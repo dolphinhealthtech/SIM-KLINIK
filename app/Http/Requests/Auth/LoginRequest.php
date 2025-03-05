@@ -54,6 +54,18 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Ambil user yang sedang login
+        $user = Auth::user();
+
+        // Cek apakah user tidak aktif
+        if (! $user->is_active) {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'login' => 'Akun Anda tidak aktif. Silakan hubungi admin.',
+            ]);
+        }
+
+
         RateLimiter::clear($this->throttleKey());
     }
 

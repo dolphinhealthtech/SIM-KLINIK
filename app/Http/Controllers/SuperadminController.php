@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
@@ -14,8 +15,9 @@ class SuperadminController extends Controller
         $title = "Role Manajemen";
 
         $role = Role::with('permissions')->get();
+        $permission = Permission::all();
 
-        return view('dashboard.role', compact('title','role'));
+        return view('dashboard.role', compact('title','role','permission'));
     }
 
     public function rolestore(Request $request)
@@ -96,6 +98,34 @@ class SuperadminController extends Controller
         ]);
     }
 
+    public function givePermission(Request $request)
+    {
+        $request->validate([
+            'role_id' => 'required|exists:roles,id',
+            'permissions' => 'nullable|array',
+        ]);
+
+        $role = Role::find($request->role_id);
+
+        if (!$role) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Role tidak ditemukan'
+            ],404);
+        }
+
+        // Update permissions
+        if ($request->has('permissions')) {
+            $role->syncPermissions($request->permissions);
+        } else {
+            $role->permissions()->detach();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Permission berhasil diperbarui untuk role ini !'
+        ]);
+    }
 
     public function permissioncreate()
     {
@@ -177,6 +207,101 @@ class SuperadminController extends Controller
         }
 
         $permission->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Role berhasil dihapus!'
+        ]);
+    }
+
+
+    public function usercreate()
+    {
+        $title = "User Manajemen";
+
+        $users = $users = User::with(['roles', 'permissions'])->get();
+        $role = Role::all();
+        return view('dashboard.user', compact('title','users','role'));
+    }
+
+    public function usernonaktif(Request $request)
+    {
+        try {
+            // Validasi input
+            $user = User::find($request->usersids);
+
+
+            // Toggle status: jika 1 jadi 0, jika 0 jadi 1
+            $user->is_active = $user->is_active ? 0 : 1;
+            $user->save();
+
+            // Menentukan pesan berdasarkan status user
+            $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Users berhasil Di'. $status .'!',
+                'data' => $user
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menonaktifkan Users!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function usersgiverole(Request $request)
+    {
+        $request->validate([
+            'userid_give' => 'required|exists:users,id',
+            'role-give' => 'required|array',
+            'role-give.*' => 'exists:roles,name'
+        ]);
+
+        try {
+            // Validasi input
+            $user = User::find($request->usersids);
+
+
+            $user = User::findOrFail($request->userid_give);
+
+            // Sinkronisasi peran pengguna
+            $user->syncRoles($request->input('role-give'));
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Users berhasil Di Berikan Role!',
+                'data' => $user
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memberikan Role Users!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function usersdestroy(Request $request)
+    {
+        $request->validate([
+            'usersid_delete' => 'required|exists:users,id',
+        ]);
+        $user = User::find($request->usersid_delete);
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'User tidak ditemukan.');
+        }
+
+        // Hapus semua role sebelum menghapus user
+        $user->syncRoles([]);
+
+        // Hapus user
+        $user->delete();
+
 
         return response()->json([
             'success' => true,

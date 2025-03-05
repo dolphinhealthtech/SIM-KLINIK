@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('role_redirects', function (Blueprint $table) {
             $table->id();
-            $table->string('role_id'); // Kunci asing untuk tabel roles
+            $table->unsignedBigInteger('role_id'); // Pastikan ini mengacu ke `id`
             $table->string('redirect_route');
             $table->timestamps();
-            $table->foreign('role_id')->references('name')->on('roles')->onDelete('cascade');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
         });
     }
 

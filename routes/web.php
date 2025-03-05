@@ -27,10 +27,20 @@ Route::get('/role', [SuperadminController::class,'rolecreate'])->name('role.get'
 Route::post('/role/add', [SuperadminController::class,'rolestore'])->name('role.store');
 Route::post('/role/update', [SuperadminController::class,'rolesupdate'])->name('role.update');
 Route::post('/role/delete', [SuperadminController::class,'rolesdestroy'])->name('role.destroy');
+Route::post('/role/give-permission', [SuperadminController::class, 'givePermission'])->name('role.givePermission');
+
 // Dashboard - Premission
 Route::get('/permission', [SuperadminController::class,'permissioncreate'])->name('permission.get');
 Route::post('/permission/add', [SuperadminController::class,'permissiontore'])->name('permission.store');
 Route::post('/permission/update', [SuperadminController::class,'permissionupdate'])->name('permission.update');
 Route::post('/permission/delete', [SuperadminController::class,'permissiondestroy'])->name('permission.destroy');
+// Dashboard - Users
+Route::get('/user', [SuperadminController::class,'usercreate'])->name('user.get');
+Route::post('/user/aktiva', [SuperadminController::class,'usernonaktif'])->name('user.aktiva');
+Route::post('/user/giverole', [SuperadminController::class,'usersgiverole'])->name('user.giverole');
+Route::post('/user/destroy', [SuperadminController::class,'usersdestroy'])->name('user.destroy');
+
+// Dashboard - Web Seting
+
 
 require __DIR__.'/auth.php';

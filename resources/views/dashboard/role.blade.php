@@ -69,7 +69,7 @@
                                                 <a href="#" class="btn btn-danger btn-sm delete-data-role" data-toggle="modal"data-id="{{ $roledata->id }}" data-nama-role="{{ $roledata->name }}" data-target="#deleteroleModal">
                                                     <i class="fas fa-trash"></i> Delete
                                                 </a>
-                                                <a href="#" class="btn btn-info btn-sm give-data-role" data-toggle="modal" data-id="{{ $roledata->id }}" data-nama-role="{{ $roledata->name }}" data-target="#giveroleModal">
+                                                <a href="#" class="btn btn-info btn-sm give-role-permission" data-toggle="modal" data-id="{{ $roledata->id }}" data-nama-role="{{ $roledata->name }}" data-permissions='@json($roledata->permissions->pluck("name"))'data-target="#giveRolePermissionModal">
                                                     <i class="fas fa-user-shield"></i> Give Role
                                                 </a>
                                             </td>
@@ -172,6 +172,54 @@
     </div>
 </div>
 
+<!-- Modal XL untuk Give Role Permissions -->
+<div class="modal fade" id="giveRolePermissionModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Beri Permission ke Role</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="giveRolePermissionForm" action="{{ route('role.givePermission') }}"  method="POST">
+                @csrf
+                <input type="hidden" id="role_id" name="role_id">
+
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Role yang Dipilih -->
+                        <div class="col-md-12 mb-3">
+                            <h5>Role: <span id="role_name_display"></span></h5>
+                        </div>
+
+                        <!-- Daftar Permission -->
+                        <div class="col-md-12">
+                            <h5>Permission</h5>
+                            <div class="form-group">
+                                @foreach ($permission as $permissiondata)
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input permission-checkbox"
+                                               name="permissions[]" value="{{ $permissiondata->name }}"
+                                               id="perm_{{ $permissiondata->id }}">
+                                        <label class="form-check-label" for="perm_{{ $permissiondata->id }}">
+                                            {{ $permissiondata->name }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
     $(document).ready(function () {
@@ -299,6 +347,82 @@
             success: function(response) {
                 if (response.success) {
                     $('#deleteroleModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: response.message,
+                        showConfirmButton: true
+                    }).then(() => {
+                        $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
+                        location.reload(); // Reload halaman untuk update data
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: 'Terjadi kesalahan saat menghapus role!',
+                });
+            }
+        });
+    });
+
+    $('.give-role-permission').click(function () {
+        var roleId = $(this).data('id');
+        var roleName = $(this).data('nama-role');
+        var rolePermissions = $(this).data('permissions'); // Data dari Blade
+
+        console.log("Raw rolePermissions:", rolePermissions);
+
+        // Pastikan rolePermissions adalah array
+        if (!Array.isArray(rolePermissions)) {
+            try {
+                rolePermissions = JSON.parse(rolePermissions);
+            } catch (e) {
+                console.error("Error parsing JSON:", e);
+                rolePermissions = [];
+            }
+        }
+
+        console.log("Parsed rolePermissions:", rolePermissions);
+
+        // Reset semua checkbox sebelum menyesuaikan dengan role
+        $('.permission-checkbox').prop('checked', false);
+
+        // Ceklis sesuai permission yang sudah dimiliki role
+        rolePermissions.forEach(function (perm) {
+            var checkbox = $('input[name="permissions[]"][value="' + perm + '"]');
+
+            console.log("Mencari checkbox dengan value:", perm, "Ditemukan:", checkbox.length > 0);
+
+            checkbox.prop('checked', true);
+        });
+
+        // Set role_id ke modal
+        $('#role_id').val(roleId);
+        $('#role_name_display').text(roleName);
+    });
+
+    $('#giveRolePermissionForm').on('submit', function(e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let url = form.attr('action');
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#giveRolePermissionModal').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil!',
