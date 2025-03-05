@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\WebSetting;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
@@ -214,7 +215,6 @@ class SuperadminController extends Controller
         ]);
     }
 
-
     public function usercreate()
     {
         $title = "User Manajemen";
@@ -307,5 +307,16 @@ class SuperadminController extends Controller
             'success' => true,
             'message' => 'Role berhasil dihapus!'
         ]);
+    }
+
+
+    public function setingweb()
+    {
+        $title = "Seting Websaite";
+        $setting = WebSetting::first(); // Ambil data pertama jika ada
+
+
+
+        return view('dashboard.webset', compact('title','setting'));
     }
 }
