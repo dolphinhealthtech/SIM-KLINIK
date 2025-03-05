@@ -46,6 +46,8 @@ Route::prefix('setting')->group(function () {
     // Dashboard - Web Seting
     Route::get('/web', [SuperadminController::class,'setingweb'])->name('web.get');
     Route::post('/web/update', [WebSettingController::class, 'update'])->name('web.update');
+    Route::post('/web/satusehat', [WebSettingController::class, 'set_satusehat'])->name('web.update.satusehat');
+    Route::post('/web/bpjs', [WebSettingController::class, 'set_bpjs'])->name('web.update.bpjs');
 
 });
 
