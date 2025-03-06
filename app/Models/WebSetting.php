@@ -9,6 +9,10 @@ class WebSetting extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama', 'alamat', 'profile_image'];
-
+    protected $fillable =
+    [
+        'nama',
+        'alamat',
+        'profile_image'
+    ];
 }

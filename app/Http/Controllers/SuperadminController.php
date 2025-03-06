@@ -20,7 +20,7 @@ class SuperadminController extends Controller
         $role = Role::with('permissions')->get();
         $permission = Permission::all();
 
-        return view('dashboard.role', compact('title','role','permission'));
+        return view('dashboard.role', compact('title', 'role', 'permission'));
     }
 
     public function rolestore(Request $request)
@@ -114,7 +114,7 @@ class SuperadminController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Role tidak ditemukan'
-            ],404);
+            ], 404);
         }
 
         // Update permissions
@@ -136,7 +136,7 @@ class SuperadminController extends Controller
 
         $permission = Permission::all();
 
-        return view('dashboard.permission', compact('title','permission'));
+        return view('dashboard.permission', compact('title', 'permission'));
     }
 
     public function permissiontore(Request $request)
@@ -223,7 +223,7 @@ class SuperadminController extends Controller
 
         $users = $users = User::with(['roles', 'permissions'])->get();
         $role = Role::all();
-        return view('dashboard.user', compact('title','users','role'));
+        return view('dashboard.user', compact('title', 'users', 'role'));
     }
 
     public function usernonaktif(Request $request)
@@ -243,7 +243,7 @@ class SuperadminController extends Controller
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Users berhasil Di'. $status .'!',
+                'message' => 'Users berhasil Di' . $status . '!',
                 'data' => $user
             ], 201);
         } catch (\Exception $e) {
@@ -320,6 +320,6 @@ class SuperadminController extends Controller
         $set_Sehat = Set_Sehat::all(); // Ambil data pertama jika ada
 
 
-        return view('dashboard.webset', compact('title','setting','set_bpjs','set_Sehat'));
+        return view('dashboard.webset', compact('title', 'setting', 'set_bpjs', 'set_Sehat'));
     }
 }
