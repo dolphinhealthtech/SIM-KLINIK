@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DataMasterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\WebSettingController;
@@ -22,6 +23,25 @@ Route::middleware('auth')->group(function () {
 
 
 
+
+Route::get('/monitor', [SuperadminController::class,'monitor'])->name('monitor.get');
+
+Route::prefix('pasien')->group(function () {
+    // Menu Pasien
+    Route::get('/', [SuperadminController::class,'pasiens'])->name('pasien.get');
+});
+
+
+Route::prefix('data-master')->group(function () {
+    // Menu Pasien
+    Route::get('/goldar', [DataMasterController::class,'darah'])->name('goldar.get');
+    Route::post('/goldar/add', [DataMasterController::class,'darahadd'])->name('goldar.store');
+    Route::post('/goldar/update', [DataMasterController::class,'darahedit'])->name('goldar.update');
+    Route::post('/goldar/delete', [DataMasterController::class,'darahdelete'])->name('goldar.destroy');
+    Route::get('/goldar/export', [DataMasterController::class, 'darahexport'])->name('goldar.export');
+    Route::post('/goldar/import', [DataMasterController::class, 'darahimport'])->name('goldar.import');
+
+});
 
 
 Route::prefix('setting')->group(function () {

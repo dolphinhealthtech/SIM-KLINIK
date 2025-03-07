@@ -322,4 +322,24 @@ class SuperadminController extends Controller
 
         return view('dashboard.webset', compact('title', 'setting', 'set_bpjs', 'set_Sehat'));
     }
+
+
+    public function pasiens()
+    {
+        $title = "Pasien";
+        $setting = WebSetting::first(); // Ambil data pertama jika ada
+        $set_bpjs = Set_Bpjs::all(); // Ambil data pertama jika ada
+        $set_Sehat = Set_Sehat::all(); // Ambil data pertama jika ada
+
+
+        return view('dashboard.pasien', compact('title', 'setting', 'set_bpjs', 'set_Sehat'));
+    }
+
+    public function monitor()
+    {
+        $title = "Pelayanan tiket";
+
+
+        return view('monitor.index', compact('title'));
+    }
 }
