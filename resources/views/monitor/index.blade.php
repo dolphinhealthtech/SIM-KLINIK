@@ -195,7 +195,7 @@
                                 </div>
                             </div>
                             <div class="bs-stepper-content">
-                                <form id="daftarForm" action="#" method="POST" enctype="multipart/form-data">
+                                <form id="daftarForm" action="{{ route('pasien.store') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <!-- your steps content here -->
                                     <div id="biodata" class="content" role="tabpanel" aria-labelledby="biodata-trigger">
@@ -208,16 +208,18 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="dob">Tanggal Lahir</label>
-                                                    <input type="date" class="form-control" id="dob" name="dob">
+                                                    <label for="tanggallahir">Tanggal Lahir</label>
+                                                    <input type="date" class="form-control" id="tanggallahir" name="tanggallahir">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="gender">Jenis Kelamin</label>
                                                     <select class="form-control" id="gender" name="gender">
-                                                        <option value="Laki-laki">Laki-laki</option>
-                                                        <option value="Perempuan">Perempuan</option>
+                                                        <option selected="selected" disabled>Pilih Jenis Kelamin</option>
+                                                        @foreach ($kelamin as $kelamindata)
+                                                            <option value="{{ $kelamindata->id }}">{{ $kelamindata->nama }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -253,10 +255,10 @@
                                                 <div class="form-group">
                                                     <label for="bloodType">Golongan Darah</label>
                                                     <select class="form-control" name="bloodType" id="bloodType">
-                                                        <option value="A">A</option>
-                                                        <option value="B">B</option>
-                                                        <option value="AB">AB</option>
-                                                        <option value="O">O</option>
+                                                        <option selected="selected" disabled>Pilih Golongan darah</option>
+                                                        @foreach ($goldar as $goldardata)
+                                                            <option value="{{ $goldardata->id }}">{{ $goldardata->nama }}{{ $goldardata->resus }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>

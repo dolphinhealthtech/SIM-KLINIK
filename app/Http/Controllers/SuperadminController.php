@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\goldar;
+use App\Models\kelamin;
+use App\Models\pasien;
 use App\Models\Set_Bpjs;
 use App\Models\Set_Sehat;
 use App\Models\User;
@@ -323,6 +326,14 @@ class SuperadminController extends Controller
         return view('dashboard.webset', compact('title', 'setting', 'set_bpjs', 'set_Sehat'));
     }
 
+    public function monitor()
+    {
+        $title = "Pelayanan tiket";
+        $goldar = goldar::all();
+        $kelamin = kelamin::all();
+
+        return view('monitor.index', compact('title','goldar','kelamin'));
+    }
 
     public function pasiens()
     {
@@ -335,11 +346,47 @@ class SuperadminController extends Controller
         return view('dashboard.pasien', compact('title', 'setting', 'set_bpjs', 'set_Sehat'));
     }
 
-    public function monitor()
+    public function pasiensadd(Request $request)
     {
-        $title = "Pelayanan tiket";
+        try {
 
+            $request->validate([
+                'patientName'   => 'required|string|max:255',
+                'tanggallahir'  => 'required|date',
+                'gender'        => 'required',
+                'phoneNumber'   => 'required|string|min:10|max:15',
+                'email'         => 'required|email|max:255|unique:users,email',
+                'address'       => 'required|string|max:500',
+                'bloodType'     => 'required',
+                'maritalStatus' => 'required',
+                'nik'           => 'required|digits:16|unique:pasiens,nik',
+                'noka'          => 'required|digits:13|unique:pasiens,no_bpjs',
+            ]);
 
-        return view('monitor.index', compact('title'));
+            $pasiens = pasien::create([
+                'no_rm' => "001",
+                'kode_ihs' => "001",
+                'nik' => $request->nik,
+                'no_bpjs' => $request->noka,
+                'goldar' => $request->bloodType,
+                'pernikahan' => $request->maritalStatus,
+                'nama' => $request->patientName,
+                'tanggal_lahir' => $request->tanggallahir,
+                'seks' => $request->gender,
+                'telepon' => $request->phoneNumber,
+                'alamat' => $request->address,
+                'kewarganegaraan' => "indonesia",
+                'verifikasi' => "1",
+            ]);
+
+            return response()->json([
+                'message' => 'Data pasien berhasil disimpan.',
+                'data'    => $pasiens
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors()
+            ], 422);
+        }
     }
 }
