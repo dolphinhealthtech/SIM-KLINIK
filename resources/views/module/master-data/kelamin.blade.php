@@ -29,47 +29,50 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Bangsa</h3>
+                                <h3 class="card-title">kelamin</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#addbangsaModal">
+                                        data-target="#addkelaminModal">
                                         <i class="fas fa-plus"></i> Tambah
                                     </button>
                                     <!-- Tombol Export -->
-                                    <a href="{{ route('bangsa.export') }}" class="btn btn-success">
+                                    <a href="{{ route('kelamin.export') }}" class="btn btn-success">
                                         <i class="fas fa-file-download"></i> Export
                                     </a>
 
                                     <!-- Tombol Import (Memunculkan Modal) -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importbangsaModal">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importkelaminModal">
                                         <i class="fas fa-file-upload"></i> Import
                                     </button>
 
                                 </div>
                             </div>
                             <div class="card-body">
-                                <table id="bangsatabel" class="table table-bordered table-striped">
+                                <table id="kelamintabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nama bangsa</th>
+                                            <th class="text-center">Nama kelamin</th>
+                                            <th class="text-center">Kode kelamin</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($bangsa as $bangsadata)
+                                        @foreach ($kelamin as $kelamindata)
                                             <tr>
-                                                <td class="text-center">{{ $bangsadata->nama }}</td>
+                                                <td class="text-center">{{ $kelamindata->nama }}</td>
+                                                <td class="text-center">{{ $kelamindata->kode }}</td>
                                                 <td class="text-center">
-                                                    <a href="#" class="btn btn-warning btn-sm edit-data-bangsa"
-                                                        data-toggle="modal" data-id="{{ $bangsadata->id }}"
-                                                        data-nama-bangsa="{{ $bangsadata->nama }}"
-                                                        data-target="#editbangsaModa">
+                                                    <a href="#" class="btn btn-warning btn-sm edit-data-kelamin"
+                                                        data-toggle="modal" data-id="{{ $kelamindata->id }}"
+                                                        data-nama-kelamin="{{ $kelamindata->nama }}"
+                                                        data-kode-kelamin="{{ $kelamindata->kode }}"
+                                                        data-target="#editkelaminModa">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </a>
-                                                    <a href="#" class="btn btn-danger btn-sm delete-data-bangsa"
-                                                        data-toggle="modal"data-id="{{ $bangsadata->id }}"
-                                                        data-nama-bangsa="{{ $bangsadata->nama }}"
-                                                        data-target="#deletebangsaModal">
+                                                    <a href="#" class="btn btn-danger btn-sm delete-data-kelamin"
+                                                        data-toggle="modal"data-id="{{ $kelamindata->id }}"
+                                                        data-nama-kelamin="{{ $kelamindata->nama }}"
+                                                        data-target="#deletekelaminModal">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </a>
                                                 </td>
@@ -88,23 +91,29 @@
 </div>
 
 {{-- modal Add Role --}}
-<div class="modal fade" id="addbangsaModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+<div class="modal fade" id="addkelaminModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data bangsa</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Master Data kelamin</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addFormbangsa" action="{{ route('bangsa.store') }}" method="POST">
+                <form id="addFormkelamin" action="{{ route('kelamin.store') }}" method="POST">
                     @csrf
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Nama Bangsa</label>
-                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Bangsa" required>
+                                <label>Nama kelamin</label>
+                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama kelamin" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>kode kelamin</label>
+                                <input type="text" class="form-control" id="kode" name="kode" placeholder="kode kelamin" required>
                             </div>
                         </div>
                     </div>
@@ -119,24 +128,30 @@
 </div>
 
 {{-- modal Edit Role --}}
-<div class="modal fade" id="editbangsaModa" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+<div class="modal fade" id="editkelaminModa" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Master Data bangsa</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Master Data kelamin</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="editFormbangsa" action="{{ route('bangsa.update') }}" method="POST">
+                <form id="editFormkelamin" action="{{ route('kelamin.update') }}" method="POST">
                     @csrf
-                    <input type="hidden" id="bangsaid_edit" name="bangsaid_edit">
+                    <input type="hidden" id="kelaminid_edit" name="kelaminid_edit">
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Nama Bangsa</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Bangsa" required>
+                                <label>Nama kelamin</label>
+                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama kelamin" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>kode kelamin</label>
+                                <input type="text" class="form-control" id="kode_edit" name="kode_edit" placeholder="kode kelamin" required>
                             </div>
                         </div>
                     </div>
@@ -151,20 +166,20 @@
 </div>
 
 {{-- modal Delete Role --}}
-<div class="modal fade" id="deletebangsaModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+<div class="modal fade" id="deletekelaminModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormbangsa" action="{{ route('bangsa.destroy') }}" method="POST">
+        <form id="deleteFormkelamin" action="{{ route('kelamin.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data bangsa</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data kelamin</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     @csrf
-                    <input type="hidden" id="bahasaid_delete" name="bahasaid_delete">
-                    <div id="deleteTextbangsa"></div>
+                    <input type="hidden" id="kelaminid_delete" name="kelaminid_delete">
+                    <div id="deleteTextkelamin"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -176,17 +191,17 @@
 </div>
 
 <!-- Modal Import -->
-<div class="modal fade" id="importbangsaModal" tabindex="-1" role="dialog" aria-labelledby="importbangsaModalLabel" aria-hidden="true">
+<div class="modal fade" id="importkelaminModal" tabindex="-1" role="dialog" aria-labelledby="importkelaminModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importbangsaModalLabel">Import Data Bangsa</h5>
+                <h5 class="modal-title" id="importkelaminModalLabel">Import Data kelamin</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('bangsa.import') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('kelamin.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label for="file">Pilih File Excel</label>
@@ -203,7 +218,7 @@
 
 <script>
         $(document).ready(function() {
-            $("#bangsatabel").DataTable({
+            $("#kelamintabel").DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -213,10 +228,10 @@
                     "pdf",
                     "print",
                 ]
-            }).buttons().container().appendTo('#bangsatabel_wrapper .col-md-6:eq(0)');
+            }).buttons().container().appendTo('#kelamintabel_wrapper .col-md-6:eq(0)');
         });
 
-        $('#addFormbangsa').on('submit', function(e) {
+        $('#addFormkelamin').on('submit', function(e) {
             e.preventDefault();
 
             $.ajax({
@@ -225,7 +240,7 @@
                 data: $(this).serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#addbangsaModal').modal('hide');
+                        $('#addkelaminModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
@@ -258,16 +273,18 @@
             });
         });
 
-        $(document).on('click', '.edit-data-bangsa', function() {
+        $(document).on('click', '.edit-data-kelamin', function() {
             var id = $(this).data('id');
-            var nama = $(this).data('nama-bangsa');
+            var nama = $(this).data('nama-kelamin');
+            var kode = $(this).data('kode-kelamin');
 
-            $('#bangsaid_edit').val(id);
+            $('#kelaminid_edit').val(id);
             $('#nama_edit').val(nama);
+            $('#kode_edit').val(kode);
              // Pastikan rhesus terpilih dengan benar
         });
 
-        $('#editFormbangsa').on('submit', function(e) {
+        $('#editFormkelamin').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);
@@ -279,7 +296,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#editbangsaModa').modal('hide');
+                        $('#editkelaminModa').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
@@ -301,22 +318,22 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate bangsa!',
+                        text: 'Terjadi kesalahan saat mengupdate kelamin!',
                     });
                 }
             });
         });
 
-        $(document).on('click', '.delete-data-bangsa', function() {
+        $(document).on('click', '.delete-data-kelamin', function() {
             let id = $(this).data('id');
-            let name = $(this).data('nama-bangsa');
+            let name = $(this).data('nama-kelamin');
 
-            $('#bahasaid_delete').val(id);
-            $('#deleteTextbangsa').html(
-            `<span>Apa Anda yakin ingin menghapus data bangsa <b>${name}</b> ?</span>`);
+            $('#kelaminid_delete').val(id);
+            $('#deleteTextkelamin').html(
+            `<span>Apa Anda yakin ingin menghapus data kelamin <b>${name}</b> ?</span>`);
         });
 
-        $('#deleteFormbangsa').on('submit', function(e) {
+        $('#deleteFormkelamin').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);
@@ -328,7 +345,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#deletebangsaModal').modal('hide');
+                        $('#deletekelaminModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',

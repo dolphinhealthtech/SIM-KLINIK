@@ -57,6 +57,38 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     Route::get('/bangsa/export', [DataMasterController::class,'bangsaexport'])->name('bangsa.export');
     Route::post('/bangsa/import', [DataMasterController::class,'bangsaimport'])->name('bangsa.import');
 
+    // Menu Bahasa
+    Route::get('/bahasa', [DataMasterController::class,'bahasa'])->name('bahasa.get');
+    Route::post('/bahasa/add', [DataMasterController::class,'bahasaadd'])->name('bahasa.store');
+    Route::post('/bahasa/update', [DataMasterController::class,'bahasaedit'])->name('bahasa.update');
+    Route::post('/bahasa/delete', [DataMasterController::class,'bahasadelete'])->name('bahasa.destroy');
+    Route::get('/bahasa/export', [DataMasterController::class,'bahasaexport'])->name('bahasa.export');
+    Route::post('/bahasa/import', [DataMasterController::class,'bahasaimport'])->name('bahasa.import');
+
+    // Menu Agama
+    Route::get('/agama', [DataMasterController::class,'agama'])->name('agama.get');
+    Route::post('/agama/add', [DataMasterController::class,'agamaadd'])->name('agama.store');
+    Route::post('/agama/update', [DataMasterController::class,'agamaedit'])->name('agama.update');
+    Route::post('/agama/delete', [DataMasterController::class,'agamadelete'])->name('agama.destroy');
+    Route::get('/agama/export', [DataMasterController::class,'agamaexport'])->name('agama.export');
+    Route::post('/agama/import', [DataMasterController::class,'agamaimport'])->name('agama.import');
+
+    // Menu Pendidikan
+    Route::get('/pendidikan', [DataMasterController::class,'pendidikan'])->name('pendidikan.get');
+    Route::post('/pendidikan/add', [DataMasterController::class,'pendidikanadd'])->name('pendidikan.store');
+    Route::post('/pendidikan/update', [DataMasterController::class,'pendidikanedit'])->name('pendidikan.update');
+    Route::post('/pendidikan/delete', [DataMasterController::class,'pendidikandelete'])->name('pendidikan.destroy');
+    Route::get('/pendidikan/export', [DataMasterController::class,'pendidikanexport'])->name('pendidikan.export');
+    Route::post('/pendidikan/import', [DataMasterController::class,'pendidikanimport'])->name('pendidikan.import');
+
+    // Menu kelamin
+    Route::get('/kelamin', [DataMasterController::class,'kelamin'])->name('kelamin.get');
+    Route::post('/kelamin/add', [DataMasterController::class,'kelaminadd'])->name('kelamin.store');
+    Route::post('/kelamin/update', [DataMasterController::class,'kelaminedit'])->name('kelamin.update');
+    Route::post('/kelamin/delete', [DataMasterController::class,'kelamindelete'])->name('kelamin.destroy');
+    Route::get('/kelamin/export', [DataMasterController::class,'kelaminexport'])->name('kelamin.export');
+    Route::post('/kelamin/import', [DataMasterController::class,'kelaminimport'])->name('kelamin.import');
+
 });
 
 
