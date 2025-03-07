@@ -32,8 +32,8 @@ Route::prefix('pasien')->group(function () {
 });
 
 
-Route::prefix('data-master')->group(function () {
-    // Menu Pasien
+Route::middleware('auth')->prefix('data-master')->group(function () {
+    // Menu Golongan Darah
     Route::get('/goldar', [DataMasterController::class,'darah'])->name('goldar.get');
     Route::post('/goldar/add', [DataMasterController::class,'darahadd'])->name('goldar.store');
     Route::post('/goldar/update', [DataMasterController::class,'darahedit'])->name('goldar.update');
@@ -41,10 +41,26 @@ Route::prefix('data-master')->group(function () {
     Route::get('/goldar/export', [DataMasterController::class, 'darahexport'])->name('goldar.export');
     Route::post('/goldar/import', [DataMasterController::class, 'darahimport'])->name('goldar.import');
 
+    // Menu Suku
+    Route::get('/suku', [DataMasterController::class,'suku'])->name('suku.get');
+    Route::post('/suku/add', [DataMasterController::class,'sukuadd'])->name('suku.store');
+    Route::post('/suku/update', [DataMasterController::class,'sukuedit'])->name('suku.update');
+    Route::post('/suku/delete', [DataMasterController::class,'sukudelete'])->name('suku.destroy');
+    Route::get('/suku/export', [DataMasterController::class,'sukuexport'])->name('suku.export');
+    Route::post('/suku/import', [DataMasterController::class,'sukuimport'])->name('suku.import');
+
+    // Menu Bangsa
+    Route::get('/bangsa', [DataMasterController::class,'bangsa'])->name('bangsa.get');
+    Route::post('/bangsa/add', [DataMasterController::class,'bangsaadd'])->name('bangsa.store');
+    Route::post('/bangsa/update', [DataMasterController::class,'bangsaedit'])->name('bangsa.update');
+    Route::post('/bangsa/delete', [DataMasterController::class,'bangsadelete'])->name('bangsa.destroy');
+    Route::get('/bangsa/export', [DataMasterController::class,'bangsaexport'])->name('bangsa.export');
+    Route::post('/bangsa/import', [DataMasterController::class,'bangsaimport'])->name('bangsa.import');
+
 });
 
 
-Route::prefix('setting')->group(function () {
+Route::middleware('auth')->prefix('setting')->group(function () {
     // Dashboard - Role
     Route::get('/role', [SuperadminController::class,'rolecreate'])->name('role.get');
     Route::post('/role/add', [SuperadminController::class,'rolestore'])->name('role.store');

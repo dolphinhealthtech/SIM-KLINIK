@@ -2,22 +2,22 @@
 
 namespace App\Exports;
 
-use App\Models\goldar;
+use App\Models\suku;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class GoldarExport implements FromCollection, WithHeadings
+class SukuExport implements FromCollection , WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
     */
     public function collection()
     {
-        return goldar::select('nama', 'resus')->get();
+        return suku::select('nama')->get();
     }
     public function headings(): array
     {
-        return ["Nama Golongan Darah", "Rhesus"];
+        return ["Nama Suku"];
     }
 
 }
