@@ -98,6 +98,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @foreach ($pasiens as $pasiensdata)
+                                            <tr>
+                                                <td>{{ $pasiensdata->nama }}</td>
+                                            </tr>
+                                        @endforeach
 
                                     </tbody>
                                 </table>

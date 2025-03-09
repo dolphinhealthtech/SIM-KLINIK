@@ -78,9 +78,12 @@ class SatusehatController extends Controller
             }
         }
 
+        $patientId = isset($responseBody['entry'][0]['resource']['id'])
+        ? $responseBody['entry'][0]['resource']['id']
+        : null;
         return response()->json([
             "status" => "success",
-            "data" => $responseBody,
+            "data" => $patientId,
             "response_time_ms" => $responseTime
         ]);
     }

@@ -13,9 +13,18 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use App\Http\Controllers\SatusehatController;
 
 class SuperadminController extends Controller
 {
+
+    protected $SatusehatController;
+
+    public function __construct(SatusehatController $SatusehatController)
+    {
+        $this->SatusehatController = $SatusehatController;
+    }
+
     public function rolecreate()
     {
         $title = "Role Manajemen";
@@ -335,15 +344,32 @@ class SuperadminController extends Controller
         return view('monitor.index', compact('title','goldar','kelamin'));
     }
 
+
+    public function creatnorm()
+    {
+        // Ambil No RM terbesar di database
+        $lastNoRM = pasien::max('no_rm');
+
+        if ($lastNoRM) {
+            // Jika ada data, tambahkan 1 ke No RM terakhir
+            $newNoRM = str_pad((int)$lastNoRM + 1, 6, '0', STR_PAD_LEFT);
+        } else {
+            // Jika tidak ada data pasien, mulai dari 000001
+            $newNoRM = '000001';
+        }
+
+        return $newNoRM;
+    }
+
     public function pasiens()
     {
         $title = "Pasien";
         $setting = WebSetting::first(); // Ambil data pertama jika ada
         $set_bpjs = Set_Bpjs::all(); // Ambil data pertama jika ada
         $set_Sehat = Set_Sehat::all(); // Ambil data pertama jika ada
+        $pasiens = pasien::all();
 
-
-        return view('dashboard.pasien', compact('title', 'setting', 'set_bpjs', 'set_Sehat'));
+        return view('dashboard.pasien', compact('title', 'setting', 'set_bpjs', 'set_Sehat','pasiens'));
     }
 
     public function pasiensadd(Request $request)
@@ -359,13 +385,15 @@ class SuperadminController extends Controller
                 'address'       => 'required|string|max:500',
                 'bloodType'     => 'required',
                 'maritalStatus' => 'required',
-                'nik'           => 'required|digits:16|unique:pasiens,nik',
-                'noka'          => 'required|digits:13|unique:pasiens,no_bpjs',
+                'nik'           => 'digits:16|unique:pasiens,nik',
+                'noka'          => 'digits:13|unique:pasiens,no_bpjs',
             ]);
 
+            $noRM = $this->creatnorm();
+            $kodeihs = $this->SatusehatController->get_nik_satusehat($request->nik)->getData(true); // Konversi ke array
             $pasiens = pasien::create([
-                'no_rm' => "001",
-                'kode_ihs' => "001",
+                'no_rm' => $noRM,
+                'kode_ihs' => $kodeihs['data'] ?? "--",
                 'nik' => $request->nik,
                 'no_bpjs' => $request->noka,
                 'goldar' => $request->bloodType,
