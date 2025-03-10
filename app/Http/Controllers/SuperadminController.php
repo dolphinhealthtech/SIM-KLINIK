@@ -14,9 +14,11 @@ use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\SatusehatController;
+use App\Models\menu;
 
 class SuperadminController extends Controller
 {
+
 
     protected $SatusehatController;
 
@@ -25,6 +27,7 @@ class SuperadminController extends Controller
         $this->SatusehatController = $SatusehatController;
     }
 
+
     public function rolecreate()
     {
         $title = "Role Manajemen";
@@ -32,7 +35,7 @@ class SuperadminController extends Controller
         $role = Role::with('permissions')->get();
         $permission = Permission::all();
 
-        return view('dashboard.role', compact('title', 'role', 'permission'));
+        return view('module.permission-role.role', compact('title', 'role', 'permission'));
     }
 
     public function rolestore(Request $request)
@@ -148,7 +151,7 @@ class SuperadminController extends Controller
 
         $permission = Permission::all();
 
-        return view('dashboard.permission', compact('title', 'permission'));
+        return view('module.permission-role.permission', compact('title', 'permission'));
     }
 
     public function permissiontore(Request $request)
@@ -235,7 +238,7 @@ class SuperadminController extends Controller
 
         $users = $users = User::with(['roles', 'permissions'])->get();
         $role = Role::all();
-        return view('dashboard.user', compact('title', 'users', 'role'));
+        return view('module.permission-role.user', compact('title', 'users', 'role'));
     }
 
     public function usernonaktif(Request $request)

@@ -24,17 +24,44 @@
         <!-- Sidebar Menu -->
         <nav class="mt-3">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            Dashboard
-                        </p>
-                    </a>
-                </li>
+                @foreach ($menus as $menu)
+                    @php
+                        // Cek apakah menu aktif berdasarkan URL
+                        $isActive = request()->is(trim($menu->url, '/')) || $menu->children->where(fn($child) => request()->is(trim($child->url, '/')))->isNotEmpty();
+                    @endphp
+
+                    <li class="nav-item {{ $isActive ? 'menu-open' : '' }}">
+                        <a href="{{ $menu->url ? url($menu->url) : '#' }}" class="nav-link {{ request()->is(trim($menu->url, '/')) ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-{{ $menu->icon }}"></i>
+                            <p>
+                                {{ $menu->name }}
+                                @if ($menu->children->isNotEmpty())
+                                    <i class="right fa fa-angle-left"></i>
+                                @endif
+                            </p>
+                        </a>
+
+                        @if ($menu->children->isNotEmpty())
+                            <ul class="nav nav-treeview">
+                                @foreach ($menu->children as $child)
+                                    <li class="nav-item">
+                                        <a href="{{ url($child->url) }}" class="nav-link {{ request()->is(trim($child->url, '/')) ? 'active' : '' }}">
+                                            <i class="fa fa-{{ $child->icon }} nav-icon"></i>
+                                            <p>{{ $child->name }}</p>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </li>
+                @endforeach
+
+
+
+
             <!-- Add icons to the links using the .nav-icon class
                 with font-awesome or any other icon font library -->
-                <li class="nav-item menu-open">
+                {{-- <li class="nav-item menu-open">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-regular fa-circle-user"></i>
                         <p>
@@ -68,7 +95,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
             </ul>
         </nav>
     <!-- /.sidebar-menu -->
