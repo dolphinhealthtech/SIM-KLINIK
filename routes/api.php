@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PcareController;
 use App\Http\Controllers\SatusehatController;
 use Illuminate\Http\Request;
@@ -9,6 +10,12 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::prefix('lokasi')->group(function(){
+    Route::get('/kabupaten', [LokasiController::class, 'getKabupaten'])->name('get.kabupaten');
+    Route::get('/kecamatan', [LokasiController::class, 'getKecamatan'])->name('get.kecamatan');
+    Route::get('/kelurahan', [LokasiController::class, 'getKelurahan'])->name('get.kelurahan');
+
+});
 Route::prefix('satusehat')->group(function(){
     Route::get('/token', [SatusehatController::class, 'get_token'])->name('satusehat.token'); // di privat fungsi nya
     Route::get('/nik/{nomor}', [SatusehatController::class, 'get_nik_satusehat'])->name('satusehat.nik'); // di privat fungsi nya
@@ -32,3 +39,4 @@ Route::prefix('pcare')->group(function () {
     Route::get('/prognosa', [PcareController::class, 'get_prognosa_bpjs'])->name('pcare.prognosa');
     Route::get('/alergi/{kode}', [PcareController::class, 'get_alergi_bpjs'])->name('pcare.alergi');
 });
+

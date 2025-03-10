@@ -14,7 +14,9 @@ use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\SatusehatController;
+use App\Models\agama;
 use App\Models\menu;
+use App\Models\provinsi;
 
 class SuperadminController extends Controller
 {
@@ -367,12 +369,12 @@ class SuperadminController extends Controller
     public function pasiens()
     {
         $title = "Pasien";
-        $setting = WebSetting::first(); // Ambil data pertama jika ada
-        $set_bpjs = Set_Bpjs::all(); // Ambil data pertama jika ada
-        $set_Sehat = Set_Sehat::all(); // Ambil data pertama jika ada
         $pasiens = pasien::all();
-
-        return view('dashboard.pasien', compact('title', 'setting', 'set_bpjs', 'set_Sehat','pasiens'));
+        $provinsi = provinsi::all();
+        $kelamin = kelamin::all();
+        $goldar = goldar::all();
+        $agama = agama::all();
+        return view('dashboard.pasien', compact('title','pasiens','provinsi','kelamin','goldar','agama'));
     }
 
     public function pasiensadd(Request $request)

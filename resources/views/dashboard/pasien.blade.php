@@ -144,19 +144,18 @@
                 <div class="modal-body">
                     <form action="">
                         <div class="row">
-                            <div class="col-md-3">
-                                <div>
+                            <div class="col-md-3 d-flex justify-content-center">
+                                <div class="position-relative text-center">
+                                    <!-- Input Gambar -->
+                                    <input type="file" id="profileImageInput" name="profile_image" accept="image/*" class="d-none" onchange="previewImage(event)">
+
                                     <!-- Bingkai Gambar dengan Rasio 3:4 -->
-                                    <div id="imageFrame"
-                                        style="display: flex; justify-content: center; align-items: center; width: 80%; height: 0; padding-bottom: 110%; position: relative; overflow: hidden; background-color: #f0f0f0; cursor: pointer; margin-top: 75px; margin-left: 20px;"
-                                        onclick="document.getElementById('foto').click();">
-                                        <!-- Gambar Profil Pengguna -->
-                                        <img class="profile-user-img img-fluid" alt="Foto profile" id="previewImage"
-                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-                                    </div>
-                                    <!-- Input file disembunyikan, akan di-trigger oleh klik pada imageFrame -->
-                                    <input type="file" class="form-control d-none" id="foto" name="foto"
-                                        accept="image/*" onchange="previewImage(event)">
+                                    <label for="profileImageInput" class="d-block" style="cursor: pointer;">
+                                        <div style="width: 100%;border: 2px solid #ccc; max-width: 180px; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 10px;  background: #f0f0f0; display: flex; align-items: center; margin-top: 75px;  justify-content: center;">
+                                            <img id="profileImage" class="img-fluid rounded" src="{{ asset('setting/' . ($setting->profile_image ?? 'default.png')) }}"
+                                                alt="User profile picture" style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
                             <div class="col-md-9">
@@ -167,72 +166,62 @@
                                 <div class="row">
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            <label>
-                                                Nama <input type="checkbox" id="manual_check"> Input Manual
-                                            </label>
-                                            <div class="input-group" id="nama_dokter_container">
-                                                <input type="text" class="form-control" id="nama_dokter_input"
-                                                    name="nama_dokter" placeholder="Masukkan Nama Dokter"
-                                                    style="width: 59%; display: none;">
-                                                <select class="form-control select2bs4" id="nama_dokter"
-                                                    name="nama_dokter" style="width: 59%;">
-                                                    <option value="" disabled selected>--- Pilih Dokter ---</option>
-                                                </select>
-                                                <input type="text" class="form-control" placeholder="Kode Dokter"
-                                                    id="kode_dokter" name="kode_dokter" style="width: 41%;" readonly>
-                                            </div>
+                                            <label>Nama </label>
+                                            <input type="text" class="form-control" placeholder="nama"
+                                                id="nama" name="nama" value="{{ $pasiensdata->nama }}" readonly>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Alamat </label>
-                                            <input type="text" class="form-control" placeholder="Alamat"
-                                                id="Alamat" name="Alamat" value="{{ old('Alamat') }}">
-                                        </div>
-                                        @error('Alamat')
+                                        @error('nama')
                                             <div style="color: red;">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <div class="form-group">
-                                            <label>NIK / Nomer KTP</label>
+                                            <label>Nomor NIK</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" id="nik" name="nik"
-                                                    oninput="cekSatuSehat()">
+                                                <input type="text" class="form-control text-center" id="nik" name="nik"
+                                                    value="{{ $pasiensdata->nik }}" readonly onfocus="this.blur()">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+
+                                    <div class="col-sm-5">
                                         <div class="form-group">
-                                            <label>Tempat Tanggal Lahir</label>
+                                            <label>Tempat & Tanggal Lahir</label>
                                             <div class="input-group">
+                                                <!-- Input Tempat Lahir -->
                                                 <input type="text" class="form-control" id="tempat_lahir"
-                                                    name="tempat_lahir" placeholder="Tempat" style="width: 60%;">
+                                                    name="tempat_lahir" value="{{ old('tempat_lahir', $pasiensdata->tempat_lahir ?? '') }}"
+                                                    placeholder="Tempat" style="width: 50%;">
+
+                                                <!-- Input Tanggal Lahir -->
                                                 <input type="date" class="form-control" id="tgllahir"
-                                                    name="tgllahir" style="width: 40%;">
+                                                    name="tgllahir" value="{{ old('tgllahir', $pasiensdata->tanggal_lahir) }}"
+                                                    style="width: 50%;">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Provinsi</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="provinsi"
                                                 name="provinsi">
                                                 <option value="" disabled selected>Provinsi</option>
-
+                                                @foreach ($provinsi as $provinsidata)
+                                                    <option value="{{ $provinsidata->kode }}">{{ $provinsidata->name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Kota/Kabupaten</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
-                                                id="kota_kabupaten" name="kota_kabupaten">
+                                                id="kabupaten" name="kabupaten">
                                                 <option value="" disabled selected>Kota/Kabupaten</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Kecamatan</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="kecamatan"
@@ -241,7 +230,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Desa/Kelurahan</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="desa"
@@ -280,14 +269,44 @@
                                             <div style="color: red;">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-8">
                                         <div class="form-group">
-                                            <label>Seks</label>
+                                            <label>Alamat</label>
+                                            <textarea class="form-control" placeholder="Masukkan alamat" id="alamat" name="alamat" rows="1">{{ $pasiensdata->alamat }}</textarea>
+                                        </div>
+                                        @error('alamat')
+                                            <div style="color: red;">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group text-center">
+                                            <label>Nomor BPJS & Satusehat</label>
+                                            <div class="input-group">
+                                                <!-- Input Tempat Lahir -->
+                                                <input type="text" class="form-control text-center" id="noka"
+                                                    name="noka" value="{{ old('noka', $pasiensdata->no_bpjs ?? '') }}"
+                                                    placeholder="Tempat" style="width: 50%;">
+
+                                                <!-- Input Tanggal Lahir -->
+                                                <input type="text" class="form-control text-center" id="noihs"
+                                                name="noihs" value="{{ old('noihs', $pasiensdata->kode_ihs ?? '') }}"
+                                                placeholder="Tempat" style="width: 50%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Jenis Kelamin</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="seks"
                                                 name="seks">
-                                                <option value="" disabled selected>--- Pilih Jenis Kelamin ---
-                                                </option>
-
+                                                <option value="" disabled selected>Jenis Kelamin</option>
+                                                @foreach ($kelamin as $kelamindata)
+                                                    <option value="{{ $kelamindata->kode }}">{{ $kelamindata->nama }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -320,7 +339,9 @@
                                             <select class="form-control select2bs4" style="width: 100%;" id="goldar"
                                                 name="goldar">
                                                 <option value="" disabled selected>--- pilih ---</option>
-
+                                                @foreach ($goldar as $goldardata)
+                                                    <option value="{{ $goldardata->id }}">{{ $goldardata->nama . $goldardata->resus}}</option>
+                                                @endforeach
                                             </select>
                                             @error('goldar')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -350,19 +371,9 @@
                                             <select class="form-control select2bs4" style="width: 100%;" id="agama"
                                                 name="agama">
                                                 <option value="" disabled selected>--- pilih ---</option>
-                                                <option value="islam" {{ old('agama') == 'islam' ? 'selected' : '' }}>
-                                                    Islam</option>
-                                                <option value="katolik" {{ old('agama') == 'katolik' ? 'selected' : '' }}>
-                                                    Kristen Katolik</option>
-                                                <option value="protestan"
-                                                    {{ old('agama') == 'protestan' ? 'selected' : '' }}>Kristen Protestan
-                                                </option>
-                                                <option value="hindu" {{ old('agama') == 'hindu' ? 'selected' : '' }}>
-                                                    Hindu</option>
-                                                <option value="buddha" {{ old('agama') == 'buddha' ? 'selected' : '' }}>
-                                                    Buddha</option>
-                                                <option value="khonghucu"
-                                                    {{ old('agama') == 'khonghucu' ? 'selected' : '' }}>Khonghucu</option>
+                                                @foreach ($agama as $agamadata)
+                                                    <option value="{{ $agamadata->id }}">{{ $agamadata->nama }}</option>
+                                                @endforeach
                                             </select>
                                             @error('agama')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -435,9 +446,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-12">
-                                <hr>
                             </div>
                             <div class="col-md-12">
                                 <h3 style="text-align: left;">STATUS</h3>
@@ -582,7 +590,7 @@
                         <input type="hidden" id="userinput" name="userinput" value="{{ auth()->user()->name }}">
                         <input type="hidden" id="userinputid" name="userinputid" value="{{ auth()->user()->id }}">
                 </div>
-                
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                     <button type="button" class="btn btn-primary">Simpan</button>
@@ -591,6 +599,73 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#provinsi').change(function () {
+                let provinsiID = $(this).val();
+                $('#kabupaten').html('<option value="">Memuat...</option>');
+                $('#kecamatan').html('<option value="">Pilih Kecamatan</option>');
+                $('#kelurahan').html('<option value="">Pilih Kelurahan</option>');
+
+                if (provinsiID) {
+                    $.get("{{ route('get.kabupaten') }}", { provinsi_id: provinsiID }, function (data) {
+                        let options = '<option value="">Pilih Kabupaten</option>';
+                        $.each(data, function (index, kab) {
+                            options += `<option value="${kab.kode}">${kab.name}</option>`;
+                        });
+                        $('#kabupaten').html(options);
+                    });
+                }
+            });
+
+            $('#kabupaten').change(function () {
+                let kabupatenID = $(this).val();
+                $('#kecamatan').html('<option value="">Memuat...</option>');
+                $('#kelurahan').html('<option value="">Pilih Kelurahan</option>');
+
+                if (kabupatenID) {
+                    $.get("{{ route('get.kecamatan') }}", { kabupaten_id: kabupatenID }, function (data) {
+                        let options = '<option value="">Pilih Kecamatan</option>';
+                        $.each(data, function (index, kec) {
+                            options += `<option value="${kec.kode}">${kec.name}</option>`;
+                        });
+                        $('#kecamatan').html(options);
+                    });
+                }
+            });
+
+            $('#kecamatan').change(function () {
+                let kecamatanID = $(this).val();
+                $('#kelurahan').html('<option value="">Memuat...</option>');
+
+                if (kecamatanID) {
+                    $.get("{{ route('get.kelurahan') }}", { kecamatan_id: kecamatanID }, function (data) {
+                        let options = '<option value="">Pilih Kelurahan</option>';
+                        $.each(data, function (index, kel) {
+                            options += `<option value="${kel.kode}">${kel.name}</option>`;
+                        });
+                        $('#desa').html(options);
+                    });
+                }
+            });
+        });
+    </script>
+
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                document.getElementById('profileImage').src = reader.result;
+            };
+
+            if (input.files && input.files[0]) {
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 
     <script>
         $(document).ready(function() {
