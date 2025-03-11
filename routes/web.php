@@ -90,6 +90,14 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     Route::get('/kelamin/export', [DataMasterController::class,'kelaminexport'])->name('kelamin.export');
     Route::post('/kelamin/import', [DataMasterController::class,'kelaminimport'])->name('kelamin.import');
 
+    // Menu kelamin
+    Route::get('/pernikahan', [DataMasterController::class,'pernikahan'])->name('pernikahan.get');
+    Route::post('/pernikahan/add', [DataMasterController::class,'pernikahanadd'])->name('pernikahan.store');
+    Route::post('/pernikahan/update', [DataMasterController::class,'pernikahanedit'])->name('pernikahan.update');
+    Route::post('/pernikahan/delete', [DataMasterController::class,'pernikahandelete'])->name('pernikahan.destroy');
+    Route::get('/pernikahan/export', [DataMasterController::class,'pernikahanexport'])->name('pernikahan.export');
+    Route::post('/pernikahan/import', [DataMasterController::class,'pernikahanimport'])->name('pernikahan.import');
+
 });
 
 

@@ -164,6 +164,7 @@
                                     <hr style="width: 85%; margin-left: 0;">
                                 </div>
                                 <div class="row">
+
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Nama </label>
@@ -174,12 +175,14 @@
                                             <div style="color: red;">{{ $message }}</div>
                                         @enderror
                                     </div>
+
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Nomor NIK</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik" name="nik"
-                                                    value="{{ $pasiensdata->nik }}" readonly onfocus="this.blur()">
+                                                    value="{{ $pasiensdata->nik }}" readonly onclick="handleClick()"
+                                                    style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
                                             </div>
                                         </div>
                                     </div>
@@ -200,6 +203,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Provinsi</label>
@@ -212,6 +216,7 @@
                                             </select>
                                         </div>
                                     </div>
+
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Kota/Kabupaten</label>
@@ -221,6 +226,7 @@
                                             </select>
                                         </div>
                                     </div>
+
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Kecamatan</label>
@@ -230,6 +236,7 @@
                                             </select>
                                         </div>
                                     </div>
+
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Desa/Kelurahan</label>
@@ -239,6 +246,7 @@
                                             </select>
                                         </div>
                                     </div>
+
                                     <div class="col-sm-1">
                                         <div class="form-group">
                                             <label>RT </label>
@@ -249,6 +257,7 @@
                                             <div style="color: red;">{{ $message }}</div>
                                         @enderror
                                     </div>
+
                                     <div class="col-sm-1">
                                         <div class="form-group">
                                             <label>RW </label>
@@ -259,6 +268,7 @@
                                             <div style="color: red;">{{ $message }}</div>
                                         @enderror
                                     </div>
+
                                     <div class="col-sm-2">
                                         <div class="form-group">
                                             <label>Kode Pos </label>
@@ -269,6 +279,7 @@
                                             <div style="color: red;">{{ $message }}</div>
                                         @enderror
                                     </div>
+
                                     <div class="col-sm-8">
                                         <div class="form-group">
                                             <label>Alamat</label>
@@ -278,10 +289,12 @@
                                             <div style="color: red;">{{ $message }}</div>
                                         @enderror
                                     </div>
+
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="row">
+
                                     <div class="col-sm-4">
                                         <div class="form-group text-center">
                                             <label>Nomor BPJS & Satusehat</label>
@@ -289,16 +302,48 @@
                                                 <!-- Input Tempat Lahir -->
                                                 <input type="text" class="form-control text-center" id="noka"
                                                     name="noka" value="{{ old('noka', $pasiensdata->no_bpjs ?? '') }}"
-                                                    placeholder="Tempat" style="width: 50%;">
+                                                    placeholder="Noka BPJS" style="width: 50%;">
 
                                                 <!-- Input Tanggal Lahir -->
                                                 <input type="text" class="form-control text-center" id="noihs"
                                                 name="noihs" value="{{ old('noihs', $pasiensdata->kode_ihs ?? '') }}"
-                                                placeholder="Tempat" style="width: 50%;">
+                                                placeholder="Noka SatuSehat" style="width: 50%;">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2">
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group text-center">
+                                            <label>Jenis & Kelas BPJS</label>
+                                            <div class="input-group">
+
+                                                <input type="text" class="form-control text-center" id="jenis_kartu"
+                                                    name="jenis_kartu" value="{{ old('jenis_kartu', $pasiensdata->jenis_Kartu_bpjs ?? '') }}"
+                                                    placeholder="Jenis Peserta BPJS" style="width: 50%;">
+
+                                                <input type="text" class="form-control text-center" id="kelas"
+                                                name="kelas" value="{{ old('kelas', $pasiensdata->kelas_bpjs ?? '') }}"
+                                                placeholder="Kelas BPJS" style="width: 50%;">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group text-center">
+                                            <label>Provide & Masa Berlaku Kartu BPJS</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control text-center" id="provide"
+                                                name="provide" value="{{ old('provide', $pasiensdata->provide ?? '') }}"
+                                                placeholder="Provide BPJS" style="width: 50%;">
+
+                                                <input type="date" class="form-control text-center" id="tgl_exp_bpjs"
+                                                    name="tgl_exp_bpjs" value="{{ old('tgl_exp_bpjs', $pasiensdata->tgl_exp_bpjs ?? '') }}"
+                                                    placeholder="Masa Berlaku Kartu BPJS" style="width: 50%;">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Jenis Kelamin</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="seks"
@@ -310,29 +355,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Status Pernikahan</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" id="pernikahan"
-                                                name="pernikahan">
-                                                <option value="" disabled selected>--- pilih ---</option>
-                                                <option value="menikah"
-                                                    {{ old('pernikahan') == 'menikah' ? 'selected' : '' }}>Menikah</option>
-                                                <option value="belum_nikah"
-                                                    {{ old('pernikahan') == 'belum_nikah' ? 'selected' : '' }}>Belum
-                                                    Menikah</option>
-                                                <option value="cerai_hidup"
-                                                    {{ old('pernikahan') == 'cerai_hidup' ? 'selected' : '' }}>Cerai Hidup
-                                                </option>
-                                                <option value="cerai_mati"
-                                                    {{ old('pernikahan') == 'cerai_mati' ? 'selected' : '' }}>Cerai Mati
-                                                </option>
-                                            </select>
-                                            @error('pernikahan')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
+
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Golongan Darah</label>
@@ -348,6 +371,23 @@
                                             @enderror
                                         </div>
                                     </div>
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Status Pernikahan</label>
+                                            <select class="form-control select2bs4" style="width: 100%;" id="pernikahan"
+                                                name="pernikahan">
+                                                <option value="" disabled selected>--- pilih ---</option>
+                                                @foreach ($pernikahan as $pernikahandata)
+                                                    <option value="{{ $pernikahandata->id }}">{{ $pernikahandata->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('pernikahan')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Kewarganegaraan</label>
@@ -365,6 +405,7 @@
                                             </select>
                                         </div>
                                     </div>
+
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Agama</label>
@@ -380,210 +421,110 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+
+                                    <div class="col-sm-3">
                                         <div class="form-group">
-                                            <label>Suku</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" id="suku"
-                                                name="suku">
-                                                <option value="" disabled selected>--- Pilih Suku ---</option>
+                                            <label>Pendidikan</label>
+                                            <select class="form-control select2bs4" style="width: 100%;"
+                                                id="pendidikan" name="pendidikan">
+                                                <option value="" disabled selected>--- pilih ---</option>
 
                                             </select>
-                                            @error('suku')
+                                            @error('pendidikan')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>Bangsa</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" id="bangsa"
-                                                name="bangsa">
-                                                <option value="" disabled selected>--- Pilih Bangsa ---</option>
 
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Status Pekerja</label>
+                                            <select class="form-control select2bs4" style="width: 100%;"
+                                                id="status_kerja" name="status_kerja">
+                                                <option value="" disabled selected>--- Pilih Status ---
+                                                </option>
                                             </select>
-                                            @error('bangsa')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label>Bahasa</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" id="bahasa"
-                                                name="bahasa">
-                                                <option value="" disabled selected>--- Pilih Bahasa ---</option>
 
-                                            </select>
-                                            @error('bahasa')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Email</label>
-                                            <input type="Email" class="form-control" id="email" name="email">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Username</label>
-                                            <input type="text" class="form-control" id="username" name="username"
-                                                readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Password</label>
-                                            <input type="password" class="form-control" id="password" name="password"
-                                                autocomplete>
-                                        </div>
-                                    </div>
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Telepon</label>
                                             <input type="text" class="form-control" id="telepon" name="telepon">
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <h3 style="text-align: left;">STATUS</h3>
-                                <div class="col-2" style="padding-left: 0; text-align: left;">
-                                    <hr style="width: 55%; margin-left: 0;">
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Tanggal Masuk</label>
-                                            <input type="date" class="form-control" id="tglawal" name="tglawal">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Status</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" id="aktivasi"
-                                                name="aktivasi">
-                                                <option value="">--- pilih ---</option>
-                                                <option value="aktif">Aktif</option>
-                                                <option value="tidak aktif">Tidak Aktif</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Unit</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" id="poli"
-                                                name="poli">
-                                                <option value="" disabled selected>--- Pilih Unit ---</option>
 
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Suku</label>
+                                            <select class="form-control select2bs4" style="width: 100%;" id="suku"
+                                                name="suku">
+                                                <option value="" disabled selected>Pilih Suku</option>
+                                                @foreach ($suku as $sukudata)
+                                                    <option value="{{ $sukudata->id }}">{{ $sukudata->nama }}</option>
+                                                @endforeach
                                             </select>
+                                            @error('suku')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Jabatan</label>
-                                            <select class="form-control select2bs4" style="width: 100%;" id="jabatan"
-                                                name="jabatan">
-                                                <option value="" disabled selected>--- Pilih Jabatan ---</option>
 
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Bangsa</label>
+                                            <select class="form-control select2bs4" style="width: 100%;" id="bangsa"
+                                                name="bangsa">
+                                                <option value="" disabled selected>Pilih Bangsa</option>
+                                                @foreach ($bangsa as $bangsadata)
+                                                    <option value="{{ $bangsadata->id }}">{{ $bangsadata->nama }}</option>
+                                                @endforeach
                                             </select>
+                                            @error('bangsa')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Nomor NPWP</label>
-                                            <input type="text" class="form-control" id="npwp" name="npwp">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Nomor STR</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" id="str" name="str"
-                                                    style="width: 60%;">
-                                                <input type="date" class="form-control" id="expstr" name="expstr"
-                                                    style="width: 40%;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Nomor SIP </label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" id="sip" name="sip"
-                                                    placeholder="Nomor SIP" style="width: 60%;">
-                                                <input type="date" class="form-control" id="expspri" name="expspri"
-                                                    style="width: 40%;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Pelatihan Khusus </label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" id="pk" name="pk"
-                                                    placeholder="Nomor PK" style="width: 60%;">
-                                                <input type="date" class="form-control" id="exppk" name="exppk"
-                                                    style="width: 40%;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>ID Satu Sehat</label>
-                                            <input type="text" class="form-control" id="kode" name="kode">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <hr>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <h3 style="text-align: left;">PENDIDIKAN</h3>
-                                        <div class="col-2" style="padding-left: 0; text-align: left;">
-                                            <hr style="width: 90%; margin-left: 0;">
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    <label>Pendidikan</label>
-                                                    <select class="form-control select2bs4" style="width: 100%;"
-                                                        id="pendidikan" name="pendidikan">
-                                                        <option value="" disabled selected>--- pilih ---</option>
-                                                        <option value="SD"
-                                                            {{ old('pendidikan') == 'SD' ? 'selected' : '' }}>SD</option>
-                                                        <option value="SMP"
-                                                            {{ old('pendidikan') == 'SMP' ? 'selected' : '' }}>SMP</option>
-                                                        <option value="SMA"
-                                                            {{ old('pendidikan') == 'SMA' ? 'selected' : '' }}>SMA</option>
-                                                        <option value="S1"
-                                                            {{ old('pendidikan') == 'S1' ? 'selected' : '' }}>Sarjana
-                                                        </option>
-                                                        <option value="S2"
-                                                            {{ old('pendidikan') == 'S2' ? 'selected' : '' }}>Magister
-                                                        </option>
-                                                        <option value="S3"
-                                                            {{ old('pendidikan') == 'S3' ? 'selected' : '' }}>Doctoral
-                                                            Degree</option>
-                                                    </select>
-                                                    @error('pendidikan')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    <label>Status Pekerja</label>
-                                                    <select class="form-control select2bs4" style="width: 100%;"
-                                                        id="status_kerja" name="status_kerja">
-                                                        <option value="" disabled selected>--- Pilih Status ---
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
 
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Bahasa</label>
+                                            <select class="form-control select2bs4" style="width: 100%;" id="bahasa"
+                                                name="bahasa">
+                                                <option value="" disabled selected> Pilih Bahasa </option>
+                                                @foreach ($bahasa as $bahasadata)
+                                                    <option value="{{ $bahasadata->id }}">{{ $bahasadata->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('bahasa')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input type="Email" class="form-control" id="email" name="email">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Username</label>
+                                            <input type="text" class="form-control" id="username" name="username"
+                                                readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Password</label>
+                                            <input type="password" class="form-control" id="password" name="password"
+                                                autocomplete>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -593,12 +534,94 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary">Simpan</button>
+                    <button type="sumbit" class="btn btn-primary">Simpan</button>
                 </div>
                     </form>
             </div>
         </div>
     </div>
+
+
+    <script>
+        function formatDate(dateString) {
+            let parts = dateString.split("-"); // Pisahkan berdasarkan "-"
+            return `${parts[2]}-${parts[1]}-${parts[0]}`; // Susun ulang menjadi "yyyy-MM-dd"
+        }
+
+        function updateInputValue(inputElement, newValue) {
+            if (inputElement.value.trim() !== newValue) {
+                inputElement.value = newValue;
+            }
+        }
+
+        function handleClick() {
+            let nik = document.getElementById("nik").value; // Ambil nilai NIK dari input
+            let apiUrl = `{{ route('pcare.nik', ':nik') }}`.replace(':nik', nik); // Perbaiki parameter
+
+            // Fetch data dari API
+            fetch(apiUrl, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+            .then(response => response.json()) // Ubah respons ke JSON
+            .then(responseData => {
+                if (responseData.status === "success" && responseData.data) {
+                    let data = responseData.data;
+
+                    // Ambil elemen input
+                    let nokaInput = document.getElementById("noka");
+                    let jenisKartuInput = document.getElementById("jenis_kartu");
+                    let kelasInput = document.getElementById("kelas");
+                    let provideInput = document.getElementById("provide");
+                    let expbpjsInput = document.getElementById("tgl_exp_bpjs");
+                    let tgllahirInput = document.getElementById("tgllahir");
+                    let namaInput = document.getElementById("nama");
+
+                    // Update nilai input hanya jika berbeda
+                    updateInputValue(nokaInput, data.noKartu);
+                    updateInputValue(jenisKartuInput, data.jnsPeserta.nama);
+                    updateInputValue(kelasInput, data.jnsKelas.nama);
+                    updateInputValue(provideInput, data.kdProviderPst.nmProvider);
+                    if (data.tglAkhirBerlaku) {
+                        updateInputValue(expbpjsInput, formatDate(data.tglAkhirBerlaku));
+                    }
+                    if (data.tglLahir) {
+                        updateInputValue(tgllahirInput, formatDate(data.tglLahir));
+                    }
+                    updateInputValue(namaInput, data.nama);
+
+                        // **Panggil route tambahan setelah namaInput diperbarui**
+                        let noihsApiUrl = `{{ route('satusehat.nik', ':nik') }}`.replace(':nik', nik); // Sesuaikan URL
+                        fetch(noihsApiUrl, {
+                            method: "GET",
+                            headers: {
+                                "Content-Type": "application/json",
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(noihsData => {
+                            let noihsInput = document.getElementById("noihs"); // Ambil elemen input noihs
+                            if (noihsData.status === "success" && noihsData.data) {
+                                updateInputValue(noihsInput, noihsData.data); // Update No IHS
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Gagal mengambil No IHS:", error);
+                        });
+
+                } else {
+                    console.error("Data tidak ditemukan atau format tidak sesuai:", responseData);
+                    alert("Data tidak ditemukan.");
+                }
+            })
+            .catch(error => {
+                console.error("Terjadi kesalahan:", error);
+                alert("Gagal mengambil data dari API.");
+            });
+        }
+    </script>
 
     <script>
         $(document).ready(function () {

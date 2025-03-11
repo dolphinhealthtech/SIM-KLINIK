@@ -15,8 +15,12 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\SatusehatController;
 use App\Models\agama;
+use App\Models\bahasa;
+use App\Models\bangsa;
 use App\Models\menu;
+use App\Models\pernikahan;
 use App\Models\provinsi;
+use App\Models\suku;
 
 class SuperadminController extends Controller
 {
@@ -374,7 +378,11 @@ class SuperadminController extends Controller
         $kelamin = kelamin::all();
         $goldar = goldar::all();
         $agama = agama::all();
-        return view('dashboard.pasien', compact('title','pasiens','provinsi','kelamin','goldar','agama'));
+        $pernikahan = pernikahan::all();
+        $suku = suku::all();
+        $bangsa = bangsa::all();
+        $bahasa = bahasa::all();
+        return view('dashboard.pasien', compact('title','pasiens','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa'));
     }
 
     public function pasiensadd(Request $request)
