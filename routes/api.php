@@ -3,12 +3,16 @@
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PcareController;
 use App\Http\Controllers\SatusehatController;
+use App\Http\Controllers\SuperadminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+Route::get('/get-pasien/{id}', [SuperadminController::class, 'getPasien']);
+
 
 Route::prefix('lokasi')->group(function(){
     Route::get('/kabupaten', [LokasiController::class, 'getKabupaten'])->name('get.kabupaten');

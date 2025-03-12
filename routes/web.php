@@ -30,6 +30,7 @@ Route::prefix('pasien')->group(function () {
     // Menu Pasien
     Route::get('/', [SuperadminController::class,'pasiens'])->name('pasien.get');
     Route::post('/add', [SuperadminController::class,'pasiensadd'])->name('pasien.store');
+    Route::post('/verifikasi', [SuperadminController::class,'pasienvefiv'])->name('pasien.verifikasi');
 });
 
 

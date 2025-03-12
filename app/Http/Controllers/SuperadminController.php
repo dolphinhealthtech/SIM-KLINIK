@@ -18,6 +18,7 @@ use App\Models\agama;
 use App\Models\bahasa;
 use App\Models\bangsa;
 use App\Models\menu;
+use App\Models\pendidikan;
 use App\Models\pernikahan;
 use App\Models\provinsi;
 use App\Models\suku;
@@ -381,8 +382,15 @@ class SuperadminController extends Controller
         $pernikahan = pernikahan::all();
         $suku = suku::all();
         $bangsa = bangsa::all();
+        $pendidikan = pendidikan::all();
         $bahasa = bahasa::all();
-        return view('dashboard.pasien', compact('title','pasiens','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa'));
+        return view('dashboard.pasien', compact('title','pasiens','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa','pendidikan'));
+    }
+
+    public function getPasien($id)
+    {
+        $pasien = Pasien::find($id); // Ambil data pasien dari database
+        return response()->json($pasien);
     }
 
     public function pasiensadd(Request $request)
@@ -399,7 +407,7 @@ class SuperadminController extends Controller
                 'bloodType'     => 'required',
                 'maritalStatus' => 'required',
                 'nik'           => 'digits:16|unique:pasiens,nik',
-                'noka'          => 'digits:13|unique:pasiens,no_bpjs',
+                'noka'          => 'nullable|digits:13|unique:pasiens,no_bpjs',
             ]);
 
             $noRM = $this->creatnorm();
@@ -408,7 +416,7 @@ class SuperadminController extends Controller
                 'no_rm' => $noRM,
                 'kode_ihs' => $kodeihs['data'] ?? "--",
                 'nik' => $request->nik,
-                'no_bpjs' => $request->noka,
+                'no_bpjs' => $request->noka ?? "--",
                 'goldar' => $request->bloodType,
                 'pernikahan' => $request->maritalStatus,
                 'nama' => $request->patientName,
@@ -429,5 +437,120 @@ class SuperadminController extends Controller
                 'errors' => $e->errors()
             ], 422);
         }
+    }
+
+    public function pasienvefiv(Request $request)
+    {
+        $data = $request->validate([
+            "nomor_rm" => 'required',
+            "nik" => 'required|unique:pasiens',
+            "kode_ihs" => 'required|unique:pasiens',
+            "nama" => 'required',
+            "tempat_lahir" => 'required',
+            "tanggal_lahir" => 'required',
+            "Alamat" => 'required|string|max:255',
+            "rt" => 'required',
+            "rw" => 'required',
+            "kode_pos" => 'required',
+            "kewarganegaraan" => 'required',
+            "provinsi" => 'required',
+            "kota_kabupaten" => 'required',
+            "kecamatan" => 'required',
+            "desa" => 'required',
+            "seks" => 'required',
+            "agama" => 'required',
+            "pendidikan" => 'required',
+            "goldar" => 'required',
+            "pernikahan" => 'required',
+            "pekerjaan" => 'required',
+            "suku" => 'required',
+            "bangsa" => 'required',
+            "bahasa" => 'required',
+            "telepon" => 'required|string',
+        ],[
+            'nomor_rm.required' => 'Nomor RM harus diisi.',
+            'nik.required' => 'NIK harus diisi.',
+            'nik.unique' => 'NIK sudah terdaftar.',
+            'kode_ihs.required' => 'Kode IHS harus diisi.',
+            'kode_ihs.unique' => 'Kode IHS sudah terdaftar.',
+            'nama.required' => 'Nama harus diisi.',
+            'tempat_lahir.required' => 'Tempat lahir harus diisi.',
+            'tanggal_lahir.required' => 'Tanggal lahir harus diisi.',
+            'Alamat.required' => 'Alamat harus diisi.',
+            'rt.required' => 'RT harus diisi.',
+            'rw.required' => 'RW harus diisi.',
+            'kode_pos.required' => 'Kode pos harus diisi.',
+            'kewarganegaraan.required' => 'Kewarganegaraan harus diisi.',
+            'provinsi.required' => 'Provinsi harus diisi.',
+            'kota_kabupaten.required' => 'Kota/Kabupaten harus diisi.',
+            'kecamatan.required' => 'Kecamatan harus diisi.',
+            'desa.required' => 'Desa harus diisi.',
+            'seks.required' => 'Seks harus diisi.',
+            'agama.required' => 'Agama harus diisi.',
+            'pendidikan.required' => 'Pendidikan harus diisi.',
+            'goldar.required' => 'Golongan darah harus diisi.',
+            'pernikahan.required' => 'Status pernikahan harus diisi.',
+            'pekerjaan.required' => 'Pekerjaan harus diisi.',
+            'telepon.required' => 'Telepon harus diisi.',
+        ]);
+
+        $fotoName = null;
+
+        if ($request->hasFile('foto')) {
+            // Get the original file name
+            $fotoName = $request->file('foto')->getClientOriginalName();
+
+            // Define the directory path to save in the public folder
+            $destinationPath = public_path('uploads/patient_photos');
+
+            // Move the uploaded file to the public directory
+            $request->file('foto')->move($destinationPath, $fotoName);
+        }
+
+        // Handle null profile photo if needed
+        if (is_null($fotoName)) {
+            // Set a default photo name or handle as required
+            $fotoName = 'default.jpg';  // Example default image
+        }
+
+
+        $pasien = new Pasien();
+            $pasien->no_rm = $data['nomor_rm'];
+            $pasien->nik = $data['nik'];
+            $pasien->nama = $data['nama'];
+            $pasien->kode_ihs = $data['kode_ihs'];
+            $pasien->tempat_lahir = $data['tempat_lahir'];
+            $pasien->tanggal_lahir = $data['tanggal_lahir'];
+            $pasien->no_bpjs = $request->no_bpjs;
+            $pasien->tgl_exp_bpjs = $request->tgl_akhir;
+            $pasien->kelas_bpjs = $request->kelbpjs;
+            $pasien->jenis_Kartu_bpjs = $request->jenper;
+            $pasien->provide = $request->provide;
+            $pasien->kodeprovide = $request->kodeprovide    ;
+            $pasien->hubungan_keluarga = $request->hubka;
+            $pasien->Alamat = $data['Alamat'];
+            $pasien->rt = $data['rt'];
+            $pasien->rw = $data['rw'];
+            $pasien->kode_pos = $data['kode_pos'];
+            $pasien->kewarganegaraan = $data['kewarganegaraan'];
+            $pasien->seks = $data['seks'];
+            $pasien->agama = $data['agama'];
+            $pasien->pendidikan = $data['pendidikan'];
+            $pasien->goldar = $data['goldar'];
+            $pasien->pernikahan = $data['pernikahan'];
+            $pasien->pekerjaan = $data['pekerjaan'];
+            $pasien->telepon = $data['telepon'];
+            $pasien->provinsi_kode = $data['provinsi'];
+            $pasien->kabupaten_kode = $data['kota_kabupaten'];
+            $pasien->kecamatan_kode = $data['kecamatan'];
+            $pasien->desa_kode = $data['desa'];
+            $pasien->suku = $data['suku'];
+            $pasien->bangsa = $data['bangsa'];
+            $pasien->bahasa = $data['bahasa'];
+            $pasien->verifikasi = 2;
+            $pasien->users = $request->userinput;
+            $pasien->user_id_input = $request->userinputid;
+            $pasien->user_name_input = $request->userinput;
+            $pasien->save();
     }
 }

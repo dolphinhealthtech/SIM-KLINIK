@@ -218,7 +218,7 @@
                                                     <select class="form-control" id="gender" name="gender">
                                                         <option selected="selected" disabled>Pilih Jenis Kelamin</option>
                                                         @foreach ($kelamin as $kelamindata)
-                                                            <option value="{{ $kelamindata->id }}">{{ $kelamindata->nama }}</option>
+                                                            <option value="{{ $kelamindata->kode }}">{{ $kelamindata->nama }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>

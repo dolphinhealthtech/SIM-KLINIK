@@ -109,8 +109,9 @@
                                                 <td>{{ $pasiensdata->no_bpjs }}</td>
                                                 <td>{{ $pasiensdata->telepon }}</td>
                                                 <td>
-                                                    <a class="btn btn-info rounded-pill" data-toggle="modal"
-                                                        data-target="#lengkapiModal{{ $pasiensdata->id }}">
+                                                    <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
+                                                        data-target="#lengkapiModal"
+                                                        data-id="{{ $pasiensdata->id }}">
                                                         <i class="fa fa-exclamation-circle"></i> Lengkapi
                                                     </a>
                                                 </td>
@@ -130,19 +131,19 @@
 
 
     <!-- Modal XL -->
-    <div class="modal fade" id="lengkapiModal{{ $pasiensdata->id }}" tabindex="-1"
-        aria-labelledby="modalTitle{{ $pasiensdata->id }}" aria-hidden="true">
+    <div class="modal fade" id="lengkapiModal" tabindex="-1"
+        aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle{{ $pasiensdata->id }}">Lengkapi Data Pasien Atas Nama
-                        {{ $pasiensdata->nama }}</h5>
+                    <h5 class="modal-title" id="modalTitle">Lengkapi Data Pasien</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="">
+                    <form action="{{ route('pasien.verifikasi') }}" method="POST">
+                        @csrf
                         <div class="row">
                             <div class="col-md-3 d-flex justify-content-center">
                                 <div class="position-relative text-center">
@@ -165,11 +166,13 @@
                                 </div>
                                 <div class="row">
 
+                                    <input type="hiden" class="form-control" placeholder="nomor_rm"
+                                        id="nomor_rm" name="nomor_rm" readonly>
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Nama </label>
                                             <input type="text" class="form-control" placeholder="nama"
-                                                id="nama" name="nama" value="{{ $pasiensdata->nama }}" readonly>
+                                                id="nama" name="nama" readonly>
                                         </div>
                                         @error('nama')
                                             <div style="color: red;">{{ $message }}</div>
@@ -181,7 +184,7 @@
                                             <label>Nomor NIK</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik" name="nik"
-                                                    value="{{ $pasiensdata->nik }}" readonly onclick="handleClick()"
+                                                    readonly onclick="handleClick()"
                                                     style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
                                             </div>
                                         </div>
@@ -193,12 +196,12 @@
                                             <div class="input-group">
                                                 <!-- Input Tempat Lahir -->
                                                 <input type="text" class="form-control" id="tempat_lahir"
-                                                    name="tempat_lahir" value="{{ old('tempat_lahir', $pasiensdata->tempat_lahir ?? '') }}"
+                                                    name="tempat_lahir"
                                                     placeholder="Tempat" style="width: 50%;">
 
                                                 <!-- Input Tanggal Lahir -->
                                                 <input type="date" class="form-control" id="tgllahir"
-                                                    name="tgllahir" value="{{ old('tgllahir', $pasiensdata->tanggal_lahir) }}"
+                                                    name="tgllahir"
                                                     style="width: 50%;">
                                             </div>
                                         </div>
@@ -283,7 +286,7 @@
                                     <div class="col-sm-8">
                                         <div class="form-group">
                                             <label>Alamat</label>
-                                            <textarea class="form-control" placeholder="Masukkan alamat" id="alamat" name="alamat" rows="1">{{ $pasiensdata->alamat }}</textarea>
+                                            <textarea class="form-control" placeholder="Masukkan alamat" id="alamat" name="alamat" rows="1"></textarea>
                                         </div>
                                         @error('alamat')
                                             <div style="color: red;">{{ $message }}</div>
@@ -301,12 +304,12 @@
                                             <div class="input-group">
                                                 <!-- Input Tempat Lahir -->
                                                 <input type="text" class="form-control text-center" id="noka"
-                                                    name="noka" value="{{ old('noka', $pasiensdata->no_bpjs ?? '') }}"
+                                                    name="noka"
                                                     placeholder="Noka BPJS" style="width: 50%;">
 
                                                 <!-- Input Tanggal Lahir -->
                                                 <input type="text" class="form-control text-center" id="noihs"
-                                                name="noihs" value="{{ old('noihs', $pasiensdata->kode_ihs ?? '') }}"
+                                                name="noihs"
                                                 placeholder="Noka SatuSehat" style="width: 50%;">
                                             </div>
                                         </div>
@@ -318,11 +321,11 @@
                                             <div class="input-group">
 
                                                 <input type="text" class="form-control text-center" id="jenis_kartu"
-                                                    name="jenis_kartu" value="{{ old('jenis_kartu', $pasiensdata->jenis_Kartu_bpjs ?? '') }}"
+                                                    name="jenis_kartu"
                                                     placeholder="Jenis Peserta BPJS" style="width: 50%;">
 
                                                 <input type="text" class="form-control text-center" id="kelas"
-                                                name="kelas" value="{{ old('kelas', $pasiensdata->kelas_bpjs ?? '') }}"
+                                                name="kelas"
                                                 placeholder="Kelas BPJS" style="width: 50%;">
                                             </div>
                                         </div>
@@ -333,11 +336,11 @@
                                             <label>Provide & Masa Berlaku Kartu BPJS</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="provide"
-                                                name="provide" value="{{ old('provide', $pasiensdata->provide ?? '') }}"
+                                                name="provide"
                                                 placeholder="Provide BPJS" style="width: 50%;">
 
                                                 <input type="date" class="form-control text-center" id="tgl_exp_bpjs"
-                                                    name="tgl_exp_bpjs" value="{{ old('tgl_exp_bpjs', $pasiensdata->tgl_exp_bpjs ?? '') }}"
+                                                    name="tgl_exp_bpjs"
                                                     placeholder="Masa Berlaku Kartu BPJS" style="width: 50%;">
                                             </div>
                                         </div>
@@ -428,7 +431,9 @@
                                             <select class="form-control select2bs4" style="width: 100%;"
                                                 id="pendidikan" name="pendidikan">
                                                 <option value="" disabled selected>--- pilih ---</option>
-
+                                                @foreach ($pendidikan as $pendidikandata)
+                                                <option value="{{ $pendidikandata->kode }}">{{ $pendidikandata->nama }}</option>
+                                            @endforeach
                                             </select>
                                             @error('pendidikan')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -438,7 +443,7 @@
 
                                     <div class="col-sm-3">
                                         <div class="form-group">
-                                            <label>Status Pekerja</label>
+                                            <label>Pekerja</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
                                                 id="status_kerja" name="status_kerja">
                                                 <option value="" disabled selected>--- Pilih Status ---
@@ -541,6 +546,34 @@
         </div>
     </div>
 
+
+    <script>
+        $(document).ready(function () {
+            // Event saat tombol "Lengkapi" diklik
+            $('.lengkapi-btn').on('click', function () {
+                // Ambil data-id dari tombol yang diklik
+                let pasienId = $(this).data('id');
+
+                // Contoh: Ambil data pasien dari server (opsional)
+                $.get(`/api/get-pasien/${pasienId}`, function (data) {
+                    $('#nomor_rm').val(data.no_rm);
+                    $('#nama').val(data.nama);
+                    $('#nik').val(data.nik);
+                    $('#tgllahir').val(data.tanggal_lahir);
+                    $('#noka').val(data.no_bpjs);
+                    $('#noihs').val(data.kode_ihs);
+                    $('#alamat').val(data.alamat);
+                    $('#telepon').val(data.telepon);
+                    $('#pernikahan').val(data.pernikahan);
+                    $('#goldar').val(data.goldar).trigger('change');
+                    $('#seks').val(data.seks).trigger('change');
+
+                }).fail(function (error) {
+                    console.error("Gagal mengambil data pasien:", error);
+                });
+            });
+        });
+    </script>
 
     <script>
         function formatDate(dateString) {
