@@ -99,6 +99,14 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     Route::get('/pernikahan/export', [DataMasterController::class,'pernikahanexport'])->name('pernikahan.export');
     Route::post('/pernikahan/import', [DataMasterController::class,'pernikahanimport'])->name('pernikahan.import');
 
+    // Menu kelamin
+    Route::get('/pekerjaan', [DataMasterController::class,'pekerjaan'])->name('pekerjaan.get');
+    Route::post('/pekerjaan/add', [DataMasterController::class,'pekerjaanadd'])->name('pekerjaan.store');
+    Route::post('/pekerjaan/update', [DataMasterController::class,'pekerjaanedit'])->name('pekerjaan.update');
+    Route::post('/pekerjaan/delete', [DataMasterController::class,'pekerjaandelete'])->name('pekerjaan.destroy');
+    Route::get('/pekerjaan/export', [DataMasterController::class,'pekerjaanexport'])->name('pekerjaan.export');
+    Route::post('/pekerjaan/import', [DataMasterController::class,'pekerjaanimport'])->name('pekerjaan.import');
+
 });
 
 

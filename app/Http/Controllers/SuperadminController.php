@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
+
 use App\Models\goldar;
 use App\Models\kelamin;
 use App\Models\pasien;
@@ -18,10 +20,12 @@ use App\Models\agama;
 use App\Models\bahasa;
 use App\Models\bangsa;
 use App\Models\menu;
+use App\Models\pekerjaan;
 use App\Models\pendidikan;
 use App\Models\pernikahan;
 use App\Models\provinsi;
 use App\Models\suku;
+
 
 class SuperadminController extends Controller
 {
@@ -384,7 +388,8 @@ class SuperadminController extends Controller
         $bangsa = bangsa::all();
         $pendidikan = pendidikan::all();
         $bahasa = bahasa::all();
-        return view('dashboard.pasien', compact('title','pasiens','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa','pendidikan'));
+        $pekerjaan = pekerjaan::all();
+        return view('dashboard.pasien', compact('title','pasiens','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa','pendidikan','pekerjaan'));
     }
 
     public function getPasien($id)
@@ -441,70 +446,50 @@ class SuperadminController extends Controller
 
     public function pasienvefiv(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             "nomor_rm" => 'required',
-            "nik" => 'required|unique:pasiens',
-            "kode_ihs" => 'required|unique:pasiens',
             "nama" => 'required',
+            "nik" => 'required',
             "tempat_lahir" => 'required',
-            "tanggal_lahir" => 'required',
-            "Alamat" => 'required|string|max:255',
-            "rt" => 'required',
-            "rw" => 'required',
-            "kode_pos" => 'required',
-            "kewarganegaraan" => 'required',
+            "tgllahir" => 'required|date',
             "provinsi" => 'required',
             "kota_kabupaten" => 'required',
             "kecamatan" => 'required',
             "desa" => 'required',
+            "rt" => 'required',
+            "rw" => 'required',
+            "kode_pos" => 'required',
+            "alamat" => 'required|string|max:255',
+            "noka" => 'nullable',
+            "kode_ihs" => 'required',
+            "jenis_kartu" => 'nullable|string',
+            "kelas" => 'nullable|string',
+            "provide" => 'nullable|string',
+            "tgl_exp_bpjs" => 'nullable|date',
             "seks" => 'required',
-            "agama" => 'required',
-            "pendidikan" => 'required',
             "goldar" => 'required',
             "pernikahan" => 'required',
-            "pekerjaan" => 'required',
+            "kewarganegaraan" => 'required',
+            "agama" => 'required',
+            "pendidikan" => 'required',
+            "status_kerja" => 'required',
+            "telepon" => 'required|string',
             "suku" => 'required',
             "bangsa" => 'required',
             "bahasa" => 'required',
-            "telepon" => 'required|string',
-        ],[
-            'nomor_rm.required' => 'Nomor RM harus diisi.',
-            'nik.required' => 'NIK harus diisi.',
-            'nik.unique' => 'NIK sudah terdaftar.',
-            'kode_ihs.required' => 'Kode IHS harus diisi.',
-            'kode_ihs.unique' => 'Kode IHS sudah terdaftar.',
-            'nama.required' => 'Nama harus diisi.',
-            'tempat_lahir.required' => 'Tempat lahir harus diisi.',
-            'tanggal_lahir.required' => 'Tanggal lahir harus diisi.',
-            'Alamat.required' => 'Alamat harus diisi.',
-            'rt.required' => 'RT harus diisi.',
-            'rw.required' => 'RW harus diisi.',
-            'kode_pos.required' => 'Kode pos harus diisi.',
-            'kewarganegaraan.required' => 'Kewarganegaraan harus diisi.',
-            'provinsi.required' => 'Provinsi harus diisi.',
-            'kota_kabupaten.required' => 'Kota/Kabupaten harus diisi.',
-            'kecamatan.required' => 'Kecamatan harus diisi.',
-            'desa.required' => 'Desa harus diisi.',
-            'seks.required' => 'Seks harus diisi.',
-            'agama.required' => 'Agama harus diisi.',
-            'pendidikan.required' => 'Pendidikan harus diisi.',
-            'goldar.required' => 'Golongan darah harus diisi.',
-            'pernikahan.required' => 'Status pernikahan harus diisi.',
-            'pekerjaan.required' => 'Pekerjaan harus diisi.',
-            'telepon.required' => 'Telepon harus diisi.',
         ]);
 
         $fotoName = null;
 
-        if ($request->hasFile('foto')) {
+        if ($request->hasFile('profile_image')) {
             // Get the original file name
-            $fotoName = $request->file('foto')->getClientOriginalName();
+            $fotoName = $request->file('profile_image')->getClientOriginalName();
 
             // Define the directory path to save in the public folder
             $destinationPath = public_path('uploads/patient_photos');
 
             // Move the uploaded file to the public directory
-            $request->file('foto')->move($destinationPath, $fotoName);
+            $request->file('profile_image')->move($destinationPath, $fotoName);
         }
 
         // Handle null profile photo if needed
@@ -514,43 +499,60 @@ class SuperadminController extends Controller
         }
 
 
-        $pasien = new Pasien();
-            $pasien->no_rm = $data['nomor_rm'];
-            $pasien->nik = $data['nik'];
-            $pasien->nama = $data['nama'];
-            $pasien->kode_ihs = $data['kode_ihs'];
-            $pasien->tempat_lahir = $data['tempat_lahir'];
-            $pasien->tanggal_lahir = $data['tanggal_lahir'];
-            $pasien->no_bpjs = $request->no_bpjs;
-            $pasien->tgl_exp_bpjs = $request->tgl_akhir;
-            $pasien->kelas_bpjs = $request->kelbpjs;
-            $pasien->jenis_Kartu_bpjs = $request->jenper;
-            $pasien->provide = $request->provide;
-            $pasien->kodeprovide = $request->kodeprovide    ;
-            $pasien->hubungan_keluarga = $request->hubka;
-            $pasien->Alamat = $data['Alamat'];
-            $pasien->rt = $data['rt'];
-            $pasien->rw = $data['rw'];
-            $pasien->kode_pos = $data['kode_pos'];
-            $pasien->kewarganegaraan = $data['kewarganegaraan'];
-            $pasien->seks = $data['seks'];
-            $pasien->agama = $data['agama'];
-            $pasien->pendidikan = $data['pendidikan'];
-            $pasien->goldar = $data['goldar'];
-            $pasien->pernikahan = $data['pernikahan'];
-            $pasien->pekerjaan = $data['pekerjaan'];
-            $pasien->telepon = $data['telepon'];
-            $pasien->provinsi_kode = $data['provinsi'];
-            $pasien->kabupaten_kode = $data['kota_kabupaten'];
-            $pasien->kecamatan_kode = $data['kecamatan'];
-            $pasien->desa_kode = $data['desa'];
-            $pasien->suku = $data['suku'];
-            $pasien->bangsa = $data['bangsa'];
-            $pasien->bahasa = $data['bahasa'];
-            $pasien->verifikasi = 2;
-            $pasien->users = $request->userinput;
-            $pasien->user_id_input = $request->userinputid;
-            $pasien->user_name_input = $request->userinput;
-            $pasien->save();
+        $pasien = Pasien::where('no_rm', $request->nomor_rm)->first();
+        if ($pasien) {
+            // Update data pasien
+            $pasien->update([
+                'no_rm' => $request->nomor_rm,
+                'nama' => $request->nama,
+                'nik' => $request->nik,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tgllahir,
+                'provinsi_kode' => $request->provinsi,
+                'kabupaten_kode' => $request->kabupaten,
+                'kecamatan_kode' => $request->kecamatan,
+                'desa_kode' => $request->desa,
+                'rt' => $request->rt,
+                'rw' => $request->rw,
+                'kode_pos' => $request->kode_pos,
+                'alamat' => $request->alamat,
+                'no_bpjs' => $request->noka,
+                'kode_ihs' => $request->noihs,
+                'jenis_Kartu_bpjs' => $request->jenis_kartu,
+                'kelas_bpjs' => $request->kelas,
+                'provide' => $request->provide,
+                'tgl_exp_bpjs' => $request->tgl_exp_bpjs,
+                'seks' => $request->seks,
+                'goldar' => $request->goldar,
+                'pernikahan' => $request->pernikahan,
+                'kewarganegaraan' => $request->kewarganegaraan,
+                'agama' => $request->agama,
+                'pendidikan' => $request->pendidikan,
+                'pekerjaan' => $request->status_kerja,
+                'telepon' => $request->telepon,
+                'suku' => $request->suku,
+                'bangsa' => $request->bangsa,
+                'bahasa' => $request->bahasa,
+                'verifikasi' => 2,
+                'users' => $request->userinput ,
+                'user_id_input' => $request->userinputid,
+                'user_name_input' => $request->userinput,
+            ]);
+
+            // Logging perubahan data
+            Log::info('Pasien berhasil diupdate', [
+                'no_rm' => $pasien->no_rm,
+                'user_input' => $pasien->user_name_input,
+                'waktu' => now()
+            ]);
+
+        } else {
+            Log::error('Gagal update, pasien tidak ditemukan', [
+                'no_rm' => $request->nomor_rm,
+                'user_input' => $request->userinput,
+                'waktu' => now()
+            ]);
+        }
+
     }
 }

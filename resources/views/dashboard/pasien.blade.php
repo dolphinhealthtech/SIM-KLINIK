@@ -166,8 +166,7 @@
                                 </div>
                                 <div class="row">
 
-                                    <input type="hiden" class="form-control" placeholder="nomor_rm"
-                                        id="nomor_rm" name="nomor_rm" readonly>
+                                    <input type="hidden" class="form-control" placeholder="nomor_rm" id="nomor_rm" name="nomor_rm">
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Nama </label>
@@ -446,8 +445,10 @@
                                             <label>Pekerja</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
                                                 id="status_kerja" name="status_kerja">
-                                                <option value="" disabled selected>--- Pilih Status ---
-                                                </option>
+                                                <option value="" disabled selected>Pilih Pekerjaan</option>
+                                                @foreach ($pekerjaan as $pekerjaandata)
+                                                    <option value="{{ $pekerjaandata->id }}">{{ $pekerjaandata->nama }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -645,13 +646,19 @@
                         });
 
                 } else {
-                    console.error("Data tidak ditemukan atau format tidak sesuai:", responseData);
-                    alert("Data tidak ditemukan.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: "Data tidak ditemukan."
+                    });
                 }
             })
             .catch(error => {
-                console.error("Terjadi kesalahan:", error);
-                alert("Gagal mengambil data dari API.");
+                Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: "Gagal mengambil data dari API."
+                    });
             });
         }
     </script>
