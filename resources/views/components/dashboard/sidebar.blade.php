@@ -55,47 +55,6 @@
                         @endif
                     </li>
                 @endforeach
-
-
-
-
-            <!-- Add icons to the links using the .nav-icon class
-                with font-awesome or any other icon font library -->
-                {{-- <li class="nav-item menu-open">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fa-regular fa-circle-user"></i>
-                        <p>
-                            Role & Permission
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('role.get') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>
-                                    Role
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('permission.get') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>
-                                    Permission
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('user.get') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>
-                                    Users
-                                </p>
-                            </a>
-                        </li>
-                    </ul>
-                </li> --}}
             </ul>
         </nav>
     <!-- /.sidebar-menu -->

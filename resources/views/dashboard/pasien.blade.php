@@ -8,14 +8,9 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Dashboard</h1>
+                        <h1 class="m-0">Pasien</h1>
                     </div><!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Dashboard v1</li>
-                        </ol>
-                    </div><!-- /.col -->
+
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
         </div>
@@ -30,9 +25,9 @@
                         <!-- small box -->
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>150</h3>
+                                <h3>{{ $pasienallold }}</h3>
 
-                                <p>New Orders</p>
+                                <p>Total Pasien lama</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-bag"></i>
@@ -44,9 +39,9 @@
                         <!-- small box -->
                         <div class="small-box bg-success">
                             <div class="inner">
-                                <h3>53<sup style="font-size: 20px">%</sup></h3>
+                                <h3>{{ $pasienallnewnow }}</h3>
 
-                                <p>Bounce Rate</p>
+                                <p>Total Pasien Baru Bulan ini</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-stats-bars"></i>
@@ -58,9 +53,9 @@
                         <!-- small box -->
                         <div class="small-box bg-warning">
                             <div class="inner">
-                                <h3>44</h3>
+                                <h3>{{ $pasienall }}</h3>
 
-                                <p>User Registrations</p>
+                                <p>Total Pasien</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-person-add"></i>
@@ -72,9 +67,9 @@
                         <!-- small box -->
                         <div class="small-box bg-danger">
                             <div class="inner">
-                                <h3>65</h3>
+                                <h3>{{ $pasiennoverif }}</h3>
 
-                                <p>Unique Visitors</p>
+                                <p>Pasien Belun Verifikasi</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-pie-graph"></i>
@@ -101,19 +96,26 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($pasiens as $pasiensdata)
-                                            <tr
-                                                class="{{ $pasiensdata->verifikasi == 1 ? 'table-danger' : ($pasiensdata->verifikasi == 2 ? 'table-success' : '') }}">
+                                            <tr class="{{ $pasiensdata->verifikasi == 1 ? 'table-danger' : ($pasiensdata->verifikasi == 2 ? 'table-success' : '') }}">
                                                 <td>{{ $pasiensdata->no_rm }}</td>
                                                 <td>{{ $pasiensdata->nama }}</td>
                                                 <td>{{ $pasiensdata->tanggal_lahir }}</td>
                                                 <td>{{ $pasiensdata->no_bpjs }}</td>
                                                 <td>{{ $pasiensdata->telepon }}</td>
                                                 <td>
+                                                    @if ($pasiensdata->verifikasi == 1)
                                                     <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
                                                         data-target="#lengkapiModal"
                                                         data-id="{{ $pasiensdata->id }}">
                                                         <i class="fa fa-exclamation-circle"></i> Lengkapi
                                                     </a>
+                                                    @else
+                                                    <a class="btn btn-warning rounded-pill edit-btn" data-toggle="modal"
+                                                        data-target="#"
+                                                        data-id="{{ $pasiensdata->id }}">
+                                                        <i class="fa-solid fa-user-pen"></i> Edit
+                                                    </a>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -534,6 +536,8 @@
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" id="kodeprovide" name="kodeprovide">
+                        <input type="hidden" id="hubungan_keluarga" name="hubungan_keluarga">
                         <input type="hidden" id="userinput" name="userinput" value="{{ auth()->user()->name }}">
                         <input type="hidden" id="userinputid" name="userinputid" value="{{ auth()->user()->id }}">
                 </div>
@@ -547,7 +551,28 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            generateCredentials(); // Panggil saat halaman dimuat
+        });
 
+        document.getElementById("nik").addEventListener("input", generateCredentials);
+        document.getElementById("tgllahir").addEventListener("input", generateCredentials);
+
+        function generateCredentials() {
+            let nik = document.getElementById("nik").value;
+            let tglLahir = document.getElementById("tgllahir").value;
+
+            // Set username dari NIK
+            document.getElementById("username").value = nik;
+
+            // Set password dari Tanggal Lahir (tanpa tanda -)
+            if (tglLahir) {
+                let passwordFormatted = tglLahir.split("-").join(""); // Hapus tanda -
+                document.getElementById("password").value = passwordFormatted;
+            }
+        }
+    </script>
     <script>
         $(document).ready(function () {
             // Event saat tombol "Lengkapi" diklik
@@ -568,7 +593,7 @@
                     $('#pernikahan').val(data.pernikahan);
                     $('#goldar').val(data.goldar).trigger('change');
                     $('#seks').val(data.seks).trigger('change');
-
+                    generateCredentials();
                 }).fail(function (error) {
                     console.error("Gagal mengambil data pasien:", error);
                 });
@@ -612,12 +637,16 @@
                     let expbpjsInput = document.getElementById("tgl_exp_bpjs");
                     let tgllahirInput = document.getElementById("tgllahir");
                     let namaInput = document.getElementById("nama");
+                    let kodeprovide = document.getElementById("kodeprovide");
+                    let hubungankeluarga = document.getElementById("hubungan_keluarga");
 
                     // Update nilai input hanya jika berbeda
                     updateInputValue(nokaInput, data.noKartu);
                     updateInputValue(jenisKartuInput, data.jnsPeserta.nama);
                     updateInputValue(kelasInput, data.jnsKelas.nama);
                     updateInputValue(provideInput, data.kdProviderPst.nmProvider);
+                    updateInputValue(kodeprovide, data.kdProviderPst.kdProvider);
+                    updateInputValue(hubungankeluarga, data.hubunganKeluarga);
                     if (data.tglAkhirBerlaku) {
                         updateInputValue(expbpjsInput, formatDate(data.tglAkhirBerlaku));
                     }

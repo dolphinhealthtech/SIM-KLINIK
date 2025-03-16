@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\role_redirect;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -24,11 +26,28 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
 
+        $request->authenticate();
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = Auth::user();
+        $roleIds = $user->roles->pluck('id'); // Ambil semua ID role pengguna
+
+
+        $redirectRoute = null;
+
+        foreach ($roleIds as $roleId) {
+            // Ambil rute pengalihan berdasarkan role_id
+            $redirectRoute = role_redirect::where('role_id', $roleId)
+                ->value('redirect_route');
+
+            if ($redirectRoute) {
+                break; // Hentikan loop jika sudah menemukan rute pengalihan
+            }
+        }
+
+
+        return redirect()->route($redirectRoute);
     }
 
     /**

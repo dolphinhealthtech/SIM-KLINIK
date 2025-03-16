@@ -23,12 +23,27 @@ class ViewServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('components.dashboard.sidebar', function ($view) {
-            $role = Auth::user()->getRoleNames();
-            $menus = Menu::whereNull('parent_id') // Ambil hanya menu utama
-                ->with('children') // Pastikan submenu diambil
-                ->orderBy('order', 'asc')
-                ->get();
-            $view->with('menus', $menus);
+            if (Auth::check()) {
+                $roleIds = Auth::user()->roles->pluck('id');
+
+                // Ambil menu utama berdasarkan role
+                $menus = Menu::whereNull('parent_id')
+                    ->whereHas('roles', function ($query) use ($roleIds) {
+                        $query->whereIn('roles.id', $roleIds);
+                    })
+                    ->with(['children' => function ($query) use ($roleIds) {
+                        // Ambil submenu yang sesuai role user
+                        $query->whereHas('roles', function ($q) use ($roleIds) {
+                            $q->whereIn('roles.id', $roleIds);
+                        })->with('children'); // Ambil submenu dalam submenu
+                    }])
+                    ->orderBy('order', 'asc')
+                    ->get();
+
+                $view->with('menus', $menus);
+            } else {
+                $view->with('menus', collect([]));
+            }
         });
     }
 }

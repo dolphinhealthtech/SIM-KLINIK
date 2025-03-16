@@ -139,3 +139,4 @@ Route::middleware('auth')->prefix('setting')->group(function () {
 
 
 require __DIR__.'/auth.php';
+require __DIR__.'/user.php';

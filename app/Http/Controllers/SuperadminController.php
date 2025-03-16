@@ -25,7 +25,7 @@ use App\Models\pendidikan;
 use App\Models\pernikahan;
 use App\Models\provinsi;
 use App\Models\suku;
-
+use Illuminate\Support\Facades\Hash;
 
 class SuperadminController extends Controller
 {
@@ -389,7 +389,12 @@ class SuperadminController extends Controller
         $pendidikan = pendidikan::all();
         $bahasa = bahasa::all();
         $pekerjaan = pekerjaan::all();
-        return view('dashboard.pasien', compact('title','pasiens','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa','pendidikan','pekerjaan'));
+        $pasiennoverif = Pasien::where('verifikasi', 1)->count();
+        $pasienallold = Pasien::where('created_at', '<', now()->subDays(30))->count();
+        $pasienall = Pasien::count();
+        $pasienallnewnow = Pasien::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+        ->count();
+        return view('dashboard.pasien', compact('title','pasiens','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa','pendidikan','pekerjaan','pasiennoverif','pasienall','pasienallnewnow','pasienallold'));
     }
 
     public function getPasien($id)
@@ -453,7 +458,7 @@ class SuperadminController extends Controller
             "tempat_lahir" => 'required',
             "tgllahir" => 'required|date',
             "provinsi" => 'required',
-            "kota_kabupaten" => 'required',
+            "kabupaten" => 'required',
             "kecamatan" => 'required',
             "desa" => 'required',
             "rt" => 'required',
@@ -461,11 +466,13 @@ class SuperadminController extends Controller
             "kode_pos" => 'required',
             "alamat" => 'required|string|max:255',
             "noka" => 'nullable',
-            "kode_ihs" => 'required',
+            "noihs" => 'required',
             "jenis_kartu" => 'nullable|string',
             "kelas" => 'nullable|string',
             "provide" => 'nullable|string',
             "tgl_exp_bpjs" => 'nullable|date',
+            "kodeprovide" =>'nullable',
+            "hubungan_keluarga" =>'nullable',
             "seks" => 'required',
             "goldar" => 'required',
             "pernikahan" => 'required',
@@ -477,6 +484,9 @@ class SuperadminController extends Controller
             "suku" => 'required',
             "bangsa" => 'required',
             "bahasa" => 'required',
+            "email" =>'nullable',
+            "username" =>'nullable',
+            "password" =>'nullable',
         ]);
 
         $fotoName = null;
@@ -534,11 +544,19 @@ class SuperadminController extends Controller
                 'bangsa' => $request->bangsa,
                 'bahasa' => $request->bahasa,
                 'verifikasi' => 2,
-                'users' => $request->userinput ,
+                'users' => 1,
                 'user_id_input' => $request->userinputid,
                 'user_name_input' => $request->userinput,
             ]);
 
+            $user = User::create([
+                'name' => $request->nama,
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'profile' => $fotoName,
+                'is_active' => 1
+            ]);
             // Logging perubahan data
             Log::info('Pasien berhasil diupdate', [
                 'no_rm' => $pasien->no_rm,
@@ -555,4 +573,6 @@ class SuperadminController extends Controller
         }
 
     }
+
+
 }
