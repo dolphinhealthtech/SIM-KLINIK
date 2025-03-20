@@ -573,6 +573,130 @@ class SuperadminController extends Controller
         }
 
     }
+    public function pasienupdate(Request $request)
+    {
+        $request->validate([
+            "nomor_rm_edit" => 'required',
+            "nama_edit" => 'required',
+            "nik_edit" => 'required',
+            "tempat_lahir_edit" => 'required',
+            "tgllahir_edit" => 'required|date',
+            "provinsi_edit" => 'required',
+            "kabupaten_edit" => 'required',
+            "kecamatan_edit" => 'required',
+            "desa_edit" => 'required',
+            "rt_edit" => 'required',
+            "rw_edit" => 'required',
+            "kode_pos_edit" => 'required',
+            "alamat_edit" => 'required|string|max:255',
+            "noka_edit" => 'nullable',
+            "noihs_edit" => 'required',
+            "jenis_kartu_edit" => 'nullable|string',
+            "kelas_edit" => 'nullable|string',
+            "provide_edit" => 'nullable|string',
+            "tgl_exp_bpjs_edit" => 'nullable|date',
+            "kodeprovide_edit" =>'nullable',
+            "hubungan_keluarga_edit" =>'nullable',
+            "seks_edit" => 'required',
+            "goldar_edit" => 'required',
+            "pernikahan_edit" => 'required',
+            "kewarganegaraan_edit" => 'required',
+            "agama_edit" => 'required',
+            "pendidikan_edit" => 'required',
+            "status_kerja_edit" => 'required',
+            "telepon_edit" => 'required|string',
+            "suku_edit" => 'required',
+            "bangsa_edit" => 'required',
+            "bahasa_edit" => 'required',
+            "email_edit" =>'nullable',
+            "username_edit" =>'nullable',
+            "password_edit" =>'nullable',
+        ]);
+
+        $fotoName = null;
+
+        if ($request->hasFile('profile_image')) {
+            // Get the original file name
+            $fotoName = $request->file('profile_image')->getClientOriginalName();
+
+            // Define the directory path to save in the public folder
+            $destinationPath = public_path('uploads/patient_photos');
+
+            // Move the uploaded file to the public directory
+            $request->file('profile_image')->move($destinationPath, $fotoName);
+        }
+
+        // Handle null profile photo if needed
+        if (is_null($fotoName)) {
+            // Set a default photo name or handle as required
+            $fotoName = 'default.jpg';  // Example default image
+        }
+
+
+        $pasien = Pasien::where('no_rm', $request->nomor_rm)->first();
+        if ($pasien) {
+            // Update data pasien
+            $pasien->update([
+                'no_rm' => $request->nomor_rm,
+                'nama' => $request->nama,
+                'nik' => $request->nik,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tgllahir,
+                'provinsi_kode' => $request->provinsi,
+                'kabupaten_kode' => $request->kabupaten,
+                'kecamatan_kode' => $request->kecamatan,
+                'desa_kode' => $request->desa,
+                'rt' => $request->rt,
+                'rw' => $request->rw,
+                'kode_pos' => $request->kode_pos,
+                'alamat' => $request->alamat,
+                'no_bpjs' => $request->noka,
+                'kode_ihs' => $request->noihs,
+                'jenis_Kartu_bpjs' => $request->jenis_kartu,
+                'kelas_bpjs' => $request->kelas,
+                'provide' => $request->provide,
+                'tgl_exp_bpjs' => $request->tgl_exp_bpjs,
+                'seks' => $request->seks,
+                'goldar' => $request->goldar,
+                'pernikahan' => $request->pernikahan,
+                'kewarganegaraan' => $request->kewarganegaraan,
+                'agama' => $request->agama,
+                'pendidikan' => $request->pendidikan,
+                'pekerjaan' => $request->status_kerja,
+                'telepon' => $request->telepon,
+                'suku' => $request->suku,
+                'bangsa' => $request->bangsa,
+                'bahasa' => $request->bahasa,
+                'verifikasi' => 2,
+                'users' => 1,
+                'user_id_input' => $request->userinputid,
+                'user_name_input' => $request->userinput,
+            ]);
+
+            $user = User::create([
+                'name' => $request->nama,
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'profile' => $fotoName,
+                'is_active' => 1
+            ]);
+            // Logging perubahan data
+            Log::info('Pasien berhasil diupdate', [
+                'no_rm' => $pasien->no_rm,
+                'user_input' => $pasien->user_name_input,
+                'waktu' => now()
+            ]);
+
+        } else {
+            Log::error('Gagal update, pasien tidak ditemukan', [
+                'no_rm' => $request->nomor_rm,
+                'user_input' => $request->userinput,
+                'waktu' => now()
+            ]);
+        }
+
+    }
 
 
 }
