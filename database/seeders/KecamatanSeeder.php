@@ -7292,6 +7292,6 @@ class KecamatanSeeder extends Seeder
             ['kode' => '950831', 'kode_kabupaten' => '9508', 'name' => 'Krepkuri'],
             ['kode' => '950832', 'kode_kabupaten' => '9508', 'name' => 'Pasir Putih']
         ];
-        DB::table('kecamatan')->insert($wilayah);
+        DB::table('kecamatans')->insert($wilayah);
     }
 }

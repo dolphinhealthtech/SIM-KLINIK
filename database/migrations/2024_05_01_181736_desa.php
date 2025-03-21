@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('kode_kecamatan');
             $table->string('name');
             $table->timestamps();
-            $table->foreign('kode_kecamatan')->references('kode')->on('kecamatan')->onDelete('cascade');
+            $table->foreign('kode_kecamatan')->references('kode')->on('kecamatans')->onDelete('cascade');
         });
     }
 

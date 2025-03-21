@@ -83786,7 +83786,7 @@ class DesaSeeder extends Seeder
         foreach ($potongan as $potonganData) {
 
             // Menggunakan metode insert Laravel untuk menyisipkan data ke dalam database
-            DB::table('desa')->insert($potonganData->toArray());
+            DB::table('desas')->insert($potonganData->toArray());
         }
     }
 }

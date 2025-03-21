@@ -530,6 +530,6 @@ class kabupatenSeeder extends Seeder
             ['kode' => '9508', 'kode_provinsi' => '95', 'name' => 'KAB. NDUGA']
         ];
 
-        DB::table('kabupaten')->insert($kabupaten);
+        DB::table('kabupatens')->insert($kabupaten);
     }
 }

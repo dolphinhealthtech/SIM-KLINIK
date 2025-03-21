@@ -53,6 +53,6 @@ class ProvinsiSeeder extends Seeder
             ['kode' => '95', 'name' => 'PAPUA PEGUNUNGAN']
         ];
 
-        DB::table('provinsi')->insert($provinces);
+        DB::table('provinsis')->insert($provinces);
     }
 }
