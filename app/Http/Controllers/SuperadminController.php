@@ -511,6 +511,17 @@ class SuperadminController extends Controller
 
         $pasien = Pasien::where('no_rm', $request->nomor_rm)->first();
         if ($pasien) {
+            $pass = $request->tgllahir;
+            $passformad = date('dmY', strtotime($pass));
+
+            $users = User::create([
+                'name' => $request->nama,
+                'username' => $request->nik,
+                'email' => $request->email,
+                'password' => Hash::make($passformad),
+                'profile' => $fotoName,
+                'is_active' => 1
+            ]);
             // Update data pasien
             $pasien->update([
                 'no_rm' => $request->nomor_rm,
@@ -544,19 +555,13 @@ class SuperadminController extends Controller
                 'bangsa' => $request->bangsa,
                 'bahasa' => $request->bahasa,
                 'verifikasi' => 2,
-                'users' => 1,
+                'users' => $users->id,
                 'user_id_input' => $request->userinputid,
                 'user_name_input' => $request->userinput,
             ]);
 
-            $user = User::create([
-                'name' => $request->nama,
-                'username' => $request->username,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'profile' => $fotoName,
-                'is_active' => 1
-            ]);
+
+
             // Logging perubahan data
             Log::info('Pasien berhasil diupdate', [
                 'no_rm' => $pasien->no_rm,
@@ -564,15 +569,19 @@ class SuperadminController extends Controller
                 'waktu' => now()
             ]);
 
+            return redirect()->route('pasien.get')->with('success', 'Data Pasien Behasil Dilengkapi');
         } else {
             Log::error('Gagal update, pasien tidak ditemukan', [
                 'no_rm' => $request->nomor_rm,
                 'user_input' => $request->userinput,
                 'waktu' => now()
             ]);
+
+            return redirect()->route('pasien.get')->with('error', 'Data Pasien Gagal Dilengkapi');
         }
 
     }
+
     public function pasienupdate(Request $request)
     {
         $request->validate([
@@ -595,8 +604,8 @@ class SuperadminController extends Controller
             "kelas_edit" => 'nullable|string',
             "provide_edit" => 'nullable|string',
             "tgl_exp_bpjs_edit" => 'nullable|date',
-            "kodeprovide_edit" =>'nullable',
-            "hubungan_keluarga_edit" =>'nullable',
+            //"kodeprovide_edit" =>'nullable',
+            //"hubungan_keluarga_edit" =>'nullable',
             "seks_edit" => 'required',
             "goldar_edit" => 'required',
             "pernikahan_edit" => 'required',
@@ -609,78 +618,44 @@ class SuperadminController extends Controller
             "bangsa_edit" => 'required',
             "bahasa_edit" => 'required',
             "email_edit" =>'nullable',
-            "username_edit" =>'nullable',
-            "password_edit" =>'nullable',
         ]);
 
-        $fotoName = null;
-
-        if ($request->hasFile('profile_image')) {
-            // Get the original file name
-            $fotoName = $request->file('profile_image')->getClientOriginalName();
-
-            // Define the directory path to save in the public folder
-            $destinationPath = public_path('uploads/patient_photos');
-
-            // Move the uploaded file to the public directory
-            $request->file('profile_image')->move($destinationPath, $fotoName);
-        }
-
-        // Handle null profile photo if needed
-        if (is_null($fotoName)) {
-            // Set a default photo name or handle as required
-            $fotoName = 'default.jpg';  // Example default image
-        }
-
-
-        $pasien = Pasien::where('no_rm', $request->nomor_rm)->first();
+        $pasien = Pasien::where('no_rm', $request->nomor_rm_edit)->first();
         if ($pasien) {
             // Update data pasien
             $pasien->update([
-                'no_rm' => $request->nomor_rm,
-                'nama' => $request->nama,
-                'nik' => $request->nik,
-                'tempat_lahir' => $request->tempat_lahir,
-                'tanggal_lahir' => $request->tgllahir,
-                'provinsi_kode' => $request->provinsi,
-                'kabupaten_kode' => $request->kabupaten,
-                'kecamatan_kode' => $request->kecamatan,
-                'desa_kode' => $request->desa,
-                'rt' => $request->rt,
-                'rw' => $request->rw,
-                'kode_pos' => $request->kode_pos,
-                'alamat' => $request->alamat,
-                'no_bpjs' => $request->noka,
-                'kode_ihs' => $request->noihs,
-                'jenis_Kartu_bpjs' => $request->jenis_kartu,
-                'kelas_bpjs' => $request->kelas,
-                'provide' => $request->provide,
-                'tgl_exp_bpjs' => $request->tgl_exp_bpjs,
-                'seks' => $request->seks,
-                'goldar' => $request->goldar,
-                'pernikahan' => $request->pernikahan,
-                'kewarganegaraan' => $request->kewarganegaraan,
-                'agama' => $request->agama,
-                'pendidikan' => $request->pendidikan,
-                'pekerjaan' => $request->status_kerja,
-                'telepon' => $request->telepon,
-                'suku' => $request->suku,
-                'bangsa' => $request->bangsa,
-                'bahasa' => $request->bahasa,
-                'verifikasi' => 2,
-                'users' => 1,
-                'user_id_input' => $request->userinputid,
-                'user_name_input' => $request->userinput,
+                'no_rm' => $request->nomor_rm_edit,
+                'nama' => $request->nama_edit,
+                'nik' => $request->nik_edit,
+                'tempat_lahir' => $request->tempat_lahir_edit,
+                'tanggal_lahir' => $request->tgllahir_edit,
+                'provinsi_kode' => $request->provinsi_edit,
+                'kabupaten_kode' => $request->kabupaten_edit,
+                'kecamatan_kode' => $request->kecamatan_edit,
+                'desa_kode' => $request->desa_edit,
+                'rt' => $request->rt_edit,
+                'rw' => $request->rw_edit,
+                'kode_pos' => $request->kode_pos_edit,
+                'alamat' => $request->alamat_edit,
+                'no_bpjs' => $request->noka_edit,
+                'kode_ihs' => $request->noihs_edit,
+                'jenis_Kartu_bpjs' => $request->jenis_kartu_edit,
+                'kelas_bpjs' => $request->kelas_edit,
+                'provide' => $request->provide_edit,
+                'tgl_exp_bpjs' => $request->tgl_exp_bpjs_edit,
+                'seks' => $request->seks_edit,
+                'goldar' => $request->goldar_edit,
+                'pernikahan' => $request->pernikahan_edit,
+                'kewarganegaraan' => $request->kewarganegaraan_edit,
+                'agama' => $request->agama_edit,
+                'pendidikan' => $request->pendidikan_edit,
+                'pekerjaan' => $request->status_kerja_edit,
+                'telepon' => $request->telepon_edit,
+                'suku' => $request->suku_edit,
+                'bangsa' => $request->bangsa_edit,
+                'bahasa' => $request->bahasa_edit,
             ]);
 
-            $user = User::create([
-                'name' => $request->nama,
-                'username' => $request->username,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'profile' => $fotoName,
-                'is_active' => 1
-            ]);
             // Logging perubahan data
             Log::info('Pasien berhasil diupdate', [
                 'no_rm' => $pasien->no_rm,
@@ -688,12 +663,17 @@ class SuperadminController extends Controller
                 'waktu' => now()
             ]);
 
+            return redirect()->route('pasien.get')->with('success', 'Data Pasien Berhasil Diperbarui');
+
+
         } else {
             Log::error('Gagal update, pasien tidak ditemukan', [
                 'no_rm' => $request->nomor_rm,
                 'user_input' => $request->userinput,
                 'waktu' => now()
             ]);
+
+            return redirect()->route('pasien.get')->with('error', 'Data Pasien Gagal Diperbarui');
         }
 
     }

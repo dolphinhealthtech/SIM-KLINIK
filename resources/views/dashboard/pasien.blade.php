@@ -462,7 +462,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Suku</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="suku"
@@ -478,7 +478,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Bangsa</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="bangsa"
@@ -494,7 +494,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Bahasa</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="bahasa"
@@ -510,29 +510,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Email</label>
                                             <input type="Email" class="form-control" id="email" name="email">
                                         </div>
                                     </div>
-
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Username</label>
-                                            <input type="text" class="form-control" id="username" name="username"
-                                                readonly>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Password</label>
-                                            <input type="password" class="form-control" id="password" name="password"
-                                                autocomplete>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
@@ -563,7 +546,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('pasien.verifikasi') }}" method="POST">
+                    <form action="{{ route('pasien.update') }}" method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-md-3 d-flex justify-content-center">
@@ -882,7 +865,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Suku</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="suku_edit"
@@ -898,7 +881,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Bangsa</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="bangsa_edit"
@@ -914,7 +897,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Bahasa</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="bahasa_edit"
@@ -930,29 +913,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Email</label>
                                             <input type="Email" class="form-control" id="email_edit" name="email_edit" value="{{ old('email_edit') }}">
                                         </div>
                                     </div>
-
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Username</label>
-                                            <input type="text" class="form-control" id="username_edit" name="username_edit" value="{{ old('username_edit') }}"
-                                                readonly>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>Password</label>
-                                            <input type="password" class="form-control" id="password_edit" name="password_edit" value="{{ old('password_edit') }}"
-                                                autocomplete>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
@@ -970,29 +936,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            generateCredentials(); // Panggil saat halaman dimuat
-        });
-
-        document.getElementById("nik").addEventListener("input", generateCredentials);
-        document.getElementById("tgllahir").addEventListener("input", generateCredentials);
-
-        function generateCredentials() {
-            let nik = document.getElementById("nik").value;
-            let tglLahir = document.getElementById("tgllahir").value;
-
-            // Set username dari NIK
-            document.getElementById("username").value = nik;
-
-            // Set password dari Tanggal Lahir (tanpa tanda -)
-            if (tglLahir) {
-                let passwordFormatted = tglLahir.split("-").join(""); // Hapus tanda -
-                document.getElementById("password").value = passwordFormatted;
-            }
-        }
-    </script>
 
 <script>
     function formatDate_edit(dateString) {
