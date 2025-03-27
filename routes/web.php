@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DataMasterController;
+use App\Http\Controllers\DataMasterMedisController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\WebSettingController;
@@ -107,6 +108,15 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     Route::post('/pekerjaan/delete', [DataMasterController::class,'pekerjaandelete'])->name('pekerjaan.destroy');
     Route::get('/pekerjaan/export', [DataMasterController::class,'pekerjaanexport'])->name('pekerjaan.export');
     Route::post('/pekerjaan/import', [DataMasterController::class,'pekerjaanimport'])->name('pekerjaan.import');
+
+});
+
+Route::middleware('auth')->prefix('data-master-medis')->group(function () {
+    // Menu Golongan Darah
+    Route::get('/poli', [DataMasterMedisController::class,'poli'])->name('poli.get');
+    Route::get('/poli/sync', [DataMasterMedisController::class,'poliadd'])->name('poli.sync');
+    Route::post('/poli/delete', [DataMasterMedisController::class,'polidelete'])->name('poli.destroy');
+
 
 });
 

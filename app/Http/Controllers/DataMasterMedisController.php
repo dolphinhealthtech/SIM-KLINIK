@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\poli;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+
+class DataMasterMedisController extends Controller
+{
+    protected $PcareController;
+
+    // Gunakan dependency injection
+    public function __construct(PcareController $PcareController)
+    {
+        $this->PcareController = $PcareController;
+    }
+
+    // data poli
+    public function poli()
+    {
+        $title = "Master Data Poli";
+        $poli = poli::all();
+        return view('module.master-data-medis.poli', compact('title','poli'));
+    }
+
+    public function poliadd()
+    {
+
+        $response = $this->PcareController->get_poli_fktp_bpjs();
+        $data = json_decode($response->getContent(), true);
+        try {
+            // Simpan data ke database
+            foreach ($data['data'] as $item) {
+                Poli::updateOrCreate(
+                    [
+                        'kode' => $item['kode_poli'],
+                        'nama' => $item['nama_poli'],
+                        'jenis' => $item['jenis_poli']
+                    ]
+                );
+            }
+
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Poli berhasil ditambahkan!'
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Poli Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Poli!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
+
+    public function polidelete(Request $request)
+    {
+
+        $request->validate([
+            'poliid_delete' => 'required'
+        ]);
+
+        $poli = poli::find($request->poliid_delete);
+
+        if (!$poli) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Poli tidak ditemukan!'
+            ], 404);
+        }
+
+        $poli->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Poli berhasil dihapus!'
+        ]);
+    }
+
+}
