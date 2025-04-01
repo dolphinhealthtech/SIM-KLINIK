@@ -112,11 +112,19 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
 });
 
 Route::middleware('auth')->prefix('data-master-medis')->group(function () {
-    // Menu Golongan Darah
+    // Menu Poli
     Route::get('/poli', [DataMasterMedisController::class,'poli'])->name('poli.get');
     Route::get('/poli/sync', [DataMasterMedisController::class,'poliadd'])->name('poli.sync');
     Route::post('/poli/delete', [DataMasterMedisController::class,'polidelete'])->name('poli.destroy');
+    Route::get('/poli/export', [DataMasterMedisController::class, 'poliexport'])->name('poli.export');
+    Route::post('/poli/import', [DataMasterMedisController::class, 'poliimport'])->name('poli.import');
 
+    // Menu Spesialis
+    Route::get('/spesialis', [DataMasterMedisController::class,'spesialis'])->name('spesialis.get');
+    Route::get('/spesialis/sync', [DataMasterMedisController::class,'spesialisadd'])->name('spesialis.sync');
+    Route::post('/spesialis/delete', [DataMasterMedisController::class,'spesialisdelete'])->name('spesialis.destroy');
+    Route::get('/spesialis/export', [DataMasterMedisController::class, 'spesialisexport'])->name('spesialis.export');
+    Route::post('/spesialis/import', [DataMasterMedisController::class, 'spesialisimport'])->name('spesialis.import');
 
 });
 

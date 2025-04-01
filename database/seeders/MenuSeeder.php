@@ -31,6 +31,9 @@ class MenuSeeder extends Seeder
             ['name' => 'Permission', 'url' => '/setting/permission', 'icon' => 'key', 'roles' => ['Super-admin'], 'parent_id' => 9, 'order' => 2],
             ['name' => 'Users', 'url' => '/setting/user', 'icon' => 'users-cog', 'roles' => ['Super-admin'], 'parent_id' => 9, 'order' => 3],
             ['name' => 'Web Setting', 'url' => '/setting/web', 'icon' => 'tools', 'roles' => ['Super-admin'], 'parent_id' => 9, 'order' => 4],
+            // Data Master Medis
+            ['name' => 'Data Master Medis', 'url' => '#', 'icon' => 'database', 'roles' => ['Super-admin'], 'parent_id' => null, 'order' => 3],
+            ['name' => 'Poli', 'url' => '/data-master-medis/poli', 'icon' => 'tint', 'roles' => ['Super-admin'], 'parent_id' => 15, 'order' => 1],
         ];
 
         // Masukkan data ke dalam database

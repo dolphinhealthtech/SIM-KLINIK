@@ -29,44 +29,41 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">poli</h3>
+                                <h3 class="card-title">spesialis</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#addpoliModal">
+                                        data-target="#addspesialisModal">
                                         <i class="fas fa-plus"></i> Tambah
                                     </button>
-
                                     <!-- Tombol Import (Memunculkan Modal) -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importpoliModal">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importspesialisModal">
                                         <i class="fas fa-file-upload"></i> Import
                                     </button>
                                     <!-- Tombol Export -->
-                                    <a href="{{ route('poli.export') }}" class="btn btn-success">
+                                    <a href="{{ route('spesialis.export') }}" class="btn btn-success">
                                         <i class="fas fa-file-download"></i> Export
                                     </a>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <table id="politabel" class="table table-bordered table-striped">
+                                <table id="spesialistabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Kode poli</th>
-                                            <th class="text-center">Nama poli</th>
-                                            <th class="text-center">Jenis poli</th>
+                                            <th class="text-center">Kode spesialis</th>
+                                            <th class="text-center">Nama spesialis</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($poli as $polidata)
+                                        @foreach ($spesialis as $spesialisdata)
                                             <tr>
-                                                <td class="text-center">{{ $polidata->kode }}</td>
-                                                <td class="text-center">{{ $polidata->nama }}</td>
-                                                <td class="text-center">{{ $polidata->jenis }}</td>
+                                                <td class="text-center">{{ $spesialisdata->kode }}</td>
+                                                <td class="text-center">{{ $spesialisdata->nama }}</td>
                                                 <td class="text-center">
                                                     <a href="#" class="btn btn-danger btn-sm delete-data-goldar"
-                                                        data-toggle="modal"data-id="{{ $polidata->id }}"
-                                                        data-nama-poli="{{ $polidata->nama }}"
-                                                        data-target="#deletepoliModal">
+                                                        data-toggle="modal"data-id="{{ $spesialisdata->id }}"
+                                                        data-nama-spesialis="{{ $spesialisdata->nama }}"
+                                                        data-target="#deletespesialisModal">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </a>
                                                 </td>
@@ -85,17 +82,17 @@
 </div>
 
 {{-- modal Add Role --}}
-<div class="modal fade" id="addpoliModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+<div class="modal fade" id="addspesialisModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Medis poli</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Medis spesialis</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addFormpoli">
+                <form id="addFormspesialis">
                     @csrf
                     <div class="row">
                         <div class="col-sm-12">
@@ -117,20 +114,20 @@
 </div>
 
 {{-- modal Delete Role --}}
-<div class="modal fade" id="deletepoliModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+<div class="modal fade" id="deletespesialisModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormpoli" action="{{ route('poli.destroy') }}" method="POST">
+        <form id="deleteFormspesialis" action="{{ route('spesialis.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data poli</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data spesialis</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     @csrf
-                    <input type="hidden" id="poliid_delete" name="poliid_delete">
-                    <div id="deleteTextpoli"></div>
+                    <input type="hidden" id="spesialisid_delete" name="spesialisid_delete">
+                    <div id="deleteTextspesialis"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -141,17 +138,17 @@
     </div>
 </div>
 <!-- Modal Import -->
-<div class="modal fade" id="importpoliModal" tabindex="-1" role="dialog" aria-labelledby="importpoliModalLabel" aria-hidden="true">
+<div class="modal fade" id="importspesialisModal" tabindex="-1" role="dialog" aria-labelledby="importspesialisModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importpoliModalLabel">Import Data poli</h5>
+                <h5 class="modal-title" id="importspesialisModalLabel">Import Data spesialis</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('poli.import') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('spesialis.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label for="file">Pilih File Excel</label>
@@ -174,17 +171,17 @@
             $("#loadingText").text("0%");          // Reset teks ke 0%
             $(".btn-primary").prop("disabled", false).text("Tambah"); // Aktifkan kembali tombol
 
-            $("#addFormpoli")[0].reset(); // Reset form input
+            $("#addFormspesialis")[0].reset(); // Reset form input
         }
 
         // Reset progress bar saat modal dibuka
-        $("#addpoliModal").on("show.bs.modal", function () {
+        $("#addspesialisModal").on("show.bs.modal", function () {
             $("#loadingContainer").show(); // Tampilkan loading saat modal dibuka
             $("#loadingBar").css("width", "0%"); // Reset ke 0%
             $("#loadingText").text("0%"); // Reset teks ke 0%
         });
 
-        $("#addFormpoli").submit(function (e) {
+        $("#addFormspesialis").submit(function (e) {
             e.preventDefault(); // Mencegah submit form default
 
             // Tampilkan loading bar dan reset ke 0%
@@ -206,12 +203,12 @@
 
                     // ** Setelah 100%, jalankan AJAX request **
                     $.ajax({
-                        url: "{{ route('poli.sync') }}",
+                        url: "{{ route('spesialis.sync') }}",
                         type: "GET",
                         dataType: "json",
                         success: function(response) {
                             if (response.success) {
-                                $('#addpoliModal').modal('hide');
+                                $('#addspesialisModal').modal('hide');
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Berhasil!',
@@ -256,7 +253,7 @@
 
 <script>
         $(document).ready(function() {
-            $("#politabel").DataTable({
+            $("#spesialistabel").DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -266,20 +263,20 @@
                     "pdf",
                     "print",
                 ]
-            }).buttons().container().appendTo('#politabel_wrapper .col-md-6:eq(0)');
+            }).buttons().container().appendTo('#spesialistabel_wrapper .col-md-6:eq(0)');
         });
 
 
-        $(document).on('click', '.edit-data-poli', function() {
+        $(document).on('click', '.edit-data-spesialis', function() {
             var id = $(this).data('id');
-            var nama = $(this).data('nama-poli');
+            var nama = $(this).data('nama-spesialis');
 
-            $('#poliid_edit').val(id);
+            $('#spesialisid_edit').val(id);
             $('#nama_edit').val(nama);
              // Pastikan rhesus terpilih dengan benar
         });
 
-        $('#editFormpoli').on('submit', function(e) {
+        $('#editFormspesialis').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);
@@ -291,7 +288,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#editpoliModa').modal('hide');
+                        $('#editspesialisModa').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
@@ -313,7 +310,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate poli!',
+                        text: 'Terjadi kesalahan saat mengupdate spesialis!',
                     });
                 }
             });
@@ -321,14 +318,14 @@
 
         $(document).on('click', '.delete-data-goldar', function() {
             let id = $(this).data('id');
-            let name = $(this).data('nama-poli');
+            let name = $(this).data('nama-spesialis');
 
-            $('#poliid_delete').val(id);
-            $('#deleteTextpoli').html(
-            `<span>Apa Anda yakin ingin menghapus data poli <b>${name}</b> ?</span>`);
+            $('#spesialisid_delete').val(id);
+            $('#deleteTextspesialis').html(
+            `<span>Apa Anda yakin ingin menghapus data spesialis <b>${name}</b> ?</span>`);
         });
 
-        $('#deleteFormpoli').on('submit', function(e) {
+        $('#deleteFormspesialis').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);
@@ -340,7 +337,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#deletepoliModal').modal('hide');
+                        $('#deletespesialisModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
