@@ -29,41 +29,45 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">spesialis</h3>
+                                <h3 class="card-title">subspesialis</h3>
                                 <div class="card-tools">
+                                    <a href="{{ route('spesialis.get') }}" class="btn btn-info">
+                                        <i class="fa-solid fa-arrow-left"></i> Kembali
+                                    </a>
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#addspesialisModal">
+                                        data-target="#addsubspesialisModal">
                                         <i class="fas fa-plus"></i> Tambah
                                     </button>
                                     <!-- Tombol Import (Memunculkan Modal) -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importspesialisModal">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importsubspesialisModal">
                                         <i class="fas fa-file-upload"></i> Import
                                     </button>
+
                                     <!-- Tombol Export -->
-                                    <a href="{{ route('spesialis.export') }}" class="btn btn-success">
+                                    <a href="{{ route('subspesialis.export',['kode' => $kode]) }}" class="btn btn-success">
                                         <i class="fas fa-file-download"></i> Export
                                     </a>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <table id="spesialistabel" class="table table-bordered table-striped">
+                                <table id="subspesialistabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Kode spesialis</th>
-                                            <th class="text-center">Nama spesialis</th>
+                                            <th class="text-center">Kode subspesialis</th>
+                                            <th class="text-center">Nama subspesialis</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($spesialis as $spesialisdata)
+                                        @foreach ($subspesialis as $subspesialisdata)
                                             <tr>
-                                                <td class="text-center">{{ $spesialisdata->kode }}</td>
-                                                <td class="text-center">{{ $spesialisdata->nama }}</td>
+                                                <td class="text-center">{{ $subspesialisdata->kode }}</td>
+                                                <td class="text-center">{{ $subspesialisdata->nama }}</td>
                                                 <td class="text-center">
                                                     <a href="#" class="btn btn-danger btn-sm delete-data-goldar"
-                                                        data-toggle="modal"data-id="{{ $spesialisdata->id }}"
-                                                        data-nama-spesialis="{{ $spesialisdata->nama }}"
-                                                        data-target="#deletespesialisModal">
+                                                        data-toggle="modal"data-id="{{ $subspesialisdata->id }}"
+                                                        data-nama-subspesialis="{{ $subspesialisdata->nama }}"
+                                                        data-target="#deletesubspesialisModal">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </a>
                                                 </td>
@@ -82,17 +86,17 @@
 </div>
 
 {{-- modal Add Role --}}
-<div class="modal fade" id="addspesialisModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+<div class="modal fade" id="addsubspesialisModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Medis spesialis</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Medis subspesialis</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addFormspesialis">
+                <form id="addFormsubspesialis">
                     @csrf
                     <div class="row">
                         <div class="col-sm-12">
@@ -114,20 +118,20 @@
 </div>
 
 {{-- modal Delete Role --}}
-<div class="modal fade" id="deletespesialisModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+<div class="modal fade" id="deletesubspesialisModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormspesialis" action="{{ route('spesialis.destroy') }}" method="POST">
+        <form id="deleteFormsubspesialis" action="{{ route('subspesialis.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data spesialis</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data subspesialis</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     @csrf
-                    <input type="hidden" id="spesialisid_delete" name="spesialisid_delete">
-                    <div id="deleteTextspesialis"></div>
+                    <input type="hidden" id="subspesialisid_delete" name="subspesialisid_delete">
+                    <div id="deleteTextsubspesialis"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -138,19 +142,21 @@
     </div>
 </div>
 <!-- Modal Import -->
-<div class="modal fade" id="importspesialisModal" tabindex="-1" role="dialog" aria-labelledby="importspesialisModalLabel" aria-hidden="true">
+<div class="modal fade" id="importsubspesialisModal" tabindex="-1" role="dialog" aria-labelledby="importsubspesialisModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importspesialisModalLabel">Import Data spesialis</h5>
+                <h5 class="modal-title" id="importsubspesialisModalLabel">Import Data subspesialis</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('spesialis.import') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('subspesialis.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
+                        <input type="hidden" name="kode" value="{{ $kode }}">
+
                         <label for="file">Pilih File Excel</label>
                         <input type="file" name="file" class="form-control" required>
                     </div>
@@ -171,17 +177,17 @@
             $("#loadingText").text("0%");          // Reset teks ke 0%
             $(".btn-primary").prop("disabled", false).text("Tambah"); // Aktifkan kembali tombol
 
-            $("#addFormspesialis")[0].reset(); // Reset form input
+            $("#addFormsubspesialis")[0].reset(); // Reset form input
         }
 
         // Reset progress bar saat modal dibuka
-        $("#addspesialisModal").on("show.bs.modal", function () {
+        $("#addsubspesialisModal").on("show.bs.modal", function () {
             $("#loadingContainer").show(); // Tampilkan loading saat modal dibuka
             $("#loadingBar").css("width", "0%"); // Reset ke 0%
             $("#loadingText").text("0%"); // Reset teks ke 0%
         });
 
-        $("#addFormspesialis").submit(function (e) {
+        $("#addFormsubspesialis").submit(function (e) {
             e.preventDefault(); // Mencegah submit form default
 
             // Tampilkan loading bar dan reset ke 0%
@@ -203,12 +209,12 @@
 
                     // ** Setelah 100%, jalankan AJAX request **
                     $.ajax({
-                        url: "{{ route('spesialis.sync') }}",
+                        url: "{{ route('subspesialis.sync',['kode' => $kode]) }}",
                         type: "GET",
                         dataType: "json",
                         success: function(response) {
                             if (response.success) {
-                                $('#addspesialisModal').modal('hide');
+                                $('#addsubspesialisModal').modal('hide');
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Berhasil!',
@@ -253,7 +259,7 @@
 
 <script>
         $(document).ready(function() {
-            $("#spesialistabel").DataTable({
+            $("#subspesialistabel").DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -263,20 +269,20 @@
                     "pdf",
                     "print",
                 ]
-            }).buttons().container().appendTo('#spesialistabel_wrapper .col-md-6:eq(0)');
+            }).buttons().container().appendTo('#subspesialistabel_wrapper .col-md-6:eq(0)');
         });
 
 
-        $(document).on('click', '.edit-data-spesialis', function() {
+        $(document).on('click', '.edit-data-subspesialis', function() {
             var id = $(this).data('id');
-            var nama = $(this).data('nama-spesialis');
+            var nama = $(this).data('nama-subspesialis');
 
-            $('#spesialisid_edit').val(id);
+            $('#subspesialisid_edit').val(id);
             $('#nama_edit').val(nama);
              // Pastikan rhesus terpilih dengan benar
         });
 
-        $('#editFormspesialis').on('submit', function(e) {
+        $('#editFormsubspesialis').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);
@@ -288,7 +294,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#editspesialisModa').modal('hide');
+                        $('#editsubspesialisModa').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
@@ -310,7 +316,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate spesialis!',
+                        text: 'Terjadi kesalahan saat mengupdate subspesialis!',
                     });
                 }
             });
@@ -318,14 +324,14 @@
 
         $(document).on('click', '.delete-data-goldar', function() {
             let id = $(this).data('id');
-            let name = $(this).data('nama-spesialis');
+            let name = $(this).data('nama-subspesialis');
 
-            $('#spesialisid_delete').val(id);
-            $('#deleteTextspesialis').html(
-            `<span>Apa Anda yakin ingin menghapus data spesialis <b>${name}</b> ?</span>`);
+            $('#subspesialisid_delete').val(id);
+            $('#deleteTextsubspesialis').html(
+            `<span>Apa Anda yakin ingin menghapus data subspesialis <b>${name}</b> ?</span>`);
         });
 
-        $('#deleteFormspesialis').on('submit', function(e) {
+        $('#deleteFormsubspesialis').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);
@@ -337,7 +343,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#deletespesialisModal').modal('hide');
+                        $('#deletesubspesialisModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',

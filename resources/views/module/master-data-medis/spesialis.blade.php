@@ -66,6 +66,8 @@
                                                         data-target="#deletespesialisModal">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </a>
+                                                    <a href="{{ route('subspesialis.get', ['kode' => $spesialisdata->kode]) }}" class="btn btn-info btn-sm"><i class="fa-solid fa-briefcase-medical"></i> Sub Spesialis</a>
+
                                                 </td>
                                             </tr>
                                         @endforeach

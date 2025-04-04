@@ -126,6 +126,12 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::get('/spesialis/export', [DataMasterMedisController::class, 'spesialisexport'])->name('spesialis.export');
     Route::post('/spesialis/import', [DataMasterMedisController::class, 'spesialisimport'])->name('spesialis.import');
 
+
+    Route::get('/subspesialis/{kode}', [DataMasterMedisController::class,'subspesialis'])->name('subspesialis.get');
+    Route::get('/subspesialis/sync/{kode}', [DataMasterMedisController::class,'subspesialisadd'])->name('subspesialis.sync');
+    Route::post('/subspesialis/delete', [DataMasterMedisController::class,'subspesialisdelete'])->name('subspesialis.destroy');
+    Route::get('/subspesialis/export/{kode}', [DataMasterMedisController::class, 'subspesialisexport'])->name('subspesialis.export');
+    Route::post('/subspesialis/import', [DataMasterMedisController::class, 'subspesialisimport'])->name('subspesialis.import');
 });
 
 
