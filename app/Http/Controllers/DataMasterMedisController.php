@@ -275,22 +275,4 @@ class DataMasterMedisController extends Controller
         ]);
     }
 
-
-    public function subspesialisexport($kode)
-    {
-        return Excel::download(new SubspesialisExport($kode), 'Subspesialis-' . $kode . '.xlsx');
-    }
-
-
-    public function subspesialisimport(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls'
-        ]);
-
-        Excel::import(new SubspesialisImport, $request->file('file'));
-        $kode = $request->input('kode');
-
-        return redirect()->route('subspesialis.get', ['kode' => $kode])->with('success', 'Data berhasil diimpor!');
-    }
 }

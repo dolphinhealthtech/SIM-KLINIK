@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DataMasterController;
+use App\Http\Controllers\DataMasterManajemenController;
 use App\Http\Controllers\DataMasterMedisController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperadminController;
@@ -34,6 +35,15 @@ Route::prefix('pasien')->group(function () {
     Route::post('/verifikasi', [SuperadminController::class,'pasienvefiv'])->name('pasien.verifikasi');
     Route::post('/update', [SuperadminController::class,'pasienupdate'])->name('pasien.update');
 });
+
+Route::prefix('dokter')->group(function () {
+    // Menu Pasien
+    Route::get('/', [SuperadminController::class,'dokter'])->name('dokter.get');
+    Route::post('/add', [SuperadminController::class,'pasiensadd'])->name('pasien.store');
+    Route::post('/verifikasi', [SuperadminController::class,'pasienvefiv'])->name('pasien.verifikasi');
+    Route::post('/update', [SuperadminController::class,'pasienupdate'])->name('pasien.update');
+});
+
 
 
 Route::middleware('auth')->prefix('data-master')->group(function () {
@@ -130,8 +140,17 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::get('/subspesialis/{kode}', [DataMasterMedisController::class,'subspesialis'])->name('subspesialis.get');
     Route::get('/subspesialis/sync/{kode}', [DataMasterMedisController::class,'subspesialisadd'])->name('subspesialis.sync');
     Route::post('/subspesialis/delete', [DataMasterMedisController::class,'subspesialisdelete'])->name('subspesialis.destroy');
-    Route::get('/subspesialis/export/{kode}', [DataMasterMedisController::class, 'subspesialisexport'])->name('subspesialis.export');
-    Route::post('/subspesialis/import', [DataMasterMedisController::class, 'subspesialisimport'])->name('subspesialis.import');
+});
+
+Route::middleware('auth')->prefix('data-master-manajemen')->group(function () {
+    // Menu Poli
+    Route::get('/posker', [DataMasterManajemenController::class,'posisi_kerja'])->name('posker.get');
+    Route::post('/posker/add', [DataMasterManajemenController::class,'posisi_kerjaadd'])->name('posker.store');
+    Route::post('/posker/update', [DataMasterManajemenController::class,'posisi_kerjaedit'])->name('posker.update');
+    Route::post('/posker/delete', [DataMasterManajemenController::class,'posisi_kerjadelete'])->name('posker.destroy');
+    Route::get('/posker/export', [DataMasterManajemenController::class, 'posisi_kerjaexport'])->name('posker.export');
+    Route::post('/posker/import', [DataMasterManajemenController::class, 'posisi_kerjaimport'])->name('posker.import');
+
 });
 
 
@@ -150,6 +169,7 @@ Route::middleware('auth')->prefix('setting')->group(function () {
     Route::post('/permission/delete', [SuperadminController::class,'permissiondestroy'])->name('permission.destroy');
     // Dashboard - Users
     Route::get('/user', [SuperadminController::class,'usercreate'])->name('user.get');
+    Route::post('/user/store', [SuperadminController::class,'userstore'])->name('users.store');
     Route::post('/user/aktiva', [SuperadminController::class,'usernonaktif'])->name('user.aktiva');
     Route::post('/user/giverole', [SuperadminController::class,'usersgiverole'])->name('user.giverole');
     Route::post('/user/destroy', [SuperadminController::class,'usersdestroy'])->name('user.destroy');

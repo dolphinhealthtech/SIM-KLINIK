@@ -23,9 +23,12 @@ use App\Models\menu;
 use App\Models\pekerjaan;
 use App\Models\pendidikan;
 use App\Models\pernikahan;
+use App\Models\poli;
+use App\Models\posker;
 use App\Models\provinsi;
 use App\Models\suku;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
 
 class SuperadminController extends Controller
 {
@@ -250,6 +253,41 @@ class SuperadminController extends Controller
         $users = $users = User::with(['roles', 'permissions'])->get();
         $role = Role::all();
         return view('module.permission-role.user', compact('title', 'users', 'role'));
+    }
+
+
+
+    public function userstore(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+
+            User::create([
+                'name' => $request->name,
+                'username' => $request->username,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'profile' => 'default.png',
+                'is_active' => 0,
+            ]);
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Users berhasil Di Tambahkan !',
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menonaktifkan Users!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function usernonaktif(Request $request)
@@ -679,4 +717,27 @@ class SuperadminController extends Controller
     }
 
 
+    public function dokter()
+    {
+        $title = "Dokter";
+
+        $user = User::all();
+        $poli = poli::all();
+        $posker = posker::all();
+
+        $pasiens = pasien::all();
+        $provinsi = provinsi::all();
+        $kelamin = kelamin::all();
+        $goldar = goldar::all();
+        $agama = agama::all();
+        $pernikahan = pernikahan::all();
+        $suku = suku::all();
+        $bangsa = bangsa::all();
+        $pendidikan = pendidikan::all();
+        $bahasa = bahasa::all();
+        $pekerjaan = pekerjaan::all();
+        $pasiennoverif = Pasien::where('verifikasi', 1)->count();
+        $pasienall = Pasien::count();
+        return view('module.staff-manajemen.dokter', compact('title','user','poli','posker','pasiens','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa','pendidikan','pekerjaan','pasiennoverif','pasienall'));
+    }
 }

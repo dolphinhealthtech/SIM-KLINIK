@@ -38,15 +38,6 @@
                                         data-target="#addsubspesialisModal">
                                         <i class="fas fa-plus"></i> Tambah
                                     </button>
-                                    <!-- Tombol Import (Memunculkan Modal) -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importsubspesialisModal">
-                                        <i class="fas fa-file-upload"></i> Import
-                                    </button>
-
-                                    <!-- Tombol Export -->
-                                    <a href="{{ route('subspesialis.export',['kode' => $kode]) }}" class="btn btn-success">
-                                        <i class="fas fa-file-download"></i> Export
-                                    </a>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -139,33 +130,6 @@
                 </div>
             </div>
         </form>
-    </div>
-</div>
-<!-- Modal Import -->
-<div class="modal fade" id="importsubspesialisModal" tabindex="-1" role="dialog" aria-labelledby="importsubspesialisModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="importsubspesialisModalLabel">Import Data subspesialis</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="{{ route('subspesialis.import') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group">
-                        <input type="hidden" name="kode" value="{{ $kode }}">
-
-                        <label for="file">Pilih File Excel</label>
-                        <input type="file" name="file" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-file-import"></i> Import
-                    </button>
-                </form>
-            </div>
-        </div>
     </div>
 </div>
 

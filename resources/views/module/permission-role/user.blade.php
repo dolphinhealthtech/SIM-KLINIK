@@ -34,6 +34,12 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Role Manajemen</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#addusersModal">
+                                        <i class="fas fa-plus"></i> Tambah
+                                    </button>
+                                </div>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -190,6 +196,60 @@
         </div>
     </div>
 
+{{-- modal Add Role --}}
+<div class="modal fade" id="addusersModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Tambah Master Data users</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addFormusers" action="{{ route('users.store') }}" method="POST">
+                    @csrf
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Nama</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Nama" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>User Name</label>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Nama User" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="email users" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password users" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Repet Password</label>
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="password confirmation users" required>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary">Tambah</button> <!-- Submit button -->
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 
     <script>
         $(document).ready(function() {
@@ -217,6 +277,48 @@
             $('#usersids').val(id);
             $('#buttonaktiva').html(`${actionText}`);
             $('#nonaktifusersText').html(`<span>Apa Anda yakin ingin ${actionText} user <b>${nama}</b>?</span>`);
+        });
+
+        $('#addFormusers').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        $('#addusersModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = "Terjadi kesalahan dalam menyimpan data!";
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: errorMessage
+                    });
+                }
+            });
         });
 
         $('#nonaktifusersFormrole').on('submit', function(e) {
