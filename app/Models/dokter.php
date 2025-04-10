@@ -10,8 +10,8 @@ class dokter extends Model
     use HasFactory;
     protected $fillable = [
         'nik',
-        'nama',
         'npwp',
+        'poli',
         'kode',
         'tgl_masuk',
         'status_pegawaian',
@@ -19,8 +19,6 @@ class dokter extends Model
         'exp_spri',
         'str',
         'exp_str',
-        'pk',
-        'exp_pk',
         'tempat_lahir',
         'tanggal_lahir',
         'alamat',
@@ -33,7 +31,6 @@ class dokter extends Model
         'pendidikan',
         'goldar',
         'pernikahan',
-        'pekerjaan',
         'telepon',
         'provinsi_kode',
         'kabupaten_kode',
@@ -47,4 +44,18 @@ class dokter extends Model
         'user_id_input',
         'user_name_input',
     ];
+
+
+    public function namauser()
+    {
+        return $this->belongsTo(User::class, 'users');
+    }
+    public function namapoli()
+    {
+        return $this->belongsTo(poli::class, 'poli');
+    }
+    public function namastatuspegawai()
+    {
+        return $this->belongsTo(posker::class, 'status_pegawaian');
+    }
 }

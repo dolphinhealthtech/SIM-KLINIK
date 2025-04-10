@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('dokters', function (Blueprint $table) {
             $table->id();
             $table->string('nik');
-            $table->string('nama');
+            $table->string('poli');
             $table->string('npwp');
             $table->string('kode')->nullable();
             $table->date('tgl_masuk');
@@ -23,8 +23,6 @@ return new class extends Migration
             $table->string('exp_spri')->nullable();
             $table->string('str')->nullable();
             $table->string('exp_str')->nullable();
-            $table->string('pk')->nullable();
-            $table->string('exp_pk')->nullable();
             $table->string('tempat_lahir')->nullable();
             $table->string('tanggal_lahir')->nullable();
             $table->string('alamat')->nullable();

@@ -26,7 +26,7 @@
                         <!-- small box -->
                         <div class="small-box bg-warning">
                             <div class="inner">
-                                <h3>{{ $pasienall }}</h3>
+                                <h3>{{ $dokterall }}</h3>
 
                                 <p>Total Dokter</p>
                             </div>
@@ -40,7 +40,7 @@
                         <!-- small box -->
                         <div class="small-box bg-danger">
                             <div class="inner">
-                                <h3>{{ $pasiennoverif }}</h3>
+                                <h3>{{ $dokternoverif }}</h3>
 
                                 <p>Dokter Belun Verifikasi</p>
                             </div>
@@ -69,27 +69,29 @@
                                         <tr>
                                             <th class="text-center">Nama</th>
                                             <th class="text-center">Poli</th>
-                                            <th class="text-center">Spesilais</th>
+                                            <th class="text-center">tanggal Masuk</th>
+                                            <th class="text-center">status Pegawai</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($pasiens as $pasiensdata)
-                                            <tr class="{{ $pasiensdata->verifikasi == 1 ? 'table-danger' : ($pasiensdata->verifikasi == 2 ? 'table-success' : '') }}">
-                                                <td>{{ $pasiensdata->nama }}</td>
-                                                <td>{{ $pasiensdata->tanggal_lahir }}</td>
-                                                <td>{{ $pasiensdata->no_bpjs }}</td>
+                                        @foreach ($dokter as $dokterdata)
+                                            <tr class="{{ $dokterdata->verifikasi == 1 ? 'table-danger' : ($dokterdata->verifikasi == 2 ? 'table-success' : '') }}">
+                                                <td class="text-center" >{{ $dokterdata->namauser->name }}</td>
+                                                <td class="text-center" >{{ $dokterdata->namapoli->nama }}</td>
+                                                <td class="text-center" >{{ $dokterdata->tgl_masuk }}</td>
+                                                <td class="text-center" >{{ $dokterdata->namastatuspegawai->nama }}</td>
                                                 <td>
-                                                    @if ($pasiensdata->verifikasi == 1)
+                                                    @if ($dokterdata->verifikasi == 1)
                                                     <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
                                                         data-target="#lengkapiModal"
-                                                        data-id="{{ $pasiensdata->id }}">
+                                                        data-id="{{ $dokterdata->id }}">
                                                         <i class="fa fa-exclamation-circle"></i> Lengkapi
                                                     </a>
                                                     @else
                                                     <a class="btn btn-warning rounded-pill edit-btn" data-toggle="modal"
                                                         data-target="#EditModal"
-                                                        data-id="{{ $pasiensdata->id }}">
+                                                        data-id="{{ $dokterdata->id }}">
                                                         <i class="fa-solid fa-user-pen"></i> Edit
                                                     </a>
                                                     @endif
@@ -121,7 +123,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('pasien.verifikasi') }}" method="POST">
+                    <form action="{{ route('dokter.store') }}" method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-md-3 d-flex justify-content-center">
@@ -145,7 +147,6 @@
                                 </div>
                                 <div class="row">
 
-                                    <input type="hidden" class="form-control" placeholder="nomor_rm" id="nomor_rm" name="nomor_rm">
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Nama </label>
@@ -153,7 +154,7 @@
                                                 name="nama">
                                                 <option value="" disabled selected>Nama</option>
                                                 @foreach ($user as $userdata)
-                                                    <option value="{{ $userdata->kode }}">{{ $userdata->name }}</option>
+                                                    <option value="{{ $userdata->id }}">{{ $userdata->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -198,12 +199,12 @@
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>ID Satu Sehat</label>
-                                            <input type="text" class="form-control" id="kode" name="kode" >
+                                            <input type="text" class="form-control" id="kode_satu" name="kode_satu" >
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            <label>Nomor STR</label>
+                                            <label>Nomor STR  & Expired</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control" id="str" name="str" style="width: 60%;" placeholder="Nomor STR">
                                                 <input type="date" class="form-control" id="expstr" name="expstr" style="width: 40%;">
@@ -212,7 +213,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            <label>Nomor SIP </label>
+                                            <label>Nomor SIP & Expired</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control" id="sip" name="sip" placeholder="Nomor SIP" style="width: 60%;">
                                                 <input type="date" class="form-control" id="expspri" name="expspri" style="width: 40%;">
@@ -221,19 +222,20 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            <label>Pelatihan Khusus </label>
+                                            <label>Mulai Kerja Sejak</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control" id="pk" name="pk" placeholder="Nomor PK" style="width: 60%;">
-                                                <input type="date" class="form-control" id="exppk" name="exppk" style="width: 40%;">
+                                                <input type="date" class="form-control" id="tgl_masuk" name="tgl_masuk" placeholder="">
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="row">
-
-
+                                    <div class="col-sm-12">
+                                        <br>
+                                    </div>
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Provinsi</label>
@@ -485,8 +487,8 @@
                                                     placeholder="Tempat" style="width: 50%;">
 
                                                 <!-- Input Tanggal Lahir -->
-                                                <input type="date" class="form-control" id="tgllahir"
-                                                    name="tgllahir"
+                                                <input type="date" class="form-control" id="tgl_lahir"
+                                                    name="tgl_lahir"
                                                     style="width: 50%;">
                                             </div>
                                         </div>
@@ -494,7 +496,7 @@
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Posisi Kerja</label>
-                                            <select class="form-control select2bs4"  style="width: 100%;"  id="poli" name="poli">
+                                            <select class="form-control select2bs4"  style="width: 100%;"  id="posker" name="posker">
                                                 <option value="" disabled selected>--- Pilih Posisi ---</option>
                                                 @foreach ($posker as $poskerd)
                                                 <option value="{{$poskerd->id}}">{{$poskerd->nama}}</option>
@@ -505,8 +507,6 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" id="kodeprovide" name="kodeprovide">
-                        <input type="hidden" id="hubungan_keluarga" name="hubungan_keluarga">
                         <input type="hidden" id="userinput" name="userinput" value="{{ auth()->user()->name }}">
                         <input type="hidden" id="userinputid" name="userinputid" value="{{ auth()->user()->id }}">
                 </div>
