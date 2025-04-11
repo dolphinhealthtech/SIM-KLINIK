@@ -66,6 +66,7 @@
                                                         data-toggle="modal" data-id="{{ $pendidikandata->id }}"
                                                         data-nama-pendidikan="{{ $pendidikandata->nama }}"
                                                         data-kode-pendidikan="{{ $pendidikandata->kode }}"
+                                                        data-urutan-pendidikan="{{ $pendidikandata->urutan }}"
                                                         data-target="#editpendidikanModa">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </a>
@@ -110,10 +111,16 @@
                                 <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama pendidikan" required>
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label>kode pendidikan</label>
                                 <input type="text" class="form-control" id="kode" name="kode" placeholder="kode pendidikan" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Urutan pendidikan</label>
+                                <input type="number" class="form-control" id="urutan" name="urutan" placeholder="urutan pendidikan" required>
                             </div>
                         </div>
                     </div>
@@ -148,10 +155,16 @@
                                 <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama pendidikan" required>
                             </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label>kode pendidikan</label>
                                 <input type="text" class="form-control" id="kode_edit" name="kode_edit" placeholder="kode pendidikan" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Uratan pendidikan</label>
+                                <input type="number" class="form-control" id="urutan_edit" name="urutan_edit" placeholder="urutan pendidikan" required>
                             </div>
                         </div>
                     </div>
@@ -277,10 +290,12 @@
             var id = $(this).data('id');
             var nama = $(this).data('nama-pendidikan');
             var kode = $(this).data('kode-pendidikan');
+            var urutan = $(this).data('urutan-pendidikan');
 
             $('#pendidikanid_edit').val(id);
             $('#nama_edit').val(nama);
             $('#kode_edit').val(kode);
+            $('#urutan_edit').val(urutan);
              // Pastikan rhesus terpilih dengan benar
         });
 

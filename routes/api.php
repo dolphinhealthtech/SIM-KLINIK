@@ -14,6 +14,7 @@ Route::get('/user', function (Request $request) {
 Route::get('/get-pasien/{id}', [SuperadminController::class, 'getPasien']);
 
 
+
 Route::prefix('lokasi')->group(function(){
     Route::get('/kabupaten', [LokasiController::class, 'getKabupaten'])->name('get.kabupaten');
     Route::get('/kecamatan', [LokasiController::class, 'getKecamatan'])->name('get.kecamatan');

@@ -18,6 +18,7 @@ class PendidikanImport implements ToModel, WithStartRow
         return new pendidikan([
             'nama'  => $row[0], // Ambil dari kolom pertama
             'kode' => $row[1], // Ambil dari kolom kedua
+            'urutan' => $row[2], // Ambil dari kolom kedua
         ]);
     }
 

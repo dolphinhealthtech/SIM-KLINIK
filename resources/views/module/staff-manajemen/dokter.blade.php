@@ -57,14 +57,14 @@
                             <div class="card-header">
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#addusersModal">
+                                        data-target="#adddokterModal">
                                         <i class="fas fa-plus"></i> Tambah
                                     </button>
                                 </div>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <table id="userstabel" class="table table-bordered table-striped">
+                                <table id="doktertabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th class="text-center">Nama</th>
@@ -95,6 +95,12 @@
                                                         <i class="fa-solid fa-user-pen"></i> Edit
                                                     </a>
                                                     @endif
+                                                    <a href="#" class="btn btn-danger rounded-pill delete-data-dokter"
+                                                        data-toggle="modal"data-id="{{ $dokterdata->id }}"
+                                                        data-nama-dokter="{{ $dokterdata->namauser->name }}"
+                                                        data-target="#deletedokterModal">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -112,7 +118,7 @@
 
 
     <!-- Modal XL -->
-    <div class="modal fade" id="addusersModal" tabindex="-1"
+    <div class="modal fade" id="adddokterModal" tabindex="-1"
         aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -123,7 +129,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('dokter.store') }}" method="POST">
+                    <form id="addFormdokter" action="{{ route('dokter.store') }}" method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-md-3 d-flex justify-content-center">
@@ -228,7 +234,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                             <div class="col-12">
@@ -522,7 +527,149 @@
 
 
 
+    {{-- modal Delete Role --}}
+    <div class="modal fade" id="deletedokterModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+        <div class="modal-dialog">
+            <form id="deleteFormdokter" action="{{ route('dokter.destroy') }}" method="POST">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data dokter</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @csrf
+                        <input type="hidden" id="dokterid_delete" name="dokterid_delete">
+                        <div id="deleteTextdokter"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Hapus</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
+    {{-- modal Delete Role --}}
+    <div class="modal fade" id="lengkapiModal" tabindex="-1" role="dialog" aria-labelledby="lengkapiModalLabel">
+        <div class="modal-dialog modal-xl">
+            <form id="lengkapiFormdokter" action="" method="POST">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="lengkapiModalLabel">Verifikasi Data dokter</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @csrf
+                        <input type="hidden" id="dokterid_lengkapi" name="dokterid_delete">
+                        <div id="deleteTextdokter"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Hapus</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        $('#addFormdokter').on('submit', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: $(this).attr('method'),
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#adddokterModal').modal('hide');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: response.message,
+                                showConfirmButton: true
+                            }).then(() => {
+                                $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
+                                location.reload(); // Reload halaman untuk update data
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        let errorMessage = "Terjadi kesalahan dalam menyimpan data!";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: errorMessage
+                        });
+                    }
+                });
+            });
+
+
+        $(document).on('click', '.delete-data-dokter', function() {
+            let id = $(this).data('id');
+            let name = $(this).data('nama-dokter');
+
+            $('#dokterid_delete').val(id);
+            $('#deleteTextdokter').html(
+            `<span>Apa Anda yakin ingin menghapus data dokter <b>${name}</b> ?</span>`);
+        });
+
+        $('#deleteFormdokter').on('submit', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+            let url = form.attr('action');
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        $('#deletedokterModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                    });
+                }
+            });
+        });
+    </script>
 
     <script>
         $(document).ready(function () {
@@ -593,7 +740,7 @@
 
     <script>
         $(document).ready(function() {
-            $("#userstabel").DataTable({
+            $("#doktertabel").DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -603,7 +750,7 @@
                     "pdf",
                     "print",
                 ]
-            }).buttons().container().appendTo('#userstabel_wrapper .col-md-6:eq(0)');
+            }).buttons().container().appendTo('#doktertabel_wrapper .col-md-6:eq(0)');
         });
     </script>
 @endsection

@@ -256,8 +256,6 @@ class SuperadminController extends Controller
         return view('module.permission-role.user', compact('title', 'users', 'role'));
     }
 
-
-
     public function userstore(Request $request)
     {
         try {
@@ -725,9 +723,7 @@ class SuperadminController extends Controller
         $user = User::all();
         $poli = poli::all();
         $posker = posker::all();
-
         $dokter = dokter::with('namauser','namapoli','namastatuspegawai')->get();
-
         $provinsi = provinsi::all();
         $kelamin = kelamin::all();
         $goldar = goldar::all();
@@ -735,10 +731,9 @@ class SuperadminController extends Controller
         $pernikahan = pernikahan::all();
         $suku = suku::all();
         $bangsa = bangsa::all();
-        $pendidikan = pendidikan::all();
+        $pendidikan = pendidikan::orderBy('urutan')->get();
         $bahasa = bahasa::all();
         $pekerjaan = pekerjaan::all();
-
         $dokternoverif = dokter::where('verifikasi', 1)->count();
         $dokterall = dokter::count();
         return view('module.staff-manajemen.dokter', compact('title','user','poli','posker','dokter','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa','pendidikan','pekerjaan','dokternoverif','dokterall'));
@@ -825,6 +820,7 @@ class SuperadminController extends Controller
             ]);
 
             return response()->json([
+                'success' => true,
                 'message' => 'Data pasien berhasil disimpan.'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -832,5 +828,27 @@ class SuperadminController extends Controller
                 'errors' => $e->errors()
             ], 422);
         }
+    }
+
+    public function dokterdelete(Request $request)
+    {
+
+        $request->validate([
+            'dokterid_delete' => 'required'
+        ]);
+
+        $dokter = dokter::find($request->dokterid_delete);
+        if (!$dokter) {
+            return response()->json([
+                'success' => false,
+                'message' => 'dokter tidak ditemukan!'
+            ], 404);
+        }
+        $dokter->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'dokter berhasil dihapus!'
+        ]);
     }
 }

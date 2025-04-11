@@ -573,11 +573,14 @@ class DataMasterController extends Controller
             $request->validate([
                 "nama" => 'required|string|unique:pendidikans,nama',
                 "kode" => 'required|string|unique:pendidikans,kode',
+                "urutan" => 'required|string|unique:pendidikans,urutan',
             ]);
 
             $pendidikan = pendidikan::create([
                 'nama' => $request->nama,
-                'kode' => $request->kode
+                'kode' => $request->kode,
+                'urutan' => $request->urutan,
+
             ]);
 
             return response()->json([
@@ -605,6 +608,7 @@ class DataMasterController extends Controller
         $request->validate([
             'nama_edit' => 'required|string',
             'kode_edit' => 'required|string',
+            'urutan_edit' => 'required|string',
         ]);
 
         $pendidikan = pendidikan::find($request->pendidikanid_edit);
@@ -618,6 +622,7 @@ class DataMasterController extends Controller
 
         $pendidikan->nama = $request->nama_edit;
         $pendidikan->kode = $request->kode_edit;
+        $pendidikan->urutan = $request->urutan_edit;
         $pendidikan->save();
 
         return response()->json([
@@ -679,7 +684,7 @@ class DataMasterController extends Controller
         try {
             $request->validate([
                 "nama" => 'required|string|unique:kelamins,nama',
-                "kode" => 'required|string|unique:kelamins,kode',
+                "urutan" => 'required|string|unique:kelamins,kode',
             ]);
 
             $kelamin = kelamin::create([
@@ -885,8 +890,8 @@ class DataMasterController extends Controller
          return view('module.master-data.pekerjaan', compact('title','pekerjaan'));
     }
 
-     public function pekerjaanadd(Request $request)
-     {
+    public function pekerjaanadd(Request $request)
+    {
          try {
              $request->validate([
                  "nama" => 'required|string|unique:pekerjaans,nama',

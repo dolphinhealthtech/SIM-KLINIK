@@ -13,10 +13,10 @@ class PendidikanExport implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        return pendidikan::select('nama', 'Kode')->get();
+        return pendidikan::select('nama', 'Kode','urutan')->get();
     }
     public function headings(): array
     {
-        return ["Nama Pendidikan", "kode"];
+        return ["Nama Pendidikan", "kode",'Urutan Pendidikan'];
     }
 }

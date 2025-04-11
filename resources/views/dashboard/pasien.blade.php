@@ -1375,6 +1375,7 @@
             }
         }
     </script>
+    
     <script>
         function previewImage(event) {
             const input = event.target;

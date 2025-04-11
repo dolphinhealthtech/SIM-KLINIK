@@ -11,5 +11,6 @@ class pendidikan extends Model
     protected $fillable = [
         'nama',
         'kode',
+        'urutan',
     ];
 }
