@@ -28,6 +28,7 @@ use App\Models\poli;
 use App\Models\posker;
 use App\Models\provinsi;
 use App\Models\suku;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
@@ -849,6 +850,28 @@ class SuperadminController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'dokter berhasil dihapus!'
+        ]);
+    }
+
+    public function getDokter($id)
+    {
+        // Ambil data dokter
+        $dokter = Dokter::findOrFail($id);
+
+        // Ambil data pendidikan dari SD hingga ke tingkat terakhir yang dimiliki dokter
+        $pendidikan = DB::table('pendidikans')
+            ->where('urutan', '<=', function ($query) use ($dokter) {
+                $query->select('urutan')
+                    ->from('pendidikans')
+                    ->where('kode', $dokter->pendidikan);
+            })
+            ->orderBy('urutan')
+            ->get();
+
+        // Return ke view modal atau response JSON
+        return response()->json([
+            'dokter' => $dokter,
+            'pendidikans' => $pendidikan
         ]);
     }
 }

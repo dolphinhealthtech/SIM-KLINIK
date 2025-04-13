@@ -565,8 +565,67 @@
                     </div>
                     <div class="modal-body">
                         @csrf
-                        <input type="hidden" id="dokterid_lengkapi" name="dokterid_delete">
-                        <div id="deleteTextdokter"></div>
+
+                        <div class="form-group">
+                            <label><strong>Pendidikan</strong></label>
+                            <hr>
+                            <div class="pendidikan-list col-12"></div>
+                        </div>
+
+                        <br>
+
+                        <div class="form-group">
+                            <label><strong>Pendidikan Spesialis</strong></label>
+                            <hr>
+
+                            <div id="spesialis-container" class="col-12"></div>
+
+                            <div class="text-center">
+                                <button type="button" class="btn btn-sm btn-primary mt-2" id="tambah-spesialis">+ Tambah Spesialis</button>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div class="form-group">
+                            <label><strong>Sertifikat Pelatihan Khusus</strong></label>
+                            <hr>
+                            <div id="pelatihan-container" class="col-12"></div>
+                            <div class="text-center">
+                                <button type="button" class="btn btn-sm btn-success mt-2" id="tambah-pelatihan">+ Tambah Pelatihan</button>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div>
+                            <label><strong>Informasi Bank</strong></label>
+                            <hr>
+                            <div class="col-12">
+                                <div class="row align-items-end mb-3">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Nama Bank</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control text-center" id="nama_bank" name="nama_bank">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>No Rekening</label>
+                                            <input type="text" class="form-control" id="norek" name="norek">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Cabang</label>
+                                            <input type="text" class="form-control" id="cabang_bank" name="cabang_bank" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -577,6 +636,135 @@
         </div>
     </div>
 
+
+    <script>
+        $(document).on('change', '.custom-file-input', function (e) {
+            const fileName = e.target.files[0]?.name;
+            $(this).next('.custom-file-label').html(fileName);
+        });
+
+        $('.lengkapi-btn').on('click', function () {
+            let dokterId = $(this).data('id');
+
+            $.get(`/api/get-dokter/${dokterId}`, function (data) {
+                let list = '';
+                data.pendidikans.forEach((item, index) => {
+                    list += `
+                        <div class="row align-items-end mb-3">
+                            <input type="hidden" name="pendidikan[${index}][kode]" value="${item.kode}">
+
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Sekolah ${item.kode}</label>
+                                <input type="text" name="pendidikan[${index}][nama_sekolah]" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Tahun Lulus ${item.kode}</label>
+                                <input type="month" name="pendidikan[${index}][tahun_lulus]" class="form-control" required>
+                            </div>
+
+                           <div class="col-md-4">
+                                <label class="form-label">Ijazah ${item.kode}</label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="ijasah-${index}" name="pendidikan[${index}][ijasah]">
+                                    <label class="custom-file-label" for="ijasah-${index}">Pilih file</label>
+                                </div>
+                            </div>
+
+                        </div>
+                    `;
+                });
+
+                $('#lengkapiModal .pendidikan-list').html(list);
+                $('#modalVerifikasi').modal('show');
+
+
+            });
+
+            let spesialisIndex = 0;
+
+            $('#tambah-spesialis').on('click', function () {
+                const html = `
+                    <div class="row align-items-end mb-3 spesialis-item">
+                        <div class="col-md-3">
+                            <label class="form-label">Nama Spesialis</label>
+                            <input type="text" name="spesialis[${spesialisIndex}][nama]" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Institusi</label>
+                            <input type="text" name="spesialis[${spesialisIndex}][institusi]" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Tahun Lulus</label>
+                            <input type="month" name="spesialis[${spesialisIndex}][tahun_lulus]" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Ijazah</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="spesialis-ijasah-${spesialisIndex}" name="spesialis[${spesialisIndex}][ijasah]">
+                                <label class="custom-file-label" for="spesialis-ijasah-${spesialisIndex}">Pilih file</label>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-danger btn-remove-spesialis">×</button>
+                        </div>
+                    </div>
+                `;
+                $('#spesialis-container').append(html);
+                spesialisIndex++;
+            });
+
+            $(document).on('click', '.btn-remove-spesialis', function () {
+                $(this).closest('.spesialis-item').remove();
+            });
+
+            let pelatihanIndex = 0;
+
+            $('#tambah-pelatihan').on('click', function () {
+                const html = `
+                    <div class="row align-items-end mb-3 pelatihan-item">
+                        <div class="col-md-3">
+                            <label class="form-label">Nama Pelatihan</label>
+                            <input type="text" name="pelatihan[${pelatihanIndex}][nama]" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Penyelenggara</label>
+                            <input type="text" name="pelatihan[${pelatihanIndex}][penyelenggara]" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Tahun</label>
+                            <input type="month" name="pelatihan[${pelatihanIndex}][tahun]" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Upload Sertifikat</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="pelatihan-sertifikat-${pelatihanIndex}" name="pelatihan[${pelatihanIndex}][sertifikat]">
+                                <label class="custom-file-label" for="pelatihan-sertifikat-${pelatihanIndex}">Pilih file</label>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-danger btn-remove-pelatihan">×</button>
+                        </div>
+                    </div>
+                `;
+                $('#pelatihan-container').append(html);
+                    pelatihanIndex++;
+                });
+
+                // Tampilkan nama file
+                $(document).on('change', '.custom-file-input', function (e) {
+                    const fileName = e.target.files[0]?.name;
+                    $(this).next('.custom-file-label').html(fileName);
+                });
+
+                // Hapus baris pelatihan
+                $(document).on('click', '.btn-remove-pelatihan', function () {
+                    $(this).closest('.pelatihan-item').remove();
+                });
+
+
+        });
+    </script>
     <script>
         $('#addFormdokter').on('submit', function(e) {
                 e.preventDefault();

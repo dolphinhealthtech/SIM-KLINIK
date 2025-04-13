@@ -12,6 +12,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/get-pasien/{id}', [SuperadminController::class, 'getPasien']);
+Route::get('/get-dokter/{id}', [SuperadminController::class, 'getDokter']);
 
 
 

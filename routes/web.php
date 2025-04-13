@@ -41,8 +41,8 @@ Route::prefix('dokter')->group(function () {
     Route::get('/', [SuperadminController::class,'dokter'])->name('dokter.get');
     Route::post('/add', [SuperadminController::class,'dokteradd'])->name('dokter.store');
     Route::post('/delete', [SuperadminController::class,'dokterdelete'])->name('dokter.destroy');
-    Route::post('/verifikasi', [SuperadminController::class,'pasienvefiv'])->name('pasien.verifikasi');
-    Route::post('/update', [SuperadminController::class,'pasienupdate'])->name('pasien.update');
+    Route::post('/verifikasi', [SuperadminController::class,'pasienvefiv'])->name('dokter.verifikasi');
+    Route::post('/update', [SuperadminController::class,'pasienupdate'])->name('dokter.update');
 });
 
 
