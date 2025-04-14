@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\agamaExport;
 use App\Exports\BahasaExport;
 use App\Exports\BangsaExport;
+use App\Exports\BankExport;
 use App\Exports\GoldarExport;
 use App\Exports\KelaminExport;
 use App\Exports\PekerjaanExport;
@@ -14,6 +15,7 @@ use App\Exports\SukuExport;
 use App\Imports\AgamaImport;
 use App\Imports\BahasaImport;
 use App\Imports\BangsaImport;
+use App\Imports\BankImport;
 use App\Imports\GoldarImport;
 use App\Imports\KelaminImport;
 use App\Imports\PekerjaanImport;
@@ -23,6 +25,7 @@ use App\Imports\SukuImport;
 use App\Models\agama;
 use App\Models\bahasa;
 use App\Models\bangsa;
+use App\Models\bank;
 use App\Models\goldar;
 use App\Models\kelamin;
 use App\Models\pekerjaan;
@@ -919,10 +922,10 @@ class DataMasterController extends Controller
                  'error' => $e->getMessage()
              ], 500);
          }
-     }
+    }
 
-     public function pekerjaanedit(Request $request)
-     {
+    public function pekerjaanedit(Request $request)
+    {
          $request->validate([
              'nama_edit' => 'required|string',
          ]);
@@ -943,7 +946,7 @@ class DataMasterController extends Controller
              'success' => true,
              'message' => 'pekerjaan berhasil diperbarui!'
          ]);
-     }
+    }
 
      public function pekerjaandelete(Request $request)
      {
@@ -967,14 +970,14 @@ class DataMasterController extends Controller
          ]);
      }
 
-     public function pekerjaanexport()
-     {
+    public function pekerjaanexport()
+    {
          return Excel::download(new PekerjaanExport, 'Pekerjaan.xlsx');
-     }
+    }
 
-     public function pekerjaanimport(Request $request)
-     {
-         $request->validate([
+    public function pekerjaanimport(Request $request)
+    {
+        $request->validate([
              'file' => 'required|mimes:xlsx,xls'
          ]);
 
@@ -982,6 +985,113 @@ class DataMasterController extends Controller
 
 
          return redirect()->route('pekerjaan.get')->with('success', 'Data berhasil diimpor!');
-     }
+    }
      // Pernikahan End
+
+
+     public function bank()
+    {
+         $title = "Master Bnak";
+         $bank = bank::all();
+         return view('module.master-data.bank', compact('title','bank'));
+    }
+
+    public function bankadd(Request $request)
+    {
+         try {
+             $request->validate([
+                 "nama" => 'required|string|unique:banks,nama',
+                 "kode" => 'required|string|unique:banks,kode',
+             ]);
+
+             $bank = bank::create([
+                 'nama' => $request->nama,
+                 'kode' => $request->kode,
+             ]);
+
+             return response()->json([
+                 'success' => true,
+                 'message' => 'bank berhasil ditambahkan!',
+                 'data' => $bank
+             ], 201);
+         } catch (ValidationException $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'pernikahan Sudah ada!',
+                 'errors' => $e->errors()
+             ], 422);
+         } catch (\Exception $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Terjadi kesalahan saat menyimpan pekerjaan!',
+                 'error' => $e->getMessage()
+             ], 500);
+         }
+    }
+
+    public function bankedit(Request $request)
+    {
+         $request->validate([
+             'nama_edit' => 'required|string',
+             'kode_edit' => 'required|string',
+         ]);
+
+         $bank = bank::find($request->bankid_edit);
+
+         if (!$bank) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'bank tidak ditemukan!'
+             ], 404);
+         }
+
+         $bank->nama = $request->nama_edit;
+         $bank->kode = $request->kode_edit;
+         $bank->save();
+
+         return response()->json([
+             'success' => true,
+             'message' => 'pekerjaan berhasil diperbarui!'
+         ]);
+    }
+
+    public function bankdelete(Request $request)
+    {
+
+        $request->validate([
+            'bankid_delete' => 'required'
+        ]);
+
+        $bank = bank::find($request->bankid_delete);
+        if (!$bank) {
+            return response()->json([
+                'success' => false,
+                'message' => 'bank tidak ditemukan!'
+            ], 404);
+        }
+        $bank->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'bank berhasil dihapus!'
+        ]);
+    }
+
+
+    public function bankexport()
+    {
+         return Excel::download(new BankExport, 'bank.xlsx');
+    }
+
+    public function bankimport(Request $request)
+    {
+        $request->validate([
+             'file' => 'required|mimes:xlsx,xls'
+         ]);
+
+         Excel::import(new BankImport, $request->file('file'));
+
+
+         return redirect()->route('bank.get')->with('success', 'Data berhasil diimpor!');
+    }
 }

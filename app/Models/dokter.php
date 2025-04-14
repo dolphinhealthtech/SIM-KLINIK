@@ -13,6 +13,7 @@ class dokter extends Model
         'npwp',
         'poli',
         'kode',
+        'kode_satu',
         'tgl_masuk',
         'status_pegawaian',
         'sip',
@@ -58,4 +59,10 @@ class dokter extends Model
     {
         return $this->belongsTo(posker::class, 'status_pegawaian');
     }
+
+    public function verifikasi()
+    {
+        return $this->hasOne(dokter_verifikasi::class);
+    }
+
 }

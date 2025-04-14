@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('poli');
             $table->string('npwp');
             $table->string('kode')->nullable();
+            $table->string('kode_satu')->nullable();
             $table->date('tgl_masuk');
             $table->integer('status_pegawaian')->nullable();
             $table->string('sip')->nullable();

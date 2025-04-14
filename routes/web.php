@@ -41,8 +41,8 @@ Route::prefix('dokter')->group(function () {
     Route::get('/', [SuperadminController::class,'dokter'])->name('dokter.get');
     Route::post('/add', [SuperadminController::class,'dokteradd'])->name('dokter.store');
     Route::post('/delete', [SuperadminController::class,'dokterdelete'])->name('dokter.destroy');
-    Route::post('/verifikasi', [SuperadminController::class,'pasienvefiv'])->name('dokter.verifikasi');
-    Route::post('/update', [SuperadminController::class,'pasienupdate'])->name('dokter.update');
+    Route::post('/verifikasi', [SuperadminController::class,'dokterverifikasi'])->name('dokter.verifikasi');
+    Route::post('/update', [SuperadminController::class,'dokteredit'])->name('dokter.update');
 });
 
 
@@ -120,6 +120,13 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     Route::get('/pekerjaan/export', [DataMasterController::class,'pekerjaanexport'])->name('pekerjaan.export');
     Route::post('/pekerjaan/import', [DataMasterController::class,'pekerjaanimport'])->name('pekerjaan.import');
 
+    //bank
+    Route::get('/bank', [DataMasterController::class,'bank'])->name('bank.get');
+    Route::post('/bank/add', [DataMasterController::class,'bankadd'])->name('bank.store');
+    Route::post('/bank/update', [DataMasterController::class,'bankedit'])->name('bank.update');
+    Route::post('/bank/delete', [DataMasterController::class,'bankdelete'])->name('bank.destroy');
+    Route::get('/bank/export', [DataMasterController::class,'bankexport'])->name('bank.export');
+    Route::post('/bank/import', [DataMasterController::class,'bankimport'])->name('bank.import');
 });
 
 Route::middleware('auth')->prefix('data-master-medis')->group(function () {
