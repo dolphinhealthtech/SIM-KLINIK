@@ -1094,4 +1094,6 @@ class DataMasterController extends Controller
 
          return redirect()->route('bank.get')->with('success', 'Data berhasil diimpor!');
     }
+
+
 }

@@ -14,7 +14,7 @@ Route::get('/user', function (Request $request) {
 Route::get('/get-pasien/{id}', [SuperadminController::class, 'getPasien']);
 Route::get('/get-dokter/{id}', [SuperadminController::class, 'getDokter']);
 Route::get('/get-dokter-all/{id}', [SuperadminController::class, 'getDokterEdit']);
-
+Route::get('/jadwal/json/{id}', [SuperadminController::class, 'dokterjadwaljson']);
 
 
 Route::prefix('lokasi')->group(function(){

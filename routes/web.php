@@ -43,9 +43,9 @@ Route::prefix('dokter')->group(function () {
     Route::post('/delete', [SuperadminController::class,'dokterdelete'])->name('dokter.destroy');
     Route::post('/verifikasi', [SuperadminController::class,'dokterverifikasi'])->name('dokter.verifikasi');
     Route::post('/update', [SuperadminController::class,'dokteredit'])->name('dokter.update');
+    Route::post('/jadwal/store', [SuperadminController::class, 'dokterjadwal'])->name('dokter.jadwal');
+    Route::delete('/jadwal/hapus/{id}', [SuperadminController::class, 'dokterjadwalhapus']);
 });
-
-
 
 Route::middleware('auth')->prefix('data-master')->group(function () {
     // Menu Golongan Darah

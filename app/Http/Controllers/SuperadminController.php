@@ -21,6 +21,7 @@ use App\Models\bahasa;
 use App\Models\bangsa;
 use App\Models\bank;
 use App\Models\dokter;
+use App\Models\dokter_jadwal;
 use App\Models\dokter_pelatihan;
 use App\Models\dokter_pendidikan;
 use App\Models\dokter_pendidikan_spesialis;
@@ -1099,5 +1100,43 @@ class SuperadminController extends Controller
                 'errors' => $e->errors()
             ], 422);
         }
+    }
+
+
+    public function dokterjadwal(Request $request)
+    {
+        $jadwal = dokter_jadwal::create([
+            'dokter_id' => $request->dokter_id,
+            'title'     => $request->title,
+            'start'     => $request->start,
+            'end'       => $request->end,
+        ]);
+
+        return response()->json($jadwal);
+    }
+
+    public function dokterjadwaljson($id)
+    {
+        return dokter_jadwal::where('dokter_id', $id)->get(['id', 'title', 'start', 'end']);
+    }
+
+    public function dokterjadwalhapus($id)
+    {
+        $jadwal = dokter_jadwal::find($id);
+
+        if (!$jadwal) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Jadwal tidak ditemukan.'
+            ], 404);
+        }
+
+        // Menghapus jadwal
+        $jadwal->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jadwal berhasil dihapus.'
+        ]);
     }
 }

@@ -81,7 +81,7 @@
                                                 <td class="text-center" >{{ $dokterdata->namapoli->nama }}</td>
                                                 <td class="text-center" >{{ $dokterdata->tgl_masuk }}</td>
                                                 <td class="text-center" >{{ $dokterdata->namastatuspegawai->nama }}</td>
-                                                <td>
+                                                <td class="text-center" >
                                                     @if ($dokterdata->verifikasi == 1)
                                                     <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
                                                         data-target="#lengkapiModal"
@@ -100,6 +100,14 @@
                                                         data-nama-dokter="{{ $dokterdata->namauser->name }}"
                                                         data-target="#deletedokterModal">
                                                         <i class="fas fa-trash"></i> Delete
+                                                    </a>
+
+                                                    <a href="#" class="btn btn-info rounded-pill jadwal-data-dokter"
+                                                        data-toggle="modal"
+                                                        data-id="{{ $dokterdata->id }}"
+                                                        data-nama-dokter-jadwal="{{ $dokterdata->namauser->name }}"
+                                                        data-target="#jadwaldokterModal">
+                                                        <i class="far fa-clock"></i> Jadwal
                                                     </a>
                                                 </td>
                                             </tr>
@@ -638,10 +646,9 @@
         </div>
     </div>
 
-
-    <div class="modal fade" id="editdokterModal" tabindex="-1" role="dialog" aria-labelledby="editdokterModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    {{-- modal edit Dokter --}}
+    <div class="modal fade" id="editdokterModal" tabindex="-1" role="dialog" aria-labelledby="editdokterModalLabel">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editdokterModalLabel">Edit Data Dokter</h5>
@@ -1137,6 +1144,176 @@
         </div>
     </div>
 
+    <!-- Modal Jadwal Dokter -->
+    <div class="modal fade" id="jadwaldokterModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <form id="deleteFormdokter" action="#" method="POST">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="nama-dokter-jadwal" class="modal-title"></h5>
+
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        @csrf
+                        <div id="calendarDokter" style="height:600px; min-width: 100%;"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        var calendar;
+        let name = $(this).data('nama-dokter-jadwal');
+        let id = $(this).data('id');
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendarDokter');
+            var Calendar = FullCalendar.Calendar;
+
+
+            calendar = new Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                locale: 'id',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: ''
+                },
+                height: 800,
+                slotMinTime: "00:00:00",
+                slotMaxTime: "24:00:00",
+                selectable: true,
+                selectMirror: true,
+                nowIndicator: true,
+
+                select: function (info) {
+                    const dokter_id = window.selectedDokterId;
+                    const title = "Jadwal Masuk";
+
+                    if (title) {
+                        // Kirim ke server
+                        fetch("{{ route('dokter.jadwal') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                dokter_id: dokter_id,
+                                title: title,
+                                start: info.startStr,
+                                end: info.endStr
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            // Tambahkan langsung ke kalender
+                            calendar.addEvent({
+                                id: data.id,
+                                title: title,
+                                start: info.startStr,
+                                end: info.endStr
+                            });
+                        })
+                        .catch(err => console.error("Error:", err));
+                    }
+
+                    calendar.unselect();
+                },
+
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    if (!window.selectedDokterId) return;
+
+                    fetch(`/api/jadwal/json/${window.selectedDokterId}`)
+                        .then(res => res.json())
+                        // .then(data => successCallback(data))
+                        .then(data => {
+                            console.log("Data dari API:", data); // Tambahkan ini!
+                            successCallback(data);
+                        })
+                        .catch(err => failureCallback(err));
+                },
+
+                eventClick: function(info) {
+                    Swal.fire({
+                        title: 'Hapus Jadwal?',
+                        text: "Apakah Anda yakin ingin menghapus jadwal ini?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const eventId = info.event.id;
+
+                            fetch(`/dokter/jadwal/hapus/${eventId}`, {
+                                method: "DELETE",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                }
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    info.event.remove();
+                                    Swal.fire(
+                                        'Terhapus!',
+                                        'Jadwal berhasil dihapus.',
+                                        'success'
+                                    );
+                                } else {
+                                    Swal.fire(
+                                        'Gagal!',
+                                        'Tidak dapat menghapus jadwal.',
+                                        'error'
+                                    );
+                                }
+                            })
+                            .catch(err => {
+                                console.error("Error:", err);
+                                Swal.fire(
+                                    'Error!',
+                                    'Terjadi kesalahan saat menghapus.',
+                                    'error'
+                                );
+                            });
+                        }
+                    });
+                }
+
+
+            });
+
+            $(document).on('click', '.jadwal-data-dokter', function () {
+                // Ambil data dari tombol yang diklik
+                let name = $(this).data('nama-dokter-jadwal');
+                let id = $(this).data('id');
+
+                $('#nama-dokter-jadwal').html(name);
+
+                window.selectedDokterId = id;
+
+
+                // Render calendar
+                setTimeout(function () {
+                    // Update source event sesuai ID dokter yang diklik
+                    calendar.removeAllEvents();
+                    calendar.refetchEvents(); // kalau pakai dynamic source
+                    calendar.render();
+                }, 200);
+            });
+
+        });
+    </script>
 
     <script>
 
@@ -1672,7 +1849,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#deletedokterModal').modal('hide');
+                        $('#jadwaldokterModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',

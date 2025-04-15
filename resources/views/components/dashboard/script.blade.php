@@ -51,6 +51,9 @@ $.widget.bridge('uibutton', $.ui.button)
 <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
 <!-- Toastr -->
 <script src="{{ asset('plugins/toastr/toastr.min.js') }}"></script>
+<!-- fullCalendar 2.2.5 -->
+<script src="{{ asset('/plugins/moment/moment.min.js') }}"></script>
+<script src="{{ asset('/plugins/fullcalendar/main.js') }}"></script>
 
 <script>
     $(document).ready(function() {

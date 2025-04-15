@@ -34,3 +34,5 @@
    <link rel="stylesheet" href="{{ asset('plugins/toastr/toastr.min.css') }}">
 <!-- BS Stepper -->
 <link rel="stylesheet" href="{{ asset('plugins/bs-stepper/css/bs-stepper.min.css') }}">
+<!-- fullCalendar -->
+<link rel="stylesheet" href="{{ asset('plugins/fullcalendar/main.css') }}">
