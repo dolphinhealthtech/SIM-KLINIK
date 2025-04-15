@@ -257,7 +257,13 @@
                                                     <select class="form-control" name="bloodType" id="bloodType">
                                                         <option selected="selected" disabled>Pilih Golongan darah</option>
                                                         @foreach ($goldar as $goldardata)
-                                                            <option value="{{ $goldardata->id }}">{{ $goldardata->nama }}{{ $goldardata->resus }}</option>
+                                                        <option value="{{ $goldardata->id }}">
+                                                            @if ($goldardata->resus == "null")
+                                                                {{ $goldardata->nama }}
+                                                            @else
+                                                                {{ $goldardata->nama . $goldardata->resus }}
+                                                            @endif
+                                                        </option>
                                                         @endforeach
                                                     </select>
                                                 </div>

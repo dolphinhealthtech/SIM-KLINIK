@@ -367,7 +367,13 @@
                                                 name="goldar">
                                                 <option value="" disabled selected>--- pilih ---</option>
                                                 @foreach ($goldar as $goldardata)
-                                                    <option value="{{ $goldardata->id }}">{{ $goldardata->nama . $goldardata->resus}}</option>
+                                                    <option value="{{ $goldardata->id }}">
+                                                        @if ($goldardata->resus == "null")
+                                                            {{ $goldardata->nama }}
+                                                        @else
+                                                            {{ $goldardata->nama . $goldardata->resus }}
+                                                        @endif
+                                                    </option>
                                                 @endforeach
                                             </select>
                                             @error('goldar')
@@ -770,7 +776,13 @@
                                                 name="goldar_edit" value="{{ old('goldar_edit') }}">
                                                 <option value="" disabled selected>--- pilih ---</option>
                                                 @foreach ($goldar as $goldardata)
-                                                    <option value="{{ $goldardata->id }}">{{ $goldardata->nama . $goldardata->resus}}</option>
+                                                    <option value="{{ $goldardata->id }}">
+                                                        @if ($goldardata->resus == "null")
+                                                            {{ $goldardata->nama }}
+                                                        @else
+                                                            {{ $goldardata->nama . $goldardata->resus }}
+                                                        @endif
+                                                    </option>
                                                 @endforeach
                                             </select>
                                             @error('goldar')

@@ -127,7 +127,7 @@
 
     <!-- modal add Dokter -->
     <div class="modal fade" id="adddokterModal" tabindex="-1"
-        aria-labelledby="modalTitle" aria-hidden="true">
+        aria-labelledby="modalTitle">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -508,7 +508,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group">
-                                            <label>Posisi Kerja</label>
+                                            <label>Status Kerja</label>
                                             <select class="form-control select2bs4"  style="width: 100%;"  id="posker" name="posker">
                                                 <option value="" disabled selected>--- Pilih Posisi ---</option>
                                                 @foreach ($posker as $poskerd)
@@ -653,7 +653,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="editdokterModalLabel">Edit Data Dokter</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
@@ -1052,7 +1052,7 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <div class="form-group">
-                                                        <label>Posisi Kerja</label>
+                                                        <label>Status Kerja</label>
                                                         <select class="form-control select2bs4"  style="width: 100%;"  id="posker_edit" name="posker_edit">
                                                             <option value="" disabled selected>--- Pilih Posisi ---</option>
                                                             @foreach ($posker as $poskerd)
@@ -1232,11 +1232,7 @@
 
                     fetch(`/api/jadwal/json/${window.selectedDokterId}`)
                         .then(res => res.json())
-                        // .then(data => successCallback(data))
-                        .then(data => {
-                            console.log("Data dari API:", data); // Tambahkan ini!
-                            successCallback(data);
-                        })
+                        .then(data => successCallback(data))
                         .catch(err => failureCallback(err));
                 },
 

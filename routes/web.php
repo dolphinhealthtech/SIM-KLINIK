@@ -47,6 +47,12 @@ Route::prefix('dokter')->group(function () {
     Route::delete('/jadwal/hapus/{id}', [SuperadminController::class, 'dokterjadwalhapus']);
 });
 
+Route::prefix('pendaftaran')->group(function () {
+    // Menu Pasien
+    Route::get('/', [SuperadminController::class,'pendaftaran'])->name('pasien.get');
+});
+
+
 Route::middleware('auth')->prefix('data-master')->group(function () {
     // Menu Golongan Darah
     Route::get('/goldar', [DataMasterController::class,'darah'])->name('goldar.get');

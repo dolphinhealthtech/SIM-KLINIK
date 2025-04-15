@@ -65,4 +65,9 @@ class dokter extends Model
         return $this->hasOne(dokter_verifikasi::class);
     }
 
+    public function jadwal()
+    {
+        return $this->hasMany(dokter_jadwal::class, 'dokter_id');
+    }
+
 }

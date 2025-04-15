@@ -1139,4 +1139,47 @@ class SuperadminController extends Controller
             'message' => 'Jadwal berhasil dihapus.'
         ]);
     }
+
+
+    public function pendaftaran()
+    {
+        $title = "Pasien";
+        $pasiens = pasien::all();
+        $poli = poli::all();
+
+        $provinsi = provinsi::all();
+        $kelamin = kelamin::all();
+        $goldar = goldar::all();
+        $agama = agama::all();
+        $pernikahan = pernikahan::all();
+        $suku = suku::all();
+        $bangsa = bangsa::all();
+        $pendidikan = pendidikan::all();
+        $bahasa = bahasa::all();
+        $pekerjaan = pekerjaan::all();
+        $pasiennoverif = Pasien::where('verifikasi', 1)->count();
+        $pasienallold = Pasien::where('created_at', '<', now()->subDays(30))->count();
+        $pasienall = Pasien::count();
+        $pasienallnewnow = Pasien::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+        ->count();
+        return view('module.pendaftaran.daftar', compact('title','pasiens','poli','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa','pendidikan','pekerjaan','pasiennoverif','pasienall','pasienallnewnow','pasienallold'));
+    }
+
+    public function getByPoli($id, Request $request)
+    {
+        $datetime = $request->input('datetime'); // ex: 2025-04-16 00:30:00
+
+        $dokter = Dokter::where('poli', $id)
+            ->whereHas('jadwal', function ($query) use ($datetime) {
+                $query->where('start', '<=', $datetime)
+                    ->where('end', '>=', $datetime);
+            })
+            ->with('namauser', 'namapoli', 'namastatuspegawai')
+            ->get();
+
+        return response()->json($dokter);
+    }
+
+
+
 }
