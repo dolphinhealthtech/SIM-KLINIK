@@ -133,6 +133,14 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     Route::post('/bank/delete', [DataMasterController::class,'bankdelete'])->name('bank.destroy');
     Route::get('/bank/export', [DataMasterController::class,'bankexport'])->name('bank.export');
     Route::post('/bank/import', [DataMasterController::class,'bankimport'])->name('bank.import');
+
+    //penjamin
+    Route::get('/penjamin', [DataMasterController::class,'penjamin'])->name('penjamin.get');
+    Route::post('/penjamin/add', [DataMasterController::class,'penjaminadd'])->name('penjamin.store');
+    Route::post('/penjamin/update', [DataMasterController::class,'penjaminedit'])->name('penjamin.update');
+    Route::post('/penjamin/delete', [DataMasterController::class,'penjamindelete'])->name('penjamin.destroy');
+    Route::get('/penjamin/export', [DataMasterController::class,'penjaminexport'])->name('penjamin.export');
+    Route::post('/penjamin/import', [DataMasterController::class,'penjaminimport'])->name('penjamin.import');
 });
 
 Route::middleware('auth')->prefix('data-master-medis')->group(function () {

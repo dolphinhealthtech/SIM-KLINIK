@@ -12,6 +12,7 @@ use App\Exports\PekerjaanExport;
 use App\Exports\PendidikanExport;
 use App\Exports\PernikahanExport;
 use App\Exports\SukuExport;
+use App\Exports\PenjaminExport;
 use App\Imports\AgamaImport;
 use App\Imports\BahasaImport;
 use App\Imports\BangsaImport;
@@ -22,6 +23,7 @@ use App\Imports\PekerjaanImport;
 use App\Imports\PendidikanImport;
 use App\Imports\PernikahanImport;
 use App\Imports\SukuImport;
+use App\Imports\PenjaminImport;
 use App\Models\agama;
 use App\Models\bahasa;
 use App\Models\bangsa;
@@ -32,6 +34,7 @@ use App\Models\pekerjaan;
 use App\Models\pendidikan;
 use App\Models\pernikahan;
 use App\Models\suku;
+use App\Models\penjamin;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -989,7 +992,7 @@ class DataMasterController extends Controller
      // Pernikahan End
 
 
-     public function bank()
+    public function bank()
     {
          $title = "Master Bnak";
          $bank = bank::all();
@@ -1077,7 +1080,6 @@ class DataMasterController extends Controller
         ]);
     }
 
-
     public function bankexport()
     {
          return Excel::download(new BankExport, 'bank.xlsx');
@@ -1095,5 +1097,106 @@ class DataMasterController extends Controller
          return redirect()->route('bank.get')->with('success', 'Data berhasil diimpor!');
     }
 
+    // Penjamin
 
+    public function penjamin()
+    {
+         $title = "Master Penjamin";
+         $penjamin = penjamin::all();
+         return view('module.master-data.penjamin', compact('title','penjamin'));
+    }
+
+    public function penjaminadd(Request $request)
+    {
+         try {
+             $request->validate([
+                 "nama" => 'required|string|unique:penjamins,nama',
+             ]);
+
+             $penjamin = penjamin::create([
+                 'nama' => $request->nama,
+             ]);
+
+             return response()->json([
+                 'success' => true,
+                 'message' => 'Penjamin berhasil ditambahkan!',
+                 'data' => $penjamin
+             ], 201);
+         } catch (ValidationException $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Penjamin Sudah ada!',
+                 'errors' => $e->errors()
+             ], 422);
+         } catch (\Exception $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Terjadi kesalahan saat menyimpan Penjamin!',
+                 'error' => $e->getMessage()
+             ], 500);
+         }
+    }
+
+    public function penjaminedit(Request $request)
+    {
+         $request->validate([
+             'nama_edit' => 'required|string',
+         ]);
+
+         $penjamin = penjamin::find($request->penjaminid_edit);
+
+         if (!$penjamin) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Penjamin tidak ditemukan!'
+             ], 404);
+         }
+
+         $penjamin->nama = $request->nama_edit;
+         $penjamin->save();
+
+         return response()->json([
+             'success' => true,
+             'message' => 'Penjamin berhasil diperbarui!'
+         ]);
+    }
+
+    public function penjamindelete(Request $request)
+    {
+
+        $request->validate([
+            'penjaminid_delete' => 'required'
+        ]);
+
+        $penjamin = penjamin::find($request->penjaminid_delete);
+        if (!$penjamin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Penjamin tidak ditemukan!'
+            ], 404);
+        }
+        $penjamin->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Penjamin berhasil dihapus!'
+        ]);
+    }
+
+    public function penjaminexport()
+    {
+         return Excel::download(new PenjaminExport, 'penjamin.xlsx');
+    }
+
+    public function penjaminimport(Request $request)
+    {
+        $request->validate([
+             'file' => 'required|mimes:xlsx,xls'
+         ]);
+
+         Excel::import(new PenjaminImport, $request->file('file'));
+
+
+         return redirect()->route('penjamin.get')->with('success', 'Data berhasil diimpor!');
+    }
 }
