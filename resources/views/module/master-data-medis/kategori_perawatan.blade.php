@@ -29,47 +29,47 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">penjamin</h3>
+                                <h3 class="card-title">Kategori Perawatan</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#addpenjaminModal">
+                                        data-target="#addkategori_perawatanModal">
                                         <i class="fas fa-plus"></i> Tambah
                                     </button>
                                     <!-- Tombol Export -->
-                                    <a href="{{ route('penjamin.export') }}" class="btn btn-success">
+                                    <a href="{{ route('kategori_perawatan.export') }}" class="btn btn-success">
                                         <i class="fas fa-file-download"></i> Export
                                     </a>
 
                                     <!-- Tombol Import (Memunculkan Modal) -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importpenjaminModal">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importkategori_perawatanModal">
                                         <i class="fas fa-file-upload"></i> Import
                                     </button>
 
                                 </div>
                             </div>
                             <div class="card-body">
-                                <table id="penjamintabel" class="table table-bordered table-striped">
+                                <table id="kategori_perawatantabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nama penjamin</th>
+                                            <th class="text-center">Nama Kategori</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($penjamin as $penjamindata)
+                                        @foreach ($kategori_perawatan as $kategori_perawatandata)
                                             <tr>
-                                                <td class="text-center">{{ $penjamindata->nama }}</td>
+                                                <td class="text-center">{{ $kategori_perawatandata->nama }}</td>
                                                 <td class="text-center">
-                                                    <a href="#" class="btn btn-warning btn-sm edit-data-penjamin"
-                                                        data-toggle="modal" data-id="{{ $penjamindata->id }}"
-                                                        data-nama-penjamin="{{ $penjamindata->nama }}"
-                                                        data-target="#editpenjaminModa">
+                                                    <a href="#" class="btn btn-warning btn-sm edit-data-kategori_perawatan"
+                                                        data-toggle="modal" data-id="{{ $kategori_perawatandata->id }}"
+                                                        data-nama-kategori_perawatan="{{ $kategori_perawatandata->nama }}"
+                                                        data-target="#editkategori_perawatanModa">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </a>
-                                                    <a href="#" class="btn btn-danger btn-sm delete-data-penjamin"
-                                                        data-toggle="modal"data-id="{{ $penjamindata->id }}"
-                                                        data-nama-penjamin="{{ $penjamindata->nama }}"
-                                                        data-target="#deletepenjaminModal">
+                                                    <a href="#" class="btn btn-danger btn-sm delete-data-kategori_perawatan"
+                                                        data-toggle="modal"data-id="{{ $kategori_perawatandata->id }}"
+                                                        data-nama-kategori_perawatan="{{ $kategori_perawatandata->nama }}"
+                                                        data-target="#deletekategori_perawatanModal">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </a>
                                                 </td>
@@ -88,23 +88,23 @@
 </div>
 
 {{-- modal Add Role --}}
-<div class="modal fade" id="addpenjaminModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+<div class="modal fade" id="addkategori_perawatanModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data penjamin</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Kategori Perawatan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addFormpenjamin" action="{{ route('penjamin.store') }}" method="POST">
+                <form id="addFormkategori_perawatan" action="{{ route('kategori_perawatan.store') }}" method="POST">
                     @csrf
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama penjamin</label>
-                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama penjamin" required>
+                                <label>Nama Kategori Perawatan</label>
+                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Kategori Perawatan" required>
                             </div>
                         </div>
                     </div>
@@ -119,24 +119,24 @@
 </div>
 
 {{-- modal Edit Role --}}
-<div class="modal fade" id="editpenjaminModa" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+<div class="modal fade" id="editkategori_perawatanModa" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Master Data penjamin</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Master Data Kategori Perawatan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="editFormpenjamin" action="{{ route('penjamin.update') }}" method="POST">
+                <form id="editFormkategori_perawatan" action="{{ route('kategori_perawatan.update') }}" method="POST">
                     @csrf
-                    <input type="hidden" id="penjaminid_edit" name="penjaminid_edit">
+                    <input type="hidden" id="kategori_perawatanid_edit" name="kategori_perawatanid_edit">
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama penjamin</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama penjamin" required>
+                                <label>Nama Kategori Perawatan</label>
+                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Kategori Perawatan" required>
                             </div>
                         </div>
                     </div>
@@ -151,20 +151,20 @@
 </div>
 
 {{-- modal Delete Role --}}
-<div class="modal fade" id="deletepenjaminModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+<div class="modal fade" id="deletekategori_perawatanModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormpenjamin" action="{{ route('penjamin.destroy') }}" method="POST">
+        <form id="deleteFormkategori_perawatan" action="{{ route('kategori_perawatan.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data penjamin</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data Kategori Perawatan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     @csrf
-                    <input type="hidden" id="penjaminid_delete" name="penjaminid_delete">
-                    <div id="deleteTextpenjamin"></div>
+                    <input type="hidden" id="kategori_perawatanid_delete" name="kategori_perawatanid_delete">
+                    <div id="deleteTextkategori_perawatan"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -176,17 +176,17 @@
 </div>
 
 <!-- Modal Import -->
-<div class="modal fade" id="importpenjaminModal" tabindex="-1" role="dialog" aria-labelledby="importpenjaminModalLabel" aria-hidden="true">
+<div class="modal fade" id="importkategori_perawatanModal" tabindex="-1" role="dialog" aria-labelledby="importkategori_perawatanModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importpenjaminModalLabel">Import Data penjamin</h5>
+                <h5 class="modal-title" id="importkategori_perawatanModalLabel">Import Data Kategori Perawatan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('penjamin.import') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('kategori_perawatan.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label for="file">Pilih File Excel</label>
@@ -203,7 +203,7 @@
 
 <script>
         $(document).ready(function() {
-            $("#penjamintabel").DataTable({
+            $("#kategori_perawatantabel").DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -213,10 +213,10 @@
                     "pdf",
                     "print",
                 ]
-            }).buttons().container().appendTo('#penjamintabel_wrapper .col-md-6:eq(0)');
+            }).buttons().container().appendTo('#kategori_perawatantabel_wrapper .col-md-6:eq(0)');
         });
 
-        $('#addFormpenjamin').on('submit', function(e) {
+        $('#addFormkategori_perawatan').on('submit', function(e) {
             e.preventDefault();
 
             $.ajax({
@@ -225,7 +225,7 @@
                 data: $(this).serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#addpenjaminModal').modal('hide');
+                        $('#addkategori_perawatanModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
@@ -258,16 +258,16 @@
             });
         });
 
-        $(document).on('click', '.edit-data-penjamin', function() {
+        $(document).on('click', '.edit-data-kategori_perawatan', function() {
             var id = $(this).data('id');
-            var nama = $(this).data('nama-penjamin');
+            var nama = $(this).data('nama-kategori_perawatan');
 
-            $('#penjaminid_edit').val(id);
+            $('#kategori_perawatanid_edit').val(id);
             $('#nama_edit').val(nama);
              // Pastikan rhesus terpilih dengan benar
         });
 
-        $('#editFormpenjamin').on('submit', function(e) {
+        $('#editFormkategori_perawatan').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);
@@ -279,7 +279,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#editpenjaminModa').modal('hide');
+                        $('#editkategori_perawatanModa').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
@@ -301,22 +301,22 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate penjamin!',
+                        text: 'Terjadi kesalahan saat mengupdate kategori_perawatan!',
                     });
                 }
             });
         });
 
-        $(document).on('click', '.delete-data-penjamin', function() {
+        $(document).on('click', '.delete-data-kategori_perawatan', function() {
             let id = $(this).data('id');
-            let name = $(this).data('nama-penjamin');
+            let name = $(this).data('nama-kategori_perawatan');
 
-            $('#penjaminid_delete').val(id);
-            $('#deleteTextpenjamin').html(
-            `<span>Apa Anda yakin ingin menghapus data penjamin <b>${name}</b> ?</span>`);
+            $('#kategori_perawatanid_delete').val(id);
+            $('#deleteTextkategori_perawatan').html(
+            `<span>Apa Anda yakin ingin menghapus data kategori_perawatan <b>${name}</b> ?</span>`);
         });
 
-        $('#deleteFormpenjamin').on('submit', function(e) {
+        $('#deleteFormkategori_perawatan').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);
@@ -328,7 +328,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#deletepenjaminModal').modal('hide');
+                        $('#deletekategori_perawatanModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',

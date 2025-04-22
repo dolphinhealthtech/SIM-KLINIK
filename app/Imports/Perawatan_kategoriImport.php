@@ -2,11 +2,11 @@
 
 namespace App\Imports;
 
-use App\Models\penjamin;
+use App\Models\perawatan_kategori;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class PenjaminImport implements ToModel,WithStartRow
+class Perawatan_kategoriImport implements ToModel,WithStartRow
 {
     /**
     * @param array $row
@@ -15,7 +15,7 @@ class PenjaminImport implements ToModel,WithStartRow
     */
     public function model(array $row)
     {
-        return new penjamin([
+        return new perawatan_kategori([
             'nama'  => $row[0] // Ambil dari kolom pertama
         ]);
     }

@@ -162,6 +162,14 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::get('/subspesialis/{kode}', [DataMasterMedisController::class,'subspesialis'])->name('subspesialis.get');
     Route::get('/subspesialis/sync/{kode}', [DataMasterMedisController::class,'subspesialisadd'])->name('subspesialis.sync');
     Route::post('/subspesialis/delete', [DataMasterMedisController::class,'subspesialisdelete'])->name('subspesialis.destroy');
+
+    // Kategori Perawatan
+    Route::get('/katper', [DataMasterMedisController::class,'kategori_perawatan'])->name('kategori_perawatan.get');
+    Route::post('/katper/add', [DataMasterMedisController::class,'kategori_perawatanadd'])->name('kategori_perawatan.store');
+    Route::post('/katper/update', [DataMasterMedisController::class,'kategori_perawatanedit'])->name('kategori_perawatan.update');
+    Route::post('/katper/delete', [DataMasterMedisController::class,'kategori_perawatandelete'])->name('kategori_perawatan.destroy');
+    Route::get('/katper/export', [DataMasterMedisController::class,'kategori_perawatanexport'])->name('kategori_perawatan.export');
+    Route::post('/katper/import', [DataMasterMedisController::class,'kategori_perawatanimport'])->name('kategori_perawatan.import');
 });
 
 Route::middleware('auth')->prefix('data-master-manajemen')->group(function () {

@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Exports\PoliExport;
 use App\Exports\SpesialisExport;
 use App\Exports\SubspesialisExport;
+use App\Exports\Perawatan_kategoriExport;
 use App\Imports\PoliImport;
 use App\Imports\SpesialisImport;
 use App\Imports\SubspesialisImport;
+use App\Imports\Perawatan_kategoriImport;
 use App\Models\poli;
 use App\Models\spesialis;
 use App\Models\subspesialis;
+use App\Models\perawatan_kategori;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -274,5 +277,110 @@ class DataMasterMedisController extends Controller
             'message' => 'subspesialis berhasil dihapus!'
         ]);
     }
+
+    // Kategori Perawatan
+
+    public function kategori_perawatan()
+    {
+         $title = "Master Kategori Perawatan";
+         $kategori_perawatan = perawatan_kategori::all();
+         return view('module.master-data-medis.kategori_perawatan', compact('title','kategori_perawatan'));
+    }
+
+    public function kategori_perawatanadd(Request $request)
+    {
+         try {
+             $request->validate([
+                 "nama" => 'required|string|unique:perawatan_kategoris,nama',
+             ]);
+
+             $kategori_perawatan = perawatan_kategori::create([
+                 'nama' => $request->nama,
+             ]);
+
+             return response()->json([
+                 'success' => true,
+                 'message' => 'Kategori perawatan berhasil ditambahkan!',
+                 'data' => $kategori_perawatan
+             ], 201);
+         } catch (ValidationException $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Kategori perawatan Sudah ada!',
+                 'errors' => $e->errors()
+             ], 422);
+         } catch (\Exception $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Terjadi kesalahan saat menyimpan kategori perawatan!',
+                 'error' => $e->getMessage()
+             ], 500);
+         }
+    }
+
+    public function kategori_perawatanedit(Request $request)
+    {
+         $request->validate([
+             'nama_edit' => 'required|string',
+         ]);
+
+         $kategori_perawatan = perawatan_kategori::find($request->kategori_perawatanid_edit);
+
+         if (!$kategori_perawatan) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Kategori perawatan tidak ditemukan!'
+             ], 404);
+         }
+
+         $kategori_perawatan->nama = $request->nama_edit;
+         $kategori_perawatan->save();
+
+         return response()->json([
+             'success' => true,
+             'message' => 'Kategori perawatan berhasil diperbarui!'
+         ]);
+    }
+
+    public function kategori_perawatandelete(Request $request)
+    {
+
+        $request->validate([
+            'kategori_perawatanid_delete' => 'required'
+        ]);
+
+        $kategori_perawatan = perawatan_kategori::find($request->kategori_perawatanid_delete);
+        if (!$kategori_perawatan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kategori perawatan tidak ditemukan!'
+            ], 404);
+        }
+        $kategori_perawatan->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kategori perawatan berhasil dihapus!'
+        ]);
+    }
+
+    public function kategori_perawatanexport()
+    {
+         return Excel::download(new Perawatan_kategoriExport, 'Kategori Perawatan.xlsx');
+    }
+
+    public function kategori_perawatanimport(Request $request)
+    {
+        $request->validate([
+             'file' => 'required|mimes:xlsx,xls'
+         ]);
+
+         Excel::import(new Perawatan_kategoriImport, $request->file('file'));
+
+
+         return redirect()->route('kategori_perawatan.get')->with('success', 'Data berhasil diimpor!');
+    }
+
+    // End Kategori Perawatan
 
 }
