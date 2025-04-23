@@ -1474,7 +1474,7 @@ class PcareController extends Controller
     }
 
 
-    public function post_ws_antria_bpjs()
+    public function post_ws_antria_bpjs($data)
     {
         $config = set_bpjs::find(1);
         $BASE_URL = $config->BASE_URL;
@@ -1490,7 +1490,7 @@ class PcareController extends Controller
             // Make the API request
             $response = Http::withHeaders($headers)
                 ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", [
-
+                    $data
                 ]);
 
             // Decode the response body

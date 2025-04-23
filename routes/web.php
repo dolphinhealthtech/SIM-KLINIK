@@ -54,6 +54,7 @@ Route::prefix('pendaftaran')->group(function () {
     Route::post('/add', [SuperadminController::class,'pendaftaranadd'])->name('pasien.add');
     Route::post('/batal', [SuperadminController::class,'pendaftaranbatal'])->name('pasien.batal');
     Route::post('/dokterup', [SuperadminController::class,'pendaftaranupdokter'])->name('pasien.dokter.update');
+    Route::post('/hadir', [SuperadminController::class,'pendaftaranhadir'])->name('pasien.hadir');
 });
 
 
@@ -145,6 +146,14 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     Route::post('/penjamin/delete', [DataMasterController::class,'penjamindelete'])->name('penjamin.destroy');
     Route::get('/penjamin/export', [DataMasterController::class,'penjaminexport'])->name('penjamin.export');
     Route::post('/penjamin/import', [DataMasterController::class,'penjaminimport'])->name('penjamin.import');
+
+    //loket
+    Route::get('/loket', [DataMasterController::class,'loket'])->name('loket.get');
+    Route::post('/loket/add', [DataMasterController::class,'loketadd'])->name('loket.store');
+    Route::post('/loket/update', [DataMasterController::class,'loketedit'])->name('loket.update');
+    Route::post('/loket/delete', [DataMasterController::class,'loketdelete'])->name('loket.destroy');
+    Route::get('/loket/export', [DataMasterController::class,'loketexport'])->name('loket.export');
+    Route::post('/loket/import', [DataMasterController::class,'loketimport'])->name('loket.import');
 });
 
 Route::middleware('auth')->prefix('data-master-medis')->group(function () {

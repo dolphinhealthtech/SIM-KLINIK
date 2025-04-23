@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('tanggal_kujungan');
             $table->string('status_panggil');
             $table->string('status_pendaftaran');
-            $table->string('Status_aplikasi')->nullable(); // file path
+            $table->string('Status_aplikasi')->nullable();
+            $table->string('antrian')->nullable();
             $table->timestamps();
         });
     }

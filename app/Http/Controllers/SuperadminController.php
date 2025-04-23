@@ -26,6 +26,7 @@ use App\Models\dokter_pelatihan;
 use App\Models\dokter_pendidikan;
 use App\Models\dokter_pendidikan_spesialis;
 use App\Models\dokter_verifikasi;
+use App\Models\loket;
 use App\Models\menu;
 use App\Models\pekerjaan;
 use App\Models\Pendaftaran_rawat_jalan;
@@ -47,11 +48,14 @@ class SuperadminController extends Controller
 
 
     protected $SatusehatController;
+    protected $PcareController;
 
-    public function __construct(SatusehatController $SatusehatController)
+    public function __construct(SatusehatController $SatusehatController, PcareController $PcareController)
     {
         $this->SatusehatController = $SatusehatController;
+        $this->PcareController = $PcareController;
     }
+
 
 
     public function rolecreate()
@@ -418,8 +422,14 @@ class SuperadminController extends Controller
                 'dokter_id' => 'required'
             ]);
 
-            $pasien = Pasien::find($request->nikNokaInput);
-            $penjamin = penjamin::find("BPJS");
+            $antrian = Loket::where('poli_id', $request->poli_id)->first();
+
+
+            $pasien = Pasien::where('nik', $request->nikNokaInput)
+            ->orWhere('no_bpjs', $request->nikNokaInput)
+            ->first();
+
+            $penjamin = penjamin::where('nama',"BPJS")->first();
             // Ambil tanggal kunjungan dan ubah jadi format yyDDD
             $tanggal = Carbon::parse($request->tanggal_kunjungan);
             $tanggalKode = $tanggal->format('y') . str_pad($tanggal->dayOfYear, 3, '0', STR_PAD_LEFT); // Contoh: 25113
@@ -430,14 +440,31 @@ class SuperadminController extends Controller
             // Gabungkan format akhir: 1234-25113
             $no_registrasi = $angkaAcak . '-' . $tanggalKode;
 
+            // Cari antrian terakhir berdasarkan kode poli
+            $last = Pendaftaran_rawat_jalan::where('antrian', 'like', $antrian->nama . '-%')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+            if ($last) {
+                // Ambil angka terakhir dan increment
+                $lastNumber = (int) str_replace($antrian->nama . '-', '', $last->antrian);
+                $nextNumber = $lastNumber + 1;
+            } else {
+                $nextNumber = 1;
+            }
+
+            $antrianBaru = $antrian->nama . '-' . $nextNumber;
+
+
             $pendaftaran = Pendaftaran_rawat_jalan::create([
                 'nomor_rm' => $pasien->no_rm,
                 'pasien_id' => $pasien->id,
                 'poli_id' => $request->poli_id,
                 'tanggal_kujungan' => $request->tanggal_kunjungan,
                 'dokter_id' => $request->dokter_id,
-                'Penjamin' => $penjamin,
+                'Penjamin' => $penjamin->id,
                 'nomor_register'=> $no_registrasi,
+                'antrian'=> $antrianBaru,
             ]);
 
             Pendaftaran_rawat_jalan_status::create([
@@ -451,10 +478,31 @@ class SuperadminController extends Controller
                 'Status_aplikasi' => 2 , // 1 = app manual , 2 = app Onlain ,3 = bpjs
             ]);
 
+            $poli = poli::find($request->poli_id)->first();
+            $dokter = dokter::with('namauser','jadwal')->find($request->dokter_id)->first();
+            $databpjs = [
+                "nomorkartu"=> $pasien->no_bpjs,
+                "nik"=> $pasien->nik,
+                "nohp"=>  $pasien->telepon,
+                "kodepoli"=> $poli->kode,
+                "namapoli"=> $poli->nama,
+                "norm"=> $pasien->no_rm,
+                "tanggalperiksa"=> \Carbon\Carbon::parse($request->tanggal_kunjungan)->format('d-m-Y'),
+                "kodedokter"=> $dokter->kode,
+                "namadokter"=> $dokter->namauser->name,
+                "jampraktek"=> Carbon::parse($dokter->jadwal->first()->start)->format('H:i')."-".Carbon::parse($dokter->jadwal->first()->end)->format('H:i'),
+                "nomorantrean"=> $antrianBaru,
+                "angkaantrean"=> $nextNumber,
+                "keterangan"=> " "
+            ];
+
+            $this->PcareController->post_ws_antria_bpjs($databpjs);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data pasien berhasil disimpan.',
-                'data' => $data
+                'data' => $data,
+                'data_bpjs' => $databpjs
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -1281,6 +1329,26 @@ class SuperadminController extends Controller
             // Gabungkan format akhir: 1234-25113
             $no_registrasi = $angkaAcak . '-' . $tanggalKode;
 
+
+
+            $antrian = Loket::where('poli_id', $request->poli_id)->first();
+
+            // Cari antrian terakhir berdasarkan kode poli
+            $last = Pendaftaran_rawat_jalan::where('antrian', 'like', $antrian->nama . '-%')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+            if ($last) {
+                // Ambil angka terakhir dan increment
+                $lastNumber = (int) str_replace($antrian->nama . '-', '', $last->antrian);
+                $nextNumber = $lastNumber + 1;
+            } else {
+                $nextNumber = 1;
+            }
+
+            $antrianBaru = $antrian->nama . '-' . $nextNumber;
+
+
             $pendaftaran = Pendaftaran_rawat_jalan::create([
                 'nomor_rm' => $pasien->no_rm,
                 'pasien_id' => $request->pasien,
@@ -1289,6 +1357,7 @@ class SuperadminController extends Controller
                 'dokter_id' => $request->dokter_id,
                 'Penjamin' => $request->penjamin_id,
                 'nomor_register'=> $no_registrasi,
+                'antrian' => $antrianBaru,
             ]);
 
             Pendaftaran_rawat_jalan_status::create([

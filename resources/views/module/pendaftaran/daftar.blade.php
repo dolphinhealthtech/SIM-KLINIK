@@ -239,7 +239,7 @@
 {{-- modal Delete Role --}}
 <div class="modal fade" id="panggilModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormbatal" action="{{ route('pasien.batal') }}" method="POST">
+        <form id="deleteFormbatal" action="{{ route('pasien.hadir') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteModalLabel">Confirmasi Pendaftaran Pasien Hadir</h5>
