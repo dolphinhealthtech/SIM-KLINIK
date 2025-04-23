@@ -73,30 +73,43 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="bpjsForm" action="#" method="POST">
+                    <form id="bpjsForm" action="{{ route('monitor.add.bpjs') }}" method="POST">
                         @csrf
-                        <div class="form-group">
-                            <label for="nikNokaInput">Masukkan NIK atau No. Kartu BPJS</label>
-                            <input type="text" class="form-control" id="nikNokaInput" name="nikNokaInput"
-                                placeholder="Masukkan NIK atau No. Kartu BPJS" required>
-                            <small id="nikNokaFeedback" class="form-text text-muted"></small>
-                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="nikNokaInput">Masukkan NIK atau No. Kartu BPJS</label>
+                                    <input type="text" class="form-control" id="nikNokaInput" name="nikNokaInput"
+                                        placeholder="Masukkan NIK atau No. Kartu BPJS" required>
+                                    <small id="nikNokaFeedback" class="form-text text-muted"></small>
+                                </div>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="poliSelect">Pilih Poli</label>
-                            <select class="form-control" id="poliSelect" name="poliSelect" required>
-                                <option value="">Pilih Poli</option>
-                                {{-- @foreach ($poli as $poline)
-                                    <option value="{{ $poline->id }}">{{ $poline->nama_poli }}</option>
-                                @endforeach --}}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="dokterSelect">Pilih Dokter</label>
-                            <select class="form-control" id="dokterSelect" name="dokterSelect" required>
-                                <option value="">Pilih Dokter</option>
-
-                            </select>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Jadwal Kunjunagan</label>
+                                    <input type="datetime-local" class="form-control" id="tanggal_kunjungan" name="tanggal_kunjungan">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Poli</label>
+                                    <select class="form-control select2bs4" style="width: 100%;" id="poli_id" name="poli_id">
+                                        <option value="" disabled selected>Pilih Poli</option>
+                                        @foreach ($poli as $polidata)
+                                            <option value="{{ $polidata->id }}">{{ $polidata->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Dokter</label>
+                                    <select class="form-control select2bs4" style="width: 100%;" id="dokter_id" name="dokter_id">
+                                        <option value="" disabled selected>Pilih Dokter</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                 </div>
                 <div class="modal-footer">
@@ -317,7 +330,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+    </div>
 
         <!-- Modal Kamera -->
         <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
@@ -411,6 +424,79 @@
             }
         </script>
 
+<script>
+    $(document).ready(function () {
+        // Jika poli atau tanggal berubah
+        $('#poli_id, #tanggal_kunjungan').on('change', function () {
+            let poliId = $('#poli_id').val();
+            let datetime = $('#tanggal_kunjungan').val(); // format input datetime-local: yyyy-MM-ddTHH:mm
+
+            if (poliId && datetime) {
+                // Format datetime jadi Y-m-d H:i:s
+                let formattedDatetime = datetime.replace('T', ' ') + ':00';
+
+                console.log("Mengambil dokter...");
+                console.log("Poli ID:", poliId);
+                console.log("Datetime:", formattedDatetime);
+
+                $.ajax({
+                    url: `/api/get-dokter-by-poli/${poliId}`,
+                    method: 'GET',
+                    data: { datetime: formattedDatetime },
+                    success: function (data) {
+                        $('#dokter_id').empty().append(`<option value="">Pilih Dokter</option>`);
+                        data.forEach(function (dokter) {
+                            $('#dokter_id').append(`<option value="${dokter.id}">${dokter.namauser.name}</option>`);
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", error);
+                        console.error("Response Text:", xhr.responseText);
+                        alert('Gagal mengambil data dokter.');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<script>
+    document.getElementById("nikNokaInput").addEventListener("blur", function () {
+        const inputValue = this.value.trim();
+        const feedbackElement = document.getElementById("nikNokaFeedback");
+
+        if (inputValue.length === 0) {
+            feedbackElement.textContent = '';
+            return;
+        }
+
+        fetch('/api/get-pasien-nikornoka', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nikNoka: inputValue })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                feedbackElement.textContent = 'Data ditemukan: ' + data.nama;
+                feedbackElement.classList.remove('text-danger');
+                feedbackElement.classList.add('text-success');
+            } else {
+                feedbackElement.textContent = 'Data tidak ditemukan';
+                feedbackElement.classList.remove('text-success');
+                feedbackElement.classList.add('text-danger');
+            }
+        })
+        .catch(error => {
+            feedbackElement.textContent = 'Terjadi kesalahan saat mencari data';
+            feedbackElement.classList.remove('text-success');
+            feedbackElement.classList.add('text-danger');
+            console.error('Error:', error);
+        });
+    });
+    </script>
 
 
         <script>

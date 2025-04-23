@@ -9,5 +9,34 @@ class Pendaftaran_rawat_jalan extends Model
 {
 
     use HasFactory;
-    protected $fillable = ['nomor_rm','pasien_id','nomor_register','tanggal_kujungan','poli_id','dokter_id','Penjamin'];
+    protected $fillable =
+    [
+        'nomor_rm',
+        'pasien_id',
+        'nomor_register',
+        'tanggal_kujungan',
+        'poli_id',
+        'dokter_id',
+        'Penjamin'
+    ];
+
+    public function status()
+    {
+        return $this->hasOne(Pendaftaran_rawat_jalan_status::class, 'register_id');
+    }
+
+    public function poli()
+    {
+        return $this->belongsTo(Poli::class, 'poli_id');
+    }
+
+    public function dokter()
+    {
+        return $this->belongsTo(Dokter::class, 'dokter_id');
+    }
+    public function pasien()
+    {
+        return $this->belongsTo(pasien::class, 'pasien_id');
+    }
+
 }

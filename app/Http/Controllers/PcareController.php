@@ -1472,4 +1472,59 @@ class PcareController extends Controller
 
         return response()->json( $data );
     }
+
+
+    public function post_ws_antria_bpjs()
+    {
+        $config = set_bpjs::find(1);
+        $BASE_URL = $config->BASE_URL;
+        $SERVICE_NAME = $config->SERVICE_ANTREAN;
+        $feature = 'antrean/add';
+
+        try {
+            // Assuming $this->generateHeaders() returns an array of headers
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $this->get_token()['headers']);
+
+            // Make the API request
+            $response = Http::withHeaders($headers)
+                ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", [
+
+                ]);
+
+            // Decode the response body
+            $responseBody = json_decode($response->body(), true);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
+        }
+
+        // Fetch the encrypted response data
+        if (is_array($responseBody) ) {
+            $encryptedString = $responseBody['response'];
+        } else {
+            return response()->json($responseBody);
+        }
+
+
+
+        // Decrypt the string using AES-256-CBC
+        $key = $this->get_token()['key_decrypt'];
+        $encrypt_method = 'AES-256-CBC';
+        $key_hash = hex2bin(hash('sha256', $key));  // Get key hash
+        $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
+
+        // Decrypt the base64-encoded encrypted string
+        $decryptedString = openssl_decrypt(base64_decode($encryptedString), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
+
+        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+
+        // Decompress the string
+        $data = json_decode($jsonString, true);
+
+
+
+
+        return response()->json( $data );
+    }
 }

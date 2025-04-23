@@ -94,18 +94,66 @@
                             <table id="userstabel" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th class="text-center">No Antrian</th>
+                                        {{-- <th class="text-center">No Antrian</th> --}}
+                                        <th class="text-center">Nama Pasien</th>
+                                        <th class="text-center">Pedaftaran</th>
                                         <th class="text-center">No Registarsi</th>
                                         <th class="text-center">Tanggal Registarsi</th>
                                         <th class="text-center">No RM</th>
-                                        <th class="text-center">Nama</th>
-                                        <th class="text-center">Nomor Telepon</th>
-                                        <th class="text-center" width="25%">Action</th>
+                                        <th class="text-center">Poli Tujuan</th>
+                                        <th class="text-center">Nama Dokter</th>
+                                        <th class="text-center" width="15%">Action</th>
                                     </tr>
                                 </thead>
+                                @foreach ($pendaftaran as $pendaftarandata)
                                 <tbody>
+                                        <td class="text-center">{{ $pendaftarandata->pasien->nama }}</td>
+                                        <td class="text-center">
+                                            @switch($pendaftarandata->status->Status_aplikasi)
+                                                @case(1)
+                                                    Applikasi Offline
+                                                    @break
+                                                @case(2)
+                                                    Applikasi Onlaine
+                                                    @break
+                                                @case(3)
+                                                    Sistem BPJS / MJKN
+                                                    @break
+                                                @default
+                                                    Tidak diketahui
+                                            @endswitch
+                                        </td>
+                                        <td class="text-center">{{ $pendaftarandata->nomor_register }}</td>
+                                        <td class="text-center">{{ \Carbon\Carbon::parse($pendaftarandata->tanggal_kujungan)->format('d-m-Y') }}</td>
+                                        <td class="text-center">{{ $pendaftarandata->nomor_rm }}</td>
+                                        <td class="text-center">{{ $pendaftarandata->poli->nama }}</td>
+                                        <td class="text-center">{{ $pendaftarandata->dokter->namauser->name }}</td>
+                                        <td class="text-center">
+                                            <div class="dropdown">
+                                                <button class="btn btn-success btn-flat dropdown-toggle dropdown-icon" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                                   Pilih Aksi
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    <li><a class="dropdown-item batal-data-pasien" data-toggle="modal" data-target="#deletebatalModal" data-id="{{ $pendaftarandata->status->id }}"
+                                                        data-nama-pasien="{{ $pendaftarandata->pasien->nama }}" ><i class="fas fa-trash"></i> Batal</a></li>
+                                                        @if ($pendaftarandata->status->status_pendaftaran == 1)
+                                                        <li>
+                                                            <a class="dropdown-item panggil-data-pasien"
+                                                               data-toggle="modal"
+                                                               data-target="#panggilModal"
+                                                               data-id="{{ $pendaftarandata->status->id }}"
+                                                               data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
+                                                               <i class="fas fa-trash"></i> Panggil
+                                                            </a>
+                                                        </li>
+                                                    @endif
 
-                                </tbody>
+                                                    <li><a class="dropdown-item dokter-data-pasien" data-toggle="modal" data-id="{{ $pendaftarandata->id }}" data-poli="{{ $pendaftarandata->poli_id }}" data-nama="{{ $pendaftarandata->pasien->nama }}"  data-tgl-kunjung="{{ $pendaftarandata->tanggal_kujungan }}" data-target="#deleterubahModal"><i class="fas fa-trash"></i> Rubah Dokter</a></li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tbody>
+                                    @endforeach
                             </table>
                         </div>
                         <!-- /.card-body -->
@@ -128,7 +176,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addFormsuku" action="{{ route('suku.store') }}" method="POST">
+                <form id="addFormsuku" action="{{ route('pasien.add') }}" method="POST">
                     @csrf
                     <div class="row">
                         <div class="col-sm-12">
@@ -157,15 +205,23 @@
                             <div class="form-group">
                                 <label>Jadwal Kunjunagan</label>
                                 <input type="datetime-local" class="form-control" id="tanggal_kunjungan" name="tanggal_kunjungan">
-
                             </div>
                         </div>
-
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Dokter</label>
                                 <select class="form-control select2bs4" style="width: 100%;" id="dokter_id" name="dokter_id">
                                     <option value="" disabled selected>Pilih Dokter</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Penjamin Pasien</label>
+                                <select class="form-control select2bs4" style="width: 100%;" id="penjamin_id" name="penjamin_id">
+                                    @foreach ($penjamin as $penjamindata)
+                                        <option value="{{ $penjamindata->id }}">{{ $penjamindata->nama }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -179,6 +235,96 @@
         </div>
     </div>
 </div>
+
+{{-- modal Delete Role --}}
+<div class="modal fade" id="panggilModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+    <div class="modal-dialog">
+        <form id="deleteFormbatal" action="{{ route('pasien.batal') }}" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmasi Pendaftaran Pasien Hadir</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" id="hadirid_delete" name="hadirid_delete">
+                    <div id="deleteTexthadir"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{{-- modal Delete Role --}}
+<div class="modal fade" id="deletebatalModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+    <div class="modal-dialog">
+        <form id="deleteFormbatal" action="{{ route('pasien.batal') }}" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Batal Pendaftaran Pasien</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" id="batalid_delete" name="batalid_delete">
+                    <div id="deleteTextbatal"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- modal Delete Role --}}
+<div class="modal fade" id="deleterubahModal" tabindex="-1" role="dialog" aria-labelledby="deleterubahModalLabel">
+    <div class="modal-dialog">
+        <form id="deleteFormrubah" action="{{ route('pasien.dokter.update') }}" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleterubahModalLabel">Peruabahan Dokter</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" id="rubahdokter_id" name="rubahdokter_id">
+                    <input type="hidden" id="poli_id_update" name="poli_id_update">
+                    <input type="hidden" id="tanggal_kunjungan_update" name="tanggal_kunjungan_update">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label id="namapasien"></label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Dokter</label>
+                            <select class="form-control select2bs4" style="width: 100%;" id="dokter_id_update" name="dokter_id_update">
+                                <option value="" disabled selected>Pilih Dokter</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 <script>
     $(document).ready(function () {
         // Jika poli atau tanggal berubah
@@ -216,6 +362,46 @@
 </script>
 
 
+<script>
+    $(document).on('click', '.dokter-data-pasien', function() {
+            let id = $(this).data('id');
+            let tanggal = $(this).data('tgl-kunjung');
+            let poli = $(this).data('poli');
+            let nama = $(this).data('nama');
+
+            $('#rubahdokter_id').val(id);
+            $('#tanggal_kunjungan_update').val(tanggal);
+            $('#poli_id_update').val(poli);
+
+            $('#namapasien').html(
+            `<span> Pasien Dengan nama  <b>${nama}</b> </span>`);
+
+            if (poli && tanggal) {
+                // Format datetime jadi Y-m-d H:i:s
+                let formattedDatetime = tanggal.replace('T', ' ') + ':00';
+
+                $.ajax({
+                    url: `/api/get-dokter-by-poli/${poli}`,
+                    method: 'GET',
+                    data: { datetime: formattedDatetime },
+                    success: function (data) {
+                        $('#dokter_id_update').empty().append(`<option value="">Pilih Dokter</option>`);
+                        data.forEach(function (dokter) {
+                            $('#dokter_id_update').append(`<option value="${dokter.id}">${dokter.namauser.name}</option>`);
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", error);
+                        console.error("Response Text:", xhr.responseText);
+                        alert('Gagal mengambil data dokter.');
+                    }
+                });
+            }
+    });
+</script>
+
+
+
 
 
 <script>
@@ -232,5 +418,23 @@
             ]
         }).buttons().container().appendTo('#userstabel_wrapper .col-md-6:eq(0)');
     });
+
+    $(document).on('click', '.batal-data-pasien', function() {
+            let id = $(this).data('id');
+            let name = $(this).data('nama-pasien');
+
+            $('#batalid_delete').val(id);
+            $('#deleteTextbatal').html(
+            `<span>Apa Anda yakin ingin membatalkan Antrian Pasien <b>${name}</b> ?</span>`);
+        });
+    $(document).on('click', '.panggil-data-pasien', function() {
+            let id = $(this).data('id');
+            let name = $(this).data('nama-pasien');
+
+            $('#hadirid_delete').val(id);
+            $('#deleteTexthadir').html(
+            `<span>Apa Anda yakin Pasien <b>${name}</b> Hadir ?</span>`);
+        });
+
 </script>
 @endsection

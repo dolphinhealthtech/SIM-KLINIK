@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
 
 
 Route::get('/monitor', [SuperadminController::class,'monitor'])->name('monitor.get');
+Route::post('/monitor/add/bpjs', [SuperadminController::class,'monitor_bpjs'])->name('monitor.add.bpjs');
 
 Route::prefix('pasien')->group(function () {
     // Menu Pasien
@@ -50,6 +51,9 @@ Route::prefix('dokter')->group(function () {
 Route::prefix('pendaftaran')->group(function () {
     // Menu Pasien
     Route::get('/', [SuperadminController::class,'pendaftaran'])->name('pasien.get');
+    Route::post('/add', [SuperadminController::class,'pendaftaranadd'])->name('pasien.add');
+    Route::post('/batal', [SuperadminController::class,'pendaftaranbatal'])->name('pasien.batal');
+    Route::post('/dokterup', [SuperadminController::class,'pendaftaranupdokter'])->name('pasien.dokter.update');
 });
 
 
