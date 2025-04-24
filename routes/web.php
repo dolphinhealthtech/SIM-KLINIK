@@ -50,13 +50,17 @@ Route::prefix('dokter')->group(function () {
 
 Route::prefix('pendaftaran')->group(function () {
     // Menu Pasien
-    Route::get('/', [SuperadminController::class,'pendaftaran'])->name('pasien.get');
-    Route::post('/add', [SuperadminController::class,'pendaftaranadd'])->name('pasien.add');
-    Route::post('/batal', [SuperadminController::class,'pendaftaranbatal'])->name('pasien.batal');
-    Route::post('/dokterup', [SuperadminController::class,'pendaftaranupdokter'])->name('pasien.dokter.update');
-    Route::post('/hadir', [SuperadminController::class,'pendaftaranhadir'])->name('pasien.hadir');
+    Route::get('/', [SuperadminController::class,'pendaftaran'])->name('pendaftaran.get');
+    Route::post('/add', [SuperadminController::class,'pendaftaranadd'])->name('pendaftaran.add');
+    Route::post('/batal', [SuperadminController::class,'pendaftaranbatal'])->name('pendaftaran.batal');
+    Route::post('/dokterup', [SuperadminController::class,'pendaftaranupdokter'])->name('pendaftaran.dokter.update');
+    Route::post('/hadir', [SuperadminController::class,'pendaftaranhadir'])->name('pendaftaran.hadir');
 });
 
+Route::prefix('data-master-gudang')->group(function () {
+    // Menu Pasien
+
+});
 
 Route::middleware('auth')->prefix('data-master')->group(function () {
     // Menu Golongan Darah
@@ -183,6 +187,14 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::post('/katper/delete', [DataMasterMedisController::class,'kategori_perawatandelete'])->name('kategori_perawatan.destroy');
     Route::get('/katper/export', [DataMasterMedisController::class,'kategori_perawatanexport'])->name('kategori_perawatan.export');
     Route::post('/katper/import', [DataMasterMedisController::class,'kategori_perawatanimport'])->name('kategori_perawatan.import');
+
+    // Perawatan dan Tindakan
+    Route::get('/perawatan-tindakan', [DataMasterMedisController::class,'perawatan_tindakan'])->name('perawatan_tindakan.get');
+    Route::post('/perawatan-tindakan/add', [DataMasterMedisController::class,'perawatan_tindakanadd'])->name('perawatan_tindakan.store');
+    Route::post('/perawatan-tindakan/update', [DataMasterMedisController::class,'perawatan_tindakanedit'])->name('perawatan_tindakan.update');
+    Route::post('/perawatan-tindakan/delete', [DataMasterMedisController::class,'perawatan_tindakandelete'])->name('perawatan_tindakan.destroy');
+    Route::get('/perawatan-tindakan/export', [DataMasterMedisController::class,'perawatan_tindakanexport'])->name('perawatan_tindakan.export');
+    Route::post('/perawatan-tindakan/import', [DataMasterMedisController::class,'perawatan_tindakanimport'])->name('perawatan_tindakan.import');
 });
 
 Route::middleware('auth')->prefix('data-master-manajemen')->group(function () {

@@ -479,7 +479,19 @@ class SuperadminController extends Controller
             ]);
 
             $poli = poli::find($request->poli_id)->first();
-            $dokter = dokter::with('namauser','jadwal')->find($request->dokter_id)->first();
+
+            // Ambil info dokter dan jadwal berdasarkan tanggal kunjungan
+            $tanggalKunjungan = Carbon::parse($request->tanggal_kunjungan)->format('Y-m-d');
+
+            $dokter = Dokter::with(['namauser', 'jadwal' => function ($query) use ($tanggalKunjungan) {
+                $query->whereDate('start', $tanggalKunjungan);
+            }])->find($request->dokter_id);
+
+            $jadwal = $dokter->jadwal->first();
+            $jamPraktek = $jadwal
+                ? Carbon::parse($jadwal->start)->format('H:i') . '-' . Carbon::parse($jadwal->end)->format('H:i')
+                : '-';
+
             $databpjs = [
                 "nomorkartu"=> $pasien->no_bpjs,
                 "nik"=> $pasien->nik,
@@ -487,22 +499,20 @@ class SuperadminController extends Controller
                 "kodepoli"=> $poli->kode,
                 "namapoli"=> $poli->nama,
                 "norm"=> $pasien->no_rm,
-                "tanggalperiksa"=> \Carbon\Carbon::parse($request->tanggal_kunjungan)->format('d-m-Y'),
+                "tanggalperiksa"=> $tanggalKunjungan,
                 "kodedokter"=> $dokter->kode,
                 "namadokter"=> $dokter->namauser->name,
-                "jampraktek"=> Carbon::parse($dokter->jadwal->first()->start)->format('H:i')."-".Carbon::parse($dokter->jadwal->first()->end)->format('H:i'),
+                "jampraktek"=> $jamPraktek,
                 "nomorantrean"=> $antrianBaru,
                 "angkaantrean"=> $nextNumber,
-                "keterangan"=> " "
+                "keterangan"=> "",
             ];
 
-            $this->PcareController->post_ws_antria_bpjs($databpjs);
+            $response = $this->PcareController->post_ws_antria_bpjs($databpjs);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data pasien berhasil disimpan.',
-                'data' => $data,
-                'data_bpjs' => $databpjs
+                'message' => 'Data pasien berhasil disimpan.'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -1394,6 +1404,22 @@ class SuperadminController extends Controller
             if (!$pendaftaran) {
                 return redirect()->back()->with('error', 'Pendaftaran tidak ditemukan.');
             }
+
+
+            $datapendaftaran = Pendaftaran_rawat_jalan::where('nomor_register', $pendaftaran->nomor_register)
+                                ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
+                                ->first();
+
+            $poli = poli::find($datapendaftaran->poli_id)->first();
+
+            $databpjs = [
+                "tanggalperiksa"=> Carbon::parse($pendaftaran->tanggal_kunjungan)->format('Y-m-d'),
+                "kodepoli"=> $poli->kode,
+                "nomorkartu"=> $datapendaftaran->pasien->no_bpjs,
+                "alasan"=> $request->alasanpembatalan,
+            ];
+
+            $this->PcareController->delete_ws_antria_bpjs($databpjs);
 
             // Perbarui status_pendaftaran menjadi 0 (batal)
             $pendaftaran->status_pendaftaran = 0;

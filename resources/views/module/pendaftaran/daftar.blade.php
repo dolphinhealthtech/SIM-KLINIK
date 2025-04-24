@@ -176,7 +176,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addFormsuku" action="{{ route('pasien.add') }}" method="POST">
+                <form id="addFormsuku" action="{{ route('pendaftaran.add') }}" method="POST">
                     @csrf
                     <div class="row">
                         <div class="col-sm-12">
@@ -239,7 +239,7 @@
 {{-- modal Delete Role --}}
 <div class="modal fade" id="panggilModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormbatal" action="{{ route('pasien.hadir') }}" method="POST">
+        <form id="deleteFormbatal" action="{{ route('pendaftaran.hadir') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteModalLabel">Confirmasi Pendaftaran Pasien Hadir</h5>
@@ -263,7 +263,7 @@
 {{-- modal Delete Role --}}
 <div class="modal fade" id="deletebatalModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormbatal" action="{{ route('pasien.batal') }}" method="POST">
+        <form id="deleteFormbatal" action="{{ route('pendaftaran.batal') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteModalLabel">Batal Pendaftaran Pasien</h5>
@@ -275,6 +275,12 @@
                     @csrf
                     <input type="hidden" id="batalid_delete" name="batalid_delete">
                     <div id="deleteTextbatal"></div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="alasanpembatalan">Alasan Pembatalan</label>
+                            <input type="text" class="form-control" id="alasanpembatalan" name="alasanpembatalan" placeholder="Masukkan lasan pembatalan" required>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -288,7 +294,7 @@
 {{-- modal Delete Role --}}
 <div class="modal fade" id="deleterubahModal" tabindex="-1" role="dialog" aria-labelledby="deleterubahModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormrubah" action="{{ route('pasien.dokter.update') }}" method="POST">
+        <form id="deleteFormrubah" action="{{ route('pendaftaran.dokter.update') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleterubahModalLabel">Peruabahan Dokter</h5>
