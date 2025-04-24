@@ -4,6 +4,7 @@ use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PcareController;
 use App\Http\Controllers\SatusehatController;
 use App\Http\Controllers\SuperadminController;
+use App\Http\Controllers\DataMasterMedisController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,5 +48,10 @@ Route::prefix('pcare')->group(function () {
     Route::get('/dpho/{nama}', [PcareController::class, 'get_dphoobat_bpjs'])->name('pcare.dpho');
     Route::get('/prognosa', [PcareController::class, 'get_prognosa_bpjs'])->name('pcare.prognosa');
     Route::get('/alergi/{kode}', [PcareController::class, 'get_alergi_bpjs'])->name('pcare.alergi');
+});
+
+// Data Master Medis
+Route::prefix('data-master-medis')->group(function(){
+    Route::get('/perawatan_tindakan/getLastKode', [DataMasterMedisController::class, 'getLastKode'])->name('perawatan_tindakan.getLastKode'); // di privat fungsi nya
 });
 

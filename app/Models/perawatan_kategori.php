@@ -9,4 +9,8 @@ class perawatan_kategori extends Model
 {
     use HasFactory;
     protected $fillable = ['nama'];
+
+    public function perawatan_tindakan() {
+        return $this->hasMany(perawatan_tindakan::class);
+    }
 }
