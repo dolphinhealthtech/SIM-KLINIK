@@ -8,6 +8,7 @@ use App\Exports\BangsaExport;
 use App\Exports\BankExport;
 use App\Exports\GoldarExport;
 use App\Exports\KelaminExport;
+use App\Exports\LoketExport;
 use App\Exports\PekerjaanExport;
 use App\Exports\PendidikanExport;
 use App\Exports\PernikahanExport;
@@ -19,6 +20,7 @@ use App\Imports\BangsaImport;
 use App\Imports\BankImport;
 use App\Imports\GoldarImport;
 use App\Imports\KelaminImport;
+use App\Imports\LoketImport;
 use App\Imports\PekerjaanImport;
 use App\Imports\PendidikanImport;
 use App\Imports\PernikahanImport;
@@ -30,11 +32,13 @@ use App\Models\bangsa;
 use App\Models\bank;
 use App\Models\goldar;
 use App\Models\kelamin;
+use App\Models\loket;
 use App\Models\pekerjaan;
 use App\Models\pendidikan;
 use App\Models\pernikahan;
 use App\Models\suku;
 use App\Models\penjamin;
+use App\Models\poli;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -1201,4 +1205,114 @@ class DataMasterController extends Controller
     }
 
     // End Penjamin
+
+
+    // antrian
+    public function loket()
+    {
+         $title = "Master Loket Antrian";
+         $loket = loket::with('poli')->get();
+         $poli = poli::all();
+         return view('module.master-data.loket', compact('title','loket','poli'));
+    }
+
+    public function loketadd(Request $request)
+    {
+         try {
+             $request->validate([
+                 "nama" => 'required|string|unique:lokets,nama',
+                 "poli_id" => 'required',
+             ]);
+
+             $penjamin = loket::create([
+                 'nama' => $request->nama,
+                 'poli_id' => $request->poli_id,
+             ]);
+
+             return response()->json([
+                 'success' => true,
+                 'message' => 'Penjamin berhasil ditambahkan!',
+                 'data' => $penjamin
+             ], 201);
+         } catch (ValidationException $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Penjamin Sudah ada!',
+                 'errors' => $e->errors()
+             ], 422);
+         } catch (\Exception $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Terjadi kesalahan saat menyimpan Penjamin!',
+                 'error' => $e->getMessage()
+             ], 500);
+         }
+    }
+
+    public function loketedit(Request $request)
+    {
+         $request->validate([
+             'nama_edit' => 'required|string',
+             'poli_edit' => 'required|string',
+         ]);
+
+         $loket = loket::find($request->loketid_edit);
+
+         if (!$loket) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'loket tidak ditemukan!'
+             ], 404);
+         }
+
+         $loket->nama = $request->nama_edit;
+         $loket->poli_id = $request->poli_edit;
+         $loket->save();
+
+         return response()->json([
+             'success' => true,
+             'message' => 'loket berhasil diperbarui!'
+         ]);
+    }
+
+    public function loketdelete(Request $request)
+    {
+
+        $request->validate([
+            'loketid_delete' => 'required'
+        ]);
+
+        $loket = loket::find($request->loketid_delete);
+        if (!$loket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'loket tidak ditemukan!'
+            ], 404);
+        }
+        $loket->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Penjamin berhasil dihapus!'
+        ]);
+    }
+
+
+    public function loketexport()
+    {
+         return Excel::download(new LoketExport, 'loket.xlsx');
+    }
+
+    public function loketimport(Request $request)
+    {
+        $request->validate([
+             'file' => 'required|mimes:xlsx,xls'
+         ]);
+
+         Excel::import(new LoketImport, $request->file('file'));
+
+
+         return redirect()->route('loket.get')->with('success', 'Data berhasil diimpor!');
+    }
+
 }

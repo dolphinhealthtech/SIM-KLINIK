@@ -70,4 +70,8 @@ class dokter extends Model
         return $this->hasMany(dokter_jadwal::class, 'dokter_id');
     }
 
+    public function pendaftaran()
+    {
+        return $this->hasMany(Pendaftaran_rawat_jalan::class, 'dokter_id');
+    }
 }
