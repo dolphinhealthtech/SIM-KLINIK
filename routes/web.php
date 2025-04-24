@@ -3,6 +3,7 @@
 use App\Http\Controllers\DataMasterController;
 use App\Http\Controllers\DataMasterManajemenController;
 use App\Http\Controllers\DataMasterMedisController;
+use App\Http\Controllers\DataMasterGudangController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\WebSettingController;
@@ -55,11 +56,6 @@ Route::prefix('pendaftaran')->group(function () {
     Route::post('/batal', [SuperadminController::class,'pendaftaranbatal'])->name('pendaftaran.batal');
     Route::post('/dokterup', [SuperadminController::class,'pendaftaranupdokter'])->name('pendaftaran.dokter.update');
     Route::post('/hadir', [SuperadminController::class,'pendaftaranhadir'])->name('pendaftaran.hadir');
-});
-
-Route::prefix('data-master-gudang')->group(function () {
-    // Menu Pasien
-
 });
 
 Route::middleware('auth')->prefix('data-master')->group(function () {
@@ -195,6 +191,32 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::post('/perawatan-tindakan/delete', [DataMasterMedisController::class,'perawatan_tindakandelete'])->name('perawatan_tindakan.destroy');
     Route::get('/perawatan-tindakan/export', [DataMasterMedisController::class,'perawatan_tindakanexport'])->name('perawatan_tindakan.export');
     Route::post('/perawatan-tindakan/import', [DataMasterMedisController::class,'perawatan_tindakanimport'])->name('perawatan_tindakan.import');
+});
+
+Route::prefix('data-master-gudang')->group(function () {
+    // Menu Jenis Satuan
+    Route::get('/satuan', [DataMasterGudangController::class,'satuan'])->name('satuan.get');
+    Route::post('/satuan/add', [DataMasterGudangController::class,'satuanadd'])->name('satuan.store');
+    Route::post('/satuan/update', [DataMasterGudangController::class,'satuanedit'])->name('satuan.update');
+    Route::post('/satuan/delete', [DataMasterGudangController::class,'satuandelete'])->name('satuan.destroy');
+    Route::get('/satuan/export', [DataMasterGudangController::class, 'satuanexport'])->name('satuan.export');
+    Route::post('/satuan/import', [DataMasterGudangController::class, 'satuanimport'])->name('satuan.import');
+
+    // Menu Jenis Kategori
+    Route::get('/kategori', [DataMasterGudangController::class,'kategori'])->name('kategori.get');
+    Route::post('/kategori/add', [DataMasterGudangController::class,'kategoriadd'])->name('kategori.store');
+    Route::post('/kategori/update', [DataMasterGudangController::class,'kategoriedit'])->name('kategori.update');
+    Route::post('/kategori/delete', [DataMasterGudangController::class,'kategoridelete'])->name('kategori.destroy');
+    Route::get('/kategori/export', [DataMasterGudangController::class, 'kategoriexport'])->name('kategori.export');
+    Route::post('/kategori/import', [DataMasterGudangController::class, 'kategoriimport'])->name('kategori.import');
+
+    // Menu Supplier
+    Route::get('/supplier-industri', [DataMasterGudangController::class,'supplier'])->name('supplier.get');
+    Route::post('/supplier-industri/add', [DataMasterGudangController::class,'supplieradd'])->name('supplier.store');
+    Route::post('/supplier-industri/update', [DataMasterGudangController::class,'supplieredit'])->name('supplier.update');
+    Route::post('/supplier-industri/delete', [DataMasterGudangController::class,'supplierdelete'])->name('supplier.destroy');
+    Route::get('/supplier-industri/export', [DataMasterGudangController::class, 'supplierexport'])->name('supplier.export');
+    Route::post('/supplier-industri/import', [DataMasterGudangController::class, 'supplierimport'])->name('supplier.import');
 });
 
 Route::middleware('auth')->prefix('data-master-manajemen')->group(function () {

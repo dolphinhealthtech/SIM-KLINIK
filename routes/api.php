@@ -5,6 +5,7 @@ use App\Http\Controllers\PcareController;
 use App\Http\Controllers\SatusehatController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\DataMasterMedisController;
+use App\Http\Controllers\DataMasterGudangController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,5 +55,10 @@ Route::prefix('pcare')->group(function () {
 // Data Master Medis
 Route::prefix('data-master-medis')->group(function(){
     Route::get('/perawatan_tindakan/getLastKode', [DataMasterMedisController::class, 'getLastKode'])->name('perawatan_tindakan.getLastKode'); // di privat fungsi nya
+});
+
+// Data Master Gudang
+Route::prefix('data-master-gudang')->group(function(){
+    Route::get('/supplier-industri/getLastKode', [DataMasterGudangController::class, 'getLastKode'])->name('supplier_industri.getLastKode');
 });
 

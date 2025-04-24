@@ -116,13 +116,13 @@
                     @csrf
                     <input type="hidden" class="form-control" id="kode" name="kode">
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Nama Perawatan Dan Tindakan</label>
                                 <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Kategori Perawatan" required>
                             </div>
                         </div>
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Kategori Perawatan Dan Tindakan</label>
                                 <select id="kategori" name="kategori" class="form-control" required>
@@ -133,37 +133,19 @@
                                 </select>
                             </div>
                         </div>
-                        {{-- <div class="col-sm-12">
-                            <div class="form-group">
-                                <label>Tarif Dokter</label>
-                                <input type="text" class="form-control" id="tarif_dokter" name="tarif_dokter" required>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label>Tarif Perawat</label>
-                                <input type="text" class="form-control" id="tarif_perawat" name="tarif_perawat" required>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label>Total Tarif</label>
-                                <input type="text" class="form-control" id="tarif_total" name="tarif_total" required>
-                            </div>
-                        </div> --}}
-                        <div class="col-sm-12">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Tarif Dokter</label>
                                 <input type="text" class="form-control rupiah" id="tarif_dokter" name="tarif_dokter" required>
                             </div>
                         </div>
-                        <div class="col-sm-12">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Tarif Perawat</label>
                                 <input type="text" class="form-control rupiah" id="tarif_perawat" name="tarif_perawat" required>
                             </div>
                         </div>
-                        <div class="col-sm-12">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Total Tarif</label>
                                 <input type="text" class="form-control rupiah" id="tarif_total" name="tarif_total" readonly required>
@@ -195,13 +177,13 @@
                     @csrf
                     <input type="hidden" id="perawatan_tindakanid_edit" name="perawatan_tindakanid_edit">
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Nama Perawatan Dan Tindakan</label>
                                 <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Perawatan Tindakan" required>
                             </div>
                         </div>
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Kategori Perawatan Dan Tindakan</label>
                                 <select id="kategori_edit" name="kategori_edit" class="form-control" required>
@@ -211,19 +193,19 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-12">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Tarif Dokter</label>
                                 <input type="text" class="form-control rupiah" id="tarif_dokter_edit" name="tarif_dokter_edit" required>
                             </div>
                         </div>
-                        <div class="col-sm-12">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Tarif Perawat</label>
                                 <input type="text" class="form-control rupiah" id="tarif_perawat_edit" name="tarif_perawat_edit" required>
                             </div>
                         </div>
-                        <div class="col-sm-12">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Total Tarif</label>
                                 <input type="text" class="form-control rupiah" id="tarif_total_edit" name="tarif_total_edit" readonly required>
