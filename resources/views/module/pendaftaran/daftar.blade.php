@@ -126,6 +126,7 @@
                                         <td class="text-center">{{ $pendaftarandata->nomor_register }}</td>
                                         <td class="text-center">{{ \Carbon\Carbon::parse($pendaftarandata->tanggal_kujungan)->format('d-m-Y') }}</td>
                                         <td class="text-center">{{ $pendaftarandata->nomor_rm }}</td>
+                                        <td class="text-center">{{ $pendaftarandata->antrian }}</td>
                                         <td class="text-center">{{ $pendaftarandata->poli->nama }}</td>
                                         <td class="text-center">{{ $pendaftarandata->dokter->namauser->name }}</td>
                                         <td class="text-center">

@@ -1473,6 +1473,33 @@ class SuperadminController extends Controller
                 return redirect()->back()->with('error', 'Pendaftaran tidak ditemukan.');
             }
 
+            $datapendaftaran = Pendaftaran_rawat_jalan::where('nomor_register', $pendaftaran->nomor_register)
+            ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
+            ->first();
+
+            $poli = poli::find($datapendaftaran->poli_id)->first();
+
+            $timestamp = round(microtime(true) * 1000); // Mendapatkan timestamp dalam milidetik
+
+            // Mengonversi timestamp ke Carbon instance
+            $waktu = Carbon::createFromTimestampMs($timestamp); // Menggunakan milidetik
+
+            // Menambahkan 1 hari
+            $waktu->addDay(); // Menambahkan 1 hari
+
+            // Mendapatkan timestamp baru dalam milidetik
+            $newTimestamp = $waktu->timestamp * 1000; // Mengonversi kembali ke milidetik
+
+            $databpjs = [
+                "tanggalperiksa"=> Carbon::parse($pendaftaran->tanggal_kunjungan, 'Asia/Jakarta')->format('Y-m-d'),
+                "kodepoli"=> $poli->kode,
+                "nomorkartu"=> $datapendaftaran->pasien->no_bpjs,
+                "status"=> 1,
+                "waktu"=> $newTimestamp,
+            ];
+
+            $this->PcareController->update_ws_antria_bpjs($databpjs);
+
             // Perbarui status_pendaftaran menjadi 0 (batal)
             $pendaftaran->status_pendaftaran = 2;
             $pendaftaran->save();
