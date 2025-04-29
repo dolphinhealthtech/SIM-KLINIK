@@ -25,7 +25,13 @@ Route::middleware('auth')->group(function () {
 });
 
 
-
+//Menu Data Barang (Obat)
+Route::get('/data-barang', [SuperadminController::class,'dabar'])->name('dabar.get');
+Route::post('/data-barang/add', [SuperadminController::class,'dabaradd'])->name('dabar.store');
+Route::post('/data-barang/update', [SuperadminController::class,'dabaredit'])->name('dabar.update');
+Route::post('/data-barang/delete', [SuperadminController::class,'dabardelete'])->name('dabar.destroy');
+Route::get('/data-barang/export', [SuperadminController::class, 'dabarexport'])->name('dabar.export');
+Route::post('/data-barang/import', [SuperadminController::class, 'dabarimport'])->name('dabar.import');
 
 Route::get('/monitor', [SuperadminController::class,'monitor'])->name('monitor.get');
 Route::post('/monitor/add/bpjs', [SuperadminController::class,'monitor_bpjs'])->name('monitor.add.bpjs');

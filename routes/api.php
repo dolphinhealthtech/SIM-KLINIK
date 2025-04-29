@@ -19,6 +19,7 @@ Route::get('/get-dokter/{id}', [SuperadminController::class, 'getDokter']);
 Route::get('/get-dokter-all/{id}', [SuperadminController::class, 'getDokterEdit']);
 Route::get('/jadwal/json/{id}', [SuperadminController::class, 'dokterjadwaljson']);
 Route::get('/get-dokter-by-poli/{id}', [SuperadminController::class, 'getByPoli']);
+Route::get('/generate-kode-data-barang', [SuperadminController::class, 'generateKodeDataBarang'])->name('generateKodeDataBarang');
 
 
 
@@ -61,4 +62,3 @@ Route::prefix('data-master-medis')->group(function(){
 Route::prefix('data-master-gudang')->group(function(){
     Route::get('/supplier-industri/getLastKode', [DataMasterGudangController::class, 'getLastKode'])->name('supplier_industri.getLastKode');
 });
-
