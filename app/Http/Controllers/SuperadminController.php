@@ -42,6 +42,7 @@ use App\Models\gudang_barang;
 use App\Models\gudang_satuan;
 use App\Models\gudang_kategori;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -525,12 +526,108 @@ class SuperadminController extends Controller
 
     }
 
+    public function monitor_nobpjs(Request $request)
+    {
+        try {
+
+
+            $data = $request->validate([
+                'nikNnamaInput' => 'required',
+                'tanggal_kunjungan_no' => 'required',
+                'poli_id_no' => 'required',
+                'dokter_id_no' => 'required'
+            ]);
+
+            $antrian = Loket::where('poli_id', $request->poli_id_no)->first();
+
+
+            $pasien = Pasien::where('nik', $request->nikNnamaInput)
+            ->orWhere('nama', $request->nikNnamaInput)
+            ->first();
+
+            $penjamin = penjamin::where('nama',"UMUM")->first();
+            // Ambil tanggal kunjungan dan ubah jadi format yyDDD
+            $tanggal = Carbon::parse($request->tanggal_kunjungan_no);
+            $tanggalKode = $tanggal->format('y') . str_pad($tanggal->dayOfYear, 3, '0', STR_PAD_LEFT); // Contoh: 25113
+
+            // Angka acak 4 digit
+            $angkaAcak = mt_rand(1000, 9999); // Contoh: 1234
+
+            // Gabungkan format akhir: 1234-25113
+            $no_registrasi = $angkaAcak . '-' . $tanggalKode;
+
+            // Cari antrian terakhir berdasarkan kode poli
+            $last = Pendaftaran_rawat_jalan::where('antrian', 'like', $antrian->nama . '-%')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+            if ($last) {
+                // Ambil angka terakhir dan increment
+                $lastNumber = (int) str_replace($antrian->nama . '-', '', $last->antrian);
+                $nextNumber = $lastNumber + 1;
+            } else {
+                $nextNumber = 1;
+            }
+
+            $antrianBaru = $antrian->nama . '-' . $nextNumber;
+
+
+            $pendaftaran = Pendaftaran_rawat_jalan::create([
+                'nomor_rm' => $pasien->no_rm,
+                'pasien_id' => $pasien->id,
+                'poli_id' => $request->poli_id_no,
+                'tanggal_kujungan' => $request->tanggal_kunjungan_no,
+                'dokter_id' => $request->dokter_id_no,
+                'Penjamin' => $penjamin->id,
+                'nomor_register'=> $no_registrasi,
+                'antrian'=> $antrianBaru,
+            ]);
+
+            Pendaftaran_rawat_jalan_status::create([
+                'nomor_rm' => $pasien->no_rm,
+                'pasien_id'=> $pasien->id,
+                'nomor_register' => $no_registrasi,
+                'tanggal_kujungan' => $request->tanggal_kunjungan_no,
+                'register_id'=> $pendaftaran->id,
+                'status_panggil'=> 0, // 0 = pendaftaran , 1 = perawat, 2 = dokter
+                'status_pendaftaran' => 1, // 0 = batal, 1 = pendaftaran , 2 = hadir
+                'Status_aplikasi' => 2 , // 1 = app manual , 2 = app Onlain ,3 = bpjs
+            ]);
+
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data pasien berhasil disimpan.'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors()
+            ], 422);
+        }
+
+    }
 
     public function cariNikNoka(Request $request)
     {
         $nikNoka = $request->input('nikNoka');
         $data = Pasien::where('nik', $nikNoka)
                     ->orWhere('no_bpjs', $nikNoka)
+                    ->first();
+
+        if ($data) {
+            return response()->json([
+                'success' => true,
+                'nama' => $data->nama
+            ]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+    public function cariNikNama(Request $request)
+    {
+        $nikNama = $request->input('nikNama');
+        $data = Pasien::where('nik', $nikNama)
+                    ->orWhere('nama', $nikNama)
                     ->first();
 
         if ($data) {
@@ -1342,8 +1439,6 @@ class SuperadminController extends Controller
             // Gabungkan format akhir: 1234-25113
             $no_registrasi = $angkaAcak . '-' . $tanggalKode;
 
-
-
             $antrian = Loket::where('poli_id', $request->poli_id)->first();
 
             // Cari antrian terakhir berdasarkan kode poli
@@ -1380,10 +1475,45 @@ class SuperadminController extends Controller
                 'tanggal_kujungan' => $request->tanggal_kunjungan,
                 'register_id'=> $pendaftaran->id,
                 'status_panggil'=> 0, // 0 = pendaftaran , 1 = perawat, 2 = dokter
-                'status_pendaftaran' => 2, // 0 = batal, 1 = pendaftaran , 2 = hadir
+                'status_pendaftaran' => 1, // 0 = batal, 1 = pendaftaran , 2 = hadir
                 'Status_aplikasi' => 1 , // 1 = app manual , 2 = app Onlain ,3 = bpjs
                 ]);
 
+            $penjamin = penjamin::find($request->penjamin_id);
+            if ($penjamin->nama == 'BPJS') {
+
+                $poli = poli::find($request->poli_id)->first();
+
+                // Ambil info dokter dan jadwal berdasarkan tanggal kunjungan
+                $tanggalKunjungan = Carbon::parse($request->tanggal_kunjungan)->format('Y-m-d');
+
+                $dokter = Dokter::with(['namauser', 'jadwal' => function ($query) use ($tanggalKunjungan) {
+                    $query->whereDate('start', $tanggalKunjungan);
+                }])->find($request->dokter_id);
+
+                $jadwal = $dokter->jadwal->first();
+                $jamPraktek = $jadwal
+                    ? Carbon::parse($jadwal->start)->format('H:i') . '-' . Carbon::parse($jadwal->end)->format('H:i')
+                    : '-';
+
+                $databpjs = [
+                    "nomorkartu"=> $pasien->no_bpjs,
+                    "nik"=> $pasien->nik,
+                    "nohp"=>  $pasien->telepon,
+                    "kodepoli"=> $poli->kode,
+                    "namapoli"=> $poli->nama,
+                    "norm"=> $pasien->no_rm,
+                    "tanggalperiksa"=> $tanggalKunjungan,
+                    "kodedokter"=> $dokter->kode,
+                    "namadokter"=> $dokter->namauser->name,
+                    "jampraktek"=> $jamPraktek,
+                    "nomorantrean"=> $antrianBaru,
+                    "angkaantrean"=> $nextNumber,
+                    "keterangan"=> "",
+                ];
+
+                $this->PcareController->post_ws_antria_bpjs($databpjs);
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Data pasien berhasil disimpan.',
@@ -1413,16 +1543,21 @@ class SuperadminController extends Controller
                                 ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
                                 ->first();
 
-            $poli = poli::find($datapendaftaran->poli_id)->first();
+            $penjamin = penjamin::find($datapendaftaran->Penjamin);
+            if ($penjamin->nama == 'BPJS') {
 
-            $databpjs = [
-                "tanggalperiksa"=> Carbon::parse($pendaftaran->tanggal_kunjungan)->format('Y-m-d'),
-                "kodepoli"=> $poli->kode,
-                "nomorkartu"=> $datapendaftaran->pasien->no_bpjs,
-                "alasan"=> $request->alasanpembatalan,
-            ];
+                $poli = poli::find($datapendaftaran->poli_id)->first();
 
-            $this->PcareController->delete_ws_antria_bpjs($databpjs);
+                $databpjs = [
+                    "tanggalperiksa"=> Carbon::parse($pendaftaran->tanggal_kunjungan)->format('Y-m-d'),
+                    "kodepoli"=> $poli->kode,
+                    "nomorkartu"=> $datapendaftaran->pasien->no_bpjs,
+                    "alasan"=> $request->alasanpembatalan,
+                ];
+
+                $this->PcareController->delete_ws_antria_bpjs($databpjs);
+            }
+
 
             // Perbarui status_pendaftaran menjadi 0 (batal)
             $pendaftaran->status_pendaftaran = 0;
@@ -1480,28 +1615,34 @@ class SuperadminController extends Controller
             ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
             ->first();
 
-            $poli = poli::find($datapendaftaran->poli_id)->first();
+            $penjamin = penjamin::find($datapendaftaran->Penjamin);
 
-            $timestamp = round(microtime(true) * 1000); // Mendapatkan timestamp dalam milidetik
+            if ($penjamin->nama == 'BPJS') {
 
-            // Mengonversi timestamp ke Carbon instance
-            $waktu = Carbon::createFromTimestampMs($timestamp); // Menggunakan milidetik
+                $poli = poli::find($datapendaftaran->poli_id)->first();
 
-            // Menambahkan 1 hari
-            $waktu->addDay(); // Menambahkan 1 hari
+                $timestamp = round(microtime(true) * 1000); // Mendapatkan timestamp dalam milidetik
 
-            // Mendapatkan timestamp baru dalam milidetik
-            $newTimestamp = $waktu->timestamp * 1000; // Mengonversi kembali ke milidetik
+                // Mengonversi timestamp ke Carbon instance
+                $waktu = Carbon::createFromTimestampMs($timestamp); // Menggunakan milidetik
 
-            $databpjs = [
-                "tanggalperiksa"=> Carbon::parse($pendaftaran->tanggal_kunjungan, 'Asia/Jakarta')->format('Y-m-d'),
-                "kodepoli"=> $poli->kode,
-                "nomorkartu"=> $datapendaftaran->pasien->no_bpjs,
-                "status"=> 1,
-                "waktu"=> $newTimestamp,
-            ];
+                // Menambahkan 1 hari
+                $waktu->addDay(); // Menambahkan 1 hari
 
-            $this->PcareController->update_ws_antria_bpjs($databpjs);
+                // Mendapatkan timestamp baru dalam milidetik
+                $newTimestamp = $waktu->timestamp * 1000; // Mengonversi kembali ke milidetik
+
+                $databpjs = [
+                    "tanggalperiksa"=> Carbon::parse($pendaftaran->tanggal_kunjungan, 'Asia/Jakarta')->format('Y-m-d'),
+                    "kodepoli"=> $poli->kode,
+                    "nomorkartu"=> $datapendaftaran->pasien->no_bpjs,
+                    "status"=> 1,
+                    "waktu"=> $newTimestamp,
+                ];
+
+                $this->PcareController->update_ws_antria_bpjs($databpjs);
+            }
+
 
             // Perbarui status_pendaftaran menjadi 0 (batal)
             $pendaftaran->status_pendaftaran = 2;
@@ -1588,8 +1729,8 @@ class SuperadminController extends Controller
                 'barcode' => $request->input('barcode'),
                 'gudang_kategori' => $request->input('barang_kategori'),
                 'bentuk_sediaan' => $request->input('bentuk_sediaan'),
-                'user_input_id' => auth()->user()->id,
-                'user_input_nama' => auth()->user()->name,
+                'user_input_id' => Auth::user()->id,
+                'user_input_nama' => Auth::user()->name,
             ]);
 
             // Return response JSON untuk AJAX

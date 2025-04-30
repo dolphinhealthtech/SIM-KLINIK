@@ -135,28 +135,43 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="nonBpjsForm" action="#" method="POST">
+                    <form id="nonBpjsForm" action="{{ route('monitor.add.nobpjs') }}" method="POST">
                         @csrf
-                        <div class="form-group">
-                            <label for="nikInputno">Masukkan NIK </label>
-                            <input type="text" class="form-control" id="nikInputno" name="nikInputno"
-                                placeholder="Masukkan NIK" required>
-                            <small id="nikNokaFeedbackno" class="form-text text-muted"></small>
-                        </div>
-                        <div class="form-group">
-                            <label for="poliSelectNonBpjs">Pilih Poli</label>
-                            <select class="form-control" id="poliSelectNonBpjs" name="poliSelectNonBpjs" required>
-                                <option value="">Pilih Poli</option>
-                                {{-- @foreach ($poli as $polis)
-                                    <option value="{{ $polis->id }}">{{ $polis->nama_poli }}</option>
-                                @endforeach --}}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="dokterSelectNonBpjs">Pilih Dokter</label>
-                            <select class="form-control" id="dokterSelectNonBpjs" name="dokterSelectNonBpjs" required>
-                                <option value="">Pilih Dokter</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="nikNnamaInput">Masukkan NIK atau Nama</label>
+                                    <input type="text" class="form-control" id="nikNnamaInput" name="nikNnamaInput"
+                                        placeholder="Masukkan NIK atau Nama" required>
+                                    <small id="nikNnamaFeedback" class="form-text text-muted"></small>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Jadwal Kunjunagan</label>
+                                    <input type="datetime-local" class="form-control" id="tanggal_kunjungan_no" name="tanggal_kunjungan_no">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Poli</label>
+                                    <select class="form-control select2bs4" style="width: 100%;" id="poli_id_no" name="poli_id_no">
+                                        <option value="" disabled selected>Pilih Poli</option>
+                                        @foreach ($poli as $polidata)
+                                            <option value="{{ $polidata->id }}">{{ $polidata->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Dokter</label>
+                                    <select class="form-control select2bs4" style="width: 100%;" id="dokter_id_no" name="dokter_id_no">
+                                        <option value="" disabled selected>Pilih Dokter</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                 </div>
                 <div class="modal-footer">
@@ -427,6 +442,42 @@
 <script>
     $(document).ready(function () {
         // Jika poli atau tanggal berubah
+        $('#poli_id_no, #tanggal_kunjungan_no').on('change', function () {
+            let poliId = $('#poli_id_no').val();
+            let datetime = $('#tanggal_kunjungan_no').val(); // format input datetime-local: yyyy-MM-ddTHH:mm
+
+            if (poliId && datetime) {
+                // Format datetime jadi Y-m-d H:i:s
+                let formattedDatetime = datetime.replace('T', ' ') + ':00';
+
+                console.log("Mengambil dokter...");
+                console.log("Poli ID:", poliId);
+                console.log("Datetime:", formattedDatetime);
+
+                $.ajax({
+                    url: `/api/get-dokter-by-poli/${poliId}`,
+                    method: 'GET',
+                    data: { datetime: formattedDatetime },
+                    success: function (data) {
+                        $('#dokter_id_no').empty().append(`<option value="">Pilih Dokter</option>`);
+                        data.forEach(function (dokter) {
+                            $('#dokter_id_no').append(`<option value="${dokter.id}">${dokter.namauser.name}</option>`);
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", error);
+                        console.error("Response Text:", xhr.responseText);
+                        alert('Gagal mengambil data dokter.');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // Jika poli atau tanggal berubah
         $('#poli_id, #tanggal_kunjungan').on('change', function () {
             let poliId = $('#poli_id').val();
             let datetime = $('#tanggal_kunjungan').val(); // format input datetime-local: yyyy-MM-ddTHH:mm
@@ -456,6 +507,44 @@
                     }
                 });
             }
+        });
+    });
+</script>
+
+<script>
+    document.getElementById("nikNnamaInput").addEventListener("blur", function () {
+        const inputValue = this.value.trim();
+        const feedbackElement = document.getElementById("nikNnamaFeedback");
+
+        if (inputValue.length === 0) {
+            feedbackElement.textContent = '';
+            return;
+        }
+
+        fetch('/api/get-pasien-nikornama', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nikNama: inputValue })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                feedbackElement.textContent = 'Data ditemukan: ' + data.nama;
+                feedbackElement.classList.remove('text-danger');
+                feedbackElement.classList.add('text-success');
+            } else {
+                feedbackElement.textContent = 'Data tidak ditemukan';
+                feedbackElement.classList.remove('text-success');
+                feedbackElement.classList.add('text-danger');
+            }
+        })
+        .catch(error => {
+            feedbackElement.textContent = 'Terjadi kesalahan saat mencari data';
+            feedbackElement.classList.remove('text-success');
+            feedbackElement.classList.add('text-danger');
+            console.error('Error:', error);
         });
     });
 </script>
@@ -496,7 +585,7 @@
             console.error('Error:', error);
         });
     });
-    </script>
+</script>
 
 
         <script>
@@ -504,4 +593,4 @@
                 window.stepper = new Stepper(document.querySelector('.bs-stepper'))
             })
         </script>
-    @endsection
+@endsection
