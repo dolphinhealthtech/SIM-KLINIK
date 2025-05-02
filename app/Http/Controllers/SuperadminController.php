@@ -41,11 +41,14 @@ use App\Models\suku;
 use App\Models\gudang_barang;
 use App\Models\gudang_satuan;
 use App\Models\gudang_kategori;
+use App\Exports\Gudang_barangExport;
+use App\Imports\Gudang_barangImport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SuperadminController extends Controller
 {
@@ -1755,29 +1758,75 @@ class SuperadminController extends Controller
 
     }
 
-    // public function satuanedit(Request $request)
-    // {
-    //     $request->validate([
-    //         'nama_edit' => 'required|string'
-    //     ]);
+    public function dabaredit(Request $request)
+    {
+        $request->validate([
+            'nama_barang_edit'           => 'required|string',
+            'kode_kfa_edit'              => 'required|string',
+            'jenis_formularium_edit'     => 'required|string',
+            'industri_barang_edit'       => 'required|string',
+            'jenis_obat_edit'            => 'required|string',
+            'jenis_generik_edit'         => 'required|string',
+            'satuan_kecil_edit'          => 'required|string',
+            'nilai_satuan_kecil_edit'    => 'required|string',
+            'satuan_sedang_edit'         => 'required|string',
+            'nilai_satuan_sedang_edit'   => 'required|string',
+            'satuan_besar_edit'          => 'required|string',
+            'tempat_penyimpanan_edit'    => 'required|string',
+            'barcode_edit'               => 'required|string',
+            'barang_kategori_edit'       => 'required|string',
+            'bentuk_sediaan_edit'        => 'required|string',
+        ], [
+            'nama_barang_edit'           => 'Masukan Data Nama Barang',
+            'kode_kfa_edit'              => 'Kode KFA',
+            'jenis_formularium_edit'     => 'Pilih Jenis Formularium',
+            'industri_barang_edit'       => 'Industri Barang',
+            'jenis_obat_edit'            => 'Pilih Jenis Obat',
+            'jenis_generik_edit'         => 'Masukan Jenis Generik Barang',
+            'satuan_kecil_edit'          => 'Pilih Satuan Kecil',
+            'nilai_satuan_kecil_edit'    => 'Masukan Satuan Kecil',
+            'satuan_sedang_edit'         => 'Pilih Satuan Sedang',
+            'nilai_satuan_sedang_edit'   => 'Masukan Satuan Sedang',
+            'satuan_besar_edit'          => 'Pilih Satuan Besar',
+            'tempat_penyimpanan_edit'    => 'Masukan Tempat Penyimpanan',
+            'barcode_edit'               => 'Masukan No Barcode',
+            'barang_kategori_edit'       => 'Pilih Kategori Barang',
+            'bentuk_sediaan_edit'        => 'Pilih Bentuk Sediaan Barang',
+        ]);
 
-    //     $satuan = gudang_satuan::find($request->satuanid_edit);
+        $dabar = gudang_barang::find($request->dabarid_edit);
 
-    //     if (!$satuan) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Jenis satuan tidak ditemukan!'
-    //         ], 404);
-    //     }
+        if (!$dabar) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data barang tidak ditemukan!'
+            ], 404);
+        }
 
-    //     $satuan->nama = $request->nama_edit;
-    //     $satuan->save();
+        $dabar->nama_barang = $request->nama_barang_edit;
+        $dabar->kfa_kode = $request->kode_kfa_edit;
+        $dabar->jenis_formularium = $request->jenis_formularium_edit;
+        $dabar->nama_industri_barang = $request->industri_barang_edit;
+        $dabar->satuan_kecil = $request->satuan_kecil_edit;
+        $dabar->satuan_sedang = $request->satuan_sedang_edit;
+        $dabar->satuan_besar = $request->satuan_besar_edit;
+        $dabar->nilai_satuan_kecil = $request->nilai_satuan_kecil_edit;
+        $dabar->nilai_satuan_sedang = $request->nilai_satuan_sedang_edit;
+        $dabar->tempat_penyimpanan = $request->tempat_penyimpanan_edit;
+        $dabar->barcode = $request->barcode_edit;
+        $dabar->gudang_kategori = $request->barang_kategori_edit;
+        $dabar->jenis_obat = $request->jenis_obat_edit;
+        $dabar->jenis_generik = $request->jenis_generik_edit;
+        $dabar->bentuk_sediaan = $request->bentuk_sediaan_edit;
+        $dabar->user_input_id = Auth::user()->id;
+        $dabar->user_input_nama = Auth::user()->name;
+        $dabar->save();
 
-    //     return response()->json([
-    //         'success' => true,
-    //         'message' => 'Jenis satuan berhasil diperbarui!'
-    //     ]);
-    // }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data barang berhasil diperbarui!'
+        ]);
+    }
 
     public function dabardelete(Request $request)
     {
@@ -1803,45 +1852,46 @@ class SuperadminController extends Controller
         ]);
     }
 
-    // public function satuanexport()
-    // {
-    //     return Excel::download(new Gudang_satuanExport, 'Jenis Satuan.xlsx');
-    // }
-
-    // public function satuanimport(Request $request)
-    // {
-    //     $request->validate([
-    //         'file' => 'required|mimes:xlsx,xls'
-    //     ]);
-
-    //     Excel::import(new Gudang_satuanImport, $request->file('file'));
-
-
-    //     return redirect()->route('satuan.get')->with('success', 'Data berhasil diimpor!');
-    // }
-
-    public function generateKodeDataBarang()
+    public function dabarexport()
     {
-        // Mengambil data barang terakhir dari tabel 'gudang_barang'
-        $last = gudang_barang::orderBy('id', 'desc')->first();
-
-        // Jika tidak ada data barang sebelumnya atau kode barang tidak sesuai format 'KBR-xxxx'
-        if (!$last || !preg_match('/^KBR-(\d{4})$/', $last->kode_barang, $match)) {
-            $nextNumber = 1;  // Mulai dengan nomor 1 jika tidak ada data atau format kode salah
-        } else {
-            // Jika ada data sebelumnya, ambil angka terakhir dan tambah 1
-            $nextNumber = (int)$match[1] + 1;
-        }
-
-        // Membuat kode barang baru dengan format 'KBR-xxxx' (dengan padding 0 di depan)
-        $kode = 'KBR-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
-
-        // Mengembalikan response dalam format JSON
-        return response()->json([
-            'success' => true,
-            'kode_barang' => $kode
-        ]);
+        return Excel::download(new Gudang_barangExport, 'Data Gudang Barang.xlsx');
     }
+
+    public function dabarimport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new Gudang_barangImport, $request->file('file'));
+
+
+        return redirect()->route('dabar.get')->with('success', 'Data berhasil diimpor!');
+    }
+
+        //Generate Kode Barang Otomatis
+        public function generateKodeDataBarang()
+        {
+            // Mengambil data barang terakhir dari tabel 'gudang_barang'
+            $last = gudang_barang::orderBy('id', 'desc')->first();
+
+            // Jika tidak ada data barang sebelumnya atau kode barang tidak sesuai format 'KBR-xxxx'
+            if (!$last || !preg_match('/^KBR-(\d{4})$/', $last->kode_barang, $match)) {
+                $nextNumber = 1;  // Mulai dengan nomor 1 jika tidak ada data atau format kode salah
+            } else {
+                // Jika ada data sebelumnya, ambil angka terakhir dan tambah 1
+                $nextNumber = (int)$match[1] + 1;
+            }
+
+            // Membuat kode barang baru dengan format 'KBR-xxxx' (dengan padding 0 di depan)
+            $kode = 'KBR-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+
+            // Mengembalikan response dalam format JSON
+            return response()->json([
+                'success' => true,
+                'kode_barang' => $kode
+            ]);
+        }
 
     // Data Barang end
 }

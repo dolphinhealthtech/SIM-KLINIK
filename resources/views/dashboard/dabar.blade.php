@@ -70,10 +70,25 @@
                                                 <td class="text-center">
                                                     <a href="#" class="btn btn-warning btn-sm edit-data-dabar"
                                                         data-toggle="modal" data-id="{{ $dabardata->id }}"
-                                                        data-nama-dabar="{{ $dabardata->nama_barang }}"
-                                                        data-target="#editdabarModa">
+                                                        data-nama_barang="{{ $dabardata->nama_barang }}"
+                                                        data-jenis_formularium="{{ $dabardata->jenis_formularium }}"
+                                                        data-kfa_kode="{{ $dabardata->kfa_kode }}"
+                                                        data-nama_industri_barang="{{ $dabardata->nama_industri_barang }}"
+                                                        data-satuan_kecil="{{ $dabardata->satuan_kecil }}"
+                                                        data-nilai_satuan_kecil="{{ $dabardata->nilai_satuan_kecil }}"
+                                                        data-satuan_sedang="{{ $dabardata->satuan_sedang }}"
+                                                        data-nilai_satuan_sedang="{{ $dabardata->nilai_satuan_sedang }}"
+                                                        data-satuan_besar="{{ $dabardata->satuan_besar }}"
+                                                        data-tempat_penyimpanan="{{ $dabardata->tempat_penyimpanan }}"
+                                                        data-barcode="{{ $dabardata->barcode }}"
+                                                        data-gudang_kategori="{{ $dabardata->gudang_kategori }}"
+                                                        data-jenis_obat="{{ $dabardata->jenis_obat }}"
+                                                        data-jenis_generik="{{ $dabardata->jenis_generik }}"
+                                                        data-bentuk_sediaan="{{ $dabardata->bentuk_sediaan }}"
+                                                        data-target="#editdabarModal">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </a>
+
                                                     <a href="#" class="btn btn-danger btn-sm delete-data-goldar"
                                                         data-toggle="modal"data-id="{{ $dabardata->id }}"
                                                         data-nama-dabar="{{ $dabardata->nama_barang }}"
@@ -293,8 +308,207 @@
     </div>
 </div>
 
+<!-- Modal Edit Gudang Barang Input -->
+<div class="modal fade" id="editdabarModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Data Gudang Barang</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editFormdabar" action="{{ route('dabar.update') }}" method="POST">
+                    @csrf
+                    <input type="hidden" id="dabarid_edit" name="dabarid_edit">
+                    <div class="bs-stepper">
+                        <div class="bs-stepper-header" role="tablist">
+                            <!-- Step 1: Informasi Umum Barang -->
+                            <div class="step" data-target="#informasi-umum-edit">
+                                <button type="button" class="step-trigger" role="tab" aria-controls="informasi-umum-edit" id="informasi-umum-edit-trigger">
+                                    <span class="bs-stepper-circle">1</span>
+                                    <span class="bs-stepper-label">Informasi Umum</span>
+                                </button>
+                            </div>
+                            <div class="line"></div>
+                            <!-- Step 2: Satuan dan Nilai Satuan -->
+                            <div class="step" data-target="#satuan-dan-nilai-edit">
+                                <button type="button" class="step-trigger" role="tab" aria-controls="satuan-dan-nilai-edit" id="satuan-dan-nilai-edit-trigger">
+                                    <span class="bs-stepper-circle">2</span>
+                                    <span class="bs-stepper-label">Satuan dan Nilai</span>
+                                </button>
+                            </div>
+                            <div class="line"></div>
+                            <!-- Step 3: Penyimpanan dan Informasi Lainnya -->
+                            <div class="step" data-target="#penyimpanan-dan-informasi-edit">
+                                <button type="button" class="step-trigger" role="tab" aria-controls="penyimpanan-dan-informasi-edit" id="penyimpanan-dan-informasi-edit-trigger">
+                                    <span class="bs-stepper-circle">3</span>
+                                    <span class="bs-stepper-label">Penyimpanan dan Lainnya</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bs-stepper-content">
+                            <!-- Step 1: Informasi Umum Barang -->
+                            <div id="informasi-umum-edit" class="content" role="tabpanel" aria-labelledby="informasi-umum-edit-trigger">
+                                <div class="row">
+                                    <input type="hidden" class="form-control" id="kode_barang" name="kode_barang">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="nama_barang_edit">Nama Barang</label>
+                                            <input type="text" class="form-control" id="nama_barang_edit" name="nama_barang_edit" placeholder="Masukkan nama barang">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="kode_kfa_edit">Kode KFA</label>
+                                            <input type="text" class="form-control" id="kode_kfa_edit" name="kode_kfa_edit" readonly value="001">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="jenis_formularium_edit">Jenis Formularium</label>
+                                            <select class="form-control select2bs4" style="width: 100%;" id="jenis_formularium_edit" name="jenis_formularium_edit">
+                                                <option value="" disabled selected>Pilih Jenis Formularium</option>
+                                                <option value="Formularium">Formularium</option>
+                                                <option value="Non Formularium">Non Formularium</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="industri_barang_edit">Industri Barang</label>
+                                            <input type="text" class="form-control" id="industri_barang_edit" name="industri_barang_edit" readonly value="PT 123">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="jenis_obat_edit">Jenis Obat</label>
+                                        <div class="form-group d-flex" id="jenis_obat_edit_container" style="width: 100%;">
+                                            <select class="form-control select2bs4" id="jenis_obat_edit" name="jenis_obat_edit" style="width: 100%;">
+                                                <option value="" disabled selected>Pilih Jenis Obat</option>
+                                                <option value="Generik">Generik</option>
+                                                <option value="Non Generik">Non Generik</option>
+                                            </select>
+
+                                            <input type="text" class="form-control ml-2" id="jenis_generik_edit" name="jenis_generik_edit" placeholder="Masukkan jenis generik" style="display: none; width: 100%;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
+                            </div>
+
+                            <!-- Step 2: Satuan dan Nilai Satuan -->
+                            <div id="satuan-dan-nilai-edit" class="content" role="tabpanel" aria-labelledby="satuan-dan-nilai-edit-trigger">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="satuan_kecil_edit">Satuan Kecil</label>
+                                            <select class="form-control select2bs4" style="width: 100%;" id="satuan_kecil_edit" name="satuan_kecil_edit">
+                                                <option value="" disabled selected>Pilih Satuan Kecil</option>
+                                                @foreach ($satuan as $satuanKecil)
+                                                    <option value="{{ $satuanKecil->nama }}">{{ $satuanKecil->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="nilai_satuan_kecil_edit">Nilai Satuan Kecil</label>
+                                            <div class="d-flex align-items-center">
+                                                <input type="number" class="form-control flex-grow-1 mr-2" id="nilai_satuan_kecil_edit" name="nilai_satuan_kecil_edit" placeholder="Masukkan nilai satuan kecil">
+                                                <label id="label_satuan_kecil_edit" class="text-nowrap">Dalam 1</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="satuan_sedang_edit">Satuan Sedang</label>
+                                            <select class="form-control select2bs4" style="width: 100%;" id="satuan_sedang_edit" name="satuan_sedang_edit">
+                                                <option value="" disabled selected>Pilih Satuan Sedang</option>
+                                                @foreach ($satuan as $satuanSedang)
+                                                    <option value="{{ $satuanSedang->nama }}">{{ $satuanSedang->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="nilai_satuan_sedang_edit">Nilai Satuan Sedang</label>
+                                            <div class="d-flex align-items-center">
+                                                <input type="number" class="form-control flex-grow-1 mr-2" id="nilai_satuan_sedang_edit" name="nilai_satuan_sedang_edit" placeholder="Masukkan nilai satuan sedang">
+                                                <label id="label_satuan_sedang_edit" class="text-nowrap">Dalam 1</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="satuan_besar_edit">Satuan Besar</label>
+                                            <select class="form-control select2bs4" id="satuan_besar_edit" name="satuan_besar_edit">
+                                                <option value="" disabled selected>Pilih Satuan Besar</option>
+                                                @foreach ($satuan as $satuanBesar)
+                                                    <option value="{{ $satuanBesar->nama }}">{{ $satuanBesar->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
+                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
+                            </div>
+
+                            <!-- Step 3: Penyimpanan dan Informasi Lainnya -->
+                            <div id="penyimpanan-dan-informasi-edit" class="content" role="tabpanel" aria-labelledby="penyimpanan-dan-informasi-edit-trigger">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="tempat_penyimpanan_edit">Tempat Penyimpanan</label>
+                                            <input type="text" class="form-control" id="tempat_penyimpanan_edit" name="tempat_penyimpanan_edit" placeholder="Masukkan tempat penyimpanan">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="barcode_edit">Barcode</label>
+                                            <input type="text" class="form-control" id="barcode_edit" name="barcode_edit" placeholder="Masukkan barcode">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="barang_kategori_edit">Kategori Barang</label>
+                                            <select class="form-control select2bs4" id="barang_kategori_edit" name="barang_kategori_edit">
+                                                <option value="" disabled selected>Pilih Kategori Barang</option>
+                                                @foreach ($kategori as $kategoriData)
+                                                    <option value="{{ $kategoriData->nama }}">{{ $kategoriData->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="bentuk_sediaan_edit">Bentuk Sediaan</label>
+                                            <select class="form-control select2bs4" id="bentuk_sediaan_edit" name="bentuk_sediaan_edit">
+                                                <option value="" disabled selected>Pilih Bentuk Sediaan</option>
+                                                <option value="Padat">Padat</option>
+                                                <option value="Cair">Cair</option>
+                                                <option value="Gas">Gas</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
+                                <button type="submit" class="btn btn-primary">Perbarui</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- modal Edit Role --}}
-<div class="modal fade" id="editdabarModa" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+{{-- <div class="modal fade" id="editdabarModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -323,7 +537,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 {{-- modal Delete Role --}}
 <div class="modal fade" id="deletedabarModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
@@ -355,7 +569,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importdabarModalLabel">Import Data dabar</h5>
+                <h5 class="modal-title" id="importdabarModalLabel">Import Data Barang</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -377,6 +591,9 @@
 </div>
 
 <script>
+    // Global Scope
+    let stepper;
+
         $(document).ready(function() {
             $("#dabartabel").DataTable({
                 "responsive": true,
@@ -393,6 +610,8 @@
 
         $(document).ready(function() {
             $('#adddabarModal').on('shown.bs.modal', function () {
+                stepper = new Stepper(document.querySelector('#adddabarModal .bs-stepper'));
+
                 $.ajax({
                     url: '/api/generate-kode-data-barang', // Pastikan sesuai dengan route API-mu
                     method: 'GET',
@@ -469,13 +688,40 @@
             });
         });
 
-        $(document).on('click', '.edit-data-dabar', function() {
-            var id = $(this).data('id');
-            var nama = $(this).data('nama-dabar');
+        $(document).ready(function() {
+            $('#editdabarModal').on('shown.bs.modal', function () {
+                stepper = new Stepper(document.querySelector('#editdabarModal .bs-stepper'));
+            });
+        })
 
-            $('#dabarid_edit').val(id);
-            $('#nama_edit').val(nama);
-             // Pastikan rhesus terpilih dengan benar
+        $(document).on('click', '.edit-data-dabar', function() {
+            const data = $(this).data();
+
+            $('#dabarid_edit').val(data.id);
+            $('#nama_barang_edit').val(data.nama_barang);
+            $('#kode_kfa_edit').val(data.kfa_kode);
+            $('#jenis_formularium_edit').val(data.jenis_formularium).trigger('change');
+            $('#industri_barang_edit').val(data.nama_industri_barang);
+            $('#jenis_obat_edit').val(data.jenis_obat).trigger('change');
+            $('#jenis_generik_edit').val(data.jenis_generik);
+
+            $('#satuan_kecil_edit').val(data.satuan_kecil).trigger('change');
+            $('#nilai_satuan_kecil_edit').val(data.nilai_satuan_kecil);
+            $('#satuan_sedang_edit').val(data.satuan_sedang).trigger('change');
+            $('#nilai_satuan_sedang_edit').val(data.nilai_satuan_sedang);
+            $('#satuan_besar_edit').val(data.satuan_besar).trigger('change');
+
+            $('#tempat_penyimpanan_edit').val(data.tempat_penyimpanan);
+            $('#barcode_edit').val(data.barcode);
+            $('#barang_kategori_edit').val(data.gudang_kategori).trigger('change');
+            $('#bentuk_sediaan_edit').val(data.bentuk_sediaan).trigger('change');
+
+            // Tampilkan input jenis_generik jika jenis_obat = 'Generik'
+            if (data.jenis_obat === 'Generik') {
+                $('#jenis_generik_edit').show();
+            } else {
+                $('#jenis_generik_edit').hide();
+            }
         });
 
         $('#editFormdabar').on('submit', function(e) {
@@ -490,7 +736,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#editdabarModa').modal('hide');
+                        $('#editdabarModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
@@ -508,12 +754,51 @@
                         });
                     }
                 },
+                // error: function(xhr) {
+                //     Swal.fire({
+                //         icon: 'error',
+                //         title: 'Gagal!',
+                //         text: 'Terjadi kesalahan saat mengupdate dabar!',
+                //     });
+                // }
                 error: function(xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate dabar!',
-                    });
+                    if (xhr.status === 422 && xhr.responseJSON.errors) {
+                        let errorList = '';
+
+                        // Bersihkan error sebelumnya
+                        $('#editFormdabar').find('.is-invalid').removeClass('is-invalid');
+
+                        // Loop tiap error dan tampilkan
+                        $.each(xhr.responseJSON.errors, function(key, messages) {
+                            // Ambil elemen input berdasarkan ID
+                            $('#' + key).addClass('is-invalid');
+
+                            // Gabungkan semua pesan error (jika lebih dari 1)
+                            messages.forEach(msg => {
+                                errorList += `- ${msg}<br>`;
+                            });
+                        });
+
+                        // Tampilkan dengan SweetAlert
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Validasi Gagal!',
+                            html: `Terdapat beberapa kesalahan pengisian:<br><br>${errorList}`,
+                            confirmButtonText: 'Periksa Kembali',
+                        });
+
+                    } else {
+                        let errorMessage = "Terjadi kesalahan dalam menyimpan data!";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: errorMessage
+                        });
+                    }
                 }
             });
         });
@@ -584,11 +869,19 @@
     });
 </script>
 
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        window.stepper = new Stepper(document.querySelector('.bs-stepper'))
-    })
+    $(document).ready(function () {
+        // Jika pakai Select2, gunakan event dari jQuery
+        $('#satuan_kecil_edit').on('change', function () {
+            const value = $(this).val();
+            $('#label_satuan_kecil_edit').text(value + ' Dalam 1');
+        });
+
+        $('#satuan_sedang_edit').on('change', function () {
+            const value = $(this).val();
+            $('#label_satuan_sedang_edit').text(value + ' Dalam 1');
+        });
+    });
 </script>
 
 <script>
@@ -612,4 +905,26 @@
         });
     });
 </script>
+
+<script>
+    $(document).ready(function () {
+        $('#jenis_obat_edit').change(function () {
+            var selectedValue = $(this).val();
+            var jenisGenerikInput = $('#jenis_generik_edit');
+            var jenisObatSelect = $('#jenis_obat_edit');
+
+            if (selectedValue === 'Generik') {
+                $('#jenis_obat_edit_container').css('display', 'flex');
+                jenisObatSelect.css('width', '0%');
+                jenisGenerikInput.show().css('width', '100%');
+                jenisGenerikInput.val('');
+            } else {
+                jenisObatSelect.css('width', '100%');
+                jenisGenerikInput.hide();
+                jenisGenerikInput.val('Non Generic');
+            }
+        });
+    });
+</script>
+
 @endsection
