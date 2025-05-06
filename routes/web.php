@@ -5,6 +5,7 @@ use App\Http\Controllers\DataMasterManajemenController;
 use App\Http\Controllers\DataMasterMedisController;
 use App\Http\Controllers\DataMasterGudangController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\soap;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\WebSettingController;
 use Illuminate\Support\Facades\Route;
