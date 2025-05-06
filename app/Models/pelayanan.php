@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pendaftaran_rawat_jalan extends Model
+class pelayanan extends Model
 {
-
     use HasFactory;
     protected $fillable =
     [
@@ -16,15 +15,8 @@ class Pendaftaran_rawat_jalan extends Model
         'nomor_register',
         'tanggal_kujungan',
         'poli_id',
-        'dokter_id',
-        'Penjamin',
-        'antrian'
+        'dokter_id'
     ];
-
-    public function status()
-    {
-        return $this->hasOne(Pendaftaran_rawat_jalan_status::class, 'register_id');
-    }
 
     public function poli()
     {
@@ -40,9 +32,8 @@ class Pendaftaran_rawat_jalan extends Model
         return $this->belongsTo(pasien::class, 'pasien_id');
     }
 
-    public function penjamin()
+    public function pendaftaran()
     {
-        return $this->belongsTo(penjamin::class, 'Penjamin');
+        return $this->belongsTo(Pendaftaran_rawat_jalan::class, 'nomor_register','nomor_register');
     }
-
 }

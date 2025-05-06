@@ -46,4 +46,9 @@ class pasien extends Model
         'user_id_input',
         'user_name_input',
     ];
+
+    public function kelamin()
+    {
+        return $this->belongsTo(kelamin::class, 'seks','kode');
+    }
 }
