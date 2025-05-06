@@ -54,6 +54,11 @@ $.widget.bridge('uibutton', $.ui.button)
 <!-- fullCalendar 2.2.5 -->
 <script src="{{ asset('/plugins/moment/moment.min.js') }}"></script>
 <script src="{{ asset('/plugins/fullcalendar/main.js') }}"></script>
+{{-- Input Mask --}}
+<script src="{{ asset('/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
+{{-- Summernote --}}
+<script src="{{ asset('/plugins/summernote/summernote-bs4.min.js') }}"></script>
+
 
 <script>
     $(document).ready(function() {
@@ -64,6 +69,10 @@ $.widget.bridge('uibutton', $.ui.button)
             theme: "bootstrap4",
             dropdownParent: $(this).parent(), // fix select2 search input focus bug
             })
+        })
+        $(function () {
+            // Summernote
+            $('#summernote').summernote()
         })
     })
 </script>

@@ -32,6 +32,12 @@ Route::post('/data-barang/update', [SuperadminController::class,'dabaredit'])->n
 Route::post('/data-barang/delete', [SuperadminController::class,'dabardelete'])->name('dabar.destroy');
 Route::get('/data-barang/export', [SuperadminController::class, 'dabarexport'])->name('dabar.export');
 Route::post('/data-barang/import', [SuperadminController::class, 'dabarimport'])->name('dabar.import');
+//Koneksi antar database
+    Route::get('/data-barang/singkron/{id}', [SuperadminController::class, 'dabarsingkron'])->name('dabar.singkron');
+
+//Menu Pembelian Barang
+Route::get('/pembelian', [SuperadminController::class, 'pembelian'])->name('pembelian.get');
+Route::post('/pembelian/add', [SuperadminController::class, 'pembelianadd'])->name('pembelian.add');
 
 Route::get('/monitor', [SuperadminController::class,'monitor'])->name('monitor.get');
 Route::post('/monitor/add/bpjs', [SuperadminController::class,'monitor_bpjs'])->name('monitor.add.bpjs');
@@ -63,6 +69,12 @@ Route::prefix('pendaftaran')->group(function () {
     Route::post('/batal', [SuperadminController::class,'pendaftaranbatal'])->name('pendaftaran.batal');
     Route::post('/dokterup', [SuperadminController::class,'pendaftaranupdokter'])->name('pendaftaran.dokter.update');
     Route::post('/hadir', [SuperadminController::class,'pendaftaranhadir'])->name('pendaftaran.hadir');
+});
+
+Route::prefix('pemeriksaan')->group(function () {
+    // Menu Pasien
+    Route::get('/', [soap::class,'pelayana'])->name('pelayana.get');
+    Route::get('/so/{norawat}', [soap::class,'sopelayanan'])->name('sopelayana.get');
 });
 
 Route::middleware('auth')->prefix('data-master')->group(function () {

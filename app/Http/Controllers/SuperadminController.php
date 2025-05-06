@@ -38,17 +38,21 @@ use App\Models\poli;
 use App\Models\posker;
 use App\Models\provinsi;
 use App\Models\suku;
-use App\Models\gudang_barang;
+use App\Models\pelayanan;
 use App\Models\gudang_satuan;
 use App\Models\gudang_kategori;
+use App\Models\gudang_supplier_industri;
+use App\Models\gudang_barang;
 use App\Exports\Gudang_barangExport;
 use App\Imports\Gudang_barangImport;
+use App\Models\external_database;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Database\Connectors\ConnectionFactory;
 
 class SuperadminController extends Controller
 {
@@ -1618,6 +1622,15 @@ class SuperadminController extends Controller
             ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
             ->first();
 
+            pelayanan::create([
+                'nomor_rm' => $datapendaftaran->nomor_rm ,
+                'pasien_id' => $datapendaftaran->pasien_id ,
+                'nomor_register' => $datapendaftaran->nomor_register ,
+                'tanggal_kujungan' => $datapendaftaran->tanggal_kujungan ,
+                'poli_id' => $datapendaftaran->poli_id ,
+                'dokter_id'=> $datapendaftaran->dokter_id,
+            ]);
+
             $penjamin = penjamin::find($datapendaftaran->Penjamin);
 
             if ($penjamin->nama == 'BPJS') {
@@ -1670,7 +1683,8 @@ class SuperadminController extends Controller
         $dabar = gudang_barang::all();
         $satuan = gudang_satuan::all();
         $kategori = gudang_kategori::all();
-        return view('dashboard.dabar', compact('title','dabar','satuan','kategori'));
+        $singkron = external_database::all();
+        return view('dashboard.dabar', compact('title','dabar','satuan','kategori','singkron'));
     }
 
     public function dabaradd(Request $request)
@@ -1869,6 +1883,79 @@ class SuperadminController extends Controller
         return redirect()->route('dabar.get')->with('success', 'Data berhasil diimpor!');
     }
 
+    // Koneksi antar database
+    public function dabarsingkron($id)
+    {
+        $externalDb = external_database::findOrFail($id);
+
+        $config = [
+            'driver' => 'mysql',
+            'host' => $externalDb->host,
+            'database' => $externalDb->database,
+            'username' => $externalDb->username,
+            'password' => $externalDb->password,
+            'port' => $externalDb->port ?? 3306,
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+        ];
+
+        $factory = app(ConnectionFactory::class);
+        $connection = $factory->make($config, $externalDb->name);
+
+        // Gunakan koneksi ini untuk query
+        $data = $connection->table('gudang_barangs')->get();
+
+        $response = response()->json($data)->getData();
+
+        try {
+            // Simpan data ke database
+            foreach ($response  as $item) {
+                gudang_barang::updateOrCreate(
+                    [
+                        'kode_barang' => $item->kode_barang,
+                        'nama_barang' => $item->nama_barang,
+                        'kfa_kode' => $item->kfa_kode,
+                        'jenis_formularium' => $item->jenis_formularium,
+                        'nama_industri_barang' => $item->nama_industri_barang,
+                        'satuan_kecil' => $item->satuan_kecil,
+                        'satuan_sedang' => $item->satuan_sedang,
+                        'satuan_besar' => $item->satuan_besar,
+                        'nilai_satuan_kecil' => $item->nilai_satuan_kecil,
+                        'nilai_satuan_sedang' => $item->nilai_satuan_sedang,
+                        'nilai_satuan_besar' => $item->nilai_satuan_besar,
+                        'tempat_penyimpanan' => $item->tempat_penyimpanan,
+                        'barcode' => $item->barcode,
+                        'gudang_kategori' => $item->gudang_kategori,
+                        'jenis_obat' => $item->jenis_obat,
+                        'jenis_generik' => $item->jenis_generik,
+                        'bentuk_sediaan' => $item->bentuk_sediaan,
+                        'user_input_id' => Auth::user()->id,
+                        'user_input_nama' => Auth::user()->name,
+                    ]
+                );
+            }
+
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Data barang berhasil ditambahkan!'
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data barang Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Data barang!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
         //Generate Kode Barang Otomatis
         public function generateKodeDataBarang()
         {
@@ -1894,4 +1981,21 @@ class SuperadminController extends Controller
         }
 
     // Data Barang end
+
+
+    // Pembelian
+
+    public function pembelian()
+    {
+        $title = "Pembelian";
+        $supplier = gudang_supplier_industri::all();
+        return view('dashboard.pembelian', compact('title','supplier'));
+    }
+
+    public function pembelianadd(Request $request)
+    {
+
+    }
+
+    // Pembelian end
 }

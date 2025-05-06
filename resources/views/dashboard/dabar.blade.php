@@ -45,6 +45,11 @@
                                         <i class="fas fa-file-upload"></i> Import
                                     </button>
 
+                                    <!-- Tombol Sinkron (Memunculkan Modal) -->
+                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
+                                        <i class="fas fa-file-upload"></i> Singkron
+                                    </button>
+
                                 </div>
                             </div>
                             <div class="card-body">
@@ -507,38 +512,6 @@
     </div>
 </div>
 
-{{-- modal Edit Role --}}
-{{-- <div class="modal fade" id="editdabarModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Master Data dabar</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editFormdabar" action="{{ route('dabar.update') }}" method="POST">
-                    @csrf
-                    <input type="hidden" id="dabarid_edit" name="dabarid_edit">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label>Nama Jenis dabar</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Jenis dabar" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Perbarui</button> <!-- Submit button -->
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> --}}
-
 {{-- modal Delete Role --}}
 <div class="modal fade" id="deletedabarModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
@@ -589,6 +562,137 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Singkron -->
+<div class="modal fade" id="singkrondabarModal" tabindex="-1" role="dialog" aria-labelledby="singkrondabarModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="singkrondabarModalLabel">Singkron Data Barang</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="singkronDabar">
+                    @csrf
+                    <div class="row">
+                        <div class="col-sm-12" id="containerExternal">
+                            <label for="external_database">Pilih Gudang</label>
+                            <select class="form-control select2bs4" style="width: 100%;" id="external_database" name="external_database">
+                                <option value="" disabled selected>Pilih Satuan Kecil</option>
+                                @foreach ($singkron as $datasingkron)
+                                    <option value="{{ $datasingkron->id }}">{{ $datasingkron->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-12">
+                            <div id="loadingContainer" class="progress" style="display: none; height: 25px;">
+                                <div id="loadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: 0%;">
+                                    <span id="loadingText" style="font-weight: bold; color: white; display: block; text-align: center;">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-info">Tambah</button> <!-- Submit button -->
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        function resetModal() {
+            $("#loadingContainer").show();         // Sembunyikan loading bar
+            $("#loadingBar").css("width", "0%");   // Reset progress ke 0%
+            $("#loadingText").text("0%");          // Reset teks ke 0%
+            $(".btn-info").prop("disabled", false).text("Tambah"); // Aktifkan kembali tombol
+
+            $("#singkronDabar")[0].reset(); // Reset form input
+        }
+
+        // Reset progress bar saat modal dibuka
+        $("#singkrondabarModal").on("show.bs.modal", function () {
+            $("#loadingContainer").hide(); // Tampilkan loading saat modal dibuka
+            $("#loadingBar").css("width", "0%"); // Reset ke 0%
+            $("#loadingText").text("0%"); // Reset teks ke 0%
+        });
+
+        $("#singkronDabar").submit(function (e) {
+            e.preventDefault(); // Mencegah submit form default
+
+            const id_db = $("#external_database").val();
+
+            // Tampilkan loading bar dan reset ke 0%
+            $("#loadingContainer").show();
+            $("#containerExternal").hide();
+            $("#loadingBar").css("width", "0%");
+            $("#loadingText").text("0%");
+            $(".btn-info").prop("disabled", true).text("Menambahkan...");
+
+            // Simulasi animasi progress dari 0% hingga 100% sebelum AJAX dijalankan
+            let progress = 0;
+            let interval = setInterval(function () {
+                progress += 10; // Tambah 10% setiap 300ms
+                $("#loadingBar").css("width", progress + "%");
+                $("#loadingText").text(progress + "%"); // Update teks
+
+                if (progress >= 100) {
+                    clearInterval(interval); // Hentikan animasi
+                    $("#loadingText").text("Complete"); // Ubah teks jadi "Complete"
+
+                    // ** Setelah 100%, jalankan AJAX request **
+                    $.ajax({
+                        url: "{{ route('dabar.singkron', ['id' => '__ID__']) }}".replace('__ID__', id_db),
+                        type: "GET",
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.success) {
+                                $('#singkrondabarModal').modal('hide');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: response.message,
+                                    showConfirmButton: true
+                                }).then(() => {
+                                    $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
+                                    location.reload(); // Reload halaman untuk update data
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal!',
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            let errorMessage = "Terjadi kesalahan dalam menyimpan data!";
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: errorMessage
+                            }).then(() => {
+                                // **🔹 Reset modal ke kondisi awal setelah OK ditekan**
+                                resetModal();
+                            });
+
+                        }
+                    });
+                }
+            }, 300); // Setiap 300ms, naik 10%
+        });
+    });
+</script>
 
 <script>
     // Global Scope
@@ -754,13 +858,6 @@
                         });
                     }
                 },
-                // error: function(xhr) {
-                //     Swal.fire({
-                //         icon: 'error',
-                //         title: 'Gagal!',
-                //         text: 'Terjadi kesalahan saat mengupdate dabar!',
-                //     });
-                // }
                 error: function(xhr) {
                     if (xhr.status === 422 && xhr.responseJSON.errors) {
                         let errorList = '';
