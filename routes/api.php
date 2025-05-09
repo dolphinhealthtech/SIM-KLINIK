@@ -6,6 +6,7 @@ use App\Http\Controllers\SatusehatController;
 use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\DataMasterMedisController;
 use App\Http\Controllers\DataMasterGudangController;
+use App\Http\Controllers\soap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,9 @@ Route::get('/get-dokter-all/{id}', [SuperadminController::class, 'getDokterEdit'
 Route::get('/jadwal/json/{id}', [SuperadminController::class, 'dokterjadwaljson']);
 Route::get('/get-dokter-by-poli/{id}', [SuperadminController::class, 'getByPoli']);
 Route::get('/generate-kode-data-barang', [SuperadminController::class, 'generateKodeDataBarang'])->name('generateKodeDataBarang');
+
+
+Route::get('/sub-pemeriksaan/{id}', [soap::class, 'getSubPemeriksaan']);
 
 
 

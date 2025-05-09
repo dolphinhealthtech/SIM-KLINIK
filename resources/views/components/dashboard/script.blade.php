@@ -68,11 +68,7 @@ $.widget.bridge('uibutton', $.ui.button)
             $(this).select2({
             theme: "bootstrap4",
             dropdownParent: $(this).parent(), // fix select2 search input focus bug
-            })
-        })
-        $(function () {
-            // Summernote
-            $('#summernote').summernote()
-        })
-    })
+            });
+        });
+    });
 </script>

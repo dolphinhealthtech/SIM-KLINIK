@@ -211,6 +211,18 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::post('/perawatan-tindakan/delete', [DataMasterMedisController::class,'perawatan_tindakandelete'])->name('perawatan_tindakan.destroy');
     Route::get('/perawatan-tindakan/export', [DataMasterMedisController::class,'perawatan_tindakanexport'])->name('perawatan_tindakan.export');
     Route::post('/perawatan-tindakan/import', [DataMasterMedisController::class,'perawatan_tindakanimport'])->name('perawatan_tindakan.import');
+
+    Route::get('/htt-pemeriksaan', [DataMasterMedisController::class,'htt_pemeriksaan'])->name('htt_pemeriksaan.get');
+    Route::post('/htt_pemeriksaan/add', [DataMasterMedisController::class,'htt_pemeriksaanadd'])->name('htt_pemeriksaan.store');
+    Route::post('/htt_pemeriksaan/update', [DataMasterMedisController::class,'htt_pemeriksaanedit'])->name('htt_pemeriksaan.update');
+    Route::post('/htt_pemeriksaan/delete', [DataMasterMedisController::class,'htt_pemeriksaandelete'])->name('htt_pemeriksaan.destroy');
+    Route::get('/htt_pemeriksaan/export', [DataMasterMedisController::class,'htt_pemeriksaanexport'])->name('htt_pemeriksaan.export');
+    Route::post('/htt_pemeriksaan/import', [DataMasterMedisController::class,'htt_pemeriksaaneimport'])->name('htt_pemeriksaan.import');
+
+    Route::get('/htt_sub_pemeriksaan/{kode}', [DataMasterMedisController::class,'htt_sub_pemeriksaan'])->name('htt_sub_pemeriksaan.get');
+    Route::post('/htt_sub_pemeriksaan/add', [DataMasterMedisController::class,'htt_sub_pemeriksaanadd'])->name('htt_sub_pemeriksaan.store');
+    Route::post('/htt_sub_pemeriksaan/update', [DataMasterMedisController::class,'htt_sub_pemeriksaanedit'])->name('htt_sub_pemeriksaan.update');
+    Route::post('/htt_sub_pemeriksaan/delete', [DataMasterMedisController::class,'htt_sub_pemeriksaandelete'])->name('htt_sub_pemeriksaan.destroy');
 });
 
 Route::prefix('data-master-gudang')->group(function () {

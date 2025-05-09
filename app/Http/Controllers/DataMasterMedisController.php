@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\Htt_pemeriksaanExport;
 use App\Exports\PoliExport;
 use App\Exports\SpesialisExport;
 use App\Exports\SubspesialisExport;
 use App\Exports\Perawatan_kategoriExport;
 use App\Exports\Perawatan_tindakanExport;
+use App\Imports\Htt_pemeriksaanImport;
 use App\Imports\PoliImport;
 use App\Imports\SpesialisImport;
 use App\Imports\SubspesialisImport;
 use App\Imports\Perawatan_kategoriImport;
 use App\Imports\Perawatan_tindakanImport;
+use App\Models\htt_pemeriksaan;
+use App\Models\htt_sub_pemeriksaan;
 use App\Models\poli;
 use App\Models\spesialis;
 use App\Models\subspesialis;
@@ -209,7 +213,7 @@ class DataMasterMedisController extends Controller
     }
 
      // data poli
-     public function subspesialis($kode)
+    public function subspesialis($kode)
     {
         $title = "Master Data Sub Spesialis";
         $subspesialis = subspesialis::where('kode_spesialis', $kode)->get();
@@ -523,4 +527,201 @@ class DataMasterMedisController extends Controller
 
     // End Kategori Perawatan
 
+    // pemeriksaan htt
+    public function htt_pemeriksaan()
+    {
+        $title = "Master Pemeriksaan HTT";
+        $pemeriksaan_htt = htt_pemeriksaan::all();
+        return view('module.master-data-medis.htt_pemeriksaan', compact('title','pemeriksaan_htt'));
+    }
+
+    public function htt_pemeriksaanadd(Request $request)
+    {
+         try {
+             $request->validate([
+                 "nama" => 'required|string',
+             ]);
+
+             $htt_pemeriksaan = htt_pemeriksaan::create([
+                 'nama_pemeriksaan' => $request->nama,
+             ]);
+
+             return response()->json([
+                 'success' => true,
+                 'message' => 'Perawatan tindakan berhasil ditambahkan!',
+                 'data' => $htt_pemeriksaan
+             ], 201);
+         } catch (ValidationException $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Perawatan tindakan Sudah ada!',
+                 'errors' => $e->errors()
+             ], 422);
+         } catch (\Exception $e) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Terjadi kesalahan saat menyimpan perawatan tindakan!',
+                 'error' => $e->getMessage()
+             ], 500);
+         }
+    }
+
+    public function htt_pemeriksaanedit(Request $request)
+    {
+         $request->validate([
+            "nama_edit" => 'required|string',
+         ]);
+
+         $htt_pemeriksaan = htt_pemeriksaan::find($request->htt_pemeriksaanid_edit);
+
+         if (!$htt_pemeriksaan) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Perawatan tindakan tidak ditemukan!'
+             ], 404);
+         }
+
+         $htt_pemeriksaan->nama_pemeriksaan = $request->nama_edit;
+         $htt_pemeriksaan->save();
+
+         return response()->json([
+             'success' => true,
+             'message' => 'Perawatan tindakan berhasil diperbarui!'
+         ]);
+    }
+
+    public function htt_pemeriksaandelete(Request $request)
+    {
+
+        $request->validate([
+            'pemeriksaan_httid_delete' => 'required'
+        ]);
+
+        $htt_pemeriksaan = htt_pemeriksaan::find($request->pemeriksaan_httid_delete);
+        if (!$htt_pemeriksaan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Perawatan tindakan tidak ditemukan!'
+            ], 404);
+        }
+        $htt_pemeriksaan->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Perawatan tindakan berhasil dihapus!'
+        ]);
+    }
+
+    public function htt_pemeriksaanexport()
+    {
+        return Excel::download(new Htt_pemeriksaanExport, 'Macam-macam Pemeriksaan HTT.xlsx');
+    }
+
+    public function htt_pemeriksaaneimport(Request $request)
+    {
+        $request->validate([
+             'file' => 'required|mimes:xlsx,xls'
+         ]);
+
+         Excel::import(new Htt_pemeriksaanImport, $request->file('file'));
+
+
+         return redirect()->route('htt_pemeriksaan.get')->with('success', 'Data berhasil diimpor!');
+    }
+
+    public function htt_sub_pemeriksaan($kode)
+    {
+        $title = "Master Data Sub Spesialis";
+        $htt_sub_pemeriksaan = htt_sub_pemeriksaan::where('htt_pemeriksaan_id', $kode)->get();
+        $htt_pemeriksaan = htt_pemeriksaan::find($kode);
+
+        // spesialis
+        return view('module.master-data-medis.htt_sub_pemeriksaan', compact('title','htt_sub_pemeriksaan','htt_pemeriksaan'));
+    }
+
+    public function htt_sub_pemeriksaanadd(Request $request)
+    {
+        try {
+            $request->validate([
+                "htt_sub_pemeriksaan_id" => 'required',
+                "nama_sub_pemeriksaan" => 'required|string',
+                "nama" => 'required|string',
+            ]);
+
+            $htt_sub_pemeriksaan = htt_sub_pemeriksaan::create([
+                'htt_pemeriksaan_id' => $request->htt_sub_pemeriksaan_id,
+                'nama_pemeriksaan' => $request->nama_sub_pemeriksaan,
+                'nama_subpemeriksaan' => $request->nama,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Perawatan tindakan berhasil ditambahkan!',
+                'data' => $htt_sub_pemeriksaan
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Perawatan tindakan Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan perawatan tindakan!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function htt_sub_pemeriksaanedit(Request $request)
+    {
+         $request->validate([
+            "htt_sub_pemeriksaanid_edit" => 'required',
+            "htt_sub_pemeriksaan_id_edit" => 'required',
+            "nama_pemeriksaan_edit" => 'required|string',
+            "nama_edit" => 'required|string',
+         ]);
+
+         $htt_sub_pemeriksaan = htt_sub_pemeriksaan::find($request->htt_sub_pemeriksaanid_edit);
+
+         if (!$htt_sub_pemeriksaan) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Perawatan tindakan tidak ditemukan!'
+             ], 404);
+         }
+
+         $htt_sub_pemeriksaan->htt_pemeriksaan_id = $request->htt_sub_pemeriksaan_id_edit;
+         $htt_sub_pemeriksaan->nama_pemeriksaan = $request->nama_pemeriksaan_edit;
+         $htt_sub_pemeriksaan->nama_subpemeriksaan = $request->nama_edit;
+         $htt_sub_pemeriksaan->save();
+
+         return response()->json([
+             'success' => true,
+             'message' => 'Perawatan tindakan berhasil diperbarui!'
+         ]);
+    }
+
+    public function htt_sub_pemeriksaandelete(Request $request)
+    {
+
+        $request->validate([
+            'htt_sub_pemeriksaanid_delete' => 'required'
+        ]);
+
+        $htt_sub_pemeriksaan = htt_sub_pemeriksaan::find($request->htt_sub_pemeriksaanid_delete);
+        if (!$htt_sub_pemeriksaan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Perawatan tindakan tidak ditemukan!'
+            ], 404);
+        }
+        $htt_sub_pemeriksaan->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Perawatan tindakan berhasil dihapus!'
+        ]);
+    }
 }

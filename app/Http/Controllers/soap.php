@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\gcs_eye;
+use App\Models\gcs_kesadaran;
+use App\Models\gcs_motorik;
+use App\Models\gcs_verbal;
+use App\Models\htt_pemeriksaan;
+use App\Models\htt_sub_pemeriksaan;
 use App\Models\pelayanan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -38,7 +44,20 @@ class soap extends Controller
         }
         $umur .= $umurHari . ' Hari';
 
-        return view('module.pelayanan.so-perawat', compact('title','pelayanan','umur'));
+        $gsc_eye = gcs_eye::all();
+        $gcs_verbal = gcs_verbal::all();
+        $gcs_motorik = gcs_motorik::all();
+        $gcs_kesadaran = gcs_kesadaran::all();
+
+        $htt_pemeriksaan = htt_pemeriksaan::all();
+        return view('module.pelayanan.so-perawat', compact('title','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
 
     }
+
+    public function getSubPemeriksaan($id)
+    {
+        $sub = htt_sub_pemeriksaan::where('htt_pemeriksaan_id', $id)->get();
+        return response()->json($sub);
+    }
+
 }
