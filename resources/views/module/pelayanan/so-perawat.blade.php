@@ -28,7 +28,8 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <form action="#" method="POST">
+                            <form action="{{ route('sopelayana.add') }}" method="POST">
+                                @csrf
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -187,7 +188,7 @@
                                                         <label>Alergi dan jenis</label>
                                                         <div class="row">
                                                             <div class="col-md-6">
-                                                                <select class="form-control select2bs4" id="text" name="text">
+                                                                <select class="form-control select2bs4" id="jenis_alergi" name="jenis_alergi">
                                                                     <option value="" disabled selected>-- Pilih --</option>
                                                                     <option value="00">tidak ada</option>
                                                                     <option value="01">makanan</option>
@@ -196,12 +197,8 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <select class="form-control select2bs4" id="text" name="text">
+                                                                <select class="form-control select2bs4" id="alergi" name="alergi">
                                                                     <option value="" disabled selected>-- Pilih --</option>
-                                                                    <option value="00">tidak ada</option>
-                                                                    <option value="01">makanan</option>
-                                                                    <option value="02">obat</option>
-                                                                    <option value="03">udara</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -318,6 +315,36 @@
         </section>
     <!-- /.content -->
 </div>
+
+<script>
+$(document).ready(function() {
+    $('#jenis_alergi').on('change', function () {
+        const kode = $(this).val();
+
+        if (kode) {
+            $.ajax({
+                url: '/api/alergi/by-jenis/' + kode,
+                method: 'GET',
+                success: function(response) {
+                    const select2 = $('#alergi');
+                    select2.empty().append('<option value="" disabled selected>-- Pilih Data Alergi --</option>');
+
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function(item) {
+                            select2.append(`<option value="${item.kode_alergi}">${item.nama_jenis_alergi}</option>`);
+                        });
+                    } else {
+                        select2.append('<option value="00">Tidak ada data</option>');
+                    }
+                },
+                error: function() {
+                    alert('Gagal memuat data alergi dari server.');
+                }
+            });
+        }
+    });
+});
+</script>
 
 
 {{-- htt Script --}}

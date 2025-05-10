@@ -25,6 +25,7 @@ Route::get('/generate-kode-data-barang', [SuperadminController::class, 'generate
 
 
 Route::get('/sub-pemeriksaan/{id}', [soap::class, 'getSubPemeriksaan']);
+Route::get('/alergi/by-jenis/{id}', [soap::class, 'getByJenis']);
 
 
 

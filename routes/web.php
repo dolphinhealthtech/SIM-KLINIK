@@ -76,6 +76,7 @@ Route::prefix('pemeriksaan')->group(function () {
     // Menu Pasien
     Route::get('/', [soap::class,'pelayana'])->name('pelayana.get');
     Route::get('/so/{norawat}', [soap::class,'sopelayanan'])->name('sopelayana.get');
+    Route::post('/so/add', [soap::class,'sopelayanandd'])->name('sopelayana.add');
 });
 
 Route::middleware('auth')->prefix('data-master')->group(function () {
@@ -223,6 +224,11 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::post('/htt_sub_pemeriksaan/add', [DataMasterMedisController::class,'htt_sub_pemeriksaanadd'])->name('htt_sub_pemeriksaan.store');
     Route::post('/htt_sub_pemeriksaan/update', [DataMasterMedisController::class,'htt_sub_pemeriksaanedit'])->name('htt_sub_pemeriksaan.update');
     Route::post('/htt_sub_pemeriksaan/delete', [DataMasterMedisController::class,'htt_sub_pemeriksaandelete'])->name('htt_sub_pemeriksaan.destroy');
+
+    Route::get('/alergi', [DataMasterMedisController::class,'alergi'])->name('alergi.get');
+    Route::post('/alergi/add', [DataMasterMedisController::class,'alergiadd'])->name('alergi.store');
+    Route::post('/alergi/delete', [DataMasterMedisController::class,'alergidelete'])->name('alergi.destroy');
+
 });
 
 Route::prefix('data-master-gudang')->group(function () {
