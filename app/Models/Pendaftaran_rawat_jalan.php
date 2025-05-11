@@ -18,7 +18,8 @@ class Pendaftaran_rawat_jalan extends Model
         'poli_id',
         'dokter_id',
         'Penjamin',
-        'antrian'
+        'antrian',
+        'no_urut'
     ];
 
     public function status()

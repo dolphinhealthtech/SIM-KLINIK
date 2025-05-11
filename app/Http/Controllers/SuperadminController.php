@@ -831,6 +831,8 @@ class SuperadminController extends Controller
                 'jenis_Kartu_bpjs' => $request->jenis_kartu,
                 'kelas_bpjs' => $request->kelas,
                 'provide' => $request->provide,
+                'kodeprovide' => $request->kodeprovide,
+                'hubungan_keluarga' => $request->hubungan_keluarga,
                 'tgl_exp_bpjs' => $request->tgl_exp_bpjs,
                 'seks' => $request->seks,
                 'goldar' => $request->goldar,
@@ -893,8 +895,8 @@ class SuperadminController extends Controller
             "kelas_edit" => 'nullable|string',
             "provide_edit" => 'nullable|string',
             "tgl_exp_bpjs_edit" => 'nullable|date',
-            //"kodeprovide_edit" =>'nullable',
-            //"hubungan_keluarga_edit" =>'nullable',
+            "kodeprovide_edit" =>'nullable',
+            "hubungan_keluarga_edit" =>'nullable',
             "seks_edit" => 'required',
             "goldar_edit" => 'required',
             "pernikahan_edit" => 'required',
@@ -931,6 +933,8 @@ class SuperadminController extends Controller
                 'jenis_Kartu_bpjs' => $request->jenis_kartu_edit,
                 'kelas_bpjs' => $request->kelas_edit,
                 'provide' => $request->provide_edit,
+                'kodeprovide' => $request->kodeprovide_edit,
+                'hubungan_keluarga' => $request->hubungan_keluarga_edit,
                 'tgl_exp_bpjs' => $request->tgl_exp_bpjs_edit,
                 'seks' => $request->seks_edit,
                 'goldar' => $request->goldar_edit,
@@ -1570,6 +1574,15 @@ class SuperadminController extends Controller
             $pendaftaran->status_pendaftaran = 0;
             $pendaftaran->save();
 
+            $pemeriksaan = pelayanan::where('nomor_register', $pendaftaran->nomor_register)
+            ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
+            ->where('pasien_id', $pendaftaran->pasien_id)
+            ->first();
+
+            if ($pemeriksaan) {
+                $pemeriksaan->delete();
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data pasien berhasil disimpan.'
@@ -1637,16 +1650,9 @@ class SuperadminController extends Controller
 
                 $poli = poli::find($datapendaftaran->poli_id)->first();
 
-                $timestamp = round(microtime(true) * 1000); // Mendapatkan timestamp dalam milidetik
-
-                // Mengonversi timestamp ke Carbon instance
-                $waktu = Carbon::createFromTimestampMs($timestamp); // Menggunakan milidetik
-
-                // Menambahkan 1 hari
-                $waktu->addDay(); // Menambahkan 1 hari
-
-                // Mendapatkan timestamp baru dalam milidetik
-                $newTimestamp = $waktu->timestamp * 1000; // Mengonversi kembali ke milidetik
+                date_default_timezone_set('UTC');
+                $Timestamp = strval(time() - strtotime('1970-01-01 00:00:00'));
+                $newTimestamp = $Timestamp * 1000;
 
                 $databpjs = [
                     "tanggalperiksa"=> Carbon::parse($pendaftaran->tanggal_kunjungan, 'Asia/Jakarta')->format('Y-m-d'),
@@ -1657,6 +1663,29 @@ class SuperadminController extends Controller
                 ];
 
                 $this->PcareController->update_ws_antria_bpjs($databpjs);
+
+                $pendaftaranpcare = [
+                    "kdProviderPeserta"=> $datapendaftaran->pasien->kodeprovide,
+                    "tglDaftar"=> Carbon::parse($pendaftaran->tanggal_kunjungan, 'Asia/Jakarta')->format('d-m-Y'),
+                    "noKartu"=> $datapendaftaran->pasien->no_bpjs,
+                    "kdPoli"=> $poli->kode,
+                    "keluhan"=> null,
+                    "kunjSakit"=> true,
+                    "sistole"=> 0,
+                    "diastole"=> 0,
+                    "beratBadan"=> 0,
+                    "tinggiBadan"=> 0,
+                    "respRate"=> 0,
+                    "lingkarPerut"=> 0,
+                    "heartRate"=> 0,
+                    "rujukBalik"=> 0,
+                    "kdTkp"=> "10",
+                ];
+
+                $nourut = $this->PcareController->post_pendaftaran_bpjs($pendaftaranpcare);
+                $pendaftaran_nourut = Pendaftaran_rawat_jalan::where('nomor_register', $pendaftaran->nomor_register)->find('tanggal_kujungan', $pendaftaran->tanggal_kujungan);
+                $pendaftaran_nourut->no_urut = $nourut['nourut'];
+                $pendaftaran_nourut->save();
             }
 
 
