@@ -43,6 +43,8 @@ use App\Models\gudang_satuan;
 use App\Models\gudang_kategori;
 use App\Models\gudang_supplier_industri;
 use App\Models\gudang_barang;
+use App\Models\pembelian;
+use App\Models\pembelian_details;
 use App\Exports\Gudang_barangExport;
 use App\Imports\Gudang_barangImport;
 use App\Models\external_database;
@@ -2022,13 +2024,155 @@ class SuperadminController extends Controller
     {
         $title = "Pembelian";
         $supplier = gudang_supplier_industri::all();
-        return view('dashboard.pembelian', compact('title','supplier'));
+        $dabar = gudang_barang::all();
+        $user = User::all();
+        return view('dashboard.pembelian', compact('title','supplier','dabar','user'));
     }
 
     public function pembelianadd(Request $request)
     {
+        try {
+            $request->validate([
+                'data_json_tabel' => 'required|string',
+                'nomor_faktur' => 'required|string',
+                'supplier_select' => 'nullable|string',
+                'supplier_input' => 'nullable|string',
+                'no_po_sp' => 'required|string',
+                'no_faktur_supplier' => 'required|string',
+                'tanggal_terima_barang' => 'required|string',
+                'tanggal_faktur' => 'required|string',
+                'tanggal_jatuh_tempo' => 'required|string',
+                'pajak_ppn' => 'required|string',
+                'metode_hna' => 'required|string',
+                'sub_total_keseluruhan_input' => 'required|string',
+                'diskon_total_keseluruhan_input' => 'required|string',
+                'ppn_total_keseluruhan_input' => 'required|string',
+                'total_keseluruhan_input' => 'required|string',
+                'materai' => 'required|string',
+                'koreksi' => 'required|string',
+                'penerima_barang' => 'required|string',
+            ], [
+                // Custom attribute names
+                'data_json_tabel' => 'Data JSON Tabel',
+                'nomor_faktur' => 'Nomor Faktur',
+                'supplier_select' => 'Supplier Select',
+                'supplier_input' => 'Supplier Input',
+                'no_po_sp' => 'Nomor PO/SP',
+                'no_faktur_supplier' => 'Nomor Faktur Supplier',
+                'tanggal_terima_barang' => 'Tanggal Terima Barang',
+                'tanggal_faktur' => 'Tanggal Faktur',
+                'tanggal_jatuh_tempo' => 'Tanggal Jatuh Tempo',
+                'pajak_ppn' => 'Pajak PPN',
+                'metode_hna' => 'Metode HNA',
+                'sub_total_keseluruhan_input' => 'Sub Total Keseluruhan',
+                'diskon_total_keseluruhan_input' => 'Diskon Total Keseluruhan',
+                'ppn_total_keseluruhan_input' => 'PPN Total Keseluruhan',
+                'total_keseluruhan_input' => 'Total Keseluruhan',
+                'materai' => 'Materai',
+                'koreksi' => 'Koreksi',
+                'penerima_barang' => 'Penerima Barang',
+            ]);
 
+            // Simpan data ke database (1)
+            $pembelian = pembelian::create([
+                'nomor_faktur' => $request->input('nomor_faktur'),
+                'supplier' => $request->input('supplier_select') ?: $request->input('supplier_input'),
+                'no_po_sp' => $request->input('no_po_sp'),
+                'no_faktur_supplier' => $request->input('no_faktur_supplier'),
+                'tanggal_terima_barang' => $request->input('tanggal_terima_barang'),
+                'tanggal_faktur' => $request->input('tanggal_faktur'),
+                'tanggal_jatuh_tempo' => $request->input('tanggal_jatuh_tempo'),
+                'pajak_ppn' => $request->input('pajak_ppn'),
+                'metode_hna' => $request->input('metode_hna'),
+                'sub_total' => $request->input('sub_total_keseluruhan_input'),
+                'total_diskon' => $request->input('diskon_total_keseluruhan_input'),
+                'ppn_total' => $request->input('ppn_total_keseluruhan_input'),
+                'materai' => $request->input('materai'),
+                'koreksi' => $request->input('koreksi'),
+                'total' => $request->input('total_keseluruhan_input'),
+                'penerima_barang' => $request->input('penerima_barang'),
+                'user_input_id' => Auth::user()->id,
+                'user_input_nama' => Auth::user()->name,
+            ]);
+
+            // Simpan detail pembelian
+            $dataDetail = json_decode($request->data_json_tabel, true);
+
+            foreach ($dataDetail as $detail) {
+                pembelian_details::create([
+                    'nomor_faktur' => $request->input('nomor_faktur'),
+                    'nama_obat_alkes' => $detail['nama'],
+                    'kode_obat_alkes' => $detail['kodeBarang'],
+                    'qty' => $detail['qty'],
+                    'harga_satuan' => $detail['hargaSatuan'],
+                    'diskon' => $detail['disc'],
+                    'exp' => $detail['exp'],
+                    'batch' => $detail['batch'],
+                    'sub_total' => $detail['subTotal'],
+                ]);
+            }
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Data pembelian berhasil ditambahkan!',
+                'data' => $pembelian
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pembelian Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Data pembelian!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+
+    //GENERATE NO FAKTUR
+        public function generateFakturPembelian()
+        {
+            try {
+                // Ambil tanggal hari ini dalam format Ymd (tanpa tanda -)
+                $today = date('Ymd'); // Format menjadi YYYYMMDD
+
+                // Cari nomor faktur terakhir untuk tanggal yang sama
+                $lastPembelian = pembelian::whereDate('created_at', '=', date('Y-m-d'))  // filter by actual date
+                                            ->latest('nomor_faktur')
+                                            ->first();
+
+                // Format dasar nomor faktur 'INV-YYYYMMDD-'
+                $prefix = 'INV-' . $today . '-';
+
+                // Jika ada nomor faktur terakhir, ambil angka di akhir nomor faktur dan tambahkan 1
+                if ($lastPembelian) {
+                    preg_match('/(\d+)$/', $lastPembelian->nomor_faktur, $matches);
+                    $nextNumber = isset($matches[0]) ? (int) $matches[0] + 1 : 1;
+                } else {
+                    // Jika tidak ada nomor faktur sebelumnya, mulai dari 1
+                    $nextNumber = 1;
+                }
+
+                // Format nomor faktur dengan padding 5 digit
+                $nextNomorFaktur = $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+
+                return response()->json([
+                    'success' => true,
+                    'kode_faktur' => $nextNomorFaktur
+                ], 200);
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat menghasilkan nomor faktur.',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
 
     // Pembelian end
 }

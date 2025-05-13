@@ -22,6 +22,7 @@ Route::get('/get-dokter-all/{id}', [SuperadminController::class, 'getDokterEdit'
 Route::get('/jadwal/json/{id}', [SuperadminController::class, 'dokterjadwaljson']);
 Route::get('/get-dokter-by-poli/{id}', [SuperadminController::class, 'getByPoli']);
 Route::get('/generate-kode-data-barang', [SuperadminController::class, 'generateKodeDataBarang'])->name('generateKodeDataBarang');
+Route::get('/generate-faktur-pembelian', [SuperadminController::class, 'generateFakturPembelian'])->name('generateFakturPembelian');
 
 
 Route::get('/sub-pemeriksaan/{id}', [soap::class, 'getSubPemeriksaan']);
