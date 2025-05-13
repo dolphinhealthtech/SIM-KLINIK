@@ -60,7 +60,7 @@
                                                         </button>
                                                         <div class="dropdown-menu dropdown-menu-right" role="menu">
                                                             @if ($pelayanandata->tindakan_button == 'panggil')
-                                                                <a class="dropdown-item" href="{{ route('sopelayana.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                                <a class="dropdown-item" href="{{ route('pelayana_dokter.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-bell"></i> Panggil
                                                                 </a>
                                                             @elseif ($pelayanandata->tindakan_button == 'soap')
@@ -70,10 +70,6 @@
                                                             @elseif ($pelayanandata->tindakan_button == 'edit')
                                                                 <a class="dropdown-item" href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-edit"></i> Edit SOAP
-                                                                </a>
-                                                             @elseif ($pelayanandata->tindakan_button == 'Complete')
-                                                                <a class="dropdown-item">
-                                                                    <i class="fas fa-edit"></i> Sudah Di cek Dokter
                                                                 </a>
                                                             @endif
                                                         </div>

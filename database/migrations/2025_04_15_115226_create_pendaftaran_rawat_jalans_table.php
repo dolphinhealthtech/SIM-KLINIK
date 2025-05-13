@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('poli_id');
             $table->string('dokter_id');
             $table->string('Penjamin');
+            $table->string('antrian')->nullable();
+            $table->string('nourut')->nullable();
             $table->timestamps();
         });
     }

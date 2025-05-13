@@ -42,7 +42,7 @@ Route::prefix('satusehat')->group(function(){
 });
 Route::prefix('pcare')->group(function () {
     // pcare
-    // Route::get('/token', [PcareController::class, 'get_token'])->name('pcare.token'); // di privat fungsi nya
+    Route::get('/token', [PcareController::class, 'get_token'])->name('pcare.token'); // di privat fungsi nya
     Route::get('/noka/{nomor}', [PcareController::class, 'get_noka_bpjs'])->name('pcare.noka');
     Route::get('/nik/{nomor}', [PcareController::class, 'get_nik_bpjs'])->name('pcare.nik');
     Route::get('/poli', [PcareController::class, 'get_poli_fktp_bpjs'])->name('pcare.poli');

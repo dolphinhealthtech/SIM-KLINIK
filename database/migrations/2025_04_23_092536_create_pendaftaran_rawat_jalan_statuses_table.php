@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('status_panggil');
             $table->string('status_pendaftaran');
             $table->string('Status_aplikasi')->nullable();
-            $table->string('antrian')->nullable();
             $table->timestamps();
         });
     }
