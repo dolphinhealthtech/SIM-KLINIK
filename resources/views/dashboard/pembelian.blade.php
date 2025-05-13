@@ -29,7 +29,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form id="addFormdabar" action="{{ route('pembelian.add') }}" method="POST">
+                                <form id="addFormpembelian" action="{{ route('pembelian.add') }}" method="POST">
                                     @csrf
                                     <div class="bs-stepper">
                                         <div class="bs-stepper-header" role="tablist">
@@ -54,10 +54,11 @@
                                             <!-- your steps content here -->
                                             <div id="data-awal" class="content" role="tabpanel" aria-labelledby="data-awal-trigger">
                                                 <div class="row">
+                                                    <input type="hidden" id="data_json_tabel" name="data_json_tabel">
+
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label for="nomor_faktur">No Faktur</label>
-                                                            {{-- JANGAN LUPA SCRIPT --}}
                                                             <input type="text" class="form-control" id="nomor_faktur" name="nomor_faktur" readonly>
                                                         </div>
                                                     </div>
@@ -153,23 +154,273 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
+                                                <button type="button" class="btn btn-primary" onclick="validateDataAwal()">Next</button>
+                                                {{-- <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button> --}}
                                             </div>
                                             <div id="data-pembelian" class="content" role="tabpanel" aria-labelledby="data-pembelian-trigger">
-                                                <div class="form-group">
-                                                    <label for="exampleInputFile">File input</label>
-                                                    <div class="input-group">
-                                                        <div class="custom-file">
-                                                            <input type="file" class="custom-file-input" id="exampleInputFile"/>
-                                                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label for="nama_obat_alkes">Nama Obat / Alkes</label>
+                                                                <select class="form-control select2bs4 mt-2" style="width: 100%;" id="nama_obat_alkes" name="nama_obat_alkes">
+                                                                    <option value="" disabled selected>Pilih Obat/Alkes</option>
+                                                                    @foreach ($dabar as $dabarData)
+                                                                        <option value="{{ $dabarData->nama_barang }}"
+                                                                            data-kode-barang="{{ $dabarData->kode_barang }}"
+                                                                            data-nilai-kecil="{{ $dabarData->nilai_satuan_kecil }}">
+                                                                            {{ $dabarData->nama_barang }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                        <div class="input-group-append">
-                                                            <span class="input-group-text">Upload</span>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group row align-items-center">
+                                                                <!-- Checkbox -->
+                                                                <div class="col-md-1">
+                                                                    <input type="checkbox" id="kemasan_kecil_besarCheck" onclick="toggleKemasanLabel()">
+                                                                </div>
+
+                                                                <!-- Label Dinamis -->
+                                                                <div class="col-md-11">
+                                                                    <label for="kemasan_kecil_besarCheck" id="kemasanLabel" class="mb-0">Kemasan Kecil</label>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Satuan Kecil -->
+                                                            <div id="formKecil" style="display: block;">
+                                                                <!-- Nilai Satuan Kecil -->
+                                                                <div class="form-group row align-items-center">
+                                                                    <div class="col-md-3">
+                                                                        <label for="nilai_satuan_kecil">Satuan Kecil</label>
+                                                                    </div>
+                                                                    <div class="col-md-5">
+                                                                        <input type="text" class="form-control" id="nilai_satuan_kecil" name="nilai_satuan_kecil">
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <span class="form-text">Kemasan Kecil</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Harga Satuan Kecil -->
+                                                                <div class="form-group row align-items-center">
+                                                                    <div class="col-md-3">
+                                                                        <label for="harga_satuan_kecil">Harga Satuan</label>
+                                                                    </div>
+                                                                    <div class="col-md-5">
+                                                                        <input type="text" class="form-control" id="harga_satuan_kecil" name="harga_satuan_kecil">
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <span class="form-text" id="harga_satuan_kecil_sebelumnya"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Satuan Besar -->
+                                                            <div id="formBesar" style="display: none;">
+                                                                <!-- Nilai Satuan Besar -->
+                                                                <div class="form-group row align-items-center">
+                                                                    <div class="col-md-3">
+                                                                        <label for="nilai_satuan_besar">Satuan Besar</label>
+                                                                    </div>
+                                                                    <div class="col-md-5">
+                                                                        <input type="text" class="form-control" id="nilai_satuan_besar" name="nilai_satuan_besar">
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <span class="form-text">Kemasan Besar</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Harga Satuan Besar -->
+                                                                <div class="form-group row align-items-center">
+                                                                    <div class="col-md-3">
+                                                                        <label for="harga_satuan_besar">Harga Satuan</label>
+                                                                    </div>
+                                                                    <div class="col-md-5">
+                                                                        <input type="text" class="form-control" id="harga_satuan_besar" name="harga_satuan_besar">
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <span class="form-text" id="harga_satuan_besar_sebelumnya"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <div class="d-flex align-items-center">
+                                                                    <label for="diskon_toggle" class="mr-2 mb-0">Diskon (Persen/Rupiah)</label>
+                                                                    <input type="checkbox" id="diskon_toggle" name="diskon_toggle" onclick="toggle_diskon()" style="margin-left: 5px;">
+                                                                </div>
+
+                                                                <!-- Persen -->
+                                                                <div class="d-flex align-items-center mt-2">
+                                                                    <input type="text" class="form-control" id="diskon_persen" name="diskon_persen" placeholder="Masukan persentase diskonnya !">
+                                                                    <input type="text" class="form-control" id="diskon_rupiah" name="diskon_rupiah" style="display: none;" placeholder="Masukan nilai rupiah diskonnya !">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label for="tgl_expired">Tanggal Expired</label>
+                                                                <input type="date" class="form-control" id="tgl_expired" name="tgl_expired">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label for="no_batch">No Batch</label>
+                                                                <input type="text" class="form-control" id="no_batch" name="no_batch" placeholder="Masukan no batch">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group row">
+                                                                <div class="col-md-6">
+                                                                    <button type="button" onclick="deleteSelectedRows()" class="btn btn-danger btn-block">Hapus</button>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <button type="button" onclick="addNewDataToTabel()" class="btn btn-primary btn-block">Tambah Data Sementara</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 300px;">
+                                                            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                                                <table class="table" id="dataTable" style="border: none;">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>No</th>
+                                                                            <th>Nama Item</th>
+                                                                            <th>Qty</th>
+                                                                            <th>Harga Satuan</th>
+                                                                            <th>Disc</th>
+                                                                            <th>Exp</th>
+                                                                            <th>Batch</th>
+                                                                            <th>Sub Total</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {{-- DATA TERISI OTOMATIS NANTI --}}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+
+                                                        <br>
+
+                                                        <div class="col-md-12">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group row">
+                                                                        {{-- SUB TOTAL --}}
+                                                                        <div class="col-md-4">
+                                                                            <h5 style="font-weight: bold;">Sub Total</h5>
+                                                                        </div>
+                                                                        <div class="col-md-1">
+                                                                            <h5 style="font-weight: bold;">:</h5>
+                                                                        </div>
+                                                                        <div class="col-md-7">
+                                                                            <h5 style="font-weight: bold" id="sub_total_keseluruhan"></h5>
+                                                                            <input type="hidden" id="sub_total_keseluruhan_input" name="sub_total_keseluruhan_input">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group row">
+                                                                        {{-- TOTAL DISKON --}}
+                                                                        <div class="col-md-4">
+                                                                            <h5 style="font-weight: bold; color: red;">Total Diskon</h5>
+                                                                        </div>
+                                                                        <div class="col-md-1">
+                                                                            <h5 style="font-weight: bold; color: red;">:</h5>
+                                                                        </div>
+                                                                        <div class="col-md-7">
+                                                                            <h5 style="font-weight: bold" id="diskon_total_keseluruhan"></h5>
+                                                                            <input type="hidden" id="diskon_total_keseluruhan_input" name="diskon_total_keseluruhan_input">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group row">
+                                                                        {{-- PPN TOTAL --}}
+                                                                        <div class="col-md-4">
+                                                                            <h5 style="font-weight: bold; color: blue;">PPN</h5>
+                                                                        </div>
+                                                                        <div class="col-md-1">
+                                                                            <h5 style="font-weight: bold; color: blue;">:</h5>
+                                                                        </div>
+                                                                        <div class="col-md-7">
+                                                                            <h5 style="font-weight: bold" id="ppn_total_keseluruhan"></h5>
+                                                                            <input type="hidden" id="ppn_total_keseluruhan_input" name="ppn_total_keseluruhan_input">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group row align-items-center">
+                                                                        <div class="col-md-3">
+                                                                            <h5 class="mb-0" style="font-weight:bold; color: green;">Materai : </h5>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <select class="form-control select2bs4" style="width: 100%;" id="materai" name="materai">
+                                                                                <option value="" disabled selected>Pilih :</option>
+                                                                                <option value="0">0</option>
+                                                                                <option value="3000">3.000</option>
+                                                                                <option value="6000">6.000</option>
+                                                                                <option value="10000">10.000</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <h5 class="mb-0" style="font-weight:bold; color: rgb(42, 197, 245);">Koreksi : </h5>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <input type="text" class="form-control" id="koreksi" name="koreksi" value="0" maxlength="3" pattern="\d{1,3}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    {{-- GARIS YEEE --}}
+                                                                    <div style="width: 100%; border-top: 2px solid black; position: relative; margin-top: 20px;">
+                                                                        <span style="position: absolute; right: -10px; top: -15px; font-weight: bold;">+</span>
+                                                                    </div>
+
+                                                                    <br>
+
+                                                                    <div class="form-group row">
+                                                                        <div class="col-md-4">
+                                                                            <h4 style="font-weight: bold">Total</h4>
+                                                                        </div>
+                                                                        <div class="col-md-1">
+                                                                            <h4 style="font-weight: bold">:</h4>
+                                                                        </div>
+                                                                        <div class="col-md-7">
+                                                                            <h4 style="font-weight: bold" id="total_keseluruhan"></h4>
+                                                                            <input type="hidden" id="total_keseluruhan_input" name="total_keseluruhan_input">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="penerima_barang">Penerima Barang/Obat/Alkes</label>
+                                                                        <select class="form-control select2bs4 mt-2" style="width: 100%;" id="penerima_barang" name="penerima_barang">
+                                                                            <option value="" disabled selected>Pilih Supplier</option>
+                                                                            @foreach ($user as $userData)
+                                                                                <option value="{{ $userData->name }}">{{ $userData->name }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    <br><br><br><br><br><br>
+                                                                    <div class="form-group row">
+                                                                        <div class="col-md-4">
+                                                                            <button type="button" class="btn btn-primary btn-block" onclick="stepper.previous()">Previous</button>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <button type="button" class="btn btn-warning btn-block" onclick="cetak_data()">Cetak</button>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <button type="submit" class="btn btn-info btn-block"> Simpan </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                                <button type="submit" class="btn btn-primary"> Submit </button>
                                             </div>
                                         </div>
                                     </div>
@@ -184,11 +435,232 @@
     <!-- /.content -->
 </div>
 
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Data</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label>No</label>
+                                <input type="text" class="form-control" id="editNo" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Kode Item</label>
+                                <input type="text" class="form-control" id="editKodeBarang" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Nama Item</label>
+                                <input type="text" class="form-control" id="editNama" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Qty</label>
+                                <input type="text" class="form-control" id="editQty">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Harga Satuan</label>
+                                <input type="text" class="form-control" id="editHargaSatuan">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Disc</label>
+                                <input type="text" class="form-control" id="editDisc">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Exp</label>
+                                <input type="date" class="form-control" id="editExp">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Batch</label>
+                                <input type="text" class="form-control" id="editBatch">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Sub Total</label>
+                                <input type="text" class="form-control" id="editSubTotal" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="saveEdit()">Simpan</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- SCRIPT ADD --}}
+    <script>
+        $('#addFormpembelian').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422 && xhr.responseJSON.errors) {
+                        let errorList = '';
+
+                        // Hapus class 'is-invalid' dari semua input dulu (optional, biar bersih)
+                        $('#addFormpembelian').find('.is-invalid').removeClass('is-invalid');
+
+                        Object.entries(xhr.responseJSON.errors).forEach(([key, value]) => {
+                            errorList += `- ${value[0]}<br>`;
+                            $(`#${key}`).addClass('is-invalid'); // Tambahkan class error ke input
+                        });
+
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Validasi Gagal!',
+                            html: `Terdapat beberapa input yang belum valid:<br><br>${errorList}`,
+                        });
+                    } else {
+                        let errorMessage = "Terjadi kesalahan dalam menyimpan data!";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: errorMessage
+                        });
+                    }
+                }
+            });
+        });
+    </script>
 
 {{-- SCRIPT GLOBAL --}}
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             window.stepper = new Stepper(document.querySelector(".bs-stepper"));
+
+            // Mask untuk persen (maksimal 3 digit)
+            Inputmask({
+                alias: "numeric",
+                suffix: '%',
+                min: 0,
+                max: 100,
+                rightAlign: false,
+                placeholder: "",
+                allowMinus: false
+            }).mask("#diskon_persen, #editDisc");
+
+            Inputmask({
+                alias: "numeric",
+                groupSeparator: ".",
+                radixPoint: ",",
+                autoGroup: true,
+                digitsOptional: true,
+                digits: 0,
+                placeholder: "",
+                prefix: "Rp ",
+                rightAlign: false,
+                removeMaskOnSubmit: true
+            }).mask("#diskon_rupiah, #harga_satuan_kecil, #harga_satuan_besar, #editHargaSatuan");
+        });
+
+        function validateDataAwal() {
+            const container = document.querySelector('#data-awal');
+            const inputs = container.querySelectorAll('input, select, textarea');
+            let unfilled = [];
+
+            inputs.forEach(input => {
+                const type = input.type;
+                const isVisible = input.offsetParent !== null;
+
+                // Skip jika: tidak terlihat, disabled, readonly, hidden, button
+                if (
+                    !input.disabled &&
+                    type !== 'hidden' &&
+                    type !== 'button' &&
+                    !input.readOnly &&
+                    isVisible &&
+                    input.value.trim() === ''
+                ) {
+                    const label = container.querySelector(`label[for="${input.id}"]`);
+                    const name = label ? label.innerText.trim() : input.name || input.id;
+                    unfilled.push(name);
+                }
+            });
+
+            if (unfilled.length > 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Input Belum Lengkap!',
+                    html: `
+                        <p>Mohon lengkapi input berikut sebelum melanjutkan:</p>
+                        <ul style="text-align: left;">
+                            ${unfilled.map(item => `<li><strong>${item}</strong></li>`).join('')}
+                        </ul>
+                    `,
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                stepper.next();
+            }
+        }
+
+        $(document).ready(function() {
+            // Ketika halaman atau modal terbuka, ambil nomor faktur terbaru
+            $.ajax({
+                url: '/api/generate-faktur-pembelian', // Mengambil nomor faktur dari controller
+                method: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        // Isi input nomor faktur dengan nomor yang dihasilkan
+                        $('#nomor_faktur').val(response.kode_faktur);
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan dalam mengambil nomor faktur.'
+                    });
+                }
+            });
         });
     </script>
 
@@ -203,6 +675,16 @@
 
             // Event listener untuk input tanggal_faktur
             document.getElementById('tanggal_faktur').addEventListener('click', function() {
+                this.showPicker();
+            });
+
+            // Event listener untuk input tgl_expired
+            document.getElementById('tgl_expired').addEventListener('click', function() {
+                this.showPicker();
+            });
+
+            // Event listener untuk input editExp
+            document.getElementById('editExp').addEventListener('click', function() {
                 this.showPicker();
             });
 
@@ -245,8 +727,10 @@
 
         });
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", function () {
             toggle_tanggal_terima_barang();
+            toggleKemasanLabel();
+            toggle_diskon();
         });
 
         function toggle_supplier() {
@@ -307,5 +791,429 @@
             }
         }
 
+    // SCRIPT DATA PEMBELIAN
+        function toggleKemasanLabel() {
+            const isChecked = document.getElementById("kemasan_kecil_besarCheck").checked;
+
+            document.getElementById("kemasanLabel").textContent = isChecked ? "Kemasan Besar" : "Kemasan Kecil";
+
+            // Toggle tampilan form
+            document.getElementById("formKecil").style.display = isChecked ? "none" : "block";
+            document.getElementById("formBesar").style.display = isChecked ? "block" : "none";
+        }
+
+        function toggle_diskon() {
+            const isChecked = document.getElementById("diskon_toggle").checked;
+            const persenInput = document.getElementById("diskon_persen");
+            const rupiahInput = document.getElementById("diskon_rupiah");
+
+            if (isChecked) {
+                persenInput.style.display = "none";
+                rupiahInput.style.display = "block";
+                persenInput.value = ""; // Reset persen jika beralih ke rupiah
+            } else {
+                rupiahInput.style.display = "none";
+                persenInput.style.display = "block";
+                rupiahInput.value = ""; // Reset rupiah jika beralih ke persen
+            }
+        }
+
+            //Menghitung satuan besar dan kecil
+        $(document).ready(function () {
+            let nilaiKonversi = 1;
+
+            $('#nama_obat_alkes').on('change', function () {
+                const selectedOption = $(this).find('option:selected');
+                nilaiKonversi = parseInt(selectedOption.data('nilai-kecil')) || 1;
+            });
+
+            $('#nilai_satuan_besar').on('input', function () {
+                const nilaiBesar = parseInt($(this).val()) || 0;
+                const hasilKecil = nilaiBesar * nilaiKonversi;
+                $('#nilai_satuan_kecil').val(hasilKecil);
+            });
+
+            $('#harga_satuan_besar').on('input', function () {
+                // Ambil nilai dari input harga satuan besar dan bersihkan formatnya (hapus "Rp", titik, dan koma)
+                const rawHargaBesar = $(this).val().replace(/[Rp\s.]/g, '').replace(',', '.');
+                const hargaBesar = parseFloat(rawHargaBesar) || 0;
+
+                // Ambil nilai satuan kecil
+                const nilaiKecil = parseInt($('#nilai_satuan_kecil').val()) || 1;
+
+                // Menghitung harga satuan kecil berdasarkan pembagian
+                const hargaKecil = hargaBesar / nilaiKecil;
+
+                // Menampilkan hasil harga satuan kecil dengan format yang benar
+                $('#harga_satuan_kecil').val(hargaKecil.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }));
+            });
+        });
+
     </script>
+
+{{-- SCRIPT TABEL --}}
+    <script>
+        $(document).ready(function () {
+            $('#materai, #koreksi').on('input change', function () {
+                hitungTotalKeseluruhan();
+            });
+        });
+
+        // Tambahkan CSS ke dalam head
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .selected-row {
+                background-color: #007bff !important;
+                color: white;
+            }
+        `;
+        document.head.appendChild(style);
+
+        let currentRow = null;
+
+        function toggleRowSelection(row) {
+            // Hapus kelas 'selected-row' dari baris yang sedang terpilih (jika ada)
+            if (currentRow && currentRow !== row) {
+                currentRow.classList.remove("selected-row");
+            }
+
+            // Toggle kelas 'selected-row' pada baris yang baru dipilih
+            row.classList.toggle("selected-row");
+
+            // Update currentRow agar baris yang terakhir dipilih menjadi yang terpilih
+            if (row.classList.contains("selected-row")) {
+                currentRow = row;
+            } else {
+                currentRow = null;
+            }
+        }
+
+        function openEditModal(row) {
+            currentRow = row;
+            const cells = row.getElementsByTagName('td');
+            document.getElementById('editNo').value = cells[0].innerText;
+            document.getElementById('editNama').value = cells[1].innerText;
+            document.getElementById('editQty').value = cells[2].innerText;
+            document.getElementById('editHargaSatuan').value = cells[3].innerText;
+            document.getElementById('editDisc').value = cells[4].innerText;
+            document.getElementById('editExp').value = cells[5].innerText;
+            document.getElementById('editBatch').value = cells[6].innerText;
+            document.getElementById('editSubTotal').value = cells[7].innerText;
+
+            document.getElementById('editKodeBarang').value = cells[8].innerText;
+
+            $('#editModal').modal('show');
+        }
+
+        $('#editQty, #editHargaSatuan').on('input keyup change blur', function () {
+            updateEditSubTotal();
+        });
+
+        function updateEditSubTotal() {
+            let qty = parseFloat($('#editQty').val()) || 0;
+            let harga = $('#editHargaSatuan').val().replace(/[Rp\s.]/g, '').replace(',', '.');
+            let hargaParsed = parseFloat(harga) || 0;
+
+            let subTotal = qty * hargaParsed;
+            let formatted = 'Rp ' + subTotal.toLocaleString('id-ID', { minimumFractionDigits: 0 });
+            $('#editSubTotal').val(formatted);
+        }
+
+        function saveEdit() {
+            if (currentRow) {
+                const cells = currentRow.getElementsByTagName('td');
+                cells[0].innerText = document.getElementById('editNo').value;
+                cells[1].innerText = document.getElementById('editNama').value;
+                cells[2].innerText = document.getElementById('editQty').value;
+                cells[3].innerText = document.getElementById('editHargaSatuan').value;
+                cells[4].innerText = document.getElementById('editDisc').value;
+                cells[5].innerText = document.getElementById('editExp').value;
+                cells[6].innerText = document.getElementById('editBatch').value;
+                cells[7].innerText = document.getElementById('editSubTotal').value;
+                cells[8].innerText = document.getElementById('editKodeBarang').value;
+
+                $('#editModal').modal('hide');
+
+                hitungTotalSubTotalRupiah();
+                hitungTotalDiskon();
+                hitungTotalPPN();
+                updateHiddenJsonInput();
+            }
+        }
+
+        function deleteSelectedRows() {
+            document.querySelectorAll('.selected-row').forEach(row => row.remove());
+
+            hitungTotalSubTotalRupiah();
+            hitungTotalDiskon();
+            hitungTotalPPN();
+            updateHiddenJsonInput();
+        }
+
+        function addNewDataToTabel() {
+            let namaObat = $('#nama_obat_alkes').val();
+            let nilaiKecil = parseFloat($('#nilai_satuan_kecil').val());
+            let rawHargaKecil = $('#harga_satuan_kecil').val();
+            let diskonPersen = $('#diskon_persen').val();
+            let diskonRupiah = $('#diskon_rupiah').val();
+            let tglExpired = $('#tgl_expired').val();
+            let noBatch = $('#no_batch').val();
+            let kodeBarang = $('#nama_obat_alkes option:selected').data('kode-barang');
+
+            let hargaKecil = parseFloat(rawHargaKecil.replace(/[Rp\s.]/g, '').replace(',', '.'));
+            let subTotal = nilaiKecil * hargaKecil;
+            let diskonBaru = (diskonPersen || diskonRupiah || '0').toString().trim();
+            let expBaru = new Date(tglExpired).toISOString().split('T')[0];
+
+            let foundMatch = null;
+            let differences = [];
+
+            $('#dataTable tbody tr').each(function () {
+                let kode = $(this).find('.kode-barang-hidden').text().trim();
+                if (kode === kodeBarang) {
+                    let existingNama = $(this).find('td:eq(1)').text().trim();
+                    let existingHarga = parseFloat($(this).find('td:eq(3)').text().replace(/[Rp\s.]/g, '').replace(',', '.'));
+                    let existingDiskon = $(this).find('td:eq(4)').text().trim();
+                    let expLamaRaw = $(this).find('td:eq(5)').text().trim();
+                    let expLama = new Date(expLamaRaw).toISOString().split('T')[0];
+
+                    let isSameNama = existingNama === namaObat;
+                    let isSameHarga = existingHarga === hargaKecil;
+                    let isSameDiskon = existingDiskon === diskonBaru;
+                    let isSameExp = expLama === expBaru;
+
+                    if (isSameNama && isSameHarga && isSameDiskon && isSameExp) {
+                        foundMatch = $(this);
+                        return false; // break
+                    } else {
+                        if (!isSameNama) differences.push("Nama Obat");
+                        if (!isSameHarga) differences.push("Harga Satuan");
+                        if (!isSameDiskon) differences.push("Diskon");
+                        if (!isSameExp) differences.push("Tanggal Expired");
+                    }
+                }
+            });
+
+            if (foundMatch) {
+                Swal.fire({
+                    title: "Data Sama Ditemukan",
+                    text: "Barang sudah ada di tabel. Tambahkan jumlah Qty saja?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, tambahkan Qty",
+                    cancelButtonText: "Batal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let existingQty = parseFloat(foundMatch.find('td:eq(2)').text());
+                        let updatedQty = existingQty + nilaiKecil;
+                        let updatedSubTotal = updatedQty * hargaKecil;
+                        let subTotalRupiah = 'Rp ' + updatedSubTotal.toLocaleString('id-ID', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        })
+                        foundMatch.find('td:eq(2)').text(updatedQty);
+                        foundMatch.find('td:eq(7)').text(subTotalRupiah);
+                        hitungTotalSubTotalRupiah();
+                        hitungTotalDiskon();
+                        hitungTotalPPN();
+                    }
+                });
+            } else if (differences.length > 0) {
+                Swal.fire({
+                    title: "Data Serupa Sudah Ada",
+                    html: "Data dengan kode barang ini sudah ada dalam tabel.<br><b>Perbedaan terdeteksi pada:</b><br><ul>" +
+                        differences.map(item => `<li>${item}</li>`).join('') + "</ul>",
+                    icon: "warning"
+                });
+            } else {
+                let subTotalRupiah = 'Rp ' + subTotal.toLocaleString('id-ID');
+                const newRow = `
+                    <tr onclick="toggleRowSelection(this)" ondblclick="openEditModal(this)">
+                        <td>${$('#dataTable tbody tr').length + 1}</td>
+                        <td>${namaObat}</td>
+                        <td>${nilaiKecil}</td>
+                        <td>${rawHargaKecil}</td>
+                        <td>${diskonBaru}</td>
+                        <td>${tglExpired}</td>
+                        <td>${noBatch}</td>
+                        <td>${subTotalRupiah}</td>
+                        <td style="display:none" class="kode-barang-hidden">${kodeBarang}</td>
+                    </tr>
+                `;
+                $('#dataTable tbody').append(newRow);
+                hitungTotalSubTotalRupiah();
+                hitungTotalDiskon();
+                hitungTotalPPN();
+                updateHiddenJsonInput();
+            }
+
+            // Reset inputan
+            $('#nama_obat_alkes').val('').trigger('change');
+            $('#nilai_satuan_kecil').val('');
+            $('#harga_satuan_kecil').val('');
+            $('#nilai_satuan_besar').val('');
+            $('#harga_satuan_besar').val('');
+            $('#diskon_persen').val('');
+            $('#diskon_rupiah').val('');
+            $('#tgl_expired').val('');
+            $('#no_batch').val('');
+        }
+
+        function updateHiddenJsonInput() {
+            const data = [];
+            $('#dataTable tbody tr').each(function () {
+                const cells = $(this).find('td');
+                data.push({
+                    no: cells.eq(0).text(),
+                    nama: cells.eq(1).text(),
+                    qty: parseFloat(cells.eq(2).text()),
+                    hargaSatuan: cells.eq(3).text(),
+                    disc: cells.eq(4).text(),
+                    exp: cells.eq(5).text(),
+                    batch: cells.eq(6).text(),
+                    subTotal: cells.eq(7).text(),
+                    kodeBarang: cells.eq(8).text()
+                });
+            });
+            $('#data_json_tabel').val(JSON.stringify(data));
+
+            let jsonData = JSON.stringify(data);
+            // console.log('Final Data nieh : ', jsonData);
+        }
+
+
+        function hitungTotalSubTotalRupiah() {
+            let total = 0;
+
+            $('#dataTable tbody tr').each(function () {
+                const teks = $(this).find('td').eq(7).text().trim();
+                const angka = parseInt(teks.replace(/[^\d]/g, ''));
+                if (!isNaN(angka)) {
+                    total += angka;
+                }
+            });
+
+            const totalFormatted = 'Rp ' + total.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            $('#sub_total_keseluruhan').text(totalFormatted);
+            $('#sub_total_keseluruhan_input').val(total);
+
+            // console.log(total);
+
+            hitungTotalKeseluruhan();
+        }
+
+        function hitungTotalDiskon() {
+            let totalDiskon = 0;
+
+            $('#dataTable tbody tr').each(function () {
+                const $tds = $(this).find('td');
+
+                const qty = parseInt($tds.eq(2).text().trim());
+                const hargaSatuanText = $tds.eq(3).text().trim();
+                const diskonText = $tds.eq(4).text().trim();
+
+                const hargaSatuan = parseInt(hargaSatuanText.replace(/[^\d]/g, '')); // Hapus "Rp" dan titik
+                let diskonRupiah = 0;
+
+                if (diskonText.includes('%')) {
+                    // Diskon persen
+                    const persen = parseFloat(diskonText.replace('%', ''));
+                    if (!isNaN(persen)) {
+                        diskonRupiah = Math.round((hargaSatuan * qty) * (persen / 100));
+                    }
+                } else if (diskonText.includes('Rp')) {
+                    // Diskon rupiah langsung
+                    diskonRupiah = parseInt(diskonText.replace(/[^\d]/g, ''));
+                }
+
+                if (!isNaN(diskonRupiah)) {
+                    totalDiskon += diskonRupiah;
+                }
+            });
+
+            // Format total diskon ke Rupiah tanpa ,00
+            const totalDiskonFormatted = 'Rp ' + totalDiskon.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            // Tampilkan ke elemen target
+            $('#diskon_total_keseluruhan').text(totalDiskonFormatted);
+            $('#diskon_total_keseluruhan_input').val(totalDiskon);
+
+            // console.log(totalDiskon);
+
+            hitungTotalKeseluruhan();
+        }
+
+        function hitungTotalPPN() {
+            // Ambil teks dari elemen subtotal dan diskon
+            let subTotalText = $('#sub_total_keseluruhan').text().trim();
+            let diskonText = $('#diskon_total_keseluruhan').text().trim();
+            let ppnText = $('#pajak_ppn').val().trim(); // misal "10%"
+
+            // Bersihkan angka dari teks
+            let subTotal = parseInt(subTotalText.replace(/[^\d]/g, '')) || 0;
+            let diskon = parseInt(diskonText.replace(/[^\d]/g, '')) || 0;
+            let ppnPersen = parseFloat(ppnText.replace('%', '').replace(',', '.')) || 0;
+
+            // Hitung PPN
+            let dasarPajak = subTotal - diskon;
+            let totalPPN = Math.round((dasarPajak * ppnPersen) / 100);
+
+            // Format ke rupiah
+            let totalPPNRupiah = 'Rp ' + totalPPN.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            // Tampilkan ke elemen target
+            $('#ppn_total_keseluruhan').text(totalPPNRupiah);
+            $('#ppn_total_keseluruhan_input').val(totalPPN);
+
+            // console.log(totalPPN);
+
+            hitungTotalKeseluruhan();
+        }
+
+        function hitungTotalKeseluruhan() {
+            // Ambil nilai Subtotal, Diskon, PPN
+            const subTotalText = $('#sub_total_keseluruhan').text().trim();
+            const diskonText = $('#diskon_total_keseluruhan').text().trim();
+            const ppnText = $('#ppn_total_keseluruhan').text().trim();
+
+            // Convert ke angka
+            const subTotal = parseInt(subTotalText.replace(/[^\d]/g, '')) || 0;
+            const diskon = parseInt(diskonText.replace(/[^\d]/g, '')) || 0;
+            const ppn = parseInt(ppnText.replace(/[^\d]/g, '')) || 0;
+
+            // Ambil nilai materai dari <select>
+            const materai = parseInt($('#materai').val()) || 0;
+
+            // Ambil koreksi
+            const koreksi = parseInt($('#koreksi').val().replace(/[^\d]/g, '')) || 0;
+
+            // Total = subtotal - diskon + ppn + materai + koreksi
+            const total = subTotal - diskon + ppn + materai + koreksi;
+
+            // Format ke Rupiah
+            const totalFormatted = 'Rp ' + total.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            // Tampilkan
+            $('#total_keseluruhan').text(totalFormatted);
+            $('#total_keseluruhan_input').val(total);
+        }
+
+
+    </script>
+
+
+
 @endsection

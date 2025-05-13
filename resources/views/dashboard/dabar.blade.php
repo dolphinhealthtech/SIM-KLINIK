@@ -578,9 +578,9 @@
                     @csrf
                     <div class="row">
                         <div class="col-sm-12" id="containerExternal">
-                            <label for="external_database">Pilih Gudang</label>
+                            <label for="external_database">Pilih Tujuan</label>
                             <select class="form-control select2bs4" style="width: 100%;" id="external_database" name="external_database">
-                                <option value="" disabled selected>Pilih Satuan Kecil</option>
+                                <option value="" disabled selected>Pilih Nama Tujuan</option>
                                 @foreach ($singkron as $datasingkron)
                                     <option value="{{ $datasingkron->id }}">{{ $datasingkron->name }}</option>
                                 @endforeach
