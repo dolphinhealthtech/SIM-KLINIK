@@ -1635,7 +1635,8 @@ class SuperadminController extends Controller
             ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
             ->first();
 
-            pelayanan::create([
+
+            pelayanan::updateOrCreate([
                 'nomor_rm' => $datapendaftaran->nomor_rm ,
                 'pasien_id' => $datapendaftaran->pasien_id ,
                 'nomor_register' => $datapendaftaran->nomor_register ,
@@ -1683,12 +1684,15 @@ class SuperadminController extends Controller
                 ];
 
                 $nourut = $this->PcareController->post_pendaftaran_bpjs($pendaftaranpcare);
-                $pendaftaran_nourut = Pendaftaran_rawat_jalan::where('nomor_register', $pendaftaran->nomor_register)->find('tanggal_kujungan', $pendaftaran->tanggal_kujungan);
-                $pendaftaran_nourut->no_urut = $nourut['nourut'];
-                $pendaftaran_nourut->save();
+                $data = json_decode($nourut->getContent(), true);
+                $pendaftaran_nourut = Pendaftaran_rawat_jalan::where('nomor_register', $pendaftaran->nomor_register)
+                    ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
+                    ->first();
+                if ($pendaftaran_nourut) {
+                    $pendaftaran_nourut->no_urut = $data['data']['message'];
+                    $pendaftaran_nourut->save();
+                }
             }
-
-
             // Perbarui status_pendaftaran menjadi 0 (batal)
             $pendaftaran->status_pendaftaran = 2;
             $pendaftaran->save();
