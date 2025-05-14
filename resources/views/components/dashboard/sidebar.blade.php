@@ -27,7 +27,13 @@
                 @foreach ($menus as $menu)
                     @php
                         // Cek apakah menu aktif berdasarkan URL
-                        $isActive = request()->is(trim($menu->url, '/')) || $menu->children->where(fn($child) => request()->is(trim($child->url, '/')))->isNotEmpty();
+                        $isActive = request()->is(trim($menu->url, '/')) || 
+                                    $menu->children->where(fn($child) => 
+                                        request()->is(trim($child->url, '/')) || 
+                                        $child->children->where(fn($grandchild) => 
+                                            request()->is(trim($grandchild->url, '/'))
+                                        )->isNotEmpty()
+                                    )->isNotEmpty();
                     @endphp
 
                     <li class="nav-item {{ $isActive ? 'menu-open' : '' }}">
@@ -44,11 +50,37 @@
                         @if ($menu->children->isNotEmpty())
                             <ul class="nav nav-treeview">
                                 @foreach ($menu->children as $child)
-                                    <li class="nav-item">
-                                        <a href="{{ url($child->url) }}" class="nav-link {{ request()->is(trim($child->url, '/')) ? 'active' : '' }}">
+                                    @php
+                                        // Cek apakah submenu aktif berdasarkan URL
+                                        $isChildActive = request()->is(trim($child->url, '/')) || 
+                                                        $child->children->where(fn($grandchild) => 
+                                                            request()->is(trim($grandchild->url, '/'))
+                                                        )->isNotEmpty();
+                                    @endphp
+                                    
+                                    <li class="nav-item {{ $isChildActive ? 'menu-open' : '' }}">
+                                        <a href="{{ $child->url ? url($child->url) : '#' }}" class="nav-link {{ request()->is(trim($child->url, '/')) ? 'active' : '' }}">
                                             <i class="fa fa-{{ $child->icon }} nav-icon"></i>
-                                            <p>{{ $child->name }}</p>
+                                            <p>
+                                                {{ $child->name }}
+                                                @if ($child->children->isNotEmpty())
+                                                    <i class="right fa fa-angle-left"></i>
+                                                @endif
+                                            </p>
                                         </a>
+                                        
+                                        @if ($child->children->isNotEmpty())
+                                            <ul class="nav nav-treeview">
+                                                @foreach ($child->children as $grandchild)
+                                                    <li class="nav-item">
+                                                        <a href="{{ url($grandchild->url) }}" class="nav-link {{ request()->is(trim($grandchild->url, '/')) ? 'active' : '' }}">
+                                                            <i class="fa fa-{{ $grandchild->icon }} nav-icon"></i>
+                                                            <p>{{ $grandchild->name }}</p>
+                                                        </a>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
                                     </li>
                                 @endforeach
                             </ul>
@@ -61,3 +93,4 @@
     </div>
     <!-- /.sidebar -->
 </aside>
+

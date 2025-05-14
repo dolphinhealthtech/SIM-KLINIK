@@ -35,7 +35,12 @@ class ViewServiceProvider extends ServiceProvider
                         // Ambil submenu yang sesuai role user
                         $query->whereHas('roles', function ($q) use ($roleIds) {
                             $q->whereIn('roles.id', $roleIds);
-                        })->with('children'); // Ambil submenu dalam submenu
+                        })->with(['children' => function ($q) use ($roleIds) {
+                            // Ambil sub-submenu yang sesuai role user
+                            $q->whereHas('roles', function ($qq) use ($roleIds) {
+                                $qq->whereIn('roles.id', $roleIds);
+                            });
+                        }]);
                     }])
                     ->orderBy('order', 'asc')
                     ->get();
@@ -47,3 +52,4 @@ class ViewServiceProvider extends ServiceProvider
         });
     }
 }
+

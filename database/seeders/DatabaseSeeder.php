@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             UserSeeder::class,
             WebSettingSeeder::class,
+            KelaminSeeder::class,
         ]);
     }
 }
