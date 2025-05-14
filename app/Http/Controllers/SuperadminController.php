@@ -45,6 +45,9 @@ use App\Models\gudang_supplier_industri;
 use App\Models\gudang_barang;
 use App\Models\pembelian;
 use App\Models\pembelian_details;
+use App\Models\gudang_setting_harga;
+use App\Models\gudang_barang_harga;
+use App\Models\gudang_barang_stok;
 use App\Exports\Gudang_barangExport;
 use App\Imports\Gudang_barangImport;
 use App\Models\external_database;
@@ -2026,7 +2029,9 @@ class SuperadminController extends Controller
         $supplier = gudang_supplier_industri::all();
         $dabar = gudang_barang::all();
         $user = User::all();
-        return view('dashboard.pembelian', compact('title','supplier','dabar','user'));
+        $settingHarga = gudang_setting_harga::first();
+
+        return view('dashboard.pembelian', compact('title','supplier','dabar','user','settingHarga'));
     }
 
     public function pembelianadd(Request $request)
@@ -2099,6 +2104,87 @@ class SuperadminController extends Controller
             $dataDetail = json_decode($request->data_json_tabel, true);
 
             foreach ($dataDetail as $detail) {
+                // Ambil metode
+                $metode = $request->metode_hna;
+
+                // Ambil dan konversi subtotal ke float
+                $subTotalRaw = $detail['hargaSatuan'];
+                $subTotal = (float) str_replace(['Rp', '.', ' '], '', $subTotalRaw);
+
+                // Ambil dan konversi diskon
+                $diskon = $detail['disc'];
+                $diskonPersen = 0;
+                $diskonRupiah = 0;
+
+                if (strpos($diskon, '%') !== false) {
+                    // Jika diskon dalam persen (misal: "10%")
+                    $diskonPersen = (float) str_replace('%', '', $diskon);
+                } else {
+                    // Jika diskon dalam rupiah
+                    $diskonRupiah = (float) str_replace(['Rp', '.', ' '], '', $diskon);
+                }
+
+                // Ambil dan konversi PPN ke float
+                $ppn = (float) str_replace('%', '', $request->pajak_ppn);
+
+                $PPNbarang = 0;
+                $Diskonbarang = 0;
+                $hargaDiskon_4 = 0;
+                $hargaDasar = $subTotal;
+
+                if ($metode == '1') {
+                    // Metode 1: Hanya subtotal
+                    $hargaDasar = $subTotal;
+                } elseif ($metode == '2') {
+                    // Metode 2: Subtotal + PPN
+                    $PPNbarang = $subTotal * ($ppn / 100);
+                    $hargaDasar = $subTotal + $PPNbarang;
+                } elseif ($metode == '3') {
+                    // Metode 3: Subtotal - Diskon
+                    if ($diskonPersen > 0) {
+                        $Diskonbarang = $subTotal * ($diskonPersen / 100);
+                        $hargaDasar = $subTotal - $Diskonbarang;
+                    } else {
+                        $Diskonbarang = $diskonRupiah;
+                        $hargaDasar = $subTotal - $Diskonbarang;
+                    }
+                } elseif ($metode == '4') {
+                    // Metode 4: Subtotal + PPN - Diskon
+                    if ($diskonPersen > 0) {
+                        $hargaDiskon_4 = $subTotal * ($diskonPersen / 100);
+                        $Diskonbarang = $hargaDiskon_4;
+                    } else {
+                        $hargaDiskon_4 = $diskonRupiah;
+                        $Diskonbarang = $hargaDiskon_4;
+                    }
+
+                    $hargaSetelahDiskon = $subTotal - $hargaDiskon_4;
+                    $PPNbarang = $hargaSetelahDiskon * ($ppn / 100);
+                    $hargaDasar = $hargaSetelahDiskon + $PPNbarang;
+                }
+
+                $setting = gudang_setting_harga::first(); // atau where('some_column', ...)
+
+                $hargaJual1 = $hargaDasar * (1 + ($setting->harga_jual_1 / 100));
+                $hargaJual2 = $hargaDasar * (1 + ($setting->harga_jual_2 / 100));
+                $hargaJual3 = $hargaDasar * (1 + ($setting->harga_jual_3 / 100));
+
+                // Simpan ke gudang
+                gudang_barang_harga::create([
+                    'kode_obat_alkes' => $detail['kodeBarang'],
+                    'nama_obat_alkes' => $detail['nama'],
+                    'harga_dasar' => $hargaDasar,
+                    'harga_jual_1' => $hargaJual1,
+                    'harga_jual_2' => $hargaJual2,
+                    'harga_jual_3' => $hargaJual3,
+                    'diskon' => $Diskonbarang,
+                    'ppn' => $PPNbarang,
+                    'tanggal_obat_masuk' => $request->input('tanggal_terima_barang'),
+                    'user_input_id' => Auth::user()->id,
+                    'user_input_name' => Auth::user()->name,
+                ]);
+
+                // Simpan ke detail pembelian
                 pembelian_details::create([
                     'nomor_faktur' => $request->input('nomor_faktur'),
                     'nama_obat_alkes' => $detail['nama'],
@@ -2110,7 +2196,18 @@ class SuperadminController extends Controller
                     'batch' => $detail['batch'],
                     'sub_total' => $detail['subTotal'],
                 ]);
+
+                gudang_barang_stok::create([
+                    'kode_obat_alkes' => $detail['kodeBarang'],
+                    'nama_obat_alkes' => $detail['nama'],
+                    'qty' => $detail['qty'],
+                    'tanggal_terima_obat' => $request->input('tanggal_terima_barang'),
+                    'expired' => $detail['exp'],
+                    'user_input_id' => Auth::user()->id,
+                    'user_input_name' => Auth::user()->name,
+                ]);
             }
+
 
             // Return response JSON untuk AJAX
             return response()->json([

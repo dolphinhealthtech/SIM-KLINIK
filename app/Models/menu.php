@@ -21,3 +21,4 @@ class menu extends Model
         return $this->hasMany(Menu::class, 'parent_id')->with('children')->orderBy('order', 'asc');
     }
 }
+

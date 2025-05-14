@@ -599,6 +599,19 @@
                 rightAlign: false,
                 removeMaskOnSubmit: true
             }).mask("#diskon_rupiah, #harga_satuan_kecil, #harga_satuan_besar, #editHargaSatuan");
+
+            @if (is_null($settingHarga))
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Pengaturan Harga Kosong',
+                    text: 'Silakan atur terlebih dahulu setting harga sebelum melanjutkan pembelian.',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ route('setharga.get') }}";
+                    }
+                });
+            @endif
         });
 
         function validateDataAwal() {

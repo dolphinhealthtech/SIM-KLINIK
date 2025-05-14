@@ -11,9 +11,16 @@ use App\Imports\Gudang_supplier_industriImport;
 use App\Models\gudang_satuan;
 use App\Models\gudang_kategori;
 use App\Models\gudang_supplier_industri;
+use App\Models\gudang_barang_harga;
+use App\Models\gudang_barang_stok;
+use App\Models\gudang_setting_harga;
+use App\Models\external_database;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Illuminate\Database\Connectors\ConnectionFactory;
 
 class DataMasterGudangController extends Controller
 {
@@ -364,4 +371,189 @@ class DataMasterGudangController extends Controller
         }
 
     // Supplier Industri end
+
+    // Setting Harga
+
+    public function setharga()
+    {
+        $title = "Master Setting Harga Jual";
+        $setharga = gudang_setting_harga::first();
+        Carbon::setLocale('id');
+        $lastUpdated = $setharga ? Carbon::parse($setharga->updated_at)->diffForHumans() : 'belum ada update';
+        $singkron = external_database::all();
+
+        return view('module.master-data-gudang.setting_harga_jual', compact('title','setharga','lastUpdated','singkron'));
+    }
+
+    public function sethargaadd(Request $request)
+    {
+        try {
+            $request->validate([
+                'harga_jual_1'  => 'required|string',
+                'harga_jual_2'  => 'required|string',
+                'harga_jual_3'  => 'required|string',
+                'embalase_poin' => 'required|string',
+            ], [
+                'harga_jual_1'  => 'Harga Jual 1',
+                'harga_jual_2'  => 'Harga Jual 2',
+                'harga_jual_3'  => 'Harga Jual 3',
+                'embalase_poin' => 'Embalase Poin',
+            ]);
+
+            // Bersihkan prefix atau simbol dari input agar hanya angka saja
+            $harga_jual_1  = preg_replace('/[^\d]/', '', $request->input('harga_jual_1'));
+            $harga_jual_2  = preg_replace('/[^\d]/', '', $request->input('harga_jual_2'));
+            $harga_jual_3  = preg_replace('/[^\d]/', '', $request->input('harga_jual_3'));
+            $embalase_poin = preg_replace('/[^\d]/', '', $request->input('embalase_poin'));
+
+            // Simpan data ke database
+            $setharga = gudang_setting_harga::first();
+
+            if ($setharga) {
+                $setharga->update([
+                    'harga_jual_1' => $harga_jual_1,
+                    'harga_jual_2' => $harga_jual_2,
+                    'harga_jual_3' => $harga_jual_3,
+                    'embalase_poin' => $embalase_poin,
+                    'user_input_id' => Auth::user()->id,
+                    'user_input_name' => Auth::user()->name,
+                ]);
+            } else {
+                $setharga = gudang_setting_harga::create([
+                    'harga_jual_1' => $harga_jual_1,
+                    'harga_jual_2' => $harga_jual_2,
+                    'harga_jual_3' => $harga_jual_3,
+                    'embalase_poin' => $embalase_poin,
+                    'user_input_id' => Auth::user()->id,
+                    'user_input_name' => Auth::user()->name,
+                ]);
+            }
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Setting harga jual berhasil ditambahkan!',
+                'data' => $setharga
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Setting harga jual sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan setting harga jual!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
+
+    // Koneksi antar database
+    public function sethargasingkron($id)
+    {
+        $externalDb = external_database::findOrFail($id);
+
+        $config = [
+            'driver' => 'mysql',
+            'host' => $externalDb->host,
+            'database' => $externalDb->database,
+            'username' => $externalDb->username,
+            'password' => $externalDb->password,
+            'port' => $externalDb->port ?? 3306,
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+        ];
+
+        $factory = app(ConnectionFactory::class);
+        $connection = $factory->make($config, $externalDb->name);
+
+        // Gunakan koneksi ini untuk query
+        $data = $connection->table('gudang_setting_hargas')->get();
+
+        $response = response()->json($data)->getData();
+
+        try {
+            // Simpan data ke database
+            foreach ($response  as $item) {
+                gudang_setting_harga::updateOrCreate(
+                    [
+                        'harga_jual_1' => $item->harga_jual_1,
+                        'harga_jual_2' => $item->harga_jual_2,
+                        'harga_jual_3' => $item->harga_jual_3,
+                        'embalase_poin' => $item->embalase_poin,
+                        'user_input_id' => Auth::user()->id,
+                        'user_input_name' => Auth::user()->name,
+                    ]
+                );
+            }
+
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Data barang berhasil ditambahkan!'
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data barang Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Data barang!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // End Setting Harga
+
+    // Harga Jual Barang
+
+    public function hargajual()
+    {
+        $title = "Master Harga Jual Obat / Alkes";
+        $harga_jual = gudang_barang_harga::all();
+
+        return view('module.master-data-gudang.harga_jual', compact('title','harga_jual'));
+    }
+
+    //End Harga Jual Barang
+
+    // Stok Barang (Obat / Alkes)
+
+    public function stokobatalkes()
+    {
+        $title = "Master Stok Obat / Alkes";
+        $stok = gudang_barang_stok::all();
+
+        return view('module.master-data-gudang.stok', compact('title','stok'));
+    }
+
+    // End Stok Barang (Obat / Alkes)
+
+    public function request()
+    {
+        $title = "Kelola Data Barang";
+
+        // Ambil data obat dari tabel gudang_barang
+        $obatList = \App\Models\gudang_barang::select('id', 'kode_barang', 'nama_barang')
+                        ->orderBy('nama_barang', 'asc')
+                        ->get();
+
+        return view('module.master-data-gudang.request', compact('title', 'obatList'));
+    }
+
+    public function utama()
+    {
+        $title = "Dashboard Gudang";
+
+        return view('module.master-data-gudang.utama', compact('title'));
+    }
 }
+
+

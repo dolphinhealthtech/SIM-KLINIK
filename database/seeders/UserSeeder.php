@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
             'username' => 'Administartor',
             'password' => bcrypt('Myapp2025'),
             'profile' => 'default.png',
+            'email_verified_at' => now(),
         ]);
 
         $user->assignRole('Super-admin');
