@@ -73,14 +73,10 @@ Route::prefix('pendaftaran')->group(function () {
 });
 
 Route::prefix('pemeriksaan')->group(function () {
-    Route::get('/dokter', [soap::class,'pelayana_dokter'])->name('pelayana_dokter.get');
-    Route::get('/dokter/so/{norawat}', [soap::class,'soappelayanan'])->name('pelayana_dokter.get');
-    Route::get('/dokter/so/hadir/{norawat}', [soap::class,'soappelayananpanggil'])->name('pelayana_dokter.hadir');
     // Menu Pasien
-    Route::get('/perawat', [soap::class,'pelayana'])->name('pelayana.get');
-    Route::get('/perawat/so/{norawat}', [soap::class,'sopelayanan'])->name('sopelayana.get');
-    Route::post('/perawat/so/add', [soap::class,'sopelayanandd'])->name('sopelayana.add');
-    Route::get('/perawat/so/hadir/{norawat}', [soap::class,'sopelayananpanggil'])->name('sopelayana.hadir');
+    Route::get('/', [soap::class,'pelayana'])->name('pelayana.get');
+    Route::get('/so/{norawat}', [soap::class,'sopelayanan'])->name('sopelayana.get');
+    Route::post('/so/add', [soap::class,'sopelayanandd'])->name('sopelayana.add');
 });
 
 Route::middleware('auth')->prefix('data-master')->group(function () {
@@ -259,12 +255,6 @@ Route::prefix('data-master-gudang')->group(function () {
     Route::post('/supplier-industri/delete', [DataMasterGudangController::class,'supplierdelete'])->name('supplier.destroy');
     Route::get('/supplier-industri/export', [DataMasterGudangController::class, 'supplierexport'])->name('supplier.export');
     Route::post('/supplier-industri/import', [DataMasterGudangController::class, 'supplierimport'])->name('supplier.import');
-
-    // Menu Setting Harga
-    Route::get('/setting-harga-jual', [DataMasterGudangController::class,'setharga'])->name('setharga.get');
-    Route::post('/setting-harga-jual/add', [DataMasterGudangController::class,'sethargaadd'])->name('setharga.store');
-    //Koneksi antar database
-        Route::get('/setting-harga-jual/singkron/{id}', [DataMasterGudangController::class, 'sethargasingkron'])->name('setharga.singkron');
 });
 
 Route::middleware('auth')->prefix('data-master-manajemen')->group(function () {
@@ -310,3 +300,44 @@ Route::middleware('auth')->prefix('setting')->group(function () {
 
 require __DIR__.'/auth.php';
 require __DIR__.'/user.php';
+
+// Data Master Gudang - Request Obat
+Route::middleware('auth')->prefix('data-master-gudang')->group(function () {
+    // Halaman Request Obat
+    Route::get('/request', [DataMasterGudangController::class, 'request'])->name('request.get');
+    
+    // Tambah Request Obat
+    Route::post('/request/store', [DataMasterGudangController::class, 'requestStore'])->name('request.store');
+    
+    // Approve Request Obat
+    Route::post('/request/approve', [DataMasterGudangController::class, 'requestApprove'])->name('request.approve');
+    
+    // Reject Request Obat
+    Route::post('/request/reject', [DataMasterGudangController::class, 'requestReject'])->name('request.reject');
+    
+    // Detail Request Obat
+    Route::get('/request/detail/{id}', [DataMasterGudangController::class, 'requestDetail'])->name('request.detail');
+});
+
+// Data Master Gudang Routes
+Route::middleware('auth')->prefix('data-master-gudang')->group(function () {
+    // Main Dashboard
+    Route::get('/utama', [DataMasterGudangController::class, 'utama'])->name('gudang.utama');
+    
+    // Dashboard API endpoints
+    Route::get('/utama/stok-data', [DataMasterGudangController::class, 'getStokData'])->name('gudang.utama.stok');
+    Route::get('/utama/request-data', [DataMasterGudangController::class, 'getRequestData'])->name('gudang.utama.request');
+    Route::get('/utama/detail/{id}', [DataMasterGudangController::class, 'getDetailData'])->name('gudang.utama.detail');
+    Route::post('/utama/request-item', [DataMasterGudangController::class, 'requestItem'])->name('gudang.utama.request-item');
+    Route::post('/utama/approve/{id}', [DataMasterGudangController::class, 'approveRequest'])->name('gudang.utama.approve');
+    Route::post('/utama/reject/{id}', [DataMasterGudangController::class, 'rejectRequest'])->name('gudang.utama.reject');
+    Route::post('/utama/konfirmasi', [DataMasterGudangController::class, 'konfirmasiPermintaan'])->name('gudang.utama.konfirmasi');
+    
+    // Filter endpoints
+    Route::get('/utama/klinik', [DataMasterGudangController::class, 'getKlinikList'])->name('gudang.utama.klinik');
+    Route::get('/utama/stok-menipis', [DataMasterGudangController::class, 'getStokMenipis'])->name('gudang.utama.stok-menipis');
+});
+
+
+
+

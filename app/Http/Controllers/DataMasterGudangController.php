@@ -11,14 +11,9 @@ use App\Imports\Gudang_supplier_industriImport;
 use App\Models\gudang_satuan;
 use App\Models\gudang_kategori;
 use App\Models\gudang_supplier_industri;
-use App\Models\gudang_setting_harga;
-use App\Models\external_database;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-use Illuminate\Database\Connectors\ConnectionFactory;
 
 class DataMasterGudangController extends Controller
 {
@@ -370,153 +365,388 @@ class DataMasterGudangController extends Controller
 
     // Supplier Industri end
 
-    // Supplier Industri
-
-    public function setharga()
+    /**
+     * Menampilkan halaman request obat
+     */
+    public function request()
     {
-        $title = "Master Setting Harga Jual";
-        $setharga = gudang_setting_harga::first();
-        Carbon::setLocale('id');
-        $lastUpdated = $setharga ? Carbon::parse($setharga->updated_at)->diffForHumans() : 'belum ada update';
-        $singkron = external_database::all();
-
-        return view('module.master-data-gudang.setting_harga_jual', compact('title','setharga','lastUpdated','singkron'));
+        $title = "Kelola Data Barang";
+        
+        // Ambil data obat dari tabel gudang_barang
+        $obatList = \App\Models\gudang_barang::select('id', 'kode_barang', 'nama_barang')
+                        ->orderBy('nama_barang', 'asc')
+                        ->get();
+        
+        // Data dummy untuk tampilan awal (nanti akan diisi dari database)
+        $approveData = collect([
+            (object)['id' => 'REQ-12345678', 'nama_obat' => 'Paracetamol 500mg', 'jumlah' => 100],
+            (object)['id' => 'REQ-87654321', 'nama_obat' => 'Amoxicillin 500mg', 'jumlah' => 50],
+        ]);
+        
+        $requestData = collect([
+            (object)['id' => 1, 'kode' => 'REQ-ABCD1234', 'nama_obat' => 'Paracetamol 500mg', 'jumlah' => 100, 'tanggal' => '2023-06-15'],
+            (object)['id' => 2, 'kode' => 'REQ-EFGH5678', 'nama_obat' => 'Amoxicillin 500mg', 'jumlah' => 50, 'tanggal' => '2023-06-16'],
+        ]);
+        
+        $stokData = collect([
+            (object)['kode' => 'OBT-0001', 'nama_obat' => 'Paracetamol 500mg', 'jumlah' => 500],
+            (object)['kode' => 'OBT-0002', 'nama_obat' => 'Amoxicillin 500mg', 'jumlah' => 300],
+            (object)['kode' => 'OBT-0003', 'nama_obat' => 'Ibuprofen 400mg', 'jumlah' => 200],
+        ]);
+        
+        return view('module.master-data-gudang.request', compact('title', 'obatList', 'approveData', 'requestData', 'stokData'));
     }
 
-    public function sethargaadd(Request $request)
+    /**
+     * Display the main dashboard for gudang management.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function utama()
     {
-        try {
-            $request->validate([
-                'harga_jual_1'  => 'required|string',
-                'harga_jual_2'  => 'required|string',
-                'harga_jual_3'  => 'required|string',
-                'harga_jual_4'  => 'required|string',
-                'harga_jual_5'  => 'required|string',
-                'embalase_poin' => 'required|string',
-            ], [
-                'harga_jual_1'  => 'Harga Jual 1',
-                'harga_jual_2'  => 'Harga Jual 2',
-                'harga_jual_3'  => 'Harga Jual 3',
-                'harga_jual_4'  => 'Harga Jual 4',
-                'harga_jual_5'  => 'Harga Jual 5',
-                'embalase_poin' => 'Embalase Poin',
-            ]);
-
-            // Bersihkan prefix atau simbol dari input agar hanya angka saja
-            $harga_jual_1  = preg_replace('/[^\d]/', '', $request->input('harga_jual_1'));
-            $harga_jual_2  = preg_replace('/[^\d]/', '', $request->input('harga_jual_2'));
-            $harga_jual_3  = preg_replace('/[^\d]/', '', $request->input('harga_jual_3'));
-            $harga_jual_4  = preg_replace('/[^\d]/', '', $request->input('harga_jual_4'));
-            $harga_jual_5  = preg_replace('/[^\d]/', '', $request->input('harga_jual_5'));
-            $embalase_poin = preg_replace('/[^\d]/', '', $request->input('embalase_poin'));
-
-            // Simpan data ke database
-            $setharga = gudang_setting_harga::first();
-
-            if ($setharga) {
-                $setharga->update([
-                    'harga_jual_1' => $harga_jual_1,
-                    'harga_jual_2' => $harga_jual_2,
-                    'harga_jual_3' => $harga_jual_3,
-                    'harga_jual_4' => $harga_jual_4,
-                    'harga_jual_5' => $harga_jual_5,
-                    'embalase_poin' => $embalase_poin,
-                    'user_input_id' => Auth::user()->id,
-                    'user_input_name' => Auth::user()->name,
-                ]);
-            } else {
-                $setharga = gudang_setting_harga::create([
-                    'harga_jual_1' => $harga_jual_1,
-                    'harga_jual_2' => $harga_jual_2,
-                    'harga_jual_3' => $harga_jual_3,
-                    'harga_jual_4' => $harga_jual_4,
-                    'harga_jual_5' => $harga_jual_5,
-                    'embalase_poin' => $embalase_poin,
-                    'user_input_id' => Auth::user()->id,
-                    'user_input_name' => Auth::user()->name,
-                ]);
-            }
-            // Return response JSON untuk AJAX
-            return response()->json([
-                'success' => true,
-                'message' => 'Setting harga jual berhasil ditambahkan!',
-                'data' => $setharga
-            ], 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Setting harga jual sudah ada!',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan setting harga jual!',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-
+        $title = "Dashboard Gudang";
+        
+        // Get real-time data for the dashboard
+        $requestData = $this->getRequestDataForDashboard();
+        $stokData = $this->getStokDataForDashboard();
+        $stokMenipis = $this->getStokMenipisForDashboard();
+        
+        // Get summary data
+        $totalRequest = count($requestData);
+        $totalStok = count($stokData);
+        $totalStokMenipis = count($stokMenipis);
+        
+        // Get list of kliniks for filtering
+        $klinikList = $this->getKlinikListForDashboard();
+        
+        return view('module.master-data-gudang.utama', compact(
+            'title', 
+            'requestData', 
+            'stokData', 
+            'stokMenipis',
+            'totalRequest',
+            'totalStok',
+            'totalStokMenipis',
+            'klinikList'
+        ));
     }
 
-    // Koneksi antar database
-    public function sethargasingkron($id)
+    /**
+     * Get request data for the dashboard.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getRequestDataForDashboard()
     {
-        $externalDb = external_database::findOrFail($id);
+        // In a real application, you would fetch this from your database
+        return collect([
+            (object) [
+                'id' => 'REQ-20230615-1001',
+                'klinik' => 'Balaraja',
+                'tanggal' => '2023-06-15',
+                'status' => 'pending'
+            ],
+            (object) [
+                'id' => 'REQ-20230616-1002',
+                'klinik' => 'Jaya',
+                'tanggal' => '2023-06-16',
+                'status' => 'pending'
+            ],
+            (object) [
+                'id' => 'REQ-20230617-1003',
+                'klinik' => 'Sentosa',
+                'tanggal' => '2023-06-17',
+                'status' => 'pending'
+            ],
+        ]);
+    }
 
-        $config = [
-            'driver' => 'mysql',
-            'host' => $externalDb->host,
-            'database' => $externalDb->database,
-            'username' => $externalDb->username,
-            'password' => $externalDb->password,
-            'port' => $externalDb->port ?? 3306,
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
+    /**
+     * Get stock data for the dashboard.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getStokDataForDashboard()
+    {
+        // In a real application, you would fetch this from your database
+        return collect([
+            (object) [
+                'id' => 1,
+                'kode' => 'OBT-1001',
+                'nama_obat' => 'Paracetamol 500mg',
+                'harga' => 15000,
+                'jumlah' => 100
+            ],
+            (object) [
+                'id' => 2,
+                'kode' => 'OBT-1002',
+                'nama_obat' => 'Amoxicillin 500mg',
+                'harga' => 25000,
+                'jumlah' => 75
+            ],
+            (object) [
+                'id' => 3,
+                'kode' => 'OBT-1003',
+                'nama_obat' => 'Ibuprofen 400mg',
+                'harga' => 20000,
+                'jumlah' => 50
+            ],
+            (object) [
+                'id' => 4,
+                'kode' => 'OBT-1004',
+                'nama_obat' => 'Cetirizine 10mg',
+                'harga' => 18000,
+                'jumlah' => 80
+            ],
+            (object) [
+                'id' => 5,
+                'kode' => 'OBT-1005',
+                'nama_obat' => 'Omeprazole 20mg',
+                'harga' => 30000,
+                'jumlah' => 60
+            ],
+        ]);
+    }
+
+    /**
+     * Get low stock data for the dashboard.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getStokMenipisForDashboard()
+    {
+        // In a real application, you would fetch this from your database
+        return collect([
+            (object) [
+                'id' => 3,
+                'kode' => 'OBT-1003',
+                'nama_obat' => 'Ibuprofen 400mg',
+                'harga' => 20000,
+                'jumlah' => 10,
+                'min_stok' => 20
+            ],
+            (object) [
+                'id' => 5,
+                'kode' => 'OBT-1005',
+                'nama_obat' => 'Omeprazole 20mg',
+                'harga' => 30000,
+                'jumlah' => 15,
+                'min_stok' => 30
+            ]
+        ]);
+    }
+
+    /**
+     * Get list of kliniks for the dashboard.
+     *
+     * @return array
+     */
+    private function getKlinikListForDashboard()
+    {
+        // In a real application, you would fetch this from your database
+        return [
+            ['id' => 'Balaraja', 'name' => 'Klinik Balaraja'],
+            ['id' => 'Jaya', 'name' => 'Klinik Jaya'],
+            ['id' => 'Sentosa', 'name' => 'Klinik Sentosa'],
+            ['id' => 'Makmur', 'name' => 'Klinik Makmur']
         ];
+    }
 
-        $factory = app(ConnectionFactory::class);
-        $connection = $factory->make($config, $externalDb->name);
+    /**
+     * Get stock data for the dashboard (AJAX).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getStokData()
+    {
+        $stokData = $this->getStokDataForDashboard();
+        return response()->json($stokData);
+    }
 
-        // Gunakan koneksi ini untuk query
-        $data = $connection->table('gudang_setting_hargas')->get();
+    /**
+     * Get request data for the dashboard (AJAX).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getRequestData()
+    {
+        $requestData = $this->getRequestDataForDashboard();
+        return response()->json($requestData);
+    }
 
-        $response = response()->json($data)->getData();
-
-        try {
-            // Simpan data ke database
-            foreach ($response  as $item) {
-                gudang_setting_harga::updateOrCreate(
+    /**
+     * Get detail data for a specific request (AJAX).
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDetailData($id)
+    {
+        // In a real application, you would fetch this data from your database
+        // based on the provided $id
+        
+        // Sample data mapping based on ID
+        $detailDataMap = [
+            'REQ-20230615-1001' => [
+                'id' => 'REQ-20230615-1001',
+                'klinik' => 'Klinik Balaraja',
+                'tanggal' => '2023-06-15',
+                'status' => 'pending',
+                'items' => [
                     [
-                        'harga_jual_1' => $item->harga_jual_1,
-                        'harga_jual_2' => $item->harga_jual_2,
-                        'harga_jual_3' => $item->harga_jual_3,
-                        'harga_jual_4' => $item->harga_jual_4,
-                        'harga_jual_5' => $item->harga_jual_5,
-                        'embalase_poin' => $item->embalase_poin,
-                        'user_input_id' => Auth::user()->id,
-                        'user_input_name' => Auth::user()->name,
+                        'kode' => 'OBT-1001',
+                        'nama' => 'Paracetamol 500mg',
+                        'jumlah' => 20
+                    ],
+                    [
+                        'kode' => 'OBT-1002',
+                        'nama' => 'Amoxicillin 500mg',
+                        'jumlah' => 15
                     ]
-                );
-            }
+                ]
+            ],
+            'REQ-20230616-1002' => [
+                'id' => 'REQ-20230616-1002',
+                'klinik' => 'Klinik Jaya',
+                'tanggal' => '2023-06-16',
+                'status' => 'pending',
+                'items' => [
+                    [
+                        'kode' => 'OBT-1003',
+                        'nama' => 'Ibuprofen 400mg',
+                        'jumlah' => 10
+                    ],
+                    [
+                        'kode' => 'OBT-1004',
+                        'nama' => 'Cetirizine 10mg',
+                        'jumlah' => 25
+                    ]
+                ]
+            ],
+            'REQ-20230617-1003' => [
+                'id' => 'REQ-20230617-1003',
+                'klinik' => 'Klinik Sentosa',
+                'tanggal' => '2023-06-17',
+                'status' => 'pending',
+                'items' => [
+                    [
+                        'kode' => 'OBT-1005',
+                        'nama' => 'Omeprazole 20mg',
+                        'jumlah' => 30
+                    ]
+                ]
+            ]
+        ];
+        
+        // Get the detail data for the requested ID, or return a default structure
+        $detailData = $detailDataMap[$id] ?? [
+            'id' => $id,
+            'klinik' => 'Unknown Klinik',
+            'tanggal' => date('Y-m-d'),
+            'status' => 'pending',
+            'items' => []
+        ];
+        
+        return response()->json($detailData);
+    }
 
+    /**
+     * Request a specific item.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function requestItem(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'id' => 'required',
+            'jumlah' => 'required|numeric|min:1'
+        ]);
+        
+        // In a real application, you would save this request to your database
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Item berhasil direquest dengan jumlah ' . $validated['jumlah']
+        ]);
+    }
 
-            // Return response JSON untuk AJAX
-            return response()->json([
-                'success' => true,
-                'message' => 'Data barang berhasil ditambahkan!'
-            ], 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data barang Sudah ada!',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Data barang!',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+    /**
+     * Approve a request.
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function approveRequest($id)
+    {
+        // In a real application, you would update the request status in your database
+        
+        return response()->json([
+            'success' => true,
+            'message' => "Request $id berhasil disetujui."
+        ]);
+    }
+
+    /**
+     * Reject a request.
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function rejectRequest($id)
+    {
+        // In a real application, you would update the request status in your database
+        
+        return response()->json([
+            'success' => true,
+            'message' => "Request $id berhasil ditolak."
+        ]);
+    }
+
+    /**
+     * Confirm multiple requests.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function konfirmasiPermintaan(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|string'
+        ]);
+        
+        // In a real application, you would update the request status in your database
+        
+        return response()->json([
+            'success' => true,
+            'message' => count($validated['ids']) . " permintaan berhasil dikonfirmasi."
+        ]);
+    }
+
+    /**
+     * Get list of kliniks for filtering.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getKlinikList()
+    {
+        $klinikList = $this->getKlinikListForDashboard();
+        return response()->json($klinikList);
+    }
+
+    /**
+     * Get list of items with low stock.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getStokMenipis()
+    {
+        $stokMenipis = $this->getStokMenipisForDashboard();
+        return response()->json($stokMenipis);
     }
 }
+
+
