@@ -13,9 +13,14 @@ use App\Models\gudang_kategori;
 use App\Models\gudang_supplier_industri;
 use App\Models\gudang_barang_harga;
 use App\Models\gudang_barang_stok;
+use App\Models\gudang_setting_harga;
+use App\Models\external_database;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Illuminate\Database\Connectors\ConnectionFactory;
 
 class DataMasterGudangController extends Controller
 {
@@ -540,53 +545,14 @@ class DataMasterGudangController extends Controller
                         ->orderBy('nama_barang', 'asc')
                         ->get();
 
-        // Data dummy untuk tampilan awal (nanti akan diisi dari database)
-        $approveData = collect([
-            (object)['id' => 'REQ-12345678', 'nama_obat' => 'Paracetamol 500mg', 'jumlah' => 100],
-            (object)['id' => 'REQ-87654321', 'nama_obat' => 'Amoxicillin 500mg', 'jumlah' => 50],
-        ]);
-
-        $requestData = collect([
-            (object)['id' => 1, 'kode' => 'REQ-ABCD1234', 'nama_obat' => 'Paracetamol 500mg', 'jumlah' => 100, 'tanggal' => '2023-06-15'],
-            (object)['id' => 2, 'kode' => 'REQ-EFGH5678', 'nama_obat' => 'Amoxicillin 500mg', 'jumlah' => 50, 'tanggal' => '2023-06-16'],
-        ]);
-
-        $stokData = collect([
-            (object)['kode' => 'OBT-0001', 'nama_obat' => 'Paracetamol 500mg', 'jumlah' => 500],
-            (object)['kode' => 'OBT-0002', 'nama_obat' => 'Amoxicillin 500mg', 'jumlah' => 300],
-            (object)['kode' => 'OBT-0003', 'nama_obat' => 'Ibuprofen 400mg', 'jumlah' => 200],
-        ]);
-
-        return view('module.master-data-gudang.request', compact('title', 'obatList', 'approveData', 'requestData', 'stokData'));
+        return view('module.master-data-gudang.request', compact('title', 'obatList'));
     }
 
     public function utama()
     {
         $title = "Dashboard Gudang";
 
-        // Get real-time data for the dashboard
-        $requestData = $this->getRequestDataForDashboard();
-        $stokData = $this->getStokDataForDashboard();
-        $stokMenipis = $this->getStokMenipisForDashboard();
-
-        // Get summary data
-        $totalRequest = count($requestData);
-        $totalStok = count($stokData);
-        $totalStokMenipis = count($stokMenipis);
-
-        // Get list of kliniks for filtering
-        $klinikList = $this->getKlinikListForDashboard();
-
-        return view('module.master-data-gudang.utama', compact(
-            'title',
-            'requestData',
-            'stokData',
-            'stokMenipis',
-            'totalRequest',
-            'totalStok',
-            'totalStokMenipis',
-            'klinikList'
-        ));
+        return view('module.master-data-gudang.utama', compact('title'));
     }
 }
 
