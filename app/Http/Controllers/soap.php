@@ -10,6 +10,8 @@ use App\Models\gcs_motorik;
 use App\Models\gcs_verbal;
 use App\Models\htt_pemeriksaan;
 use App\Models\htt_sub_pemeriksaan;
+use App\Models\icd10;
+use App\Models\icd9;
 use App\Models\pelayanan;
 use App\Models\pelayanan_soap_perawat;
 use Carbon\Carbon;
@@ -277,7 +279,9 @@ class soap extends Controller
         $gcs_kesadaran = gcs_kesadaran::all();
 
         $htt_pemeriksaan = htt_pemeriksaan::all();
-        return view('module.pelayanan.soap-dokter', compact('title','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
+        $icd10 = icd10::all();
+        $icd9 = icd9::all();
+        return view('module.pelayanan.soap-dokter', compact('title','icd10','icd9','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
 
     }
 

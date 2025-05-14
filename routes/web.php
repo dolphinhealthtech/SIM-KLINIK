@@ -233,6 +233,22 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::post('/alergi/add', [DataMasterMedisController::class,'alergiadd'])->name('alergi.store');
     Route::post('/alergi/delete', [DataMasterMedisController::class,'alergidelete'])->name('alergi.destroy');
 
+    Route::get('/icd-10', [DataMasterMedisController::class,'icd10'])->name('icd10.get');
+    Route::post('/icd-10/add', [DataMasterMedisController::class,'icd10add'])->name('icd10.store');
+    Route::post('/icd-10/update', [DataMasterMedisController::class,'icd10edit'])->name('icd10.update');
+    Route::post('/icd-10/delete', [DataMasterMedisController::class,'icd10delete'])->name('icd10.destroy');
+    Route::get('/icd-10/export', [DataMasterMedisController::class,'icd10export'])->name('icd10.export');
+    Route::post('/icd-10/import', [DataMasterMedisController::class,'icd10import'])->name('icd10.import');
+    Route::post('/icd-10/singkron', [DataMasterMedisController::class,'icd10singkron'])->name('icd10.singkron');
+
+    Route::get('/icd-9', [DataMasterMedisController::class,'icd9'])->name('icd9.get');
+    Route::post('/icd-9/add', [DataMasterMedisController::class,'icd9add'])->name('icd9.store');
+    Route::post('/icd-9/update', [DataMasterMedisController::class,'icd9edit'])->name('icd9.update');
+    Route::post('/icd-9/delete', [DataMasterMedisController::class,'icd9delete'])->name('icd9.destroy');
+    Route::get('/icd-9/export', [DataMasterMedisController::class,'icd9export'])->name('icd9.export');
+    Route::post('/icd-9/import', [DataMasterMedisController::class,'icd9import'])->name('icd9.import');
+
+
 });
 
 Route::prefix('data-master-gudang')->group(function () {
