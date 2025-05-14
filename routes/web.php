@@ -259,6 +259,12 @@ Route::prefix('data-master-gudang')->group(function () {
     Route::post('/supplier-industri/delete', [DataMasterGudangController::class,'supplierdelete'])->name('supplier.destroy');
     Route::get('/supplier-industri/export', [DataMasterGudangController::class, 'supplierexport'])->name('supplier.export');
     Route::post('/supplier-industri/import', [DataMasterGudangController::class, 'supplierimport'])->name('supplier.import');
+
+    // Menu Setting Harga
+    Route::get('/setting-harga-jual', [DataMasterGudangController::class,'setharga'])->name('setharga.get');
+    Route::post('/setting-harga-jual/add', [DataMasterGudangController::class,'sethargaadd'])->name('setharga.store');
+    //Koneksi antar database
+        Route::get('/setting-harga-jual/singkron/{id}', [DataMasterGudangController::class, 'sethargasingkron'])->name('setharga.singkron');
 });
 
 Route::middleware('auth')->prefix('data-master-manajemen')->group(function () {
