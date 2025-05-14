@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gudang_setting_hargas', function (Blueprint $table) {
+        Schema::create('gudang_barang_stoks', function (Blueprint $table) {
             $table->id();
-            $table->string('harga_jual_1');
-            $table->string('harga_jual_2');
-            $table->string('harga_jual_3');
-            $table->string('embalase_poin');
+            $table->string('kode_obat_alkes');
+            $table->string('nama_obat_alkes');
+            $table->string('qty');
+            $table->string('tanggal_terima_obat');
+            $table->string('expired');
             $table->string('user_input_id');
             $table->string('user_input_name');
             $table->timestamps();
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gudang_setting_hargas');
+        Schema::dropIfExists('gudang_barang_stoks');
     }
 };

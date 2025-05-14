@@ -5,16 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class gudang_setting_harga extends Model
+class gudang_barang_stok extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'harga_jual_1',
-        'harga_jual_2',
-        'harga_jual_3',
-        'embalase_poin',
+        'kode_obat_alkes',
+        'nama_obat_alkes',
+        'qty',
+        'tanggal_terima_obat',
+        'expired',
         'user_input_id',
-        'user_input_name'
+        'user_input_name',
     ];
 }

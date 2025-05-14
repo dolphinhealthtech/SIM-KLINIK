@@ -54,7 +54,7 @@
                                                 </div>
 
                                                 <div class="col-md-3">
-                                                    <span class="form-text">UGD / IGD</span>
+                                                    <span class="form-text">Rawat Jalan</span>
                                                 </div>
                                             </div>
                                             {{-- HARGA JUAL 2 --}}
@@ -66,7 +66,7 @@
                                                 </div>
 
                                                 <div class="col-md-3">
-                                                    <span class="form-text">Rawat Jalan</span>
+                                                    <span class="form-text">Asuransi</span>
                                                 </div>
                                             </div>
                                             {{-- HARGA JUAL 3 --}}
@@ -75,30 +75,6 @@
 
                                                 <div class="col-md-6">
                                                     <input type="text" class="form-control" id="harga_jual_3" name="harga_jual_3" placeholder="Harga Jual 3" value="{{ $setharga ? $setharga->harga_jual_3 : '' }}">
-                                                </div>
-
-                                                <div class="col-md-3">
-                                                    <span class="form-text">Rawat Inap</span>
-                                                </div>
-                                            </div>
-                                            {{-- HARGA JUAL 4 --}}
-                                            <div class="form-group row align-items-center">
-                                                <label for="harga_jual_4" class="col-md-3 col-form-label">Setting Harga Jual 4 :</label>
-
-                                                <div class="col-md-6">
-                                                    <input type="text" class="form-control" id="harga_jual_4" name="harga_jual_4" placeholder="Harga Jual 4" value="{{ $setharga ? $setharga->harga_jual_4 : '' }}">
-                                                </div>
-
-                                                <div class="col-md-3">
-                                                    <span class="form-text">Asuransi</span>
-                                                </div>
-                                            </div>
-                                            {{-- HARGA JUAL 5 --}}
-                                            <div class="form-group row align-items-center">
-                                                <label for="harga_jual_5" class="col-md-3 col-form-label">Setting Harga Jual 5 :</label>
-
-                                                <div class="col-md-6">
-                                                    <input type="text" class="form-control" id="harga_jual_5" name="harga_jual_5" placeholder="Harga Jual 5" value="{{ $setharga ? $setharga->harga_jual_5 : '' }}">
                                                 </div>
 
                                                 <div class="col-md-3">
