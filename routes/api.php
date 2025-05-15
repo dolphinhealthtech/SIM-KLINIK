@@ -68,4 +68,9 @@ Route::prefix('data-master-medis')->group(function(){
 // Data Master Gudang
 Route::prefix('data-master-gudang')->group(function(){
     Route::get('/supplier-industri/getLastKode', [DataMasterGudangController::class, 'getLastKode'])->name('supplier_industri.getLastKode');
+
+    Route::get('/request/getLastKode', [DataMasterGudangController::class, 'request_getLastKode'])->name('request.getLastKode');
+    Route::get('/request/getDetails/{kode_request}', [DataMasterGudangController::class, 'getDetails'])->name('request.getDetails');
+
+    Route::get('/utama/getHargaDasar/{kode_obat}', [DataMasterGudangController::class, 'getHargaDasar'])->name('utama.getHargaDasar');
 });

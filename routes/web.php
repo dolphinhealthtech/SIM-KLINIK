@@ -283,6 +283,14 @@ Route::prefix('data-master-gudang')->group(function () {
 
     // Menu Stok Obat / Alkes
     Route::get('/stok-obat-alkes', [DataMasterGudangController::class,'stokobatalkes'])->name('stokobatalkes.get');
+
+    // Menu Request Obat Klinik Omega
+    Route::get('/gudang-request', [DataMasterGudangController::class, 'gudangrequest'])->name('gudangrequest.get');
+    Route::post('/gudang-request/add', [DataMasterGudangController::class, 'gudangrequestadd'])->name('gudangrequest.store');
+
+    // Menu Utama Klinik Omega
+    Route::get('/gudang-utama', [DataMasterGudangController::class, 'gudangutama'])->name('gudangutama.get');
+    Route::post('/gudang-utama/konfirmasi', [DataMasterGudangController::class, 'gudangutamakonfirmasi'])->name('gudangutama.konfirmasi');
 });
 
 Route::middleware('auth')->prefix('data-master-manajemen')->group(function () {
@@ -328,44 +336,3 @@ Route::middleware('auth')->prefix('setting')->group(function () {
 
 require __DIR__.'/auth.php';
 require __DIR__.'/user.php';
-
-// Data Master Gudang - Request Obat
-Route::middleware('auth')->prefix('data-master-gudang')->group(function () {
-    // Halaman Request Obat
-    Route::get('/request', [DataMasterGudangController::class, 'request'])->name('request.get');
-
-    // Tambah Request Obat
-    Route::post('/request/store', [DataMasterGudangController::class, 'requestStore'])->name('request.store');
-
-    // Approve Request Obat
-    Route::post('/request/approve', [DataMasterGudangController::class, 'requestApprove'])->name('request.approve');
-
-    // Reject Request Obat
-    Route::post('/request/reject', [DataMasterGudangController::class, 'requestReject'])->name('request.reject');
-
-    // Detail Request Obat
-    Route::get('/request/detail/{id}', [DataMasterGudangController::class, 'requestDetail'])->name('request.detail');
-});
-
-// Data Master Gudang Routes
-Route::middleware('auth')->prefix('data-master-gudang')->group(function () {
-    // Main Dashboard
-    Route::get('/utama', [DataMasterGudangController::class, 'utama'])->name('gudang.utama');
-
-    // Dashboard API endpoints
-    Route::get('/utama/stok-data', [DataMasterGudangController::class, 'getStokData'])->name('gudang.utama.stok');
-    Route::get('/utama/request-data', [DataMasterGudangController::class, 'getRequestData'])->name('gudang.utama.request');
-    Route::get('/utama/detail/{id}', [DataMasterGudangController::class, 'getDetailData'])->name('gudang.utama.detail');
-    Route::post('/utama/request-item', [DataMasterGudangController::class, 'requestItem'])->name('gudang.utama.request-item');
-    Route::post('/utama/approve/{id}', [DataMasterGudangController::class, 'approveRequest'])->name('gudang.utama.approve');
-    Route::post('/utama/reject/{id}', [DataMasterGudangController::class, 'rejectRequest'])->name('gudang.utama.reject');
-    Route::post('/utama/konfirmasi', [DataMasterGudangController::class, 'konfirmasiPermintaan'])->name('gudang.utama.konfirmasi');
-
-    // Filter endpoints
-    Route::get('/utama/klinik', [DataMasterGudangController::class, 'getKlinikList'])->name('gudang.utama.klinik');
-    Route::get('/utama/stok-menipis', [DataMasterGudangController::class, 'getStokMenipis'])->name('gudang.utama.stok-menipis');
-});
-
-
-
-
