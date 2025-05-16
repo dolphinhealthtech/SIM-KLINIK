@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\Nama_MakananExport;
+use App\Exports\Jenis_DietExport;
 use App\Exports\Htt_pemeriksaanExport;
 use App\Exports\PoliExport;
 use App\Exports\SpesialisExport;
 use App\Exports\SubspesialisExport;
 use App\Exports\Perawatan_kategoriExport;
 use App\Exports\Perawatan_tindakanExport;
+use App\Imports\Nama_MakananImport;
+use App\Imports\Jenis_DietImport;
 use App\Imports\Htt_pemeriksaanImport;
 use App\Imports\PoliImport;
 use App\Imports\SpesialisImport;
@@ -15,6 +19,8 @@ use App\Imports\SubspesialisImport;
 use App\Imports\Perawatan_kategoriImport;
 use App\Imports\Perawatan_tindakanImport;
 use App\Models\alergi;
+use App\Models\jenis_diet;
+use App\Models\nama_makanan;
 use App\Models\htt_pemeriksaan;
 use App\Models\htt_sub_pemeriksaan;
 use App\Models\poli;
@@ -797,4 +803,222 @@ class DataMasterMedisController extends Controller
             'message' => 'alergi berhasil dihapus!'
         ]);
     }
+
+    // jenis_diet Start
+    public function jenis_diet()
+    {
+        $title = "Master jenis_diet";
+        $jenis_diet = jenis_diet::all();
+        return view('module.master-data-medis.jenis_diet', compact('title','jenis_diet'));
+    }
+
+    public function jenis_dietadd(Request $request)
+    {
+        try {
+            $request->validate([
+                "nama" => 'required|string|unique:jenis_diets,nama',
+            ]);
+
+            $jenis_diet = jenis_diet::create([
+                'nama' => $request->nama
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'jenis_diet berhasil ditambahkan!',
+                'data' => $jenis_diet
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'jenis_diet Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan jenis_diet!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function jenis_dietedit(Request $request)
+    {
+        $request->validate([
+            'nama_edit' => 'required|string',
+        ]);
+
+        $jenis_diet = jenis_diet::find($request->jenis_dietid_edit);
+
+        if (!$jenis_diet) {
+            return response()->json([
+                'success' => false,
+                'message' => 'jenis_diet tidak ditemukan!'
+            ], 404);
+        }
+
+        $jenis_diet->nama = $request->nama_edit;
+        $jenis_diet->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'jenis_diet berhasil diperbarui!'
+        ]);
+    }
+
+    public function jenis_dietdelete(Request $request)
+    {
+
+        $request->validate([
+            'jenis_dietid_delete' => 'required'
+        ]);
+
+        $jenis_diet = jenis_diet::find($request->jenis_dietid_delete);
+        if (!$jenis_diet) {
+            return response()->json([
+                'success' => false,
+                'message' => 'jenis_diet tidak ditemukan!'
+            ], 404);
+        }
+        $jenis_diet->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'jenis_diet berhasil dihapus!'
+        ]);
+    }
+
+    public function jenis_dietexport()
+    {
+        return Excel::download(new jenis_dietExport, 'jenis_diet.xlsx');
+    }
+
+    public function jenis_dietimport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new jenis_dietImport, $request->file('file'));
+
+
+        return redirect()->route('jenis_diet.get')->with('success', 'Data berhasil diimpor!');
+    }
+    // jenis_diet end
+
+
+    // Nama_Makanan Start
+    public function nama_makanan()
+    {
+        $title = "Master nama_makanan";
+        $nama_makanan = nama_makanan::all();
+        return view('module.master-data-medis.nama_makanan', compact('title','nama_makanan'));
+    }
+
+    public function nama_makananadd(Request $request)
+    {
+        try {
+            $request->validate([
+                "nama" => 'required|string|unique:nama_makanan,nama', // perhatikan nama tabel
+            ]);
+
+            $nama_makanan = nama_makanan::create([
+                'nama' => $request->nama
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'nama makanan berhasil ditambahkan!',
+                'data' => $nama_makanan
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'nama makanan Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan nama makanan!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function nama_makananedit(Request $request)
+    {
+        $request->validate([
+            'nama_edit' => 'required|string',
+        ]);
+
+        $nama_makanan = nama_makanan::find($request->nama_makananid_edit);
+
+        if (!$nama_makanan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'nama_makanan tidak ditemukan!'
+            ], 404);
+        }
+
+        $nama_makanan->nama = $request->nama_edit;
+        $nama_makanan->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'nama_makanan berhasil diperbarui!'
+        ]);
+    }
+
+    public function nama_makanandelete(Request $request)
+    {
+
+        $request->validate([
+            'nama_makananid_delete' => 'required'
+        ]);
+
+        $nama_makanan = nama_makanan::find($request->nama_makananid_delete);
+        if (!$nama_makanan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'nama_makanan tidak ditemukan!'
+            ], 404);
+        }
+        $nama_makanan->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'nama_makanan berhasil dihapus!'
+        ]);
+    }
+
+    public function nama_makananexport()
+    {
+        return Excel::download(new nama_makananExport, 'nama_makanan.xlsx');
+    }
+
+    public function nama_makananimport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new nama_makananImport, $request->file('file'));
+
+
+        return redirect()->route('nama_makanan.get')->with('success', 'Data berhasil diimpor!');
+    }
+    // nama_makanan end
 }
+
+
+
+
+
+
+
+
+
