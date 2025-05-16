@@ -14,6 +14,8 @@ use App\Models\icd10;
 use App\Models\icd9;
 use App\Models\pelayanan;
 use App\Models\pelayanan_soap_perawat;
+use App\Models\perawatan_kategori;
+use App\Models\perawatan_tindakan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -281,7 +283,11 @@ class soap extends Controller
         $htt_pemeriksaan = htt_pemeriksaan::all();
         $icd10 = icd10::all();
         $icd9 = icd9::all();
-        return view('module.pelayanan.soap-dokter', compact('title','icd10','icd9','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
+
+        $kategori = perawatan_kategori::all();
+        $tindakan = perawatan_tindakan::all();
+
+        return view('module.pelayanan.soap-dokter', compact('title','tindakan','kategori','icd10','icd9','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
 
     }
 

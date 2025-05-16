@@ -87,6 +87,15 @@
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-plan-tab" data-toggle="pill" href="#custom-tabs-four-plan" role="tab" aria-controls="custom-tabs-four-plan" aria-selected="false">Plan</a>
                                                     </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-diet-tab" data-toggle="pill" href="#custom-tabs-four-diet" role="tab" aria-controls="custom-tabs-four-diet" aria-selected="false">Diet</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-tindakan-tab" data-toggle="pill" href="#custom-tabs-four-tindakan" role="tab" aria-controls="custom-tabs-four-tindakan" aria-selected="false">Tindakan</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-obat-tab" data-toggle="pill" href="#custom-tabs-four-obat" role="tab" aria-controls="custom-tabs-four-obat" aria-selected="false">Obat</a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <div class="card-body">
@@ -295,13 +304,7 @@
                                                     <div class="tab-pane fade" id="custom-tabs-four-assesmen" role="tabpanel" aria-labelledby="custom-tabs-four-assesmen-tab">
                                                         <div class="form-group row">
                                                             <div class="col-md-12">
-                                                                <label for="summernote1">Kesadaran</label>
-                                                                <textarea class="form-control" id="summernote1" name="summernote1" rows="3"></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <div class="col-md-12">
-                                                                <label for="summernote2">Kesadaran</label>
+                                                                <label for="summernote2">Assesmen</label>
                                                                 <textarea class="form-control" id="summernote2" name="summernote2" rows="3"></textarea>
                                                             </div>
                                                         </div>
@@ -422,19 +425,219 @@
                                                     <div class="tab-pane fade" id="custom-tabs-four-plan" role="tabpanel" aria-labelledby="custom-tabs-four-plan-tab">
                                                         <div class="form-group row">
                                                             <div class="col-md-12">
-                                                                <label for="summernote5">Kesadaran</label>
+                                                                <label for="summernote5">expertise</label>
                                                                 <textarea class="form-control" id="summernote5" name="summernote5" rows="3"></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-6">
-                                                                <label for="summernote3">Kesadaran</label>
+                                                                <label for="summernote3">evaluasi</label>
                                                                 <textarea class="form-control" id="summernote3" name="summernote3" rows="3"></textarea>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <label for="summernote4">Kesadaran</label>
+                                                                <label for="summernote4">plan</label>
                                                                 <textarea class="form-control" id="summernote4" name="summernote4" rows="3"></textarea>
                                                             </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="custom-tabs-four-diet" role="tabpanel" aria-labelledby="custom-tabs-four-diet-tab">
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                <label>Jenis Diet</label>
+                                                                <select id="jenisDiet" class="form-control">
+                                                                    <option value="">-- Pilih Jenis Diet --</option>
+                                                                    <option value="Diabetes">Diabetes</option>
+                                                                    <option value="Hipertensi">Hipertensi</option>
+                                                                    <option value="Rendah Garam">Rendah Garam</option>
+                                                                    <option value="Tinggi Kalori">Tinggi Kalori</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="col-md-4">
+                                                                <label>Makanan Dianjurkan</label>
+                                                                <select id="makananAnjuran" class="form-control">
+                                                                    <option value="">-- Pilih Makanan Dianjurkan --</option>
+                                                                    <option value="Sayur Hijau">Sayur Hijau</option>
+                                                                    <option value="Ikan">Ikan</option>
+                                                                    <option value="Buah Segar">Buah Segar</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="col-md-4">
+                                                                <label>Makanan Tidak Boleh</label>
+                                                                <select id="makananPantangan" class="form-control">
+                                                                    <option value="">-- Pilih Makanan Tidak Boleh --</option>
+                                                                    <option value="Gula Tinggi">Gula Tinggi</option>
+                                                                    <option value="Makanan Asin">Makanan Asin</option>
+                                                                    <option value="Gorengan">Gorengan</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="col-md-1 d-flex align-items-end">
+                                                                <button type="button"  class="btn btn-success" id="btnTambahDiet" onclick="tambahAtauUpdateDiet(event)">Tambah</button>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Tabel hasil -->
+                                                        <div class="mt-3">
+                                                            <table class="table table-bordered" id="tabelDiet">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Jenis Diet</th>
+                                                                        <th>Makanan Dianjurkan</th>
+                                                                        <th>Makanan Tidak Boleh</th>
+                                                                        <th>Aksi</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="custom-tabs-four-tindakan" role="tabpanel" aria-labelledby="custom-tabs-four-tindakan-tab">
+                                                        <div class="form-row align-items-center mb-3" id="form-tindakan">
+                                                            <div class="col-md-3 mb-2">
+                                                                <select class="form-control" id="jenis-tindakan">
+                                                                    <option value="">Jenis Tindakan</option>
+                                                                    @foreach($kategori as $kat)
+                                                                        <option value="{{ $kat->id }}">{{ $kat->nama }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-3 mb-2">
+                                                                <select class="form-control" id="tindakan">
+                                                                    <option value="">Tindakan</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-3 mb-2">
+                                                                <select class="form-control" id="pelaksana">
+                                                                    <option value="">Pelaksana</option>
+                                                                    <option value="dokter">Dokter</option>
+                                                                    <option value="perawat">Perawat</option>
+                                                                    <option value="keduanya">Keduanya</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-3 mb-2">
+                                                                <button type="button" class="btn btn-primary btn-block" id="tambah-tindakan">Tambah</button>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- TABEL TINDAKAN -->
+                                                        <div class="mt-3">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-bordered" id="tabel-tindakan">
+                                                                    <thead class="thead-light">
+                                                                        <tr>
+                                                                            <th style="width: 30%">Tindakan</th>
+                                                                            <th style="width: 25%">Pelaksana</th>
+                                                                            <th style="width: 20%">Harga</th>
+                                                                            <th style="width: 25%">Aksi</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody></tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="custom-tabs-four-obat" role="tabpanel" aria-labelledby="custom-tabs-four-obat-tab">
+                                                        <div class="container p-3">
+
+                                                            <!-- Input R:/ -->
+                                                            <div class="form-row align-items-center mb-3">
+                                                                <div class="col-12">
+                                                                    <label for="r-text">R:/</label>
+                                                                    <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <button type="button" id="btn-r-action" class="btn btn-info">R:/</button>
+                                                                    </div>
+                                                                    <input type="text" id="r-text" class="form-control" placeholder="Kosong = R:/, isi = R:/ + teks">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Input Obat & Dosis -->
+                                                            <div class="form-row align-items-end mb-3">
+                                                            <div class="col-md-4">
+                                                                <label for="nama-obat">Nama Obat</label>
+                                                                <select class="form-control" id="nama-obat">
+                                                                <option value="">-- Pilih Nama Obat --</option>
+                                                                <option value="Paracetamol">Paracetamol</option>
+                                                                <option value="Amoxicillin">Amoxicillin</option>
+                                                                <option value="Vitamin C">Vitamin C</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Dosis</label>
+                                                                <div class="form-row">
+                                                                    <div class="col">
+                                                                    <input type="text" id="dosis1" class="form-control" placeholder="Contoh: 500mg">
+                                                                    </div>
+                                                                    <div class="col">
+                                                                    <input type="text" id="dosis2" class="form-control" readonly>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-4">
+                                                                <label for="instruksi">Instruksi</label>
+                                                                <select class="form-control" id="instruksi">
+                                                                <option value="">-- Pilih Instruksi --</option>
+                                                                <option value="oral">Oral</option>
+                                                                <option value="injeksi">Injeksi</option>
+                                                                <option value="topikal">Topikal</option>
+                                                                </select>
+                                                            </div>
+                                                            </div>
+
+                                                            <!-- Input Signa -->
+                                                            <div class="form-row align-items-end mb-3">
+                                                            <div class="col-md-6">
+                                                                <label>Signa</label>
+                                                                <div class="form-row align-items-center">
+                                                                    <div class="col">
+                                                                    <input type="text" id="signa-jumlah1" class="form-control" placeholder="Contoh: 1">
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                    <strong>x</strong>
+                                                                    </div>
+                                                                    <div class="col">
+                                                                    <input type="text" id="signa-jumlah2" class="form-control" placeholder="Contoh: 3">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label for="signa-satuan1">Signa Satuan 1</label>
+                                                                <select class="form-control" id="signa-satuan1">
+                                                                <option value="">-- Pilih Satuan --</option>
+                                                                <option value="tablet">Tablet</option>
+                                                                <option value="kapsul">Kapsul</option>
+                                                                <option value="ml">ml</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label for="signa-satuan2">Signa Satuan 2</label>
+                                                                <select class="form-control" id="signa-satuan2">
+                                                                <option value="">-- Pilih Satuan --</option>
+                                                                <option value="hari">Hari</option>
+                                                                <option value="minggu">Minggu</option>
+                                                                <option value="bulan">Bulan</option>
+                                                                </select>
+                                                            </div>
+                                                            </div>
+
+                                                            <!-- Tombol Tambah -->
+                                                            <div class="form-group mb-3">
+                                                            <button type="button" id="btn-add-obat" class="btn btn-primary">Tambah Obat ke Resep</button>
+                                                            </div>
+
+                                                            <!-- Tampilan Resep -->
+                                                            <div class="form-group">
+                                                            <label for="summernote-resep">Resep:</label>
+                                                            <div id="summernote-resep" style="border:1px solid #ccc; min-height:200px; padding:10px; background:#f9f9f9; overflow-y:auto;"></div>
+                                                            </div>
+
                                                         </div>
                                                     </div>
 
@@ -456,160 +659,521 @@
     <!-- /.content -->
 </div>
 
-<script>
-    $(document).ready(function () {
-        // Inisialisasi variabel
-        let selectedICD10 = null;
-        let selectedPriorityICD10 = null;
 
-        // Toggle tampilan card ICD
-        $('#toggleICD').on('click', function () {
-            $('#icdCard').toggle();
+<script>
+$(function () {
+  let resepList = [];
+  let selectedIndex = -1;
+
+  function renderResep() {
+    let html = "";
+    resepList.forEach((line, i) => {
+      html += `<div class="resep-line d-flex justify-content-between align-items-center"
+               data-index="${i}" style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #ddd; ${i === selectedIndex ? 'background:#d1ecf1;' : ''}">
+        <span class="resep-text">${$('<div>').text(line).html()}</span>`;
+      if (i === selectedIndex) {
+        html += `<div class="btn-group btn-group-sm ml-2">
+                  <button type="button" class="btn btn-warning btn-up">▲</button>
+                  <button type="button" class="btn btn-warning btn-down">▼</button>
+                  <button type="button" class="btn btn-success btn-edit">✎</button>
+                  <button type="button" class="btn btn-danger btn-delete">✖</button>
+                </div>`;
+      }
+      html += `</div>`;
+    });
+    $("#summernote-resep").html(html);
+  }
+
+  $("#btn-r-action").click(function () {
+    const text = $("#r-text").val().trim();
+    resepList.push(text ? `R:/ ${text}` : "R:/");
+    $("#r-text").val("");
+    renderResep();
+  });
+
+ $("#btn-add-obat").click(function () {
+  const nama = $("#nama-obat").val();
+  const dosis1 = $("#dosis1").val().trim();
+  const dosis2 = $("#dosis2").val().trim();
+  const instruksi = $("#instruksi").val();
+  const signa1 = $("#signa-jumlah1").val().trim();
+  const signa2 = $("#signa-jumlah2").val().trim();
+  const satuan1 = $("#signa-satuan1").val();
+  const satuan2 = $("#signa-satuan2").val();
+
+  if (!nama) {
+    alert("Pilih nama obat!");
+    return;
+  }
+
+  let line = nama;
+  if (dosis1) line += ` ${dosis1}`;
+  if (dosis2) line += ` ${dosis2}`;
+  if (instruksi) line += ` ${instruksi}`;
+  if (signa1 && signa2 && satuan1 && satuan2) {
+    line += ` ${signa1} x ${signa2} ${satuan1} ${satuan2}`;
+  }
+
+  resepList.push(line);
+  renderResep();
+
+  // Reset input
+  $("#nama-obat").val("");
+  $("#dosis1").val("");
+  $("#dosis2").val("");
+  $("#instruksi").val("");
+  $("#signa-jumlah1").val("");
+  $("#signa-satuan1").val("");
+  $("#signa-jumlah2").val("");
+  $("#signa-satuan2").val("");
+});
+
+
+  // Pilih baris
+  $("#summernote-resep").on("click", ".resep-line", function () {
+    const idx = $(this).data("index");
+    selectedIndex = selectedIndex === idx ? -1 : idx;
+    renderResep();
+  });
+
+  // Hapus
+  $("#summernote-resep").on("click", ".btn-delete", function (e) {
+    e.stopPropagation();
+    const idx = $(this).closest(".resep-line").data("index");
+    resepList.splice(idx, 1);
+    selectedIndex = -1;
+    renderResep();
+  });
+
+  // Naik
+  $("#summernote-resep").on("click", ".btn-up", function (e) {
+    e.stopPropagation();
+    const idx = $(this).closest(".resep-line").data("index");
+    if (idx > 0) {
+      [resepList[idx - 1], resepList[idx]] = [resepList[idx], resepList[idx - 1]];
+      selectedIndex = idx - 1;
+      renderResep();
+    }
+  });
+
+  // Turun
+  $("#summernote-resep").on("click", ".btn-down", function (e) {
+    e.stopPropagation();
+    const idx = $(this).closest(".resep-line").data("index");
+    if (idx < resepList.length - 1) {
+      [resepList[idx + 1], resepList[idx]] = [resepList[idx], resepList[idx + 1]];
+      selectedIndex = idx + 1;
+      renderResep();
+    }
+  });
+
+  // Edit
+  $("#summernote-resep").on("click", ".btn-edit", function (e) {
+    e.stopPropagation();
+    const idx = $(this).closest(".resep-line").data("index");
+    const line = resepList[idx];
+
+    if (line.startsWith("R:/")) {
+      const content = line.replace(/^R:\/*\s*/, "");
+      $("#r-text").val(content);
+    } else {
+      // Reset semua input
+      $("#nama-obat").val(""); $("#dosis1").val(""); $("#dosis2").val(""); $("#instruksi").val("");
+      $("#signa-jumlah1").val(""); $("#signa-satuan1").val("");
+      $("#signa-jumlah2").val(""); $("#signa-satuan2").val("");
+
+      const parts = line.split(" ");
+
+      // Nama obat
+      if (parts.length > 0) $("#nama-obat").val(parts[0]);
+
+      // Dosis
+      if (parts.length > 1) $("#dosis1").val(parts[1]);
+      if (parts.length > 2 && !["oral", "injeksi", "topikal"].includes(parts[2])) {
+        $("#dosis2").val(parts[2]);
+      }
+
+      // Instruksi
+      const instruksiList = ["oral", "injeksi", "topikal"];
+      const instruksi = parts.find(p => instruksiList.includes(p.toLowerCase()));
+      if (instruksi) $("#instruksi").val(instruksi);
+
+      // Signa
+      const signaRegex = /(\d+)\s*x\s*(\d+)\s+(\w+)\s+(\w+)/;
+        const match = line.match(signaRegex);
+        if (match) {
+        $("#signa-jumlah1").val(match[1]);
+        $("#signa-jumlah2").val(match[2]);
+        $("#signa-satuan1").val(match[3]);
+        $("#signa-satuan2").val(match[4]);
+        }
+
+    }
+
+    // Hapus item
+    resepList.splice(idx, 1);
+    selectedIndex = -1;
+    renderResep();
+  });
+
+});
+</script>
+
+
+{{-- Script tindakan --}}
+<script>
+    // Data tindakan dari backend (Laravel) ke JS
+    const perawatanTindakan = @json($tindakan);
+
+    let tindakanList = [];
+    let editingData = null;
+    let editingIndex = null;
+
+    function renderTable() {
+        const tbody = $('#tabel-tindakan tbody');
+        tbody.empty();
+
+        tindakanList.forEach((group, index) => {
+            const pelaksanaRows = group.pelaksana;
+            pelaksanaRows.forEach((p, i) => {
+                const row = $('<tr>');
+                if (i === 0) {
+                    row.append(`<td rowspan="${pelaksanaRows.length}" class="align-middle text-center">${group.nama}</td>`);
+                }
+                row.append(`<td class="align-middle text-center">${p.pelaksana}</td>`);
+                row.append(`<td class="align-middle text-center">Rp ${p.harga.toLocaleString('id-ID')}</td>`);
+                if (i === 0) {
+                    row.append(`
+                        <td rowspan="${pelaksanaRows.length}" class="align-middle text-center">
+                            <button type="button" class="btn btn-sm btn-warning btn-edit" data-index="${index}">Edit</button>
+                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-index="${index}">Hapus</button>
+                        </td>
+                    `);
+                }
+                tbody.append(row);
+            });
+        });
+    }
+
+    function resetForm() {
+        $('#jenis-tindakan').val('');
+        $('#tindakan').empty().append('<option value="">Pilih Tindakan</option>');
+        $('#pelaksana').val('');
+        $('#tambah-tindakan').text('Tambah').removeData('edit-index');
+
+        if (editingData !== null && editingIndex !== null) {
+            tindakanList.splice(editingIndex, 0, editingData);
+            editingData = null;
+            editingIndex = null;
+            renderTable();
+        }
+    }
+
+    $(document).ready(function () {
+        // Saat pilih kategori isi dropdown tindakan sesuai kategori
+        $('#jenis-tindakan').change(function () {
+            const kategoriId = parseInt($(this).val());
+            const tindakanSelect = $('#tindakan').empty().append('<option value="">Pilih Tindakan</option>');
+
+            if (!isNaN(kategoriId)) {
+                perawatanTindakan
+                    .filter(t => t.perawatan_kategori_id === kategoriId)
+                    .forEach(t => {
+                        tindakanSelect.append(`<option value="${t.id}">${t.nama}</option>`);
+                    });
+            }
         });
 
-        // Saat ICD-10 dipilih
+        // Tambah atau update tindakan
+        $('#tambah-tindakan').click(function () {
+            const kategoriId = parseInt($('#jenis-tindakan').val());
+            const tindakanId = parseInt($('#tindakan').val());
+            const pelaksana = $('#pelaksana').val();
+            const editFlag = $(this).data('edit-index');
+
+            if (isNaN(kategoriId) || isNaN(tindakanId) || !pelaksana) {
+                alert('Lengkapi semua input!');
+                return;
+            }
+
+            const tindakanData = perawatanTindakan.find(t => t.id === tindakanId);
+            if (!tindakanData) {
+                alert('Tindakan tidak valid!');
+                return;
+            }
+
+            let pelaksanaList = [];
+            if (pelaksana === 'dokter') {
+                pelaksanaList.push({ pelaksana: 'Dokter', harga: tindakanData.tarif_dokter });
+            } else if (pelaksana === 'perawat') {
+                pelaksanaList.push({ pelaksana: 'Perawat', harga: tindakanData.tarif_perawat });
+            } else if (pelaksana === 'keduanya') {
+                pelaksanaList.push({ pelaksana: 'Dokter', harga: tindakanData.tarif_dokter });
+                pelaksanaList.push({ pelaksana: 'Perawat', harga: tindakanData.tarif_perawat });
+            }
+
+            const newEntry = { nama: tindakanData.nama, pelaksana: pelaksanaList };
+
+            if (editFlag === 'editing') {
+                if (editingIndex !== null) {
+                    tindakanList.splice(editingIndex, 0, newEntry);
+                    editingIndex = null;
+                    editingData = null;
+                }
+                $(this).removeData('edit-index').text('Tambah');
+            } else {
+                tindakanList.push(newEntry);
+            }
+
+            renderTable();
+            resetForm();
+        });
+
+        // Hapus tindakan
+        $('#tabel-tindakan').on('click', '.btn-delete', function () {
+            const index = $(this).data('index');
+            if (editingIndex === index) {
+                editingData = null;
+                editingIndex = null;
+                $('#tambah-tindakan').removeData('edit-index').text('Tambah');
+                resetForm();
+            }
+            tindakanList.splice(index, 1);
+            renderTable();
+        });
+
+        // Edit tindakan
+        $('#tabel-tindakan').on('click', '.btn-edit', function () {
+            const index = $(this).data('index');
+            const item = tindakanList[index];
+
+            editingData = item;
+            editingIndex = index;
+            tindakanList.splice(index, 1);
+            renderTable();
+
+            // Cari kategori dari data tindakan di perawatanTindakan
+            const tindakanObj = perawatanTindakan.find(t => t.nama === item.nama);
+            const kategoriId = tindakanObj ? tindakanObj.perawatan_kategori_id : null;
+
+            const pelaksana = item.pelaksana.length === 2 ? 'keduanya' : item.pelaksana[0].pelaksana.toLowerCase();
+
+            $('#jenis-tindakan').val(kategoriId).trigger('change');
+
+            // Tunggu tindakan dropdown terisi lalu set tindakan & pelaksana
+            setTimeout(() => {
+                $('#tindakan').val(tindakanObj ? tindakanObj.id : '').trigger('change');
+                $('#pelaksana').val(pelaksana);
+                $('#tambah-tindakan').text('Update').data('edit-index', 'editing');
+            }, 100);
+        });
+    });
+</script>
+
+{{-- Script Diet --}}
+<script>
+    let editIndex = null;
+
+    function tambahAtauUpdateDiet(event) {
+        event.preventDefault();
+
+        const jenis = document.getElementById("jenisDiet").value;
+        const anjur = document.getElementById("makananAnjuran").value;
+        const pantang = document.getElementById("makananPantangan").value;
+
+        if (!jenis || !anjur || !pantang) {
+            alert("Mohon lengkapi semua pilihan!");
+            return;
+        }
+
+        const tbody = document.querySelector("#tabelDiet tbody");
+
+        if (editIndex === null) {
+            // Tambah baris baru
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${jenis}</td>
+                <td>${anjur}</td>
+                <td>${pantang}</td>
+                <td>
+                    <button type="button"  class="btn btn-warning btn-sm" onclick="editBaris(this)">Edit</button>
+                    <button type="button"  class="btn btn-danger btn-sm" onclick="hapusBaris(this)">Hapus</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        } else {
+            // Update baris
+            const row = tbody.rows[editIndex];
+            row.cells[0].textContent = jenis;
+            row.cells[1].textContent = anjur;
+            row.cells[2].textContent = pantang;
+
+            editIndex = null;
+            document.getElementById("btnTambahDiet").textContent = "Tambah";
+        }
+
+        // Reset input
+        document.getElementById("jenisDiet").value = "";
+        document.getElementById("makananAnjuran").value = "";
+        document.getElementById("makananPantangan").value = "";
+    }
+
+    function editBaris(button) {
+        const row = button.closest("tr");
+        const cells = row.children;
+
+        // Ambil nilai dari baris
+        const jenis = cells[0].textContent;
+        const anjur = cells[1].textContent;
+        const pantang = cells[2].textContent;
+
+        // Set nilai ke select/input
+        document.getElementById("jenisDiet").value = jenis;
+        document.getElementById("makananAnjuran").value = anjur;
+        document.getElementById("makananPantangan").value = pantang;
+
+        // Hapus baris dari tabel
+        row.remove();
+
+        // Reset mode edit
+        editIndex = null;
+        document.getElementById("btnTambahDiet").textContent = "Update";
+    }
+
+
+    function hapusBaris(button) {
+        const row = button.closest("tr");
+        row.remove();
+
+        // Reset form jika sedang edit
+        if (editIndex !== null) {
+            editIndex = null;
+            document.getElementById("btnTambahDiet").textContent = "Tambah";
+        }
+    }
+</script>
+
+{{-- Script ICD --}}
+<script>
+    $(document).ready(function () {
+        // Variabel penyimpanan
+        let selectedICD10 = null, selectedPriorityICD10 = null;
+        let selectedICD9 = null, selectedPriorityICD9 = null;
+
+        // ICD10 - dropdown
         $('#icd10').on('change', function () {
-            const selectedOption = $(this).find('option:selected');
-            selectedICD10 = {
-                code: selectedOption.val(),
-                name: selectedOption.data('nama')
-            };
+            const opt = $(this).find('option:selected');
+            selectedICD10 = { code: opt.val(), name: opt.data('nama') };
             $('#kodeICD10').text(selectedICD10.code);
         });
 
-        // Saat prioritas dipilih
         $('#dropdownMenuButtonICD10').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
             selectedPriorityICD10 = $(this).data('value');
             $('#prioritas_icd_10').text(selectedPriorityICD10);
         });
 
-        // Klik tombol "Terima"
         $('#acceptICD10').on('click', function () {
-            if (!selectedICD10 || !selectedPriorityICD10) {
-                alert('Pilih Diagnosa dan Prioritas!');
-                return;
-            }
+            if (!selectedICD10 || !selectedPriorityICD10) return alert('Pilih Diagnosa dan Prioritas!');
+            if (isDuplicate('.icd_10 tbody', selectedICD10.code)) return alert('Data sudah ada.');
+            if (selectedPriorityICD10 === 'Primary' && hasPrimary('.icd_10 tbody')) return alert('Primary hanya boleh satu.');
 
-            // Cek apakah sudah ada
-            let exists = false;
-            $('.icd_10 tbody tr').each(function () {
-                if ($(this).find('td:first').text().trim() === selectedICD10.code) {
-                    exists = true;
-                    return false;
-                }
-            });
-
-            if (exists) {
-                alert('Data sudah ada di tabel.');
-                return;
-            }
-
-            // Simpan lewat AJAX
-            $.ajax({
-                url: '{{ route("pendaftaran.add") }}',
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-
-                    kode: selectedICD10.code,
-                    prioritas: selectedPriorityICD10,
-                    status_penyakit: $('#status_penyakit').val() || 'lama'
-                },
-                success: function (response) {
-                    if (response.success) {
-                        const newRow = `
-                            <tr align="center" data-id="${response.id}">
-                                <td valign="top">${selectedICD10.code}</td>
-                                <td valign="top">${selectedICD10.name}</td>
-                                <td valign="top">${selectedPriorityICD10}</td>
-                                <td valign="top">
-                                    <button type="button" class="btn btn-danger btn-sm deleteICD10">Hapus</button>
-                                </td>
-                            </tr>
-                        `;
-                        $('.icd_10 tbody').append(newRow);
-                        $(document).trigger('rowAdded');
-                        resetFieldsICD10();
-                    } else {
-                        alert('Gagal: ' + response.message);
-                    }
-                },
-                error: function (xhr) {
-                    alert('Terjadi kesalahan: ' + xhr.responseText);
-                }
-            });
+            $('.icd_10 tbody').append(generateRow(selectedICD10, selectedPriorityICD10, 'ICD10'));
+            resetFields('#icd10', '#kodeICD10', '#prioritas_icd_10');
+            selectedICD10 = selectedPriorityICD10 = null;
+            updateTableState();
         });
 
-        // Hapus ICD-10
-        $(document).on('click', '.deleteICD10', function () {
-            const row = $(this).closest('tr');
-            const id = row.data('id');
-
-            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                $.ajax({
-                    url: '{{ route("pendaftaran.add") }}',
-                    method: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        id: id
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            row.remove();
-                            $(document).trigger('rowRemoved');
-                        } else {
-                            alert('Gagal: ' + response.message);
-                        }
-                    },
-                    error: function (xhr) {
-                        alert('Terjadi kesalahan: ' + xhr.responseText);
-                    }
-                });
-            }
+        // ICD9 - dropdown
+        $('#icd9').on('change', function () {
+            const opt = $(this).find('option:selected');
+            selectedICD9 = { code: opt.val(), name: opt.data('nama') };
+            $('#kodeICD9').text(selectedICD9.code);
         });
 
-        // Reset semua input ICD10
-        function resetFieldsICD10() {
-            $('#icd10').val('').trigger('change');
-            $('#kodeICD10').text('KODE ICD 10');
-            $('#prioritas_icd_10').text('Pilih');
-            selectedICD10 = null;
-            selectedPriorityICD10 = null;
-        }
-
-        // Toggle tampilan tabel berdasarkan data
-        function toggleTableVisibility() {
-            const icd10Rows = $(".icd_10 tbody tr").not(".kosong").length;
-            const icd9Rows = $(".icd_9 tbody tr").not(".kosong").length;
-            const kosongRow = $(".kosong");
-
-            icd10Rows === 0 ? $(".isi_10").hide() : $(".isi_10").show();
-            icd9Rows === 0 ? $(".isi_9").hide() : $(".isi_9").show();
-
-            if (icd10Rows === 0 && icd9Rows === 0) {
-                kosongRow.show();
-            } else {
-                kosongRow.hide();
-            }
-        }
-
-        // Jalankan saat pertama kali
-        toggleTableVisibility();
-
-        // Trigger ulang saat data berubah
-        $(document).on('rowAdded rowRemoved', function () {
-            toggleTableVisibility();
+        $('#dropdownMenuButtonICD9').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
+            selectedPriorityICD9 = $(this).data('value');
+            $('#prioritas_icd_9').text(selectedPriorityICD9);
         });
 
-        // Trigger hapus dari tombol hapus ICD-10/9
-        $(document).on('click', '.deleteICD10, .deleteICD9', function () {
+        $('#acceptICD9').on('click', function () {
+            if (!selectedICD9 || !selectedPriorityICD9) return alert('Pilih Tindakan dan Prioritas!');
+            if (isDuplicate('.icd_9 tbody', selectedICD9.code)) return alert('Data sudah ada.');
+            if (selectedPriorityICD9 === 'Primary' && hasPrimary('.icd_9 tbody')) return alert('Primary hanya boleh satu.');
+
+            $('.icd_9 tbody').append(generateRow(selectedICD9, selectedPriorityICD9, 'ICD9'));
+            resetFields('#icd9', '#kodeICD9', '#prioritas_icd_9');
+            selectedICD9 = selectedPriorityICD9 = null;
+            updateTableState();
+        });
+
+        // Hapus baris
+        $(document).on('click', '.deleteRow', function () {
             $(this).closest('tr').remove();
-            $(document).trigger('rowRemoved');
+            updateTableState();
         });
+
+        // Helper: generate baris
+        function generateRow(data, priority, type) {
+            return `
+            <tr align="center">
+                <td valign="top" style="border: none;">${data.code}</td>
+                <td valign="top" style="border: none;">${data.name}</td>
+                <td valign="top" style="border: none;">${priority}</td>
+                <td valign="top" style="border: none;">
+                    <button type="button" class="btn btn-danger btn-sm deleteRow">Hapus</button>
+                </td>
+            </tr>`;
+        }
+
+        // Helper: cek duplikat
+        function isDuplicate(tbodySelector, code) {
+            let exists = false;
+            $(`${tbodySelector} tr`).each(function () {
+                const c = $(this).find('td:first').text().trim();
+                if (c === code) exists = true;
+            });
+            return exists;
+        }
+
+        // Helper: sudah ada Primary?
+        function hasPrimary(tbodySelector) {
+            let found = false;
+            $(`${tbodySelector} tr`).each(function () {
+                const p = $(this).find('td:eq(2)').text().trim();
+                if (p === 'Primary') found = true;
+            });
+            return found;
+        }
+
+        // Reset dropdown dan tombol
+        function resetFields(selectID, kodeID, prioritasID) {
+            $(selectID).val('').trigger('change');
+            $(kodeID).text(kodeID.includes('10') ? 'KODE ICD 10' : 'KODE ICD 9');
+            $(prioritasID).text('Pilih');
+        }
+
+        // Sembunyikan/tampilkan elemen
+        function updateTableState() {
+            const icd10Count = $('.icd_10 tbody tr').length;
+            const icd9Count = $('.icd_9 tbody tr').not(':first').length;
+
+
+            // ICD 10 hanya ditampilkan jika ada isinya
+            $('.isi_10').toggle(icd10Count > 0);
+
+            // ICD 9 selalu ditampilkan
+            $('.isi_9').toggle(icd9Count > 0);
+
+            // Jika keduanya kosong, tampilkan "Data Tidak Ada"
+            $('.kosong').toggle(icd10Count === 0 && icd9Count === 0);
+        }
+
+
+        updateTableState(); // Inisialisasi saat pertama load
     });
 </script>
 
-
+{{-- Script jenis alergi --}}
 <script>
     $(document).ready(function() {
         $('#jenis_alergi').on('change', function () {
@@ -639,7 +1203,6 @@
         });
     });
 </script>
-
 
 {{-- htt Script --}}
 <script>
@@ -1353,33 +1916,256 @@
     }
 </script>
 
-{{-- BS-Stepper --}}
+{{-- sctipt untuk init summernote --}}
 <script>
     $(function () {
+
         $('#summernote').summernote({
             height: 300, // Tentukan tinggi editor (dalam px)
             tabsize: 2,
             disableResizeEditor: true // Menonaktifkan resize editor
         });
-        $('#summernote1').summernote({
-            height: 100, // Tentukan tinggi editor (dalam px)
-            tabsize: 2
-        });
+
+        // script untuk dolphi
         $('#summernote2').summernote({
-            height: 100, // Tentukan tinggi editor (dalam px)
-            tabsize: 2
+            height: 100,
+            tabsize: 2,
+            toolbar: [
+                ['custom', ['dolphi']], // Tambahkan tombol AI
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']]
+            ],
+            buttons: {
+                dolphi: function (context) {
+                    var ui = $.summernote.ui;
+
+                        // Fungsi mengumpulkan seluruh data form medis
+                        function collectAllMedicalData() {
+                            return {
+                                keluhan: document.getElementById('penyakit')?.value || '',
+                                durasi: document.getElementById('durasi')?.value || '',
+                                waktu: document.getElementById('waktu')?.value || '',
+                                sistol: document.getElementById('sistol')?.value || '',
+                                distol: document.getElementById('distol')?.value || '',
+                                suhu: document.getElementById('suhu')?.value || '',
+                                nadi: document.getElementById('nadi')?.value || '',
+                                rr: document.getElementById('rr')?.value || '',
+                                tinggi: document.getElementById('tinggi')?.value || '',
+                                berat: document.getElementById('berat')?.value || '',
+                                spo2: document.getElementById('spo2')?.value || '',
+                                jenis_alergi: document.getElementById('jenis_alergi')?.value || '',
+                                alergi: document.getElementById('alergi')?.value || '',
+                                lingkar_perut: document.getElementById('lingkar_perut')?.value || '',
+                                nilai_bmi: document.getElementById('nilai_bmi')?.value || '',
+                                status_bmi: document.getElementById('status_bmi')?.value || '',
+                                eye: document.getElementById('eye')?.value || '',
+                                verbal: document.getElementById('verbal')?.value || '',
+                                motorik: document.getElementById('motorik')?.value || '',
+                                sadar: document.getElementById('sadar')?.value || '',
+                                htt_pemeriksaan: document.getElementById('htt_pemeriksaan')?.value || '',
+                                sub_pemeriksaan: document.getElementById('sub-pemeriksaan-select')?.value || '',
+                                htt_pemeriksaan_detail: document.getElementById('htt_pemeriksaan_detail')?.value || ''
+                            };
+                        }
+
+                        function formatMedicalQuestion(data) {
+                            return `Berikut adalah data medis pasien:
+                            - Keluhan: ${data.keluhan}, sejak ${data.durasi} ${data.waktu}
+                            - Tensi: ${data.sistol}/${data.distol} mmHg
+                            - Suhu: ${data.suhu} °C
+                            - Nadi: ${data.nadi} /mnt, RR: ${data.rr} /mnt
+                            - Tinggi: ${data.tinggi} cm, Berat: ${data.berat} kg
+                            - SpO2: ${data.spo2}
+                            - Alergi: ${data.jenis_alergi} - ${data.alergi}
+                            - Lingkar Perut: ${data.lingkar_perut} cm
+                            - BMI: ${data.nilai_bmi} (${data.status_bmi})
+                            - GCS: E${data.eye} V${data.verbal} M${data.motorik} → Kesadaran: ${data.sadar}
+                            - Head to Toe: ${data.htt_pemeriksaan} di ${data.sub_pemeriksaan} pada ${data.htt_pemeriksaan_detail}
+
+                            Apa kemungkinan diagnosis dan saran tindak lanjut berdasarkan data di atas?`;
+                        }
+
+                            // Buat tombol custom
+                            var button = ui.button({
+                                contents: '<i class="fa fa-stethoscope"></i> Dolphi Health AI',
+                                tooltip: 'Tanya AI Kesehatan berdasarkan data medis',
+                                click: function () {
+                                    const medicalData = collectAllMedicalData();
+                                    const question = formatMedicalQuestion(medicalData);
+
+                                    // Kirim pertanyaan ke Flowise API
+                                    fetch("https://cloud.flowiseai.com/api/v1/prediction/663a90e4-cfe1-4b54-b78e-5a44bc2c2794", {
+                                        method: "POST",
+                                        headers: {
+                                            Authorization: "Bearer Nmh-j3f6wL2ebBFhZdBzlKM0m_nTmL5Y544F7e2LQ0o",
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({ question: question })
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const answer = data.text || JSON.stringify(data);
+
+                                        // Buka jawaban di jendela popup baru
+                                        const popupWindow = window.open(
+                                            '',
+                                            '_blank',
+                                            'width=500,height=600,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,status=no'
+                                        );
+
+                                        popupWindow.document.write(`
+                                            <html>
+                                                <head>
+                                                    <title>Dolphi Health AI</title>
+                                                    <style>
+                                                        body {
+                                                            font-family: Arial, sans-serif;
+                                                            padding: 20px;
+                                                            background: #f9f9f9;
+                                                        }
+                                                        h2 {
+                                                            color: #4CAF50;
+                                                            margin-top: 0;
+                                                        }
+                                                        pre {
+                                                            white-space: pre-wrap;
+                                                            word-wrap: break-word;
+                                                            font-size: 14px;
+                                                        }
+                                                    </style>
+                                                </head>
+                                                <body>
+                                                    <h2>💡 Jawaban dari Dolphi AI</h2>
+                                                    <pre>${answer}</pre>
+                                                </body>
+                                            </html>
+                                        `);
+                                        popupWindow.document.close();
+                                    })
+                                    .catch(error => {
+                                        Swal.fire('Error', 'Gagal mengambil jawaban dari AI: ' + error.message, 'error');
+                                    });
+                                }
+                            });
+
+                    return button.render();
+                }
+            }
+
         });
+
         $('#summernote3').summernote({
             height: 100, // Tentukan tinggi editor (dalam px)
             tabsize: 2
         });
+
         $('#summernote4').summernote({
             height: 100, // Tentukan tinggi editor (dalam px)
             tabsize: 2
         });
+
+        // sctipt speak to text
         $('#summernote5').summernote({
-            height: 100, // Tentukan tinggi editor (dalam px)
-            tabsize: 2
+            height: 100,
+            tabsize: 2,
+            toolbar: [
+                ['custom', ['speak']],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']]
+            ],
+            buttons: {
+                speak: function (context) {
+                    var ui = $.summernote.ui;
+                    var isRecognizing = false;
+                    var recognition;
+                    var $button;
+
+                    function createButtonContent(isRecording) {
+                        return isRecording
+                            ? '<i class="fa fa-stop"></i> Stop Speech'
+                            : '<i class="fa fa-microphone"></i> Speech';
+                    }
+
+                    var button = ui.button({
+                        contents: createButtonContent(false),
+                        tooltip: 'Speech to Text',
+                        click: function () {
+                            if (!('webkitSpeechRecognition' in window)) {
+                                Swal.fire('Error', 'Speech Recognition tidak didukung di browser ini.', 'error');
+                                return;
+                            }
+
+                            if (isRecognizing && recognition) {
+                                recognition.stop();
+                                isRecognizing = false;
+                                $button.html(createButtonContent(false));
+                                return;
+                            }
+
+                            recognition = new webkitSpeechRecognition();
+                            recognition.lang = 'id-ID';
+                            recognition.interimResults = false;
+                            recognition.continuous = true; // Agar tidak stop otomatis
+
+                            recognition.onstart = function () {
+                                isRecognizing = true;
+                                $button.html(createButtonContent(true));
+                                console.log("🔊 Mulai mendengarkan...");
+                            };
+
+                            recognition.onresult = function (event) {
+                                let finalTranscript = '';
+                                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                                    if (event.results[i].isFinal) {
+                                        finalTranscript += event.results[i][0].transcript + ' ';
+                                    }
+                                }
+                                if (finalTranscript.trim()) {
+                                    // Tambahkan spasi jika teks sebelumnya tidak diakhiri spasi
+                                    const editorContent = context.invoke('code');
+                                    const needsSpace = editorContent && !editorContent.endsWith(' ');
+                                    const textToInsert = (needsSpace ? ' ' : '') + finalTranscript.trim() + ' ';
+                                    context.invoke('editor.insertText', textToInsert);
+                                    console.log("🎤 Hasil suara:", finalTranscript.trim());
+                                }
+                            };
+
+
+                            recognition.onerror = function (event) {
+                                console.warn("❗ Speech recognition error:", event.error);
+                                if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                                    Swal.fire('Error', 'Izin mikrofon ditolak.', 'error');
+                                    isRecognizing = false;
+                                    $button.html(createButtonContent(false));
+                                }
+                            };
+
+                            recognition.onend = function () {
+                                console.log("🛑 Sesi pengenalan suara selesai.");
+                                isRecognizing = false;
+                                $button.html(createButtonContent(false));
+                            };
+
+                            try {
+                                recognition.start();
+                            } catch (e) {
+                                console.error('Recognition start error:', e);
+                            }
+                        }
+                    });
+
+                    $button = button.render();
+                    return $button;
+                }
+            }
         });
     })
 </script>
