@@ -2,109 +2,6 @@
 @extends('layouts.dashbord')
 
 @section('content')
-    <!-- CSS Kustom untuk tampilan yang lebih baik -->
-    <style>
-        .small-box {
-            height: 80px !important;
-            background-color: #6C757D !important;
-        }
-        .small-box .icon {
-            font-size: 18px !important;
-            top: 10px !important;
-            right: 10px !important;
-            opacity: 0.8 !important;
-        }
-        .small-box .icon i {
-            font-size: 18px !important;
-        }
-        .small-box h6 {
-            font-size: 14px !important;
-            margin-bottom: 5px !important;
-        }
-        .small-box p {
-            font-size: 12px !important;
-        }
-        .card-header {
-            background-color: white !important;
-        }
-        .table thead th {
-            background-color: #f8f9fa !important;
-        }
-        .clickable-row {
-            cursor: pointer;
-        }
-        .clickable-row:hover {
-            background-color: #f5f5f5;
-        }
-        .pagination-container {
-            display: flex;
-            align-items: center;
-        }
-        .pagination-container .page-number {
-            width: 40px;
-            text-align: center;
-        }
-        .card {
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-            border-radius: 0.5rem;
-        }
-        .card-header {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-            padding: 1rem;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-        .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: rgba(0, 0, 0, 0.02);
-        }
-        .bg-highlight {
-            background-color: rgba(255, 204, 204, 0.2) !important; /* Merah dengan opacity 0.2 */
-            color: #333 !important;
-        }
-
-        .main-header .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-        .main-header .nav-links a {
-            color: #6c757d;
-            text-decoration: none;
-        }
-        .main-header .nav-links a:hover {
-            color: #007bff;
-        }
-        .main-header .right-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .main-footer {
-            background-color: #fff;
-            padding: 15px;
-            color: #6c757d;
-            border-top: 1px solid #dee2e6;
-            text-align: center;
-            margin-top: 20px;
-        }
-        /* Definisi warna merah transparan untuk baris yang dipilih */
-        .bg-merah-transparan {
-            background-color: rgba(255, 0, 0, 0.15) !important; /* Merah dengan opacity rendah */
-            color: #333 !important;
-        }
-        
-        /* Definisi warna pink untuk baris default yang dipilih pertama kali */
-        .bg-pink {
-            background-color: rgba(255, 192, 203, 0.3) !important; /* Pink dengan opacity rendah */
-            color: #333 !important;
-        }
-    </style>
-
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <div class="content-header">
@@ -146,14 +43,6 @@
                                             <option value="Klinik Makmur">Klinik Makmur</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label>Halaman:</label>
-                                        <div class="pagination-container">
-                                            <button class="btn btn-default" id="prevPage"><i class="fas fa-chevron-left"></i></button>
-                                            <input type="text" class="form-control page-number" id="currentPage" value="1" readonly>
-                                            <button class="btn btn-default" id="nextPage"><i class="fas fa-chevron-right"></i></button>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <table class="table table-bordered table-striped" id="permintaanTable">
@@ -165,15 +54,22 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Data akan diisi secara dinamis -->
+                                        @foreach($request as $requestData)
+                                        <tr class="table-row" ondblclick="openModal('{{ $requestData->kode_request }}')"
+                                                data-kode-klinik="{{ $requestData->kode_klinik }}"
+                                                data-nama-klinik="{{ $requestData->nama_klinik }}"
+                                                data-tanggal-input="{{ $requestData->tanggal_input }}"
+                                                style="background-color:
+                                                    {{ $requestData->status == 0 ? '#f8d7da' :
+                                                    ($requestData->status == 1 ? '#fff3cd' :
+                                                    ($requestData->status == 2 ? '#d4edda' : 'transparent')) }};">
+                                                <td>{{ $requestData->nama_klinik }}</td>
+                                                <td>{{ $requestData->kode_request }}</td>
+                                                <td>{{ $requestData->tanggal_input }}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
-
-                                <div class="text-center mt-3">
-                                    <button type="button" class="btn btn-success" id="konfirmasiPermintaanBtn">
-                                        <i class="fas fa-check-circle"></i> Konfirmasi Permintaan
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -204,14 +100,14 @@
                                     </div>
                                 </div>
 
-                                <table class="table table-bordered table-striped" id="requestItemsTable">
+                                <table class="table table-bordered table-striped" id="approval_permintaan">
                                     <thead>
                                         <tr>
-                                            <th>Kode Obat</th>
-                                            <th>Nama Obat</th>
-                                            <th>Harga Dasar</th>
-                                            <th>Jumlah</th>
-                                            <th>Aksi</th>
+                                            <th class="text-center">Kode Obat</th>
+                                            <th class="text-center">Nama Obat</th>
+                                            <th class="text-center">Harga Dasar</th>
+                                            <th class="text-center">Jumlah</th>
+                                            <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -242,443 +138,190 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <strong>Klinik:</strong> <span id="detailKlinik"></span>
+                {{-- <form id="confirmFormRequest" action="{{ route('gudangutama.konfirmasi') }}" method="POST">
+                    @csrf --}}
+                    <div class="modal-body">
+                        <input type="hidden" id="detail_data" name="detail_data">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <strong>Klinik:</strong> <span id="detailKlinik"></span>
+                                <input type="hidden" id="detail_klinik" name="detail_klinik">
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Kode Permintaan:</strong> <span id="detailKodeRequest"></span>
+                                <input type="hidden" id="detail_kode_request" name="detail_kode_request">
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Tanggal:</strong> <span id="detailTanggal"></span>
+                                <input type="hidden" id="detail_tanggal" name="detail_tanggal">
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <strong>Kode Permintaan:</strong> <span id="detailKodeRequest"></span>
-                        </div>
-                        <div class="col-md-4">
-                            <strong>Tanggal:</strong> <span id="detailTanggal"></span>
-                        </div>
+
+                        <table id="detailTable" class="table table-bordered table-striped">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="text-center" width="5%">No</th>
+                                    <th class="text-center" width="15%">Kode Obat</th>
+                                    <th class="text-center" width="50%">Nama Obat</th>
+                                    <th class="text-center" width="15%">Jumlah</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Detail item akan ditambahkan secara dinamis -->
+                            </tbody>
+                        </table>
                     </div>
-                    
-                    <table class="table table-bordered table-striped">
-                        <thead class="bg-light">
-                            <tr>
-                                <th class="text-center" width="5%">No</th>
-                                <th class="text-center" width="15%">Kode Obat</th>
-                                <th width="50%">Nama Obat</th>
-                                <th class="text-center" width="15%">Jumlah</th>
-                            </tr>
-                        </thead>
-                        <tbody id="detailTableBody">
-                            <!-- Detail item akan ditambahkan secara dinamis -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        <i class="fas fa-times"></i> Tutup
-                    </button>
-                    <button type="button" class="btn btn-success" id="approveRequestBtn">
-                        <i class="fas fa-check"></i> Konfirmasi Permintaan
-                    </button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times"></i> Tutup
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="konfirmasi_permintaan()">
+                            <i class="fas fa-check"></i> Konfirmasi Permintaan
+                        </button>
+                    </div>
+                {{-- </form> --}}
             </div>
         </div>
     </div>
 
     <script>
-        $(document).ready(function() {
-            // Inisialisasi Select2
-            $('.select2').select2({
-                theme: 'bootstrap4',
-                width: '100%'
-            });
+        function openModal(kodeRequest) {
+            // Cari elemen <tr> yang dipanggil saat double click
+            const row = document.querySelector(`tr[ondblclick="openModal('${kodeRequest}')"]`);
 
-            // Data contoh untuk permintaan
-            const allRequests = [
-                {
-                    id: 'BLR-20250512-0001',
-                    klinik: 'Klinik Balaraja',
-                    tanggal: '12-05-2025',
-                    items: [
-                        { kode: 'B00001', nama: 'Paracetamol 500 mg Tablet (PHAPROS Tbk)', jumlah: 5 }
-                    ]
-                },
-                {
-                    id: 'JYA-20250510-0002',
-                    klinik: 'Klinik Jaya',
-                    tanggal: '10-05-2025',
-                    items: [
-                        { kode: 'B00002', nama: 'Amoxicillin 500mg', jumlah: 10 },
-                        { kode: 'B00003', nama: 'Ibuprofen 400mg', jumlah: 8 }
-                    ]
-                },
-                {
-                    id: 'SNT-20250509-0003',
-                    klinik: 'Klinik Sentosa',
-                    tanggal: '09-05-2025',
-                    items: [
-                        { kode: 'B00004', nama: 'Cetirizine 10mg', jumlah: 15 }
-                    ]
-                },
-                {
-                    id: 'MKM-20250508-0004',
-                    klinik: 'Klinik Makmur',
-                    tanggal: '08-05-2025',
-                    items: [
-                        { kode: 'B00005', nama: 'Omeprazole 20mg', jumlah: 12 }
-                    ]
-                }
-            ];
+            // Ambil data-* dari row tersebut
+            const kodeKlinik = row.dataset.kodeKlinik;
+            const namaKlinik = row.dataset.namaKlinik;
+            const tanggalInput = row.dataset.tanggalInput;
 
-            // Inisialisasi DataTable dengan opsi kustom
-            const permintaanTable = $('#permintaanTable').DataTable({
-                paging: false,
-                searching: false,
-                info: false,
-                ordering: true,
-                language: {
-                    emptyTable: "Tidak ada data permintaan"
-                },
-                columnDefs: [
-                    { orderable: true, targets: [0, 1, 2] }
-                ]
-            });
+            // Isi elemen detail di modal
+            document.getElementById('detailKlinik').textContent = namaKlinik;
+            document.getElementById('detailKodeRequest').textContent = kodeRequest;
+            document.getElementById('detailTanggal').textContent = tanggalInput;
+            document.getElementById('detail_klinik').value = namaKlinik;
+            document.getElementById('detail_kode_request').value = kodeRequest;
+            document.getElementById('detail_tanggal').value = tanggalInput;
 
-            // Fungsi untuk memfilter dan menampilkan permintaan
-            function filterAndDisplayRequests() {
-                const klinikFilter = $('#filterKlinik').val();
-                
-                // Kosongkan tabel
-                permintaanTable.clear();
-                
-                // Filter dan tambahkan baris
-                allRequests.forEach(req => {
-                    if (!klinikFilter || req.klinik === klinikFilter) {
-                        permintaanTable.row.add([
-                            req.klinik,
-                            req.id,
-                            req.tanggal
-                        ]).draw(false);
-                    }
-                });
-                
-                // Tambahkan class clickable-row ke semua baris
-                $('#permintaanTable tbody tr').addClass('clickable-row');
-                
-                // Tambahkan atribut data ke baris
-                $('#permintaanTable tbody tr').each(function(index) {
-                    const rowData = permintaanTable.row(index).data();
-                    const requestId = rowData[1];
-                    const request = allRequests.find(r => r.id === requestId);
-                    
-                    if (request) {
-                        $(this).attr('data-id', request.id);
-                        $(this).attr('data-klinik', request.klinik);
-                    }
-                });
-                
-                // Sorot baris pertama jika ada dengan warna pink
-                if (permintaanTable.rows().count() > 0) {
-                    $('#permintaanTable tbody tr:first').addClass('bg-pink');
-                }
-            }
+            fetch(`/api/data-master-gudang/request/getDetails/${kodeRequest}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Kosongkan dan isi ulang isi tabel
+                    const table = document.getElementById('detailTable');
+                    const tableBody = table.querySelector('tbody');
+                    tableBody.innerHTML = '';
 
-            // Terapkan filter saat pemilihan klinik berubah
-            $('#filterKlinik').change(function() {
-                filterAndDisplayRequests();
-            });
+                     // Input hidden untuk simpan data JSON
+                    const hiddenInput = document.getElementById('detail_data');
+                    const jsonData = JSON.stringify(data.details);
+                    hiddenInput.value = jsonData;
 
-            // Inisialisasi dengan semua permintaan
-            filterAndDisplayRequests();
+                    // Log hasil JSON
+                    console.log('JSON Detail Data:', jsonData);
 
-            // Variabel untuk melacak klik terakhir
-            let lastClickTime = 0;
-            let lastClickedRow = null;
-
-            // Tangani klik pada baris permintaan
-            $(document).on('click', '#permintaanTable tbody tr', function(e) {
-                const now = new Date().getTime();
-                const row = $(this);
-                
-                // Cek apakah ini double click (klik kedua dalam 300ms)
-                if (lastClickedRow && lastClickedRow.is(row) && now - lastClickTime < 300) {
-                    // Double click - tampilkan modal
-                    const requestId = row.data('id');
-                    showDetailModal(requestId);
-                    
-                    // Reset tracking
-                    lastClickTime = 0;
-                    lastClickedRow = null;
-                } else {
-                    // Single click - toggle warna
-                    
-                    // Hapus warna pink dari semua baris
-                    $('#permintaanTable tbody tr').removeClass('bg-pink');
-                    
-                    // Toggle warna merah transparan
-                    if (row.hasClass('bg-merah-transparan')) {
-                        // Jika sudah merah, hapus warna
-                        row.removeClass('bg-merah-transparan');
-                    } else {
-                        // Hapus warna merah dari semua baris lain
-                        $('#permintaanTable tbody tr').removeClass('bg-merah-transparan');
-                        // Tambahkan warna merah ke baris ini
-                        row.addClass('bg-merah-transparan');
-                    }
-                    
-                    // Update tracking untuk deteksi double click
-                    lastClickTime = now;
-                    lastClickedRow = row;
-                    
-                    // Simpan ID permintaan yang dipilih jika baris dipilih
-                    if (row.hasClass('bg-merah-transparan')) {
-                        const requestId = row.data('id');
-                        $('#konfirmasiPermintaanBtn').data('selected-id', requestId);
-                    } else {
-                        // Hapus ID yang dipilih jika tidak ada baris yang dipilih
-                        $('#konfirmasiPermintaanBtn').data('selected-id', null);
-                    }
-                }
-            });
-
-            // Fungsi untuk menampilkan modal detail
-            function showDetailModal(requestId) {
-                const request = allRequests.find(r => r.id === requestId);
-                
-                if (request) {
-                    // Isi detail modal
-                    $('#detailKlinik').text(request.klinik);
-                    $('#detailKodeRequest').text(request.id);
-                    $('#detailTanggal').text(request.tanggal);
-                    
-                    // Isi tabel detail
-                    $('#detailTableBody').empty();
-                    request.items.forEach((item, index) => {
-                        $('#detailTableBody').append(`
-                            <tr>
-                                <td class="text-center">${index + 1}</td>
-                                <td class="text-center">${item.kode}</td>
-                                <td>${item.nama}</td>
-                                <td class="text-center">${item.jumlah}</td>
-                            </tr>
-                        `);
+                    data.details.forEach((detail, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="text-center">${index + 1}</td>
+                            <td class="text-center">${detail.kode_obat_alkes}</td>
+                            <td class="text-center">${detail.nama_obat_alkes}</td>
+                            <td class="text-center">${detail.qty}</td>
+                        `;
+                        tableBody.appendChild(row);
                     });
-                    
-                    // Simpan ID permintaan untuk tombol konfirmasi
-                    $('#approveRequestBtn').data('request-id', requestId);
-                    
+
                     // Tampilkan modal
                     $('#detailModal').modal('show');
-                }
+                })
+                .catch(error => {
+                    console.error('Error fetching details:', error);
+                });
+        }
+
+        function konfirmasi_permintaan() {
+            const detailData = document.getElementById('detail_data').value;
+            const klinik = document.getElementById('detail_klinik').value;
+            const kodeRequest = document.getElementById('detail_kode_request').value;
+            const tanggal = document.getElementById('detail_tanggal').value;
+
+            let parsedData = [];
+            try {
+                parsedData = JSON.parse(detailData);
+            } catch (e) {
+                Swal.fire('Error', 'Data tidak valid!', 'error');
+                return;
             }
-            
-            // Tangani klik pada tombol konfirmasi permintaan
-            $('#konfirmasiPermintaanBtn').on('click', function() {
-                const selectedId = $(this).data('selected-id');
-                
-                if (selectedId) {
-                    showDetailModal(selectedId);
-                } else {
-                    // Jika tidak ada baris yang dipilih
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Perhatian',
-                        text: 'Silakan pilih permintaan terlebih dahulu!'
+
+            $.ajax({
+                url: "{{ route('gudangutama.konfirmasi') }}",
+                method: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    detail_data: detailData,
+                    detail_klinik: klinik,
+                    detail_kode_request: kodeRequest,
+                    detail_tanggal: tanggal
+                },
+                success: function (response) {
+                    // Lanjut hanya kalau konfirmasi sukses
+                    let promises = parsedData.map(item => {
+                        return $.ajax({
+                            url: `/api/data-master-gudang/utama/getHargaDasar/${item.kode_obat_alkes}`,
+                            method: 'GET'
+                        }).then(hargaResponse => {
+                            return {
+                                ...item,
+                                harga_dasar: hargaResponse.harga_dasar ?? 0
+                            };
+                        }).catch(() => {
+                            return {
+                                ...item,
+                                harga_dasar: 0
+                            };
+                        });
                     });
-                }
-            });
-            
-            // Tangani klik pada tombol konfirmasi di modal
-            $('#approveRequestBtn').on('click', function() {
-                const requestId = $(this).data('request-id');
-                const request = allRequests.find(req => req.id === requestId);
-                
-                if (!request) return;
-                
-                Swal.fire({
-                    title: 'Konfirmasi Permintaan',
-                    text: "Apakah Anda yakin ingin mengkonfirmasi permintaan ini?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Konfirmasi!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Tambahkan semua item ke tabel kanan
-                        request.items.forEach(item => {
-                            // Hasilkan harga acak untuk tujuan demo
-                            const harga = Math.floor(5000 + Math.random() * 95000);
-                            
-                            // Tambahkan ke tabel
-                            const newRow = `
-                                <tr>
-                                    <td>${item.kode}</td>
-                                    <td>${item.nama}</td>
-                                    <td>Rp ${new Intl.NumberFormat('id-ID').format(harga)}</td>
-                                    <td>${item.jumlah}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-danger delete-item">
+
+                    Promise.all(promises).then(fullData => {
+                        Swal.fire({
+                            title: 'Berhasil dikonfirmasi!',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            $('#detailModal').modal('hide');
+
+                            const approvalTableBody = document.querySelector('#approval_permintaan tbody');
+                            approvalTableBody.innerHTML = '';
+
+                            fullData.forEach(item => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${item.kode_obat_alkes}</td>
+                                    <td>${item.nama_obat_alkes}</td>
+                                    <td class="text-end">Rp ${parseFloat(item.harga_dasar).toLocaleString('id-ID', {
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0
+                                    })}</td>
+                                    <td class="text-center">${item.qty}</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
-                                </tr>
-                            `;
-                            
-                            $('#requestItemsTable tbody').append(newRow);
+                                `;
+                                approvalTableBody.appendChild(row);
+                            });
                         });
-                        
-                        // Tutup modal
-                        $('#detailModal').modal('hide');
-                        
-                        // Tampilkan pesan sukses
-                        Swal.fire(
-                            'Berhasil!',
-                            'Permintaan telah dikonfirmasi dan ditambahkan ke form.',
-                            'success'
-                        );
-                    }
-                });
-            });
-
-            // Hapus item dari tabel
-            $(document).on('click', '.delete-item', function() {
-                $(this).closest('tr').remove();
-            });
-
-            // Klik tombol tambah obat
-            $('#addObatBtn').click(function() {
-                const obat = $('#obatSelect').val();
-                const jumlah = $('#jumlahObat').val();
-                
-                if (!obat || !jumlah || jumlah <= 0) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Harap isi semua field dengan benar!'
                     });
-                    return;
+                },
+                error: function (xhr) {
+                    Swal.fire('Gagal', 'Terjadi kesalahan saat mengirim data.', 'error');
+                    console.error(xhr.responseText);
                 }
-                
-                // Cari item obat dari daftar
-                const allObats = [];
-                allRequests.forEach(req => {
-                    req.items.forEach(item => {
-                        if (!allObats.some(o => o.kode === item.kode)) {
-                            allObats.push(item);
-                        }
-                    });
-                });
-                
-                const selectedObat = allObats.find(item => item.nama === obat);
-                
-                if (!selectedObat) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Obat tidak ditemukan!'
-                    });
-                    return;
-                }
-                
-                // Hasilkan harga acak untuk tujuan demo
-                const harga = Math.floor(5000 + Math.random() * 95000);
-                
-                // Tambahkan ke tabel
-                const newRow = `
-                    <tr>
-                        <td>${selectedObat.kode}</td>
-                        <td>${selectedObat.nama}</td>
-                        <td>Rp ${new Intl.NumberFormat('id-ID').format(harga)}</td>
-                        <td>${jumlah}</td>
-                        <td>
-                            <button class="btn btn-sm btn-danger delete-item">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                
-                $('#requestItemsTable tbody').append(newRow);
-                
-                // Reset form
-                $('#obatSelect').val('').trigger('change');
-                $('#jumlahObat').val(1);
-                
-                // Tampilkan pesan sukses
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: 'Item berhasil ditambahkan ke form permintaan',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
             });
+        }
 
-            // Konfirmasi permintaan button click
-            $('#konfirmasiPermintaanBtn').click(function() {
-                Swal.fire({
-                    title: 'Konfirmasi Permintaan',
-                    text: "Apakah Anda yakin ingin mengkonfirmasi permintaan yang dipilih?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Konfirmasi!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire(
-                            'Berhasil!',
-                            'Permintaan telah dikonfirmasi.',
-                            'success'
-                        );
-                    }
-                });
-            });
 
-            // Konfirmasi stok button click
-            $('#konfirmasiStokBtn').click(function() {
-                Swal.fire({
-                    title: 'Konfirmasi Permintaan Stok',
-                    text: "Apakah Anda yakin ingin mengkonfirmasi permintaan stok yang dipilih?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Konfirmasi!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire(
-                            'Berhasil!',
-                            'Permintaan stok telah dikonfirmasi.',
-                            'success'
-                        );
-                    }
-                });
-            });
 
-            // Isi dropdown obat saat halaman dimuat
-            $(document).ready(function() {
-                // Isi dropdown dengan semua obat dari semua permintaan
-                const allObats = [];
-                allRequests.forEach(req => {
-                    req.items.forEach(item => {
-                        if (!allObats.some(o => o.kode === item.kode)) {
-                            allObats.push(item);
-                        }
-                    });
-                });
-                
-                // Urutkan berdasarkan nama
-                allObats.sort((a, b) => a.nama.localeCompare(b.nama));
-                
-                // Tambahkan ke dropdown
-                $('#obatSelect').empty().append('<option value="">Pilih Obat</option>');
-                allObats.forEach(item => {
-                    $('#obatSelect').append(`<option value="${item.nama}">${item.kode} - ${item.nama}</option>`);
-                });
-            });
-        });
+
     </script>
-
 
 @endsection
