@@ -330,9 +330,6 @@ Route::middleware('auth')->prefix('setting')->group(function () {
 });
 
 
-require __DIR__.'/auth.php';
-require __DIR__.'/user.php';
-
 // Data Master Gudang - Request Obat
 Route::middleware('auth')->prefix('data-master-gudang')->group(function () {
     // Halaman Request Obat
@@ -370,9 +367,5 @@ Route::middleware('auth')->prefix('data-master-gudang')->group(function () {
     Route::get('/utama/stok-menipis', [DataMasterGudangController::class, 'getStokMenipis'])->name('gudang.utama.stok-menipis');
 });
 
-
-
-
-
-
-
+require __DIR__.'/auth.php';
+require __DIR__.'/user.php';
