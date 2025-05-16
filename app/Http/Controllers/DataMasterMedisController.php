@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Exports\Nama_MakananExport;
 use App\Exports\Jenis_DietExport;
 use App\Exports\Htt_pemeriksaanExport;
+use App\Exports\Icd10Export;
+use App\Exports\Icd9Export;
 use App\Exports\PoliExport;
 use App\Exports\SpesialisExport;
 use App\Exports\SubspesialisExport;
@@ -13,6 +15,8 @@ use App\Exports\Perawatan_tindakanExport;
 use App\Imports\Nama_MakananImport;
 use App\Imports\Jenis_DietImport;
 use App\Imports\Htt_pemeriksaanImport;
+use App\Imports\Icd10Import;
+use App\Imports\Icd9Import;
 use App\Imports\PoliImport;
 use App\Imports\SpesialisImport;
 use App\Imports\SubspesialisImport;
@@ -23,6 +27,8 @@ use App\Models\jenis_diet;
 use App\Models\nama_makanan;
 use App\Models\htt_pemeriksaan;
 use App\Models\htt_sub_pemeriksaan;
+use App\Models\icd10;
+use App\Models\icd9;
 use App\Models\poli;
 use App\Models\spesialis;
 use App\Models\subspesialis;
@@ -758,8 +764,6 @@ class DataMasterMedisController extends Controller
                     );
                 }
             }
-
-
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
@@ -802,6 +806,253 @@ class DataMasterMedisController extends Controller
             'success' => true,
             'message' => 'alergi berhasil dihapus!'
         ]);
+    }
+
+    public function icd10()
+    {
+        $title = "Master Gologan Darah";
+        $icd10 = icd10::all();
+        return view('module.master-data-medis.icd10', compact('title','icd10'));
+    }
+
+    public function icd10add(Request $request)
+    {
+        try {
+            $request->validate([
+                'nama' => 'required|string',
+                'kode' =>'string|nullable'
+            ]);
+            // Simpan data ke database
+            $goldar = icd10::create([
+                'nama_icd10' => $request->input('nama'),   // Ambil data dari request
+                'kode_icd10' => $request->input('kode')
+            ]);
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Goldar berhasil ditambahkan!',
+                'data' => $goldar
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Goldar Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Goldar!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
+
+    public function icd10edit(Request $request)
+    {
+        $request->validate([
+            'nama_edit' => 'required|string',
+            'kode_edit' =>'string|nullable'
+        ]);
+
+        $icd10 = icd10::find($request->icd10id_edit);
+
+        if (!$icd10) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Goldar tidak ditemukan!'
+            ], 404);
+        }
+
+        $icd10->nama_icd10 = $request->nama_edit;
+        $icd10->kode_icd10 = $request->kode_edit;
+        $icd10->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Goldar berhasil diperbarui!'
+        ]);
+    }
+    public function icd10delete(Request $request)
+    {
+
+        $request->validate([
+            'icd10id_delete' => 'required'
+        ]);
+
+        $icd10 = icd10::find($request->icd10id_delete);
+
+        if (!$icd10) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Goldar tidak ditemukan!'
+            ], 404);
+        }
+
+        $icd10->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Goldar berhasil dihapus!'
+        ]);
+    }
+
+    public function icd10singkron(Request $request)
+    {
+        $response = $this->PcareController->get_diagnosis_bpjs($request->kode_icd);
+        $data = json_decode($response->getContent(), true);
+        try {
+            // Simpan data ke database
+            foreach ($data['data']['list'] as $item) {
+                icd10::updateOrCreate(
+                    [
+                        'kode_icd10' => $item['kdDiag'],
+                        'nama_icd10' => $item['nmDiag']
+                    ]
+                );
+            }
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Alergi berhasil ditambahkan!'
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Alergi Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Alergi!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function icd10export()
+    {
+        return Excel::download(new Icd10Export, 'Macam-macam ICD10.xlsx');
+    }
+
+    public function icd10import(Request $request)
+    {
+        $request->validate([
+             'file' => 'required|mimes:xlsx,xls'
+         ]);
+
+         Excel::import(new Icd10Import, $request->file('file'));
+        return redirect()->route('icd10.get')->with('success', 'Data berhasil diimpor!');
+    }
+
+    public function icd9()
+    {
+        $title = "Master Gologan Darah";
+        $icd9 = icd9::all();
+        return view('module.master-data-medis.icd9', compact('title','icd9'));
+    }
+
+    public function icd9add(Request $request)
+    {
+        try {
+            $request->validate([
+                'nama' => 'required|string',
+                'kode' =>'string|nullable'
+            ]);
+            // Simpan data ke database
+            $goldar = icd9::create([
+                'nama_icd9' => $request->input('nama'),   // Ambil data dari request
+                'kode_icd9' => $request->input('kode')
+            ]);
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Goldar berhasil ditambahkan!',
+                'data' => $goldar
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Goldar Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Goldar!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
+
+    public function icd9edit(Request $request)
+    {
+        $request->validate([
+            'nama_edit' => 'required|string',
+            'kode_edit' =>'string|nullable'
+        ]);
+
+        $icd9 = icd9::find($request->icd9id_edit);
+
+        if (!$icd9) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Goldar tidak ditemukan!'
+            ], 404);
+        }
+
+        $icd9->nama_icd9 = $request->nama_edit;
+        $icd9->kode_icd9 = $request->kode_edit;
+        $icd9->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Goldar berhasil diperbarui!'
+        ]);
+    }
+
+    public function icd9delete(Request $request)
+    {
+
+        $request->validate([
+            'icd9id_delete' => 'required'
+        ]);
+
+        $icd9 = icd9::find($request->icd9id_delete);
+
+        if (!$icd9) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Goldar tidak ditemukan!'
+            ], 404);
+        }
+
+        $icd9->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Goldar berhasil dihapus!'
+        ]);
+    }
+
+    public function icd9export()
+    {
+        return Excel::download(new Icd9Export, 'Macam-macam ICD9.xlsx');
+    }
+
+    public function icd9import(Request $request)
+    {
+        $request->validate([
+             'file' => 'required|mimes:xlsx,xls'
+         ]);
+
+         Excel::import(new Icd9Import, $request->file('file'));
+        return redirect()->route('icd9.get')->with('success', 'Data berhasil diimpor!');
     }
 
     // jenis_diet Start

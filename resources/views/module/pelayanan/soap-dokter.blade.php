@@ -66,289 +66,383 @@
                                     </div>
 
                                     <div class="col-md-12">
-                                          <div class="bs-stepper">
-                                            <div class="bs-stepper-header" role="tablist">
-                                              <!-- your steps here -->
-                                              <div class="step" data-target="#Subyektif-part">
-                                                <button type="button" class="step-trigger" role="tab" aria-controls="Subyektif-part" id="Subyektif-part-trigger">
-                                                  <span class="bs-stepper-circle">1</span>
-                                                  <span class="bs-stepper-label">Subyektif</span>
-                                                </button>
-                                              </div>
-                                              <div class="line"></div>
-                                              <div class="step" data-target="#Obyektif-part">
-                                                <button type="button" class="step-trigger" role="tab" aria-controls="Obyektif-part" id="Obyektif-part-trigger">
-                                                  <span class="bs-stepper-circle">2</span>
-                                                  <span class="bs-stepper-label">Obyektif</span>
-                                                </button>
-                                              </div>
-                                              <div class="line"></div>
-                                              <div class="step" data-target="#htt-part">
-                                                <button type="button" class="step-trigger" role="tab" aria-controls="htt-part" id="htt-part-trigger">
-                                                  <span class="bs-stepper-circle">3</span>
-                                                  <span class="bs-stepper-label">Head To Toe</span>
-                                                </button>
-                                              </div>
-                                              <div class="line"></div>
-                                              <div class="step" data-target="#ead-part">
-                                                <button type="button" class="step-trigger" role="tab" aria-controls="ead-part" id="ead-trigger">
-                                                  <span class="bs-stepper-circle">4</span>
-                                                  <span class="bs-stepper-label">Expertise dan Assesment diagnosis</span>
-                                                </button>
-                                              </div>
-                                              <div class="line"></div>
-                                              <div class="step" data-target="#pie-part">
-                                                <button type="button" class="step-trigger" role="tab" aria-controls="pie-part" id="pie-trigger">
-                                                  <span class="bs-stepper-circle">5</span>
-                                                  <span class="bs-stepper-label">Plan ,Instruksi dan Evaluasi</span>
-                                                </button>
-                                              </div>
+                                        <div class="card card-primary card-outline card-outline-tabs">
+                                            <div class="card-header p-0 border-bottom-0">
+                                                <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" id="custom-tabs-four-subyektif-tab" data-toggle="pill" href="#custom-tabs-four-subyektif" role="tab" aria-controls="custom-tabs-four-subyektif" aria-selected="true">Subyektif</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-objectiv-tab" data-toggle="pill" href="#custom-tabs-four-objectiv" role="tab" aria-controls="custom-tabs-four-objectiv" aria-selected="false">Objectiv</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-headtotoe-tab" data-toggle="pill" href="#custom-tabs-four-headtotoe" role="tab" aria-controls="custom-tabs-four-headtotoe" aria-selected="false">Head To Toe</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-assesmen-tab" data-toggle="pill" href="#custom-tabs-four-assesmen" role="tab" aria-controls="custom-tabs-four-assesmen" aria-selected="false">Assesmen</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-diag-tab" data-toggle="pill" href="#custom-tabs-four-diag" role="tab" aria-controls="custom-tabs-four-diag" aria-selected="false">Diagnosisi ICD</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-plan-tab" data-toggle="pill" href="#custom-tabs-four-plan" role="tab" aria-controls="custom-tabs-four-plan" aria-selected="false">Plan</a>
+                                                    </li>
+                                                </ul>
                                             </div>
-                                            <div class="bs-stepper-content">
+                                            <div class="card-body">
+                                                <div class="tab-content" id="custom-tabs-four-tabContent">
 
-                                              <!-- your steps content here -->
-                                              <div id="Subyektif-part" class="content" role="tabpanel" aria-labelledby="Subyektif-part-trigger">
-                                                <div class="form-group">
-                                                    <label>Keluhan :</label>
-                                                    <div class="row">
-                                                        <div class="col-md-5">
-                                                            <input type="text" class="form-control" id="penyakit" placeholde="Masukan Keluhan">
+                                                    <div class="tab-pane fade show active" id="custom-tabs-four-subyektif" role="tabpanel" aria-labelledby="custom-tabs-four-subyektif-tab">
+                                                        <div class="form-group">
+                                                            <label>Keluhan :</label>
+                                                            <div class="row">
+                                                                <div class="col-md-5">
+                                                                    <input type="text" class="form-control" id="penyakit" placeholde="Masukan Keluhan">
+                                                                </div>
+                                                                <div class="col-md-5 d-flex align-items-center">
+                                                                    <label class="mr-3 mb-0">Sejak</label>
+                                                                    <input type="number" class="form-control mr-2" id="durasi" placeholder="Masukkan durasi">
+                                                                    <select class="form-control select2bs4" id="waktu" name="waktu">
+                                                                        <option value="" disabled selected>-- Pilih Hari --</option>
+                                                                        <option value="Hari">Hari</option>
+                                                                        <option value="Minggu">Minggu</option>
+                                                                        <option value="Bulan">Bulan</option>
+                                                                        <option value="Tahun">Tahun</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-2 d-flex justify-content-end">
+                                                                    <button type="button" class="btn btn-primary" onclick="addData()">Tambahkan</button>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-md-5 d-flex align-items-center">
-                                                            <label class="mr-3 mb-0">Sejak</label>
-                                                            <input type="number" class="form-control mr-2" id="durasi" placeholder="Masukkan durasi">
-                                                            <select class="form-control select2bs4" id="waktu" name="waktu">
-                                                                <option value="" disabled selected>-- Pilih Hari --</option>
-                                                                <option value="Hari">Hari</option>
-                                                                <option value="Minggu">Minggu</option>
-                                                                <option value="Bulan">Bulan</option>
-                                                                <option value="Tahun">Tahun</option>
-                                                            </select>
+
+                                                        <input type="hidden" id="tableData" name="tableData" value="[]">
+
+                                                        <!-- Tabel -->
+                                                        <div class="form-group row">
+                                                            <div class="col-md-12">
+                                                                <table class="table table-bordered" id="SubTabel">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th style="width: 5%; text-align: center;">No</th>
+                                                                            <th style="width: 70%">Subyektif</th>
+                                                                            <th style="width: 25%; text-align: center;">Aksi</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-md-2 d-flex justify-content-end">
-                                                            <button type="button" class="btn btn-primary" onclick="addData()">Tambahkan</button>
+
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="custom-tabs-four-objectiv" role="tabpanel" aria-labelledby="custom-tabs-four-objectiv-tab">
+                                                        <div class="form-group row">
+                                                            <div class="col-md-2">
+                                                                <label>Tensi (mmHg)</label>
+                                                                <div class="row">
+                                                                    <div class="col-md-5">
+                                                                        <input type="text" class="form-control" id="sistol" name="sistol">
+                                                                    </div>
+                                                                    <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                                                        <span>/</span> <!-- Menambahkan pemisah / -->
+                                                                    </div>
+                                                                    <div class="col-md-5">
+                                                                        <input type="text" class="form-control" id="distol" name="distol" onchange="updateTensi()">
+                                                                    </div>
+                                                                    <input type="hidden" id="tensi" name="tensi">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <label for="suhu">Suhu (°C)</label>
+                                                                <input type="text" class="form-control" id="suhu" name="suhu" onchange="validateSuhu(this)">
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <label for="nadi">Nadi (/mnt)</label>
+                                                                <input type="text" class="form-control" id="nadi" name="nadi" onchange="validateNadi()">
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <label for="rr">RR (/mnt)</label>
+                                                                <input type="text" class="form-control" id="rr" name="rr" onchange="validateRR(this)">
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <label for="tinggi">Tinggi (Cm)</label>
+                                                                <input type="text" class="form-control" id="tinggi" name="tinggi" onchange="validateTB()">
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <label for="berat">Berat (/Kg)</label>
+                                                                <input type="text" class="form-control" id="berat" name="berat" onchange="validateTB()">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-3">
+                                                                <label for="spo2">SpO2</label>
+                                                                <input type="text" class="form-control" id="spo2" name="spo2" onchange="validateSpO2(this)">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label>Alergi dan jenis</label>
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <select class="form-control select2bs4" id="jenis_alergi" name="jenis_alergi">
+                                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                                            <option value="00">tidak ada</option>
+                                                                            <option value="01">makanan</option>
+                                                                            <option value="02">obat</option>
+                                                                            <option value="03">udara</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <select class="form-control select2bs4" id="alergi" name="alergi">
+                                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label for="lingkar_perut">Lingkar Perut</label>
+                                                                <input type="text" class="form-control" id="lingkar_perut" name="lingkar_perut">
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label>Data BMI</label>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <input type="text" class="form-control" id="nilai_bmi" name="nilai_bmi" readonly>
+                                                                    </div>
+                                                                    <div class="col-md-8">
+                                                                        <input type="text" class="form-control" id="status_bmi" name="status_bmi" readonly>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-3">
+                                                                <label for="eye">EYE</label>
+                                                                <select class="form-control select2bs4" style="width: 100%;" id="eye" name="eye">
+                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                    @foreach ($gsc_eye as $gsc_eyedata)
+                                                                        <option value="{{$gsc_eyedata->skor}}">{{$gsc_eyedata->nama}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label for="verbal">VERBAL</label>
+                                                                <select class="form-control select2bs4" style="width: 100%;" id="verbal" name="verbal">
+                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                    @foreach ($gcs_verbal as $gcs_verbaldata)
+                                                                        <option value="{{$gcs_verbaldata->skor}}">{{$gcs_verbaldata->nama}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label for="motorik">MOTORIK</label>
+                                                                <select class="form-control select2bs4" style="width: 100%;" id="motorik" name="motorik">
+                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                    @foreach ($gcs_motorik as $gcs_motorikdata)
+                                                                        <option value="{{$gcs_motorikdata->skor}}">{{$gcs_motorikdata->nama}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label for="sadar">Kesadaran</label>
+                                                                <select class="form-control" style="width: 100%;" id="sadar" name="sadar" disabled>
+                                                                    <option value="" disabled selected> </option>
+                                                                    @foreach ($gcs_kesadaran as $gcs_kesadarandata)
+                                                                        <option value="{{ $gcs_kesadarandata->skor }}">{{ $gcs_kesadarandata->nama }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
-                                                <input type="hidden" id="tableData" name="tableData" value="[]">
+                                                    <div class="tab-pane fade" id="custom-tabs-four-headtotoe" role="tabpanel" aria-labelledby="custom-tabs-four-headtotoe-tab">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <select class="form-control select2bs4" style="width: 100%;" id="htt_pemeriksaan" name="htt_pemeriksaan">
+                                                                        <option value="-" disabled selected> -- Silahkan Pilih -- </option>
+                                                                        @foreach ($htt_pemeriksaan as $htt_pemeriksaandata)
+                                                                            <option value="{{ $htt_pemeriksaandata->id }}">
+                                                                                {{ $htt_pemeriksaandata->nama_pemeriksaan }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
 
-                                               <!-- Tabel -->
-                                                <div class="form-group row">
-                                                    <div class="col-md-12">
-                                                        <table class="table table-bordered" id="SubTabel">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th style="width: 5%; text-align: center;">No</th>
-                                                                    <th style="width: 70%">Subyektif</th>
-                                                                    <th style="width: 25%; text-align: center;">Aksi</th>
-                                                                </tr>
-                                                            </thead>
+                                                                <div class="col-md-3 d-flex align-items-center">
+                                                                    <label class="mb-0 text-center mr-3 ">Di</label>
+                                                                    <select id="sub-pemeriksaan-select"  class="form-control select2bs4" style="width: 100%;">
+                                                                        <option value="">-- Pilih Sub Pemeriksaan --</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-3 d-flex align-items-center">
+                                                                    <label class="mb-0 text-center mr-3 ">Pada</label>
+                                                                    <input type="text" class="form-control" id="htt_pemeriksaan_detail" name="htt_pemeriksaan_detail"disabled>
+                                                                </div>
+                                                                <div class="col-md-2 d-flex justify-content-end">
+                                                                    <button type="button" class="btn btn-primary" onclick="addDataHtt_Text()">Tambahkan</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-12">
+                                                                <textarea class="form-control" id="summernote" name="summernote" rows="5"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="custom-tabs-four-assesmen" role="tabpanel" aria-labelledby="custom-tabs-four-assesmen-tab">
+                                                        <div class="form-group row">
+                                                            <div class="col-md-12">
+                                                                <label for="summernote1">Kesadaran</label>
+                                                                <textarea class="form-control" id="summernote1" name="summernote1" rows="3"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-12">
+                                                                <label for="summernote2">Kesadaran</label>
+                                                                <textarea class="form-control" id="summernote2" name="summernote2" rows="3"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="custom-tabs-four-diag" role="tabpanel" aria-labelledby="custom-tabs-four-diag-tab">
+                                                        <div class="form-group row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group row align-items-center">
+                                                                    <label for="icd10" class="ml-2 col-form-label">Diagnosa (ICD 10)</label>
+                                                                    <div class="ml-1">
+                                                                        <button type="button" class="ml-2 btn btn-default" id="kodeICD10">KODE ICD 10</button>
+                                                                        <button type="button" class="ml-2 btn btn-default dropdown-toggle" id="dropdownMenuButtonICD10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                            <span id="prioritas_icd_10" class="caret">Pilih</span>
+                                                                        </button>
+                                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButtonICD10">
+                                                                            <li><a class="dropdown-item" data-value="Primary">Primary</a></li>
+                                                                            <li><a class="dropdown-item" data-value="Sekunder">Sekunder</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="input-group" style="display: flex; align-items: center;">
+                                                                    <select class="form-control select2bs4" style="width: 80%;" id="icd10" name="icd10">
+                                                                        <option value="" disabled selected>-- Pilih --</option>
+                                                                        @foreach ($icd10 as $icd10data)
+                                                                                <option value="{{$icd10data->kode_icd10}}" data-nama="{{$icd10data->nama_icd10}}">{{$icd10data->kode_icd10}} - {{$icd10data->nama_icd10}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <!-- Tombol check yang sejajar dengan dropdown -->
+                                                                    <div class="input-group-append">
+                                                                        <button type="button" class="btn btn-secondary" id="acceptICD10">
+                                                                            <i class="fa fa-check"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <div class="form-group row align-items-center">
+                                                                    <label for="icd9" class="ml-2 col-form-label">Tindakan (ICD 9)</label>
+                                                                    <div class="ml-1">
+                                                                        <!-- Tombol yang akan menampilkan kode ICD 9 -->
+                                                                        <button type="button" class="ml-2 btn btn-default" id="kodeICD9">KODE ICD 9</button>
+                                                                        <!-- Dropdown Prioritas -->
+                                                                        <button type="button" class="ml-2 btn btn-default dropdown-toggle" id="dropdownMenuButtonICD9" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                            <span id="prioritas_icd_9" class="caret">Pilih</span>
+                                                                        </button>
+                                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButtonICD9">
+                                                                            <li><a class="dropdown-item" data-value="Primary">Primary</a></li>
+                                                                            <li><a class="dropdown-item" data-value="Sekunder">Sekunder</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Dropdown ICD 9 menggunakan -->
+                                                                <div class="input-group" style="display: flex; align-items: center;">
+                                                                    <select class="form-control select2bs4" style="width: 80%;" id="icd9" name="icd9">
+                                                                        <option value="" disabled selected>-- Pilih --</option>
+                                                                        @foreach ($icd9 as $icd9data)
+                                                                            <option value="{{$icd9data->kode_icd9}}" data-nama="{{$icd9data->nama_icd9}}">{{$icd9data->kode_icd9}} - {{$icd9data->nama_icd9}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <!-- Tombol Accept -->
+                                                                    <div class="input-group-append">
+                                                                        <button type="button" class="btn btn-secondary" id="acceptICD9">
+                                                                            <i class="fa fa-check"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <table class="table table-bordered no-padding icd" width="100%" style="border-spacing: 0; border-collapse: collapse;">
                                                             <tbody>
+                                                                <tr class="kosong">
+                                                                    <td colspan="4" style="text-align:center;">Data Tidak Ada</td>
+                                                                </tr>
 
+                                                                <tr class="isi_10">
+                                                                    <td valign="top" width="200px" style="vertical-align: middle;"> Diagnosa/Penyakit/ICD 10 </td>
+                                                                    <td valign="top" width="1px" style="vertical-align: middle;"> : </td>
+                                                                    <td valign="top">
+                                                                        <table width="100%" cellpadding="3px" cellspacing="0" class="icd_10">
+                                                                            <thead>
+                                                                                <tr align="center">
+                                                                                    <td valign="top" width="100px" style="border: none;">Kode</td>
+                                                                                    <td valign="top" style="border: none;">Nama Penyakit</td>
+                                                                                    <td valign="top" width="100px" style="border: none;">Prioritas</td>
+                                                                                    <td valign="top" width="100px" style="border: none;">Aksi</td>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="isi_9">
+                                                                    <td valign="top" width="250px" style="vertical-align: middle;">Tindakan/Penyakit/ICD 9</td>
+                                                                    <td valign="top" width="1px" style="vertical-align: middle;">:</td>
+                                                                    <td valign="top">
+                                                                        <table width="100%" cellpadding="3px" cellspacing="0" class="icd_9">
+                                                                            <tbody>
+                                                                                <tr align="center">
+                                                                                    <td valign="top" width="100px" style="border: none;">Kode</td>
+                                                                                    <td valign="top" style="border: none;">Nama Tindakan</td>
+                                                                                    <td valign="top" width="100px" style="border: none;">Prioritas</td>
+                                                                                    <td valign="top" width="100px" style="border: none;">Aksi</td>
+                                                                                </tr>
+
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
                                                             </tbody>
                                                         </table>
                                                     </div>
-                                                </div>
-                                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
-                                              </div>
 
-                                              {{-- setp ke 2 --}}
-                                              <div id="Obyektif-part" class="content" role="tabpanel" aria-labelledby="Obyektif-part-trigger">
-                                                <div class="form-group row">
-                                                    <div class="col-md-2">
-                                                        <label>Tensi (mmHg)</label>
-                                                        <div class="row">
-                                                            <div class="col-md-5">
-                                                                <input type="text" class="form-control" id="sistol" name="sistol">
+                                                    <div class="tab-pane fade" id="custom-tabs-four-plan" role="tabpanel" aria-labelledby="custom-tabs-four-plan-tab">
+                                                        <div class="form-group row">
+                                                            <div class="col-md-12">
+                                                                <label for="summernote5">Kesadaran</label>
+                                                                <textarea class="form-control" id="summernote5" name="summernote5" rows="3"></textarea>
                                                             </div>
-                                                            <div class="col-md-1 d-flex justify-content-center align-items-center">
-                                                                <span>/</span> <!-- Menambahkan pemisah / -->
-                                                            </div>
-                                                            <div class="col-md-5">
-                                                                <input type="text" class="form-control" id="distol" name="distol" onchange="updateTensi()">
-                                                            </div>
-                                                            <input type="hidden" id="tensi" name="tensi">
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <label for="suhu">Suhu (°C)</label>
-                                                        <input type="text" class="form-control" id="suhu" name="suhu" onchange="validateSuhu(this)">
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <label for="nadi">Nadi (/mnt)</label>
-                                                        <input type="text" class="form-control" id="nadi" name="nadi" onchange="validateNadi()">
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <label for="rr">RR (/mnt)</label>
-                                                        <input type="text" class="form-control" id="rr" name="rr" onchange="validateRR(this)">
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <label for="tinggi">Tinggi (Cm)</label>
-                                                        <input type="text" class="form-control" id="tinggi" name="tinggi" onchange="validateTB()">
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <label for="berat">Berat (/Kg)</label>
-                                                        <input type="text" class="form-control" id="berat" name="berat" onchange="validateTB()">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col-md-3">
-                                                        <label for="spo2">SpO2</label>
-                                                        <input type="text" class="form-control" id="spo2" name="spo2" onchange="validateSpO2(this)">
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <label>Alergi dan jenis</label>
-                                                        <div class="row">
+                                                        <div class="form-group row">
                                                             <div class="col-md-6">
-                                                                <select class="form-control select2bs4" id="jenis_alergi" name="jenis_alergi">
-                                                                    <option value="" disabled selected>-- Pilih --</option>
-                                                                    <option value="00">tidak ada</option>
-                                                                    <option value="01">makanan</option>
-                                                                    <option value="02">obat</option>
-                                                                    <option value="03">udara</option>
-                                                                </select>
+                                                                <label for="summernote3">Kesadaran</label>
+                                                                <textarea class="form-control" id="summernote3" name="summernote3" rows="3"></textarea>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <select class="form-control select2bs4" id="alergi" name="alergi">
-                                                                    <option value="" disabled selected>-- Pilih --</option>
-                                                                </select>
+                                                                <label for="summernote4">Kesadaran</label>
+                                                                <textarea class="form-control" id="summernote4" name="summernote4" rows="3"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <label for="lingkar_perut">Lingkar Perut</label>
-                                                        <input type="text" class="form-control" id="lingkar_perut" name="lingkar_perut">
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <label>Data BMI</label>
-                                                        <div class="row">
-                                                            <div class="col-md-4">
-                                                                <input type="text" class="form-control" id="nilai_bmi" name="nilai_bmi" readonly>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <input type="text" class="form-control" id="status_bmi" name="status_bmi" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+
                                                 </div>
-                                                <div class="form-group row">
-                                                    <div class="col-md-3">
-                                                        <label for="eye">EYE</label>
-                                                        <select class="form-control select2bs4" style="width: 100%;" id="eye" name="eye">
-                                                            <option value="" disabled selected>-- Pilih --</option>
-                                                            @foreach ($gsc_eye as $gsc_eyedata)
-                                                                <option value="{{$gsc_eyedata->skor}}">{{$gsc_eyedata->nama}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <label for="verbal">VERBAL</label>
-                                                        <select class="form-control select2bs4" style="width: 100%;" id="verbal" name="verbal">
-                                                            <option value="" disabled selected>-- Pilih --</option>
-                                                            @foreach ($gcs_verbal as $gcs_verbaldata)
-                                                                <option value="{{$gcs_verbaldata->skor}}">{{$gcs_verbaldata->nama}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <label for="motorik">MOTORIK</label>
-                                                        <select class="form-control select2bs4" style="width: 100%;" id="motorik" name="motorik">
-                                                            <option value="" disabled selected>-- Pilih --</option>
-                                                            @foreach ($gcs_motorik as $gcs_motorikdata)
-                                                                <option value="{{$gcs_motorikdata->skor}}">{{$gcs_motorikdata->nama}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <label for="sadar">Kesadaran</label>
-                                                        <select class="form-control" style="width: 100%;" id="sadar" name="sadar" disabled>
-                                                            <option value="" disabled selected> </option>
-                                                            @foreach ($gcs_kesadaran as $gcs_kesadarandata)
-                                                                <option value="{{ $gcs_kesadarandata->skor }}">{{ $gcs_kesadarandata->nama }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
-                                              </div>
-
-                                              {{-- step ke 3 --}}
-                                              <div id="htt-part" class="content" role="tabpanel" aria-labelledby="htt-part-trigger">
-                                                <div class="form-group">
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <select class="form-control select2bs4" style="width: 100%;" id="htt_pemeriksaan" name="htt_pemeriksaan">
-                                                                <option value="-" disabled selected> -- Silahkan Pilih -- </option>
-                                                                @foreach ($htt_pemeriksaan as $htt_pemeriksaandata)
-                                                                    <option value="{{ $htt_pemeriksaandata->id }}">
-                                                                        {{ $htt_pemeriksaandata->nama_pemeriksaan }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-
-                                                        <div class="col-md-3 d-flex align-items-center">
-                                                            <label class="mb-0 text-center mr-3 ">Di</label>
-                                                            <select id="sub-pemeriksaan-select"  class="form-control select2bs4" style="width: 100%;">
-                                                                <option value="">-- Pilih Sub Pemeriksaan --</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-3 d-flex align-items-center">
-                                                            <label class="mb-0 text-center mr-3 ">Pada</label>
-                                                            <input type="text" class="form-control" id="htt_pemeriksaan_detail" name="htt_pemeriksaan_detail"disabled>
-                                                        </div>
-                                                        <div class="col-md-2 d-flex justify-content-end">
-                                                            <button type="button" class="btn btn-primary" onclick="addDataHtt_Text()">Tambahkan</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col-md-12">
-                                                        <textarea class="form-control" id="summernote" name="summernote" rows="5"></textarea>
-                                                    </div>
-                                                </div>
-                                               <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
-                                              </div>
-
-
-                                              <div id="ead-part" class="content" role="tabpanel" aria-labelledby="ead-part-trigger">
-                                                <div class="form-group">
-                                                    <div class="row">
-
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col-md-12">
-                                                        <textarea class="form-control" id="summernote" name="summernote" rows="5"></textarea>
-                                                    </div>
-                                                </div>
-                                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
-                                              </div>
-
-
-                                              <div id="pie-part" class="content" role="tabpanel" aria-labelledby="pie-part-trigger">
-                                                <div class="form-group">
-                                                    <div class="row">
-
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col-md-12">
-                                                        <textarea class="form-control" id="summernote" name="summernote" rows="5"></textarea>
-                                                    </div>
-                                                </div>
-                                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                                <button type="submit" class="btn btn-primary">Submit</button>
-                                              </div>
-
                                             </div>
-                                          </div>
-                                      <!-- /.card -->
+                                            <!-- /.card -->
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -363,33 +457,187 @@
 </div>
 
 <script>
-$(document).ready(function() {
-    $('#jenis_alergi').on('change', function () {
-        const kode = $(this).val();
+    $(document).ready(function () {
+        // Inisialisasi variabel
+        let selectedICD10 = null;
+        let selectedPriorityICD10 = null;
 
-        if (kode) {
-            $.ajax({
-                url: '/api/alergi/by-jenis/' + kode,
-                method: 'GET',
-                success: function(response) {
-                    const select2 = $('#alergi');
-                    select2.empty().append('<option value="" disabled selected>-- Pilih Data Alergi --</option>');
+        // Toggle tampilan card ICD
+        $('#toggleICD').on('click', function () {
+            $('#icdCard').toggle();
+        });
 
-                    if (response.data && response.data.length > 0) {
-                        response.data.forEach(function(item) {
-                            select2.append(`<option value="${item.kode_alergi}">${item.nama_jenis_alergi}</option>`);
-                        });
-                    } else {
-                        select2.append('<option value="00">Tidak ada data</option>');
-                    }
-                },
-                error: function() {
-                    alert('Gagal memuat data alergi dari server.');
+        // Saat ICD-10 dipilih
+        $('#icd10').on('change', function () {
+            const selectedOption = $(this).find('option:selected');
+            selectedICD10 = {
+                code: selectedOption.val(),
+                name: selectedOption.data('nama')
+            };
+            $('#kodeICD10').text(selectedICD10.code);
+        });
+
+        // Saat prioritas dipilih
+        $('#dropdownMenuButtonICD10').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
+            selectedPriorityICD10 = $(this).data('value');
+            $('#prioritas_icd_10').text(selectedPriorityICD10);
+        });
+
+        // Klik tombol "Terima"
+        $('#acceptICD10').on('click', function () {
+            if (!selectedICD10 || !selectedPriorityICD10) {
+                alert('Pilih Diagnosa dan Prioritas!');
+                return;
+            }
+
+            // Cek apakah sudah ada
+            let exists = false;
+            $('.icd_10 tbody tr').each(function () {
+                if ($(this).find('td:first').text().trim() === selectedICD10.code) {
+                    exists = true;
+                    return false;
                 }
             });
+
+            if (exists) {
+                alert('Data sudah ada di tabel.');
+                return;
+            }
+
+            // Simpan lewat AJAX
+            $.ajax({
+                url: '{{ route("pendaftaran.add") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+
+                    kode: selectedICD10.code,
+                    prioritas: selectedPriorityICD10,
+                    status_penyakit: $('#status_penyakit').val() || 'lama'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        const newRow = `
+                            <tr align="center" data-id="${response.id}">
+                                <td valign="top">${selectedICD10.code}</td>
+                                <td valign="top">${selectedICD10.name}</td>
+                                <td valign="top">${selectedPriorityICD10}</td>
+                                <td valign="top">
+                                    <button type="button" class="btn btn-danger btn-sm deleteICD10">Hapus</button>
+                                </td>
+                            </tr>
+                        `;
+                        $('.icd_10 tbody').append(newRow);
+                        $(document).trigger('rowAdded');
+                        resetFieldsICD10();
+                    } else {
+                        alert('Gagal: ' + response.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert('Terjadi kesalahan: ' + xhr.responseText);
+                }
+            });
+        });
+
+        // Hapus ICD-10
+        $(document).on('click', '.deleteICD10', function () {
+            const row = $(this).closest('tr');
+            const id = row.data('id');
+
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                $.ajax({
+                    url: '{{ route("pendaftaran.add") }}',
+                    method: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: id
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            row.remove();
+                            $(document).trigger('rowRemoved');
+                        } else {
+                            alert('Gagal: ' + response.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        alert('Terjadi kesalahan: ' + xhr.responseText);
+                    }
+                });
+            }
+        });
+
+        // Reset semua input ICD10
+        function resetFieldsICD10() {
+            $('#icd10').val('').trigger('change');
+            $('#kodeICD10').text('KODE ICD 10');
+            $('#prioritas_icd_10').text('Pilih');
+            selectedICD10 = null;
+            selectedPriorityICD10 = null;
         }
+
+        // Toggle tampilan tabel berdasarkan data
+        function toggleTableVisibility() {
+            const icd10Rows = $(".icd_10 tbody tr").not(".kosong").length;
+            const icd9Rows = $(".icd_9 tbody tr").not(".kosong").length;
+            const kosongRow = $(".kosong");
+
+            icd10Rows === 0 ? $(".isi_10").hide() : $(".isi_10").show();
+            icd9Rows === 0 ? $(".isi_9").hide() : $(".isi_9").show();
+
+            if (icd10Rows === 0 && icd9Rows === 0) {
+                kosongRow.show();
+            } else {
+                kosongRow.hide();
+            }
+        }
+
+        // Jalankan saat pertama kali
+        toggleTableVisibility();
+
+        // Trigger ulang saat data berubah
+        $(document).on('rowAdded rowRemoved', function () {
+            toggleTableVisibility();
+        });
+
+        // Trigger hapus dari tombol hapus ICD-10/9
+        $(document).on('click', '.deleteICD10, .deleteICD9', function () {
+            $(this).closest('tr').remove();
+            $(document).trigger('rowRemoved');
+        });
     });
-});
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        $('#jenis_alergi').on('change', function () {
+            const kode = $(this).val();
+
+            if (kode) {
+                $.ajax({
+                    url: '/api/alergi/by-jenis/' + kode,
+                    method: 'GET',
+                    success: function(response) {
+                        const select2 = $('#alergi');
+                        select2.empty().append('<option value="" disabled selected>-- Pilih Data Alergi --</option>');
+
+                        if (response.data && response.data.length > 0) {
+                            response.data.forEach(function(item) {
+                                select2.append(`<option value="${item.kode_alergi}">${item.nama_jenis_alergi}</option>`);
+                            });
+                        } else {
+                            select2.append('<option value="00">Tidak ada data</option>');
+                        }
+                    },
+                    error: function() {
+                        alert('Gagal memuat data alergi dari server.');
+                    }
+                });
+            }
+        });
+    });
 </script>
 
 
@@ -1107,17 +1355,31 @@ $(document).ready(function() {
 
 {{-- BS-Stepper --}}
 <script>
-    // BS-Stepper Init
-  document.addEventListener('DOMContentLoaded', function () {
-    window.stepper = new Stepper(document.querySelector('.bs-stepper'))
-  })
-
-  $(function () {
-    // Summernote
+    $(function () {
         $('#summernote').summernote({
             height: 300, // Tentukan tinggi editor (dalam px)
             tabsize: 2,
             disableResizeEditor: true // Menonaktifkan resize editor
+        });
+        $('#summernote1').summernote({
+            height: 100, // Tentukan tinggi editor (dalam px)
+            tabsize: 2
+        });
+        $('#summernote2').summernote({
+            height: 100, // Tentukan tinggi editor (dalam px)
+            tabsize: 2
+        });
+        $('#summernote3').summernote({
+            height: 100, // Tentukan tinggi editor (dalam px)
+            tabsize: 2
+        });
+        $('#summernote4').summernote({
+            height: 100, // Tentukan tinggi editor (dalam px)
+            tabsize: 2
+        });
+        $('#summernote5').summernote({
+            height: 100, // Tentukan tinggi editor (dalam px)
+            tabsize: 2
         });
     })
 </script>

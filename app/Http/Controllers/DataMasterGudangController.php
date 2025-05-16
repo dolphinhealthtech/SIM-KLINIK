@@ -11,10 +11,13 @@ use App\Imports\Gudang_supplier_industriImport;
 use App\Models\gudang_satuan;
 use App\Models\gudang_kategori;
 use App\Models\gudang_supplier_industri;
+use App\Models\gudang_barang;
 use App\Models\gudang_barang_harga;
 use App\Models\gudang_barang_stok;
 use App\Models\gudang_setting_harga;
 use App\Models\external_database;
+use App\Models\gudang_klinik_request;
+use App\Models\gudang_klinik_request_details;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -536,24 +539,313 @@ class DataMasterGudangController extends Controller
 
     // End Stok Barang (Obat / Alkes)
 
-    public function request()
+    // Gudang Klinik Request (OMEGA)
+
+    public function gudangrequest()
     {
-        $title = "Kelola Data Barang";
+        $title = "Request Stok Obat Alkes";
+        $dabar = gudang_barang::all();
+        $singkron = external_database::all();
 
-        // Ambil data obat dari tabel gudang_barang
-        $obatList = \App\Models\gudang_barang::select('id', 'kode_barang', 'nama_barang')
-                        ->orderBy('nama_barang', 'asc')
-                        ->get();
+        // Ambil koneksi external (contoh id=1)
+        $connExternal = external_database::find(1);
 
-        return view('module.master-data-gudang.request', compact('title', 'obatList'));
+        if ($connExternal) {
+            $config = [
+                'driver'    => 'mysql',
+                'host'      => $connExternal->host,
+                'database'  => $connExternal->database,
+                'username'  => $connExternal->username,
+                'password'  => $connExternal->password,
+                'port'      => $connExternal->port ?? 3306,
+                'charset'   => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+            ];
+
+            $factory = app(ConnectionFactory::class);
+            $connection = $factory->make($config, $connExternal->name);
+
+            // Gunakan koneksi ini untuk query
+            $request = $connection->table('gudang_klinik_requests as req')
+                                // ->leftJoin('gudang_klinik_request_details as det', 'req.kode_request', '=', 'det.kode_request')
+                                // ->select(
+                                //     'req.*',
+                                //     'det.kode_obat_alkes',
+                                //     'det.nama_obat_alkes',
+                                //     'det.qty'
+                                // )
+                                ->where('req.kode_klinik', 'BLRJ')
+                                ->get();
+        } else {
+            $request = collect(); // kosong jika tidak ada koneksi eksternal
+        }
+
+        return view('module.master-data-gudang.request', compact('title', 'dabar','request','singkron'));
     }
 
-    public function utama()
+    public function gudangrequestadd(Request $request)
     {
-        $title = "Dashboard Gudang";
+        try {
+            $request->validate([
+                'data_tabel_request'  => 'required|string',
+                'kode_request'  => 'required|string',
+                'external_database'  => 'required|string',
+            ], [
+                'data_tabel_request'  => 'Tidak Input Request',
+                'kode_request'  => 'Kode Request',
+                'external_database'  => 'Koneksi Database',
+            ]);
 
-        return view('module.master-data-gudang.utama', compact('title'));
+            // Ambil ID dari input request
+            $externalDbId = $request->input('external_database');
+
+            // Ambil data dari tabel external_database
+            $externalDb = external_database::findOrFail($externalDbId);
+
+            // Buat config koneksi
+            $config = [
+                'driver'    => 'mysql',
+                'host'      => $externalDb->host,
+                'database'  => $externalDb->database,
+                'username'  => $externalDb->username,
+                'password'  => $externalDb->password,
+                'port'      => $externalDb->port ?? 3306,
+                'charset'   => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+            ];
+
+            $factory = app(ConnectionFactory::class);
+            $connection = $factory->make($config, $externalDb->name);
+
+            $kodeRequest = $request->kode_request;
+            $kodeKlinik = explode('-', $kodeRequest)[0];
+
+            // Mapping kode klinik ke nama
+            $namaKlinik = match($kodeKlinik) {
+                'KRNJ' => 'Klinik Kronjo',
+                'BLRJ' => 'Klinik Balaraja',
+                'KRSK' => 'Klinik Kresek',
+                'RJEG' => 'Klinik Rajeg',
+                'CITR' => 'Klinik Citra',
+                'TGRS' => 'Klinik Tiga Raksa',
+                'CTRY' => 'Klinik Citra Raya',
+                'JAYA' => 'Klinik Jaya',
+                default => 'Klinik Tidak Dikenal'
+            };
+
+            $connection->table('gudang_klinik_requests')->insert([
+                'kode_request' => $kodeRequest,
+                'kode_klinik' => $kodeKlinik,
+                'nama_klinik' => $namaKlinik,
+                'status' => 0,
+                'tanggal_input' => now()->toDateString(),
+                'user_input_id' => Auth::user()->id,
+                'user_input_name' => Auth::user()->name,
+                'created_at'       => now(),
+                'updated_at'       => now(),
+            ]);
+
+            // Simpan detail pembelian
+            $dataDetail = json_decode($request->data_tabel_request, true);
+
+            foreach ($dataDetail as $detail) {
+                $connection->table('gudang_klinik_request_details')->insert([
+                    'kode_request'    => $request->input('kode_request'),
+                    'kode_obat_alkes' => $detail['kode_barang'],
+                    'nama_obat_alkes' => $detail['nama_obat'],
+                    'qty'             => $detail['jumlah'],
+                    'user_input_id'   => Auth::user()->id,
+                    'user_input_name' => Auth::user()->name,
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                ]);
+            }
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Setting harga jual berhasil ditambahkan!',
+                'data' => $connection
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Setting harga jual sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan setting harga jual!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
     }
+
+        //API
+        public function getDetails($kodeRequest)
+        {
+            // Ambil koneksi external (contoh id=1)
+            $connExternal = external_database::find(1);
+
+            if ($connExternal) {
+                $config = [
+                    'driver'    => 'mysql',
+                    'host'      => $connExternal->host,
+                    'database'  => $connExternal->database,
+                    'username'  => $connExternal->username,
+                    'password'  => $connExternal->password,
+                    'port'      => $connExternal->port ?? 3306,
+                    'charset'   => 'utf8mb4',
+                    'collation' => 'utf8mb4_unicode_ci',
+                ];
+
+                $factory = app(ConnectionFactory::class);
+                $connection = $factory->make($config, $connExternal->name);
+
+                // Query detail request berdasarkan kode_request
+                $details = $connection->table('gudang_klinik_request_details')
+                    ->where('kode_request', $kodeRequest)
+                    ->select('kode_obat_alkes', 'nama_obat_alkes', 'qty')
+                    ->get();
+
+            } else {
+                $details = collect(); // kosong jika tidak ada koneksi eksternal
+            }
+
+            return response()->json([
+                'details' => $details
+            ]);
+        }
+
+        // API Get Kode Supplier Industri
+
+        public function request_getLastKode()
+        {
+            $kodeKlinik = 'BLRJ'; // Bisa juga ambil dari request jika dynamic
+            $tanggal = now()->format('Ymd'); // Format YYYYMMDD
+
+            $connExternal = external_database::find(1); // Ambil koneksi eksternal
+
+            if ($connExternal) {
+                $config = [
+                    'driver'    => 'mysql',
+                    'host'      => $connExternal->host,
+                    'database'  => $connExternal->database,
+                    'username'  => $connExternal->username,
+                    'password'  => $connExternal->password,
+                    'port'      => $connExternal->port ?? 3306,
+                    'charset'   => 'utf8mb4',
+                    'collation' => 'utf8mb4_unicode_ci',
+                ];
+
+                $factory = app(ConnectionFactory::class);
+                $connection = $factory->make($config, $connExternal->name);
+
+                // Ambil kode terakhir yang sesuai tanggal & klinik
+                $last = $connection->table('gudang_klinik_requests')
+                    ->where('kode_klinik', $kodeKlinik)
+                    ->where('kode_request', 'like', "{$kodeKlinik}-{$tanggal}-%")
+                    ->orderByDesc('kode_request')
+                    ->first();
+
+                // Tentukan nomor urut
+                if ($last) {
+                    $lastNumber = (int) substr($last->kode_request, -5); // Ambil 5 digit terakhir
+                    $nextNumber = $lastNumber + 1;
+                } else {
+                    $nextNumber = 1;
+                }
+
+                $kodeBaru = $kodeKlinik . '-' . $tanggal . '-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+
+                return response()->json([
+                    'kode_request' => $kodeBaru
+                ]);
+            }
+
+            return response()->json([
+                'kode_request' => null
+            ]);
+        }
+
+    // END Gudang Klinik Request (OMEGA)
+
+    // Gudang Utama (OMEGA)
+
+    public function gudangutama()
+    {
+        $title = "Dashboard Gudang Utama";
+        $request = gudang_klinik_request::with('details')->get();
+
+        return view('module.master-data-gudang.utama', compact('title','request'));
+    }
+
+    public function gudangutamakonfirmasi(Request $request)
+    {
+        $request->validate([
+            'detail_kode_request' => 'required|string',
+            'detail_tanggal' => 'required|string',
+        ]);
+
+        try {
+            $found = gudang_klinik_request::where('kode_request', $request->input('detail_kode_request'))
+                ->where('tanggal_input', $request->input('detail_tanggal'))
+                ->first();
+
+            if (!$found) {
+                // Data tidak ditemukan, return error
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak valid atau tidak ditemukan!',
+                ], 404);
+            }
+
+            // Update status
+            $found->update([
+                'status' => 1,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil dikonfirmasi',
+                'data' => $found,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat konfirmasi data!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getHargaDasar($kode_obat)
+    {
+        try {
+            $tanggalHariIni = Carbon::today();
+            $tanggal3BulanLalu = $tanggalHariIni->copy()->subMonths(3);
+
+            $harga = gudang_barang_harga::where('kode_obat_alkes', $kode_obat)
+                ->whereBetween('tanggal_obat_masuk', [$tanggal3BulanLalu, $tanggalHariIni])
+                ->max('harga_dasar');
+
+            return response()->json([
+                'success' => true,
+                'harga_dasar' => $harga
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+    // END Gudang Utama (OMEGA)
 }
 
 
