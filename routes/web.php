@@ -73,10 +73,14 @@ Route::prefix('pendaftaran')->group(function () {
 });
 
 Route::prefix('pemeriksaan')->group(function () {
+    Route::get('/dokter', [soap::class,'pelayana_dokter'])->name('pelayana_dokter.get');
+    Route::get('/dokter/so/{norawat}', [soap::class,'soappelayanan'])->name('pelayana_dokter.get');
+    Route::get('/dokter/so/hadir/{norawat}', [soap::class,'soappelayananpanggil'])->name('pelayana_dokter.hadir');
     // Menu Pasien
-    Route::get('/', [soap::class,'pelayana'])->name('pelayana.get');
-    Route::get('/so/{norawat}', [soap::class,'sopelayanan'])->name('sopelayana.get');
-    Route::post('/so/add', [soap::class,'sopelayanandd'])->name('sopelayana.add');
+    Route::get('/perawat', [soap::class,'pelayana'])->name('pelayana.get');
+    Route::get('/perawat/so/{norawat}', [soap::class,'sopelayanan'])->name('sopelayana.get');
+    Route::post('/perawat/so/add', [soap::class,'sopelayanandd'])->name('sopelayana.add');
+    Route::get('/perawat/so/hadir/{norawat}', [soap::class,'sopelayananpanggil'])->name('sopelayana.hadir');
 });
 
 Route::middleware('auth')->prefix('data-master')->group(function () {
