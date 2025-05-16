@@ -229,6 +229,22 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::post('/alergi/add', [DataMasterMedisController::class,'alergiadd'])->name('alergi.store');
     Route::post('/alergi/delete', [DataMasterMedisController::class,'alergidelete'])->name('alergi.destroy');
 
+    // Menu jenis_diet
+    Route::get('/jenis-diet', [DataMasterMedisController::class,'jenis_diet'])->name('jenis_diet.get');
+    Route::post('/jenis-diet/add', [DataMasterMedisController::class,'jenis_dietadd'])->name('jenis_diet.store');
+    Route::post('/jenis-diet/update', [DataMasterMedisController::class,'jenis_dietedit'])->name('jenis_diet.update');
+    Route::post('/jenis-diet/delete', [DataMasterMedisController::class,'jenis_dietdelete'])->name('jenis_diet.destroy');
+    Route::get('/jenis-diet/export', [DataMasterMedisController::class,'jenis_dietexport'])->name('jenis_diet.export');
+    Route::post('/jenis-diet/import', [DataMasterMedisController::class,'jenis_dietimport'])->name('jenis_diet.import');
+
+    // Menu nama_
+    Route::get('/nama-makanan', [DataMasterMedisController::class, 'nama_makanan'])->name('nama_makanan.get');
+    Route::post('/nama-makanan/add', [DataMasterMedisController::class,'nama_makananadd'])->name('nama_makanan.store');
+    Route::post('/nama-makanan/update', [DataMasterMedisController::class,'nama_makananedit'])->name('nama_makanan.update');
+    Route::post('/nama-makanan/delete', [DataMasterMedisController::class,'nama_makanandelete'])->name('nama_makanan.destroy');
+    Route::get('/nama-makanan/export', [DataMasterMedisController::class,'nama_makananexport'])->name('nama_makanan.export');
+    Route::post('/nama-makanan/import', [DataMasterMedisController::class,'nama_makananimport'])->name('nama_makanan.import');
+
 });
 
 Route::prefix('data-master-gudang')->group(function () {
@@ -267,14 +283,6 @@ Route::prefix('data-master-gudang')->group(function () {
 
     // Menu Stok Obat / Alkes
     Route::get('/stok-obat-alkes', [DataMasterGudangController::class,'stokobatalkes'])->name('stokobatalkes.get');
-
-    // Menu Request Obat Klinik Omega
-    Route::get('/gudang-request', [DataMasterGudangController::class, 'gudangrequest'])->name('gudangrequest.get');
-    Route::post('/gudang-request/add', [DataMasterGudangController::class, 'gudangrequestadd'])->name('gudangrequest.store');
-
-    // Menu Utama Klinik Omega
-    Route::get('/gudang-utama', [DataMasterGudangController::class, 'gudangutama'])->name('gudangutama.get');
-    Route::post('/gudang-utama/konfirmasi', [DataMasterGudangController::class, 'gudangutamakonfirmasi'])->name('gudangutama.konfirmasi');
 });
 
 Route::middleware('auth')->prefix('data-master-manajemen')->group(function () {
@@ -357,6 +365,9 @@ Route::middleware('auth')->prefix('data-master-gudang')->group(function () {
     Route::get('/utama/klinik', [DataMasterGudangController::class, 'getKlinikList'])->name('gudang.utama.klinik');
     Route::get('/utama/stok-menipis', [DataMasterGudangController::class, 'getStokMenipis'])->name('gudang.utama.stok-menipis');
 });
+
+
+
 
 
 
