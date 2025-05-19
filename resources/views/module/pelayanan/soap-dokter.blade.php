@@ -420,6 +420,7 @@
                                                                 </tr>
                                                             </tbody>
                                                         </table>
+
                                                     </div>
 
                                                     <div class="tab-pane fade" id="custom-tabs-four-plan" role="tabpanel" aria-labelledby="custom-tabs-four-plan-tab">
@@ -447,10 +448,9 @@
                                                                 <label>Jenis Diet</label>
                                                                 <select id="jenisDiet" class="form-control">
                                                                     <option value="">-- Pilih Jenis Diet --</option>
-                                                                    <option value="Diabetes">Diabetes</option>
-                                                                    <option value="Hipertensi">Hipertensi</option>
-                                                                    <option value="Rendah Garam">Rendah Garam</option>
-                                                                    <option value="Tinggi Kalori">Tinggi Kalori</option>
+                                                                    @foreach ($jenis_diete as $jenis_dietedata)
+                                                                        <option value="{{ $jenis_dietedata->nama }}">{{ $jenis_dietedata->nama }}</option>
+                                                                    @endforeach
                                                                 </select>
                                                             </div>
 
@@ -458,9 +458,9 @@
                                                                 <label>Makanan Dianjurkan</label>
                                                                 <select id="makananAnjuran" class="form-control">
                                                                     <option value="">-- Pilih Makanan Dianjurkan --</option>
-                                                                    <option value="Sayur Hijau">Sayur Hijau</option>
-                                                                    <option value="Ikan">Ikan</option>
-                                                                    <option value="Buah Segar">Buah Segar</option>
+                                                                    @foreach ($jenis_makanan_diet as $jenis_makanan_dietdata)
+                                                                        <option value="{{ $jenis_makanan_dietdata->nama }}">{{ $jenis_makanan_dietdata->nama }}</option>
+                                                                    @endforeach
                                                                 </select>
                                                             </div>
 
@@ -468,9 +468,9 @@
                                                                 <label>Makanan Tidak Boleh</label>
                                                                 <select id="makananPantangan" class="form-control">
                                                                     <option value="">-- Pilih Makanan Tidak Boleh --</option>
-                                                                    <option value="Gula Tinggi">Gula Tinggi</option>
-                                                                    <option value="Makanan Asin">Makanan Asin</option>
-                                                                    <option value="Gorengan">Gorengan</option>
+                                                                    @foreach ($jenis_makanan_diet as $jenis_makanan_dietdata)
+                                                                        <option value="{{ $jenis_makanan_dietdata->nama }}">{{ $jenis_makanan_dietdata->nama }}</option>
+                                                                    @endforeach
                                                                 </select>
                                                             </div>
 
@@ -493,6 +493,10 @@
                                                                 <tbody></tbody>
                                                             </table>
                                                         </div>
+                                                        <div id="hiddenDietInputs">
+                                                        </div>
+
+
                                                     </div>
 
                                                     <div class="tab-pane fade" id="custom-tabs-four-tindakan" role="tabpanel" aria-labelledby="custom-tabs-four-tindakan-tab">
@@ -539,6 +543,8 @@
                                                                 </table>
                                                             </div>
                                                         </div>
+                                                        <div id="hiddenTindakanInputs"></div>
+
                                                     </div>
 
                                                     <div class="tab-pane fade" id="custom-tabs-four-obat" role="tabpanel" aria-labelledby="custom-tabs-four-obat-tab">
@@ -562,17 +568,16 @@
                                                             <div class="col-md-4">
                                                                 <label for="nama-obat">Nama Obat</label>
                                                                 <select class="form-control" id="nama-obat">
-                                                                <option value="">-- Pilih Nama Obat --</option>
-                                                                <option value="Paracetamol">Paracetamol</option>
-                                                                <option value="Amoxicillin">Amoxicillin</option>
-                                                                <option value="Vitamin C">Vitamin C</option>
+                                                                @foreach ($obat as $obatdata)
+                                                                    <option value="{{ $obatdata->nama_barang }}" data-satuan="{{ $obatdata->satuan_kecil }}">{{ $obatdata->nama_barang }}</option>
+                                                                @endforeach
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-4">
                                                                 <label>Dosis</label>
                                                                 <div class="form-row">
                                                                     <div class="col">
-                                                                    <input type="text" id="dosis1" class="form-control" placeholder="Contoh: 500mg">
+                                                                    <input type="text" id="dosis1" class="form-control" placeholder="Contoh: 500">
                                                                     </div>
                                                                     <div class="col">
                                                                     <input type="text" id="dosis2" class="form-control" readonly>
@@ -609,11 +614,7 @@
                                                             </div>
                                                             <div class="col-md-3">
                                                                 <label for="signa-satuan1">Signa Satuan 1</label>
-                                                                <select class="form-control" id="signa-satuan1">
-                                                                <option value="">-- Pilih Satuan --</option>
-                                                                <option value="tablet">Tablet</option>
-                                                                <option value="kapsul">Kapsul</option>
-                                                                <option value="ml">ml</option>
+                                                                <input type="text" id="dosis3" class="form-control" readonly>
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -635,7 +636,9 @@
                                                             <!-- Tampilan Resep -->
                                                             <div class="form-group">
                                                             <label for="summernote-resep">Resep:</label>
-                                                            <div id="summernote-resep" style="border:1px solid #ccc; min-height:200px; padding:10px; background:#f9f9f9; overflow-y:auto;"></div>
+                                                            <div id="summernote-resep" name="summernote-resep" style="border:1px solid #ccc; min-height:200px; padding:10px; background:#f9f9f9; overflow-y:auto;"></div>
+                                                            <input type="hidden" name="resep_data" id="resep-data">
+
                                                             </div>
 
                                                         </div>
@@ -660,165 +663,236 @@
 </div>
 
 
+
+{{-- Script load data --}}
 <script>
-$(function () {
-  let resepList = [];
-  let selectedIndex = -1;
+    const soapRoute = "{{ route('pelayana_dokter_data.get', ':id') }}";
 
-  function renderResep() {
-    let html = "";
-    resepList.forEach((line, i) => {
-      html += `<div class="resep-line d-flex justify-content-between align-items-center"
-               data-index="${i}" style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #ddd; ${i === selectedIndex ? 'background:#d1ecf1;' : ''}">
-        <span class="resep-text">${$('<div>').text(line).html()}</span>`;
-      if (i === selectedIndex) {
-        html += `<div class="btn-group btn-group-sm ml-2">
-                  <button type="button" class="btn btn-warning btn-up">▲</button>
-                  <button type="button" class="btn btn-warning btn-down">▼</button>
-                  <button type="button" class="btn btn-success btn-edit">✎</button>
-                  <button type="button" class="btn btn-danger btn-delete">✖</button>
-                </div>`;
-      }
-      html += `</div>`;
-    });
-    $("#summernote-resep").html(html);
-  }
-
-  $("#btn-r-action").click(function () {
-    const text = $("#r-text").val().trim();
-    resepList.push(text ? `R:/ ${text}` : "R:/");
-    $("#r-text").val("");
-    renderResep();
-  });
-
- $("#btn-add-obat").click(function () {
-  const nama = $("#nama-obat").val();
-  const dosis1 = $("#dosis1").val().trim();
-  const dosis2 = $("#dosis2").val().trim();
-  const instruksi = $("#instruksi").val();
-  const signa1 = $("#signa-jumlah1").val().trim();
-  const signa2 = $("#signa-jumlah2").val().trim();
-  const satuan1 = $("#signa-satuan1").val();
-  const satuan2 = $("#signa-satuan2").val();
-
-  if (!nama) {
-    alert("Pilih nama obat!");
-    return;
-  }
-
-  let line = nama;
-  if (dosis1) line += ` ${dosis1}`;
-  if (dosis2) line += ` ${dosis2}`;
-  if (instruksi) line += ` ${instruksi}`;
-  if (signa1 && signa2 && satuan1 && satuan2) {
-    line += ` ${signa1} x ${signa2} ${satuan1} ${satuan2}`;
-  }
-
-  resepList.push(line);
-  renderResep();
-
-  // Reset input
-  $("#nama-obat").val("");
-  $("#dosis1").val("");
-  $("#dosis2").val("");
-  $("#instruksi").val("");
-  $("#signa-jumlah1").val("");
-  $("#signa-satuan1").val("");
-  $("#signa-jumlah2").val("");
-  $("#signa-satuan2").val("");
-});
-
-
-  // Pilih baris
-  $("#summernote-resep").on("click", ".resep-line", function () {
-    const idx = $(this).data("index");
-    selectedIndex = selectedIndex === idx ? -1 : idx;
-    renderResep();
-  });
-
-  // Hapus
-  $("#summernote-resep").on("click", ".btn-delete", function (e) {
-    e.stopPropagation();
-    const idx = $(this).closest(".resep-line").data("index");
-    resepList.splice(idx, 1);
-    selectedIndex = -1;
-    renderResep();
-  });
-
-  // Naik
-  $("#summernote-resep").on("click", ".btn-up", function (e) {
-    e.stopPropagation();
-    const idx = $(this).closest(".resep-line").data("index");
-    if (idx > 0) {
-      [resepList[idx - 1], resepList[idx]] = [resepList[idx], resepList[idx - 1]];
-      selectedIndex = idx - 1;
-      renderResep();
-    }
-  });
-
-  // Turun
-  $("#summernote-resep").on("click", ".btn-down", function (e) {
-    e.stopPropagation();
-    const idx = $(this).closest(".resep-line").data("index");
-    if (idx < resepList.length - 1) {
-      [resepList[idx + 1], resepList[idx]] = [resepList[idx], resepList[idx + 1]];
-      selectedIndex = idx + 1;
-      renderResep();
-    }
-  });
-
-  // Edit
-  $("#summernote-resep").on("click", ".btn-edit", function (e) {
-    e.stopPropagation();
-    const idx = $(this).closest(".resep-line").data("index");
-    const line = resepList[idx];
-
-    if (line.startsWith("R:/")) {
-      const content = line.replace(/^R:\/*\s*/, "");
-      $("#r-text").val(content);
-    } else {
-      // Reset semua input
-      $("#nama-obat").val(""); $("#dosis1").val(""); $("#dosis2").val(""); $("#instruksi").val("");
-      $("#signa-jumlah1").val(""); $("#signa-satuan1").val("");
-      $("#signa-jumlah2").val(""); $("#signa-satuan2").val("");
-
-      const parts = line.split(" ");
-
-      // Nama obat
-      if (parts.length > 0) $("#nama-obat").val(parts[0]);
-
-      // Dosis
-      if (parts.length > 1) $("#dosis1").val(parts[1]);
-      if (parts.length > 2 && !["oral", "injeksi", "topikal"].includes(parts[2])) {
-        $("#dosis2").val(parts[2]);
-      }
-
-      // Instruksi
-      const instruksiList = ["oral", "injeksi", "topikal"];
-      const instruksi = parts.find(p => instruksiList.includes(p.toLowerCase()));
-      if (instruksi) $("#instruksi").val(instruksi);
-
-      // Signa
-      const signaRegex = /(\d+)\s*x\s*(\d+)\s+(\w+)\s+(\w+)/;
-        const match = line.match(signaRegex);
-        if (match) {
-        $("#signa-jumlah1").val(match[1]);
-        $("#signa-jumlah2").val(match[2]);
-        $("#signa-satuan1").val(match[3]);
-        $("#signa-satuan2").val(match[4]);
+    $(document).ready(function () {
+        let id = $('#no_rawat').val();
+        if (id) {
+            loadSoapData(id); // Ini panggil AJAX saat halaman dibuka
         }
+    });
 
+    function loadSoapData(id) {
+        const url = soapRoute.replace(':id', id); // Ganti placeholder dengan ID sebenarnya
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function (data) {
+                // PARSE data.tableData (default [] jika null)
+                dataArray = JSON.parse(data.tableData || '[]');
+
+                // Kosongkan DataTable
+                dataTable.clear().draw();
+
+                // Tambahkan ulang ke DataTable
+                dataArray.forEach((item, index) => {
+                    const aksiBtn = `
+                        <button class="btn btn-warning btn-sm mr-1" onclick="editData(${index})">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="removeData(${index})">Hapus</button>
+                    `;
+                    dataTable.row.add([
+                        index + 1,
+                        `${item.penyakit} sejak ${item.durasi} ${item.waktu}`,
+                        aksiBtn
+                    ]);
+                });
+                dataTable.draw();
+                updateHiddenInput(); // Simpan ke hidden input #tableData
+
+                $('#sistol').val(data.sistol);
+                $('#distol').val(data.distol);
+                $('#tensi').val(data.tensi);
+                $('#suhu').val(data.suhu);
+                $('#nadi').val(data.nadi);
+                $('#rr').val(data.rr);
+                $('#tinggi').val(data.tinggi);
+                $('#berat').val(data.berat);
+                $('#spo2').val(data.spo2);
+
+                $('#jenis_alergi').val(data.jenis_alergi).trigger('change');
+                loadAlergiByJenis(data.jenis_alergi, data.alergi);
+
+                $('#lingkar_perut').val(data.lingkar_perut);
+                $('#nilai_bmi').val(data.nilai_bmi);
+                $('#status_bmi').val(data.status_bmi);
+
+                $('#eye').val(data.eye).trigger('change');
+                $('#verbal').val(data.verbal).trigger('change');
+                $('#motorik').val(data.motorik).trigger('change');
+
+                $('#summernote').summernote('code', data.summernote);
+            }
+        });
     }
-
-    // Hapus item
-    resepList.splice(idx, 1);
-    selectedIndex = -1;
-    renderResep();
-  });
-
-});
 </script>
 
+{{-- Script resep --}}
+<script>
+    $(function () {
+    let resepList = [];
+    let selectedIndex = -1;
+
+    function renderResep() {
+        let html = "";
+        resepList.forEach((line, i) => {
+        html += `<div class="resep-line d-flex justify-content-between align-items-center"
+                data-index="${i}" style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #ddd; ${i === selectedIndex ? 'background:#d1ecf1;' : ''}">
+            <span class="resep-text">${$('<div>').html(line.replace(/\n/g, "<br>")).html()}</span>`;
+        if (i === selectedIndex) {
+            html += `<div class="btn-group btn-group-sm ml-2">
+                    <button type="button" class="btn btn-warning btn-up">▲</button>
+                    <button type="button" class="btn btn-warning btn-down">▼</button>
+                    <button type="button" class="btn btn-success btn-edit">✎</button>
+                    <button type="button" class="btn btn-danger btn-delete">✖</button>
+                    </div>`;
+        }
+        html += `</div>`;
+        });
+        $("#summernote-resep").html(html);
+        $("#resep-data").val(JSON.stringify(resepList));
+    }
+
+    $("#btn-r-action").click(function () {
+        const text = $("#r-text").val().trim();
+        resepList.push(text ? `R:/ ${text}` : "R:/");
+        $("#r-text").val("");
+        renderResep();
+    });
+
+    $("#btn-add-obat").click(function () {
+        const nama = $("#nama-obat").val();
+        const dosis1 = $("#dosis1").val().trim();
+        const dosis2 = $("#dosis2").val().trim();
+        const signaJumlah1 = $("#signa-jumlah1").val().trim();
+        const signaJumlah2 = $("#signa-jumlah2").val().trim();
+        const dosis3 = $("#dosis3").val().trim();
+        const signaSatuan2 = $("#signa-satuan2").val();
+
+        if (!nama) {
+        alert("Pilih nama obat!");
+        return;
+        }
+
+        // Susun format output sesuai permintaan
+        let line = `${nama}`;
+        if (dosis1) line += ` ${dosis1}`;
+        if (dosis2) line += ` ${dosis2}`;
+        line += "\n"; // newline untuk instruksi
+
+        const instruksi = $("#instruksi").val().trim();
+        if (instruksi) line += `${instruksi}\n`;
+
+        if (signaJumlah1 && signaJumlah2 && dosis3 && signaSatuan2) {
+        line += `${signaJumlah1} x ${signaJumlah2} ${dosis3} ${signaSatuan2}`;
+        }
+
+        resepList.push(line);
+        renderResep();
+
+        // Reset input
+        $("#nama-obat").val("");
+        $("#dosis1").val("");
+        $("#dosis2").val("");
+        $("#instruksi").val("");
+        $("#signa-jumlah1").val("");
+        $("#signa-jumlah2").val("");
+        $("#dosis3").val("");
+        $("#signa-satuan2").val("");
+    });
+
+    // Auto isi dosis2 & dosis3 dari data-satuan
+    $("#nama-obat").on("change", function () {
+        const satuan = $(this).find(":selected").data("satuan");
+        $("#dosis2").val(satuan ?? "");
+        $("#dosis3").val(satuan ?? "");
+    });
+
+    $("#summernote-resep").on("click", ".resep-line", function () {
+        const idx = $(this).data("index");
+        selectedIndex = selectedIndex === idx ? -1 : idx;
+        renderResep();
+    });
+
+    $("#summernote-resep").on("click", ".btn-delete", function (e) {
+        e.stopPropagation();
+        const idx = $(this).closest(".resep-line").data("index");
+        resepList.splice(idx, 1);
+        selectedIndex = -1;
+        renderResep();
+    });
+
+    $("#summernote-resep").on("click", ".btn-up", function (e) {
+        e.stopPropagation();
+        const idx = $(this).closest(".resep-line").data("index");
+        if (idx > 0) {
+        [resepList[idx - 1], resepList[idx]] = [resepList[idx], resepList[idx - 1]];
+        selectedIndex = idx - 1;
+        renderResep();
+        }
+    });
+
+    $("#summernote-resep").on("click", ".btn-down", function (e) {
+        e.stopPropagation();
+        const idx = $(this).closest(".resep-line").data("index");
+        if (idx < resepList.length - 1) {
+        [resepList[idx + 1], resepList[idx]] = [resepList[idx], resepList[idx + 1]];
+        selectedIndex = idx + 1;
+        renderResep();
+        }
+    });
+
+    $("#summernote-resep").on("click", ".btn-edit", function (e) {
+        e.stopPropagation();
+        const idx = $(this).closest(".resep-line").data("index");
+        const line = resepList[idx];
+
+        if (line.startsWith("R:/")) {
+        const content = line.replace(/^R:\/*\s*/, "");
+        $("#r-text").val(content);
+        } else {
+        // reset input
+        $("#nama-obat").val("");
+        $("#dosis1").val("");
+        $("#dosis2").val("");
+        $("#instruksi").val("");
+        $("#signa-jumlah1").val("");
+        $("#signa-jumlah2").val("");
+        $("#dosis3").val("");
+        $("#signa-satuan2").val("");
+
+        const parts = line.split("\n");
+
+        // Baris 1: nama dosis1 dosis2
+        const baris1 = parts[0]?.trim().split(" ") || [];
+        if (baris1.length > 0) $("#nama-obat").val(baris1[0]);
+        if (baris1.length > 1) $("#dosis1").val(baris1[1]);
+        if (baris1.length > 2) $("#dosis2").val(baris1[2]);
+
+        // Baris 2: instruksi
+        if (parts[1]) $("#instruksi").val(parts[1].trim());
+
+        // Baris 3: signa (format: x x dosis3 satuan)
+        if (parts[2]) {
+            const signaRegex = /(\d+)\s*x\s*(\d+)\s+(\S+)\s+(\S+)/;
+            const match = parts[2].match(signaRegex);
+            if (match) {
+            $("#signa-jumlah1").val(match[1]);
+            $("#signa-jumlah2").val(match[2]);
+            $("#dosis3").val(match[3]);
+            $("#signa-satuan2").val(match[4]);
+            }
+        }
+        }
+
+        resepList.splice(idx, 1);
+        selectedIndex = -1;
+        renderResep();
+    });
+    });
+</script>
 
 {{-- Script tindakan --}}
 <script>
@@ -870,7 +944,6 @@ $(function () {
     }
 
     $(document).ready(function () {
-        // Saat pilih kategori isi dropdown tindakan sesuai kategori
         $('#jenis-tindakan').change(function () {
             const kategoriId = parseInt($(this).val());
             const tindakanSelect = $('#tindakan').empty().append('<option value="">Pilih Tindakan</option>');
@@ -884,12 +957,11 @@ $(function () {
             }
         });
 
-        // Tambah atau update tindakan
         $('#tambah-tindakan').click(function () {
             const kategoriId = parseInt($('#jenis-tindakan').val());
             const tindakanId = parseInt($('#tindakan').val());
             const pelaksana = $('#pelaksana').val();
-            const editFlag = $(this).data('edit-index');
+            const isEditing = $(this).data('edit-index') === 'editing';
 
             if (isNaN(kategoriId) || isNaN(tindakanId) || !pelaksana) {
                 alert('Lengkapi semua input!');
@@ -902,7 +974,7 @@ $(function () {
                 return;
             }
 
-            let pelaksanaList = [];
+            const pelaksanaList = [];
             if (pelaksana === 'dokter') {
                 pelaksanaList.push({ pelaksana: 'Dokter', harga: tindakanData.tarif_dokter });
             } else if (pelaksana === 'perawat') {
@@ -912,24 +984,51 @@ $(function () {
                 pelaksanaList.push({ pelaksana: 'Perawat', harga: tindakanData.tarif_perawat });
             }
 
-            const newEntry = { nama: tindakanData.nama, pelaksana: pelaksanaList };
+            const newEntry = { nama: tindakanData.nama, pelaksana: pelaksanaList, _id: 'tindakan_' + Date.now() };
 
-            if (editFlag === 'editing') {
-                if (editingIndex !== null) {
-                    tindakanList.splice(editingIndex, 0, newEntry);
-                    editingIndex = null;
-                    editingData = null;
-                }
+            if (isEditing) {
+                tindakanList.splice(editingIndex, 0, newEntry);
+                editingData = null;
+                editingIndex = null;
                 $(this).removeData('edit-index').text('Tambah');
             } else {
-                tindakanList.push(newEntry);
+                const existingIndex = tindakanList.findIndex(t => t.nama === tindakanData.nama);
+
+                if (existingIndex !== -1) {
+                    const existing = tindakanList[existingIndex];
+                    pelaksanaList.forEach(p => {
+                        if (!existing.pelaksana.some(e => e.pelaksana === p.pelaksana)) {
+                            existing.pelaksana.push(p);
+                        }
+                    });
+
+                    const existingId = existing._id;
+                    $(`#hiddenTindakanInputs input[data-id="${existingId}"]`).remove();
+
+                    existing.pelaksana.forEach(p => {
+                        $('#hiddenTindakanInputs').append(`
+                            <input type="hidden" name="tindakan_nama[]" value="${existing.nama}" data-id="${existingId}">
+                            <input type="hidden" name="tindakan_pelaksana[]" value="${p.pelaksana}" data-id="${existingId}">
+                            <input type="hidden" name="tindakan_harga[]" value="${p.harga}" data-id="${existingId}">
+                        `);
+                    });
+                } else {
+                    tindakanList.push(newEntry);
+                    const hiddenWrapper = $('#hiddenTindakanInputs');
+                    pelaksanaList.forEach(p => {
+                        $('#hiddenTindakanInputs').append(`
+                            <input type="hidden" name="tindakan_nama[]" value="${newEntry.nama}" data-id="${newEntry._id}">
+                            <input type="hidden" name="tindakan_pelaksana[]" value="${p.pelaksana}" data-id="${newEntry._id}">
+                            <input type="hidden" name="tindakan_harga[]" value="${p.harga}" data-id="${newEntry._id}">
+                        `);
+                    });
+                }
             }
 
             renderTable();
             resetForm();
         });
 
-        // Hapus tindakan
         $('#tabel-tindakan').on('click', '.btn-delete', function () {
             const index = $(this).data('index');
             if (editingIndex === index) {
@@ -938,21 +1037,23 @@ $(function () {
                 $('#tambah-tindakan').removeData('edit-index').text('Tambah');
                 resetForm();
             }
+            const uniqueId = tindakanList[index]._id;
+            $(`#hiddenTindakanInputs input[data-id="${uniqueId}"]`).remove();
             tindakanList.splice(index, 1);
             renderTable();
         });
 
-        // Edit tindakan
         $('#tabel-tindakan').on('click', '.btn-edit', function () {
             const index = $(this).data('index');
             const item = tindakanList[index];
 
             editingData = item;
             editingIndex = index;
+            const uniqueId = item._id;
+            $(`#hiddenTindakanInputs input[data-id="${uniqueId}"]`).remove();
             tindakanList.splice(index, 1);
             renderTable();
 
-            // Cari kategori dari data tindakan di perawatanTindakan
             const tindakanObj = perawatanTindakan.find(t => t.nama === item.nama);
             const kategoriId = tindakanObj ? tindakanObj.perawatan_kategori_id : null;
 
@@ -960,7 +1061,6 @@ $(function () {
 
             $('#jenis-tindakan').val(kategoriId).trigger('change');
 
-            // Tunggu tindakan dropdown terisi lalu set tindakan & pelaksana
             setTimeout(() => {
                 $('#tindakan').val(tindakanObj ? tindakanObj.id : '').trigger('change');
                 $('#pelaksana').val(pelaksana);
@@ -969,6 +1069,7 @@ $(function () {
         });
     });
 </script>
+
 
 {{-- Script Diet --}}
 <script>
@@ -989,28 +1090,30 @@ $(function () {
         const tbody = document.querySelector("#tabelDiet tbody");
 
         if (editIndex === null) {
-            // Tambah baris baru
+            const uniqueId = 'diet_' + Date.now(); // ID unik
+
             const row = document.createElement("tr");
+            row.setAttribute("data-id", uniqueId);
             row.innerHTML = `
                 <td>${jenis}</td>
                 <td>${anjur}</td>
                 <td>${pantang}</td>
                 <td>
-                    <button type="button"  class="btn btn-warning btn-sm" onclick="editBaris(this)">Edit</button>
-                    <button type="button"  class="btn btn-danger btn-sm" onclick="hapusBaris(this)">Hapus</button>
+                    <button type="button" class="btn btn-warning btn-sm" onclick="editBaris(this)">Edit</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="hapusBaris(this)">Hapus</button>
                 </td>
             `;
             tbody.appendChild(row);
-        } else {
-            // Update baris
-            const row = tbody.rows[editIndex];
-            row.cells[0].textContent = jenis;
-            row.cells[1].textContent = anjur;
-            row.cells[2].textContent = pantang;
 
-            editIndex = null;
-            document.getElementById("btnTambahDiet").textContent = "Tambah";
+            // Tambahkan hidden input
+            const hiddenWrapper = document.getElementById("hiddenDietInputs");
+            hiddenWrapper.insertAdjacentHTML("beforeend", `
+                <input type="hidden" name="diet_jenis[]" value="${jenis}" data-id="${uniqueId}">
+                <input type="hidden" name="diet_anjuran[]" value="${anjur}" data-id="${uniqueId}">
+                <input type="hidden" name="diet_pantangan[]" value="${pantang}" data-id="${uniqueId}">
+            `);
         }
+
 
         // Reset input
         document.getElementById("jenisDiet").value = "";
@@ -1020,6 +1123,7 @@ $(function () {
 
     function editBaris(button) {
         const row = button.closest("tr");
+        const id = row.getAttribute("data-id");
         const cells = row.children;
 
         // Ambil nilai dari baris
@@ -1028,6 +1132,7 @@ $(function () {
         const pantang = cells[2].textContent;
 
         // Set nilai ke select/input
+        document.querySelectorAll(`#hiddenDietInputs input[data-id="${id}"]`).forEach(el => el.remove());
         document.getElementById("jenisDiet").value = jenis;
         document.getElementById("makananAnjuran").value = anjur;
         document.getElementById("makananPantangan").value = pantang;
@@ -1043,14 +1148,16 @@ $(function () {
 
     function hapusBaris(button) {
         const row = button.closest("tr");
+        const id = row.getAttribute("data-id");
+        document.querySelectorAll(`#hiddenDietInputs input[data-id="${id}"]`).forEach(el => el.remove());
         row.remove();
 
-        // Reset form jika sedang edit
         if (editIndex !== null) {
             editIndex = null;
             document.getElementById("btnTambahDiet").textContent = "Tambah";
         }
     }
+
 </script>
 
 {{-- Script ICD --}}
@@ -1108,24 +1215,30 @@ $(function () {
 
         // Hapus baris
         $(document).on('click', '.deleteRow', function () {
-            $(this).closest('tr').remove();
+            const tr = $(this).closest('tr');
+            const id = tr.data('id');
+            $(`input[data-id="${id}"]`).remove();
+            tr.remove();
             updateTableState();
         });
 
-        // Helper: generate baris
+        // Generate baris
         function generateRow(data, priority, type) {
+            const uniqueId = `${type}_${data.code}_${priority}_${Date.now()}`;
             return `
-            <tr align="center">
-                <td valign="top" style="border: none;">${data.code}</td>
-                <td valign="top" style="border: none;">${data.name}</td>
-                <td valign="top" style="border: none;">${priority}</td>
-                <td valign="top" style="border: none;">
-                    <button type="button" class="btn btn-danger btn-sm deleteRow">Hapus</button>
-                </td>
-            </tr>`;
+                <tr align="center" data-id="${uniqueId}">
+                    <td valign="top" style="border: none;">${data.code}</td>
+                    <td valign="top" style="border: none;">${data.name}</td>
+                    <td valign="top" style="border: none;">${priority}</td>
+                    <td valign="top" style="border: none;">
+                        <button type="button" class="btn btn-danger btn-sm deleteRow">Hapus</button>
+                    </td>
+                    <input type="hidden" name="${type.toLowerCase()}_code[]" value="${data.code}" data-id="${uniqueId}">
+                    <input type="hidden" name="${type.toLowerCase()}_name[]" value="${data.name}" data-id="${uniqueId}">
+                    <input type="hidden" name="${type.toLowerCase()}_priority[]" value="${priority}" data-id="${uniqueId}">
+                </tr>`;
         }
 
-        // Helper: cek duplikat
         function isDuplicate(tbodySelector, code) {
             let exists = false;
             $(`${tbodySelector} tr`).each(function () {
@@ -1135,7 +1248,6 @@ $(function () {
             return exists;
         }
 
-        // Helper: sudah ada Primary?
         function hasPrimary(tbodySelector) {
             let found = false;
             $(`${tbodySelector} tr`).each(function () {
@@ -1145,63 +1257,101 @@ $(function () {
             return found;
         }
 
-        // Reset dropdown dan tombol
         function resetFields(selectID, kodeID, prioritasID) {
             $(selectID).val('').trigger('change');
             $(kodeID).text(kodeID.includes('10') ? 'KODE ICD 10' : 'KODE ICD 9');
             $(prioritasID).text('Pilih');
         }
 
-        // Sembunyikan/tampilkan elemen
         function updateTableState() {
             const icd10Count = $('.icd_10 tbody tr').length;
             const icd9Count = $('.icd_9 tbody tr').not(':first').length;
 
-
-            // ICD 10 hanya ditampilkan jika ada isinya
             $('.isi_10').toggle(icd10Count > 0);
-
-            // ICD 9 selalu ditampilkan
             $('.isi_9').toggle(icd9Count > 0);
-
-            // Jika keduanya kosong, tampilkan "Data Tidak Ada"
             $('.kosong').toggle(icd10Count === 0 && icd9Count === 0);
         }
 
+        // Fungsi JSON Output
+        window.getICDDataAsJSON = function () {
+            const icd10 = [];
+            const icd9 = [];
 
-        updateTableState(); // Inisialisasi saat pertama load
+            $('input[name="icd10_code[]"]').each(function () {
+                const id = $(this).data('id');
+                const code = $(this).val();
+                const name = $(`input[name="icd10_name[]"][data-id="${id}"]`).val();
+                const priority = $(`input[name="icd10_priority[]"][data-id="${id}"]`).val();
+
+                if (code && name && priority) {
+                    icd10.push({ code, name, priority });
+                }
+            });
+
+            $('input[name="icd9_code[]"]').each(function () {
+                const id = $(this).data('id');
+                const code = $(this).val();
+                const name = $(`input[name="icd9_name[]"][data-id="${id}"]`).val();
+                const priority = $(`input[name="icd9_priority[]"][data-id="${id}"]`).val();
+
+                if (code && name && priority) {
+                    icd9.push({ code, name, priority });
+                }
+            });
+
+            return { icd10, icd9 };
+        }
+
+        updateTableState();
     });
 </script>
 
 {{-- Script jenis alergi --}}
 <script>
-    $(document).ready(function() {
-        $('#jenis_alergi').on('change', function () {
-            const kode = $(this).val();
+    function loadAlergiByJenis(kodeJenis, selectedAlergi = null) {
+        if (!kodeJenis) {
+            $('#alergi').empty().append('<option value="" disabled selected>-- Pilih Data Alergi --</option>');
+            return;
+        }
 
-            if (kode) {
-                $.ajax({
-                    url: '/api/alergi/by-jenis/' + kode,
-                    method: 'GET',
-                    success: function(response) {
-                        const select2 = $('#alergi');
-                        select2.empty().append('<option value="" disabled selected>-- Pilih Data Alergi --</option>');
+        $.ajax({
+            url: '/api/alergi/by-jenis/' + kodeJenis,
+            method: 'GET',
+            success: function(response) {
+                const select2 = $('#alergi');
+                select2.empty().append('<option value="" disabled>-- Pilih Data Alergi --</option>');
 
-                        if (response.data && response.data.length > 0) {
-                            response.data.forEach(function(item) {
-                                select2.append(`<option value="${item.kode_alergi}">${item.nama_jenis_alergi}</option>`);
-                            });
-                        } else {
-                            select2.append('<option value="00">Tidak ada data</option>');
-                        }
-                    },
-                    error: function() {
-                        alert('Gagal memuat data alergi dari server.');
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(function(item) {
+                        select2.append(`<option value="${item.kode_alergi}">${item.nama_jenis_alergi}</option>`);
+                    });
+
+                    if (selectedAlergi) {
+                        select2.val(selectedAlergi).trigger('change');
                     }
-                });
+                } else {
+                    select2.append('<option value="00">Tidak ada data</option>');
+                }
+            },
+            error: function() {
+                alert('Gagal memuat data alergi dari server.');
             }
         });
+    }
+
+    $(document).ready(function() {
+        // Event handler untuk ketika jenis_alergi berubah
+        $('#jenis_alergi').on('change', function () {
+            const kode = $(this).val();
+            loadAlergiByJenis(kode);
+        });
+
+        // Saat load data dari server (misal di fungsi loadSoapData)
+        // Contoh:
+        // $('#jenis_alergi').val(data.jenis_alergi).trigger('change');
+        // loadAlergiByJenis(data.jenis_alergi, data.alergi);
     });
+
 </script>
 
 {{-- htt Script --}}

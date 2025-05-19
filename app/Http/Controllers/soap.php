@@ -8,10 +8,13 @@ use App\Models\gcs_eye;
 use App\Models\gcs_kesadaran;
 use App\Models\gcs_motorik;
 use App\Models\gcs_verbal;
+use App\Models\gudang_barang;
 use App\Models\htt_pemeriksaan;
 use App\Models\htt_sub_pemeriksaan;
 use App\Models\icd10;
 use App\Models\icd9;
+use App\Models\jenis_diet;
+use App\Models\nama_makanan;
 use App\Models\pelayanan;
 use App\Models\pelayanan_soap_perawat;
 use App\Models\perawatan_kategori;
@@ -287,7 +290,11 @@ class soap extends Controller
         $kategori = perawatan_kategori::all();
         $tindakan = perawatan_tindakan::all();
 
-        return view('module.pelayanan.soap-dokter', compact('title','tindakan','kategori','icd10','icd9','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
+        $jenis_diete = jenis_diet::all();
+        $jenis_makanan_diet = nama_makanan::all();
+
+        $obat = gudang_barang::all();
+        return view('module.pelayanan.soap-dokter', compact('title','jenis_diete','obat','jenis_makanan_diet','tindakan','kategori','icd10','icd9','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
 
     }
 
@@ -372,5 +379,11 @@ class soap extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function soappelayanandata($nomor_rawat)
+    {
+        $data = pelayanan_soap_perawat::where('no_rawat', $nomor_rawat)->first();
+        return response()->json($data);
     }
 }
