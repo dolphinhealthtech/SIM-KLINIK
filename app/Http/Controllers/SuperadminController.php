@@ -2272,4 +2272,13 @@ class SuperadminController extends Controller
         }
 
     // Pembelian end
+
+
+// Tambahkan metode apotek ke SuperadminController
+public function apotek()
+{
+    $title = "Apotek";
+    return view('dashboard.apotek', compact('title'));
 }
+}
+

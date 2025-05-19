@@ -386,4 +386,15 @@ class soap extends Controller
         $data = pelayanan_soap_perawat::where('no_rawat', $nomor_rawat)->first();
         return response()->json($data);
     }
+
+    public function dataLrawatJalan()
+    {
+        $title = "SOAP Rawat Jalan";
+        return view('module.pelayanan.soap_rawat_jalan', compact('title'));
+    }
 }
+
+
+
+
+
