@@ -373,4 +373,15 @@ class soap extends Controller
             ], 500);
         }
     }
+
+    public function dataLrawatJalan()
+    {
+        $title = "SOAP Rawat Jalan";
+        return view('module.pelayanan.soap_rawat_jalan', compact('title'));
+    }
 }
+
+
+
+
+
