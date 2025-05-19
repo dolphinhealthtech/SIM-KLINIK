@@ -18,6 +18,7 @@ use App\Models\gudang_setting_harga;
 use App\Models\external_database;
 use App\Models\gudang_klinik_request;
 use App\Models\gudang_klinik_request_details;
+use App\Models\gudang_utama_keluar;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -545,6 +546,7 @@ class DataMasterGudangController extends Controller
     {
         $title = "Request Stok Obat Alkes";
         $dabar = gudang_barang::all();
+        $stok = gudang_barang_stok::all();
         $singkron = external_database::all();
 
         // Ambil koneksi external (contoh id=1)
@@ -566,21 +568,22 @@ class DataMasterGudangController extends Controller
             $connection = $factory->make($config, $connExternal->name);
 
             // Gunakan koneksi ini untuk query
-            $request = $connection->table('gudang_klinik_requests as req')
-                                // ->leftJoin('gudang_klinik_request_details as det', 'req.kode_request', '=', 'det.kode_request')
-                                // ->select(
-                                //     'req.*',
-                                //     'det.kode_obat_alkes',
-                                //     'det.nama_obat_alkes',
-                                //     'det.qty'
-                                // )
-                                ->where('req.kode_klinik', 'BLRJ')
+            $request = $connection->table('gudang_klinik_requests')
+                                ->where('kode_klinik', 'BLRJ')
                                 ->get();
+
+            $data_kirim = $connection->table('gudang_utama_keluars')
+                                ->select('kode_request', 'tanggal_request', 'nama_klinik')
+                                ->where('nama_klinik', 'Klinik Balaraja')
+                                ->groupBy('kode_request', 'tanggal_request', 'nama_klinik')
+                                ->get();
+
         } else {
             $request = collect(); // kosong jika tidak ada koneksi eksternal
+            $data_kirim = collect(); // kosong jika tidak ada koneksi eksternal
         }
 
-        return view('module.master-data-gudang.request', compact('title', 'dabar','request','singkron'));
+        return view('module.master-data-gudang.request', compact('title', 'dabar','request','singkron','data_kirim','stok'));
     }
 
     public function gudangrequestadd(Request $request)
@@ -719,6 +722,42 @@ class DataMasterGudangController extends Controller
             ]);
         }
 
+        //API details approval
+
+        public function detailsAprroval($kodeRequest)
+        {
+            // Ambil koneksi external (contoh id=1)
+            $connExternal = external_database::find(1);
+
+            if ($connExternal) {
+                $config = [
+                    'driver'    => 'mysql',
+                    'host'      => $connExternal->host,
+                    'database'  => $connExternal->database,
+                    'username'  => $connExternal->username,
+                    'password'  => $connExternal->password,
+                    'port'      => $connExternal->port ?? 3306,
+                    'charset'   => 'utf8mb4',
+                    'collation' => 'utf8mb4_unicode_ci',
+                ];
+
+                $factory = app(ConnectionFactory::class);
+                $connection = $factory->make($config, $connExternal->name);
+
+                // Query detail request berdasarkan kode_request
+                $details = $connection->table('gudang_utama_keluars')
+                    ->where('kode_request', $kodeRequest)
+                    ->get();
+
+            } else {
+                $details = collect(); // kosong jika tidak ada koneksi eksternal
+            }
+
+            return response()->json([
+                'details' => $details
+            ]);
+        }
+
         // API Get Kode Supplier Industri
 
         public function request_getLastKode()
@@ -770,6 +809,125 @@ class DataMasterGudangController extends Controller
             ]);
         }
 
+        // API Terima Data
+        public function terimaData(Request $request, $id)
+        {
+            try {
+                // Ambil koneksi eksternal (misalnya id = 1)
+                $connExternal = external_database::find(1);
+
+                $config = [
+                    'driver'    => 'mysql',
+                    'host'      => $connExternal->host,
+                    'database'  => $connExternal->database,
+                    'username'  => $connExternal->username,
+                    'password'  => $connExternal->password,
+                    'port'      => $connExternal->port ?? 3306,
+                    'charset'   => 'utf8mb4',
+                    'collation' => 'utf8mb4_unicode_ci',
+                ];
+
+                $factory = app(ConnectionFactory::class);
+                $connection = $factory->make($config, $connExternal->name);
+
+                // Ambil data berdasarkan ID
+                $data = $connection->table('gudang_utama_keluars')->where('id', $id)->first();
+
+                if (!$data) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Data tidak ditemukan.'
+                    ], 404);
+                }
+
+                // Simpan ke tabel tujuan (misal: gudang_klinik_masuk)
+                gudang_barang_stok::create([
+                    'kode_obat_alkes' => $data->kode_obat_alkes,
+                    'nama_obat_alkes' => $data->nama_obat_alkes,
+                    'qty' => $data->qty,
+                    'tanggal_terima_obat' => Carbon::now()->toDateString(),
+                    'expired' => $data->expired,
+                    'user_input_id' => $request->input('user_id'),
+                    'user_input_name' => $request->input('user_name'),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                    ]);
+
+                // Hapus dari gudang_utama_keluars (opsional)
+                $connection->table('gudang_utama_keluars')->where('id', $id)->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data berhasil diterima dan dipindahkan.'
+                ]);
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                ], 500);
+            }
+        }
+
+        // API Tolak Data
+        public function tolakData(Request $request, $id)
+        {
+            try {
+                $connExternal = external_database::find(1);
+
+                $config = [
+                    'driver'    => 'mysql',
+                    'host'      => $connExternal->host,
+                    'database'  => $connExternal->database,
+                    'username'  => $connExternal->username,
+                    'password'  => $connExternal->password,
+                    'port'      => $connExternal->port ?? 3306,
+                    'charset'   => 'utf8mb4',
+                    'collation' => 'utf8mb4_unicode_ci',
+                ];
+
+                $factory = app(ConnectionFactory::class);
+                $connection = $factory->make($config, $connExternal->name);
+
+                $data = $connection->table('gudang_utama_keluars')->where('id', $id)->first();
+
+                if (!$data) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Data tidak ditemukan.'
+                    ], 404);
+                }
+
+                // Tambahkan kembali qty ke gudang_barang
+                $connection->table('gudang_barang_stoks')->insert([
+                    'kode_obat_alkes' => $data->kode_obat_alkes,
+                    'nama_obat_alkes' => $data->nama_obat_alkes,
+                    'qty' => $data->qty,
+                    'tanggal_terima_obat' => $data->tanggal_terima_obat,
+                    'expired' => $data->expired,
+                    'user_input_id' => $request->input('user_id'),
+                    'user_input_name' => $request->input('user_name'),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Hapus data dari keluar
+                $connection->table('gudang_utama_keluars')->where('id', $id)->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Stok berhasil dikembalikan ke gudang.'
+                ]);
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                ], 500);
+            }
+        }
+
+
     // END Gudang Klinik Request (OMEGA)
 
     // Gudang Utama (OMEGA)
@@ -778,8 +936,9 @@ class DataMasterGudangController extends Controller
     {
         $title = "Dashboard Gudang Utama";
         $request = gudang_klinik_request::with('details')->get();
+        $dabar = gudang_barang::all();
 
-        return view('module.master-data-gudang.utama', compact('title','request'));
+        return view('module.master-data-gudang.utama', compact('title','request','dabar'));
     }
 
     public function gudangutamakonfirmasi(Request $request)
@@ -842,6 +1001,79 @@ class DataMasterGudangController extends Controller
             ], 500);
         }
     }
+
+    public function prosesPermintaan(Request $request)
+    {
+        try {
+            $itemsJson = $request->input('items_json');
+            $items = json_decode($itemsJson, true);
+            $kodeRequest = $request->input('kode_request');
+            $tanggalRequest = $request->input('tanggal_request');
+            $namaKlinik = $request->input('nama_klinik');
+
+            foreach ($items as $item) {
+                $kodeObat = $item['kode_obat'];
+                $jumlahDibutuhkan = intval($item['jumlah']);
+
+                // Skip jika jumlah kosong/tidak valid
+                if ($jumlahDibutuhkan <= 0) {
+                    continue;
+                }
+
+                $stokList = gudang_barang_stok::where('kode_obat_alkes', $kodeObat)
+                            ->where('qty', '>', 0)
+                            ->orderBy('tanggal_terima_obat', 'asc')
+                            ->get();
+
+                $totalTersedia = $stokList->sum('qty');
+                if ($totalTersedia < $jumlahDibutuhkan) {
+                    // Validasi gagal jika stok tidak mencukupi
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Stok tidak cukup untuk kode obat {$kodeObat}. Dibutuhkan: {$jumlahDibutuhkan}, tersedia: {$totalTersedia}",
+                    ], 422);
+                }
+
+                foreach ($stokList as $stok) {
+                    if ($jumlahDibutuhkan <= 0) break;
+
+                    $ambil = min($stok->qty, $jumlahDibutuhkan);
+
+                    $stok->qty -= $ambil;
+                    $stok->save();
+
+                    $jumlahDibutuhkan -= $ambil;
+
+                    gudang_utama_keluar::create([
+                        'kode_request' => $kodeRequest,
+                        'nama_klinik' => $namaKlinik,
+                        'tanggal_request' => $tanggalRequest,
+                        'kode_obat_alkes' => $kodeObat,
+                        'nama_obat_alkes' => $stok->nama_obat_alkes,
+                        'qty' => $ambil,
+                        'tanggal_terima_obat' => $stok->tanggal_terima_obat,
+                        'expired' => $stok->expired,
+                        'user_input_id' => $request->input('user_id'),
+                        'user_input_name' => $request->input('user_name'),
+                    ]);
+                }
+            }
+
+            // Return jika berhasil
+            return response()->json([
+                'success' => true,
+                'message' => 'Permintaan berhasil diproses!',
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memproses permintaan!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 
 
 

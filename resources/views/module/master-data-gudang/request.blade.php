@@ -102,14 +102,25 @@
                                 <table id="approveTable" class="table table-bordered table-striped table-hover">
                                     <thead class="bg-white">
                                         <tr>
-                                            <th class="text-center">ID</th>
-                                            <th class="text-center">Nama Obat</th>
-                                            <th class="text-center">Jumlah</th>
-                                            <th class="text-center" width="25%">Aksi</th>
+                                            <th class="text-center" width="5%">No</th>
+                                            <th class="text-center">Kode Request</th>
+                                            <th class="text-center">Tanggal Request</th>
+                                            <th class="text-center" width="20%">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-
+                                        @foreach($data_kirim as $index => $data_kirimData)
+                                            <tr>
+                                                <td class="text-center">{{ $index + 1 }}</td>
+                                                <td class="text-center">{{ $data_kirimData->kode_request }}</td>
+                                                <td class="text-center">{{ $data_kirimData->tanggal_request }}</td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-info btn-sm" onclick="detailDataKirim('{{ $data_kirimData->kode_request }}');">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -181,11 +192,23 @@
                                             <th class="text-center" width="15%">Kode</th>
                                             <th class="text-center">Nama Obat</th>
                                             <th class="text-center" width="15%">Jumlah</th>
-                                            <th class="text-center" width="15%">Status</th>
+                                            <th class="text-center" width="15%">Detail</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-
+                                        @foreach($stok as $index => $stokData)
+                                            <tr>
+                                                <td class="text-center">{{ $index + 1 }}</td>
+                                                <td class="text-center">{{ $stokData->kode_obat_alkes }}</td>
+                                                <td class="text-center">{{ $stokData->nama_obat_alkes }}</td>
+                                                <td class="text-center">{{ $stokData->qty }}</td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-info btn-sm" onclick="detailDataStok();">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -355,8 +378,55 @@
         </div>
     </div>
 
+    {{-- Modal Details Approval --}}
+    <div class="modal fade" id="approveDetailsModal" tabindex="-1" role="dialog" aria-labelledby="approveDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approveDetailsModalLabel">Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <h4 id="modal-title-text" class="fw-bold"></h4>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="approveDetailsTable" class="table table-bordered table-striped table-hover">
+                                <thead class="bg-white">
+                                    <tr>
+                                        <th class="text-center" width="5%">No</th>
+                                        <th class="text-center">Kode Obat/Alkes</th>
+                                        <th class="text-center">Nama Obat/Alkes</th>
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-center">Expired</th>
+                                        <th class="text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Diisi oleh JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
+        const CURRENT_USER_ID = {{ auth()->user()->id }};
+        const CURRENT_USER_NAME = "{{ auth()->user()->name }}";
+
         $(document).ready(function(){
             Inputmask({
                 alias: "numeric",
@@ -531,6 +601,137 @@
                 });
         }
 
+        function detailDataKirim(kodeRequest) {
+            // Set judul modal
+            $('#modal-title-text').text('Details untuk Kode Request: ' + kodeRequest);
+
+            // Kosongkan isi tabel dulu
+            let tbody = $('#approveDetailsTable tbody');
+            tbody.empty();
+
+            // Tampilkan modal
+            $('#approveDetailsModal').modal('show');
+
+            // Panggil API
+            $.ajax({
+                url: '/api/data-master-gudang/request/detailsAprroval/' + encodeURIComponent(kodeRequest),
+                method: 'GET',
+                success: function(response) {
+                    let data = response.details; // Ambil array dari properti 'details'
+
+                    if (data.length === 0) {
+                        tbody.append('<tr><td colspan="6" class="text-center">Data tidak ditemukan</td></tr>');
+                        return;
+                    }
+
+                    data.forEach(function(item, index) {
+                        let row = `
+                            <tr>
+                                <td class="text-center">${index + 1}</td>
+                                <td class="text-center">${item.kode_obat_alkes}</td>
+                                <td>${item.nama_obat_alkes}</td>
+                                <td class="text-center">${item.qty}</td>
+                                <td class="text-center">${item.expired}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-success" onclick="terimaData(${item.id}, '${kodeRequest}')">Terima</button>
+                                    <button class="btn btn-sm btn-danger" onclick="tolakData(${item.id}, '${kodeRequest}')">Tolak</button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.append(row);
+                    });
+                },
+
+                error: function(xhr, status, error) {
+                    tbody.append('<tr><td colspan="6" class="text-center text-danger">Gagal memuat data: ' + error + '</td></tr>');
+                }
+            });
+        }
+
+        function terimaData(id, kodeRequest) {
+            Swal.fire({
+                title: 'Terima Data?',
+                text: "Data akan dipindahkan ke klinik!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745', // Hijau
+                cancelButtonColor: '#d33',     // Merah
+                confirmButtonText: 'Ya, Terima!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/api/data-master-gudang/request/terimaData/${id}`,
+                        method: 'POST',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            user_id: CURRENT_USER_ID,
+                            user_name: CURRENT_USER_NAME
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Berhasil!',
+                                response.message,
+                                'success'
+                            );
+
+                            // REFRESH tabel di dalam modal
+                            detailDataKirim(kodeRequest);
+                        },
+                        error: function(xhr) {
+                            Swal.fire(
+                                'Gagal!',
+                                'Terjadi kesalahan saat menyimpan.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        }
+
+
+        function tolakData(id, kodeRequest) {
+            Swal.fire({
+                title: 'Tolak Data?',
+                text: "Stok akan dikembalikan ke gudang utama!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Tolak!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/api/data-master-gudang/request/tolakData/${id}`,
+                        method: 'POST',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            user_id: CURRENT_USER_ID,
+                            user_name: CURRENT_USER_NAME
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Ditolak!',
+                                response.message,
+                                'success'
+                            );
+
+                            // Refresh isi tabel
+                            detailDataKirim(kodeRequest);
+                        },
+                        error: function(xhr) {
+                            Swal.fire(
+                                'Gagal!',
+                                'Terjadi kesalahan saat menolak data.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        }
 
 
 

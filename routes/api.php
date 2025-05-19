@@ -71,6 +71,10 @@ Route::prefix('data-master-gudang')->group(function(){
 
     Route::get('/request/getLastKode', [DataMasterGudangController::class, 'request_getLastKode'])->name('request.getLastKode');
     Route::get('/request/getDetails/{kode_request}', [DataMasterGudangController::class, 'getDetails'])->name('request.getDetails');
+    Route::get('/request/detailsAprroval/{kode_request}', [DataMasterGudangController::class, 'detailsAprroval'])->name('request.detailsAprroval');
+    Route::post('/request/terimaData/{id}', [DataMasterGudangController::class, 'terimaData'])->name('request.terimaData');
+    Route::post('/request/tolakData/{id}', [DataMasterGudangController::class, 'tolakData'])->name('request.tolakData');
 
     Route::get('/utama/getHargaDasar/{kode_obat}', [DataMasterGudangController::class, 'getHargaDasar'])->name('utama.getHargaDasar');
+    Route::post('/utama/proses-permintaan', [DataMasterGudangController::class, 'prosesPermintaan'])->name('utama.prosesPermintaan');
 });
