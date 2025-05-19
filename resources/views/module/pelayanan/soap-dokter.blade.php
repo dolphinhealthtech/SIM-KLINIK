@@ -28,7 +28,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <form action="{{ route('sopelayana.add') }}" method="POST">
+                            <form action="{{ route('pelayana_dokter.add') }}" method="POST">
                                 @csrf
                             <div class="card-body">
                                 <div class="row">
@@ -100,7 +100,6 @@
                                             </div>
                                             <div class="card-body">
                                                 <div class="tab-content" id="custom-tabs-four-tabContent">
-
                                                     <div class="tab-pane fade show active" id="custom-tabs-four-subyektif" role="tabpanel" aria-labelledby="custom-tabs-four-subyektif-tab">
                                                         <div class="form-group">
                                                             <label>Keluhan :</label>
@@ -144,7 +143,6 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-
                                                     </div>
 
                                                     <div class="tab-pane fade" id="custom-tabs-four-objectiv" role="tabpanel" aria-labelledby="custom-tabs-four-objectiv-tab">
@@ -548,8 +546,6 @@
                                                     </div>
 
                                                     <div class="tab-pane fade" id="custom-tabs-four-obat" role="tabpanel" aria-labelledby="custom-tabs-four-obat-tab">
-                                                        <div class="container p-3">
-
                                                             <!-- Input R:/ -->
                                                             <div class="form-row align-items-center mb-3">
                                                                 <div class="col-12">
@@ -640,8 +636,6 @@
                                                             <input type="hidden" name="resep_data" id="resep-data">
 
                                                             </div>
-
-                                                        </div>
                                                     </div>
 
                                                 </div>
@@ -896,7 +890,6 @@
 
 {{-- Script tindakan --}}
 <script>
-    // Data tindakan dari backend (Laravel) ke JS
     const perawatanTindakan = @json($tindakan);
 
     let tindakanList = [];
@@ -1005,21 +998,25 @@
                     const existingId = existing._id;
                     $(`#hiddenTindakanInputs input[data-id="${existingId}"]`).remove();
 
+                    // Tambahkan hanya 1 tindakan_nama
+                    $('#hiddenTindakanInputs').append(`
+                        <input type="hidden" name="tindakan_nama[]" value="${existing.nama}" data-id="${existingId}">
+                    `);
                     existing.pelaksana.forEach(p => {
                         $('#hiddenTindakanInputs').append(`
-                            <input type="hidden" name="tindakan_nama[]" value="${existing.nama}" data-id="${existingId}">
                             <input type="hidden" name="tindakan_pelaksana[]" value="${p.pelaksana}" data-id="${existingId}">
-                            <input type="hidden" name="tindakan_harga[]" value="${p.harga}" data-id="${existingId}">
+                            <input type="hidden" name="tindakan_harga[]" value="${p.harga ?? 0}" data-id="${existingId}">
                         `);
                     });
                 } else {
                     tindakanList.push(newEntry);
-                    const hiddenWrapper = $('#hiddenTindakanInputs');
+                    $('#hiddenTindakanInputs').append(`
+                        <input type="hidden" name="tindakan_nama[]" value="${newEntry.nama}" data-id="${newEntry._id}">
+                    `);
                     pelaksanaList.forEach(p => {
                         $('#hiddenTindakanInputs').append(`
-                            <input type="hidden" name="tindakan_nama[]" value="${newEntry.nama}" data-id="${newEntry._id}">
                             <input type="hidden" name="tindakan_pelaksana[]" value="${p.pelaksana}" data-id="${newEntry._id}">
-                            <input type="hidden" name="tindakan_harga[]" value="${p.harga}" data-id="${newEntry._id}">
+                            <input type="hidden" name="tindakan_harga[]" value="${p.harga ?? 0}" data-id="${newEntry._id}">
                         `);
                     });
                 }
@@ -1069,6 +1066,7 @@
         });
     });
 </script>
+
 
 
 {{-- Script Diet --}}
@@ -1272,39 +1270,37 @@
             $('.kosong').toggle(icd10Count === 0 && icd9Count === 0);
         }
 
-        // Fungsi JSON Output
+        // ✅ Fungsi JSON Output dalam format: [{type, priority, code}, ...]
         window.getICDDataAsJSON = function () {
-            const icd10 = [];
-            const icd9 = [];
+            const result = [];
 
             $('input[name="icd10_code[]"]').each(function () {
                 const id = $(this).data('id');
                 const code = $(this).val();
-                const name = $(`input[name="icd10_name[]"][data-id="${id}"]`).val();
                 const priority = $(`input[name="icd10_priority[]"][data-id="${id}"]`).val();
 
-                if (code && name && priority) {
-                    icd10.push({ code, name, priority });
+                if (code && priority) {
+                    result.push({ type: 'ICD10', priority, code });
                 }
             });
 
             $('input[name="icd9_code[]"]').each(function () {
                 const id = $(this).data('id');
                 const code = $(this).val();
-                const name = $(`input[name="icd9_name[]"][data-id="${id}"]`).val();
                 const priority = $(`input[name="icd9_priority[]"][data-id="${id}"]`).val();
 
-                if (code && name && priority) {
-                    icd9.push({ code, name, priority });
+                if (code && priority) {
+                    result.push({ type: 'ICD9', priority, code });
                 }
             });
 
-            return { icd10, icd9 };
+            return result;
         }
 
         updateTableState();
     });
 </script>
+
 
 {{-- Script jenis alergi --}}
 <script>

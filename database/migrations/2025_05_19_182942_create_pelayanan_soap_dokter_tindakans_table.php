@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('sex');
             $table->string('penjamin');
             $table->date('tanggal_lahir');
-            $table->string('Jenis_diet');
-            $table->string('jenis_diet_makanan');
-            $table->string('jenis_diet_makanan_tidak');
+            $table->string('Jenis_tindakan')->nullable();
+            $table->string('jenis_pelaksana')->nullable();
+            $table->string('harga')->nullable();
             $table->timestamps();
         });
     }

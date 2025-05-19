@@ -78,6 +78,7 @@ Route::prefix('pendaftaran')->group(function () {
 Route::prefix('pemeriksaan')->group(function () {
     Route::get('/dokter', [soap::class,'pelayana_dokter'])->name('pelayana_dokter.get');
     Route::get('/dokter/so/{norawat}', [soap::class,'soappelayanan'])->name('pelayana_dokter.get');
+    Route::post('/dokter/so/add', [soap::class,'soappelayananandd'])->name('pelayana_dokter.add');
     Route::get('/dokter/so/hadir/{norawat}', [soap::class,'soappelayananpanggil'])->name('pelayana_dokter.hadir');
     // Menu Pasien
     Route::get('/perawat', [soap::class,'pelayana'])->name('pelayana.get');
