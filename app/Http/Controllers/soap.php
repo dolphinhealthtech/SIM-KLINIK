@@ -220,7 +220,7 @@ class soap extends Controller
         foreach ($pelayanan as $item) {
             $status = $item->pendaftaran->status->status_panggil ?? 0;
 
-            $soap = pelayanan_soap_perawat::where('no_rawat', $item->nomor_register)->first();
+            $soap = pelayanan_soap_dokter::where('no_rawat', $item->nomor_register)->first();
 
             if ($status == 1) {
                 $item->tindakan_button = 'panggil';
@@ -486,6 +486,37 @@ class soap extends Controller
     {
         $title = "SOAP Rawat Jalan";
         return view('module.pelayanan.soap_rawat_jalan', compact('title'));
+    }
+
+    public function pelayana_rujukan($norawat)
+    {
+        $nomor_rawat = base64_decode($norawat);
+        $title = "Pelayanan";
+        $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien.kelamin','pendaftaran.penjamin')->where('nomor_register', $nomor_rawat)->first();
+
+        $tgl_lahir = Carbon::createFromFormat('Y-m-d', $pelayanan->pasien->tanggal_lahir);
+        $diff = $tgl_lahir->diff(Carbon::now());
+
+        $umurTahun = $diff->y;
+        $umurBulan = $diff->m;
+        $umurHari = $diff->d;
+
+        $umur = '';
+        if ($umurTahun > 0) {
+            $umur .= $umurTahun . ' Tahun ';
+        }
+        if ($umurBulan > 0 || $umurTahun > 0) {
+            $umur .= $umurBulan . ' Bulan ';
+        }
+        $umur .= $umurHari . ' Hari';
+
+        $gsc_eye = gcs_eye::all();
+        $gcs_verbal = gcs_verbal::all();
+        $gcs_motorik = gcs_motorik::all();
+        $gcs_kesadaran = gcs_kesadaran::all();
+
+        $htt_pemeriksaan = htt_pemeriksaan::all();
+        return view('module.pelayanan.pelayanan_rujuk', compact('title','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
     }
 }
 

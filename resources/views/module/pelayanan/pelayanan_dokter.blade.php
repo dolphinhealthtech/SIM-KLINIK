@@ -64,12 +64,15 @@
                                                                     <i class="fas fa-bell"></i> Panggil
                                                                 </a>
                                                             @elseif ($pelayanandata->tindakan_button == 'soap')
-                                                                <a class="dropdown-item" href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                                <a class="dropdown-item" href="{{ route('pelayana_dokter.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-file-medical-alt"></i> SOAP & Pemeriksaan
                                                                 </a>
                                                             @elseif ($pelayanandata->tindakan_button == 'edit')
-                                                                <a class="dropdown-item" href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                                <a class="dropdown-item" href="{{ route('pelayana_dokter.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-edit"></i> Edit SOAP
+                                                                </a>
+                                                                <a class="dropdown-item" href="{{ route('pelayana_rujuk.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                                    <i class="fas fa-edit"></i> Rujukan
                                                                 </a>
                                                             @endif
                                                         </div>
