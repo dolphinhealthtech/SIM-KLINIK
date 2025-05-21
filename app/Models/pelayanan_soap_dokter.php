@@ -48,7 +48,7 @@ class pelayanan_soap_dokter extends Model
 
     public function resep()
     {
-        return $this->hasMany(Pelayanan_soap_dokter_obat::class, 'no_rawat','no_rawat');
+        return $this->hasOne(Pelayanan_soap_dokter_obat::class, 'no_rawat','no_rawat');
     }
     public function pendaftaran()
     {

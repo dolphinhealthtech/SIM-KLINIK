@@ -76,10 +76,15 @@
                             <label>Resep</label>
                         </div>
                         <div class="col-md-1 text-center">:</div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <select class="form-control" id="resep" name="resep">
-                                <option value="">-- Pilih --</option>
+                                <option value="" disabled selected>-- Pilih --</option>
+                                <option value="RESEP">RESEP</option>
+                                <option value="BELI BEBAS">BELI BEBAS</option>
                             </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" id="faktur_apotek" name="faktur_apotek" value="JANGAN LUPA SCRIPT AUTO" readonly>
                         </div>
                         <div class="col-md-1">
                             <label>Dokter</label>
@@ -92,7 +97,10 @@
                                     </div>
                                 </div>
                                 <select class="form-control" id="dokter" name="dokter">
-                                    <option value="">-- Pilih Dokter --</option>
+                                    <option value="" disabled selected>Pilih Dokter</option>
+                                    @foreach ($dokter as $dokterData)
+                                        <option value="{{ $dokterData->namauser->name }}">{{ $dokterData->namauser->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -107,8 +115,11 @@
                             <button class="btn btn-secondary btn-block">RAWAT JALAN</button>
                         </div>
                         <div class="col-md-2">
-                            <select class="form-control" id="poli" name="poli">
-                                <option value="">-- Pilih Poli --</option>
+                            <select class="form-control select2bs4" id="poli" name="poli">
+                                <option value="" disabled selected>Pilih Poli</option>
+                                @foreach ($poli as $poliData)
+                                    <option value="{{ $poliData->nama }}">{{ $poliData->nama }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-1">
@@ -116,7 +127,10 @@
                         </div>
                         <div class="col-md-4">
                             <select class="form-control" id="penjamin" name="penjamin">
-                                <option value="">-- Pilih --</option>
+                                <option value="" disabled selected>-- Pilih --</option>
+                                @foreach ($penjamin as $penjaminData)
+                                    <option value="{{ $penjaminData->nama }}">{{ $penjaminData->nama }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -138,142 +152,145 @@
                                 <h3 class="card-title">Form Resep</h3>
                             </div>
                             <div class="card-body p-3">
-                                <div class="table-responsive border border-dark">
-                                    <table class="table table-bordered mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Nama Item</th>
-                                                <th>Kode Item</th>
-                                                <th>Harga</th>
-                                                <th>Diskon</th>
-                                                <th>Kuantitas</th>
-                                                <th>Jumlah</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Baris kosong untuk space -->
-                                            <tr style="height: 200px;">
-                                                <td colspan="7"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 300px;">
+                                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                        <table class="table" id="tabel_apotek_harga" style="border: none;">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama Item</th>
+                                                    <th>Kode Item</th>
+                                                    <th>Harga</th>
+                                                    <th>Kuantitas</th>
+                                                    <th>Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{-- DATA TERISI OTOMATIS NANTI --}}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
                                 <div class="p-3 bg-light border mt-3">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                             <div class="row mb-3">
-                                                <div class="col-md-2">
+                                                <div class="col-md-1">
                                                     <button class="btn btn-info btn-sm rounded-circle">R/</button>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <label>Barang :</label>
                                                 </div>
-                                                <div class="col-md-7">
-                                                    <select class="form-control" id="barang">
-                                                        <option value="">-- Pilih Obat --</option>
+                                                <div class="col-md-9">
+                                                    <select class="form-control" id="barang_bebas" name="barang_bebas">
+                                                        <option value="" disabled selected>Pilih Obat / Alkes</option>
+                                                        @foreach ($stok as $stokData)
+                                                            <option value="{{ $stokData->nama_obat_alkes }}" data-kode="{{ $stokData->kode_obat_alkes}}">
+                                                                {{ $stokData->nama_obat_alkes }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
 
                                             <div class="row mb-3">
-                                                <div class="col-md-2"></div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-2">
                                                     <label>Qty :</label>
                                                 </div>
-                                                <div class="col-md-7">
+                                                <div class="col-md-9">
                                                     <input type="number" class="form-control" id="qty">
                                                 </div>
                                             </div>
 
                                             <div class="row mb-3">
-                                                <div class="col-md-2"></div>
-                                                <div class="col-md-3">
-                                                    <label>Diskon :</label>
-                                                </div>
-                                                <div class="col-md-7">
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <div class="input-group-text">
-                                                                <input type="checkbox" id="is_diskon">
-                                                            </div>
-                                                        </div>
-                                                        <input type="text" class="form-control" id="diskon">
-                                                    </div>
-                                                    <small class="text-muted">(button mengubah disc rupiah)</small>
-                                                </div>
-                                            </div>
-
-                                            <div class="row mb-3">
-                                                <div class="col-md-2"></div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-1"></div>
+                                                <div class="col-md-2">
                                                     <label>Harga :</label>
                                                 </div>
-                                                <div class="col-md-7">
+                                                <div class="col-md-9">
                                                     <div class="row">
-                                                        <div class="col-md-6">
-                                                            <select class="form-control" id="harga_select">
-                                                                <option value="">-- Pilih --</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <input type="text" class="form-control" id="harga_text">
+                                                        <div class="col-md-12">
+                                                            <input type="text" class="form-control" id="harga_barang_bebas" name="harga_barang_bebas">
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-md-5"></div>
-                                                <div class="col-md-7">
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-9">
                                                     <button class="btn btn-info mr-2">Tambah</button>
                                                     <button class="btn btn-info">Hapus</button>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
-                                            <div class="row mb-3">
-                                                <div class="col-md-4">
-                                                    <label>Barang :</label>
+                                        <div class="col-md-5">
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-md-3">
+                                                    <label>Barang</label>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <label>:</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="d-flex">
-                                                        <input type="text" class="form-control" id="barang_text2">
-                                                        <span class="ml-2">(Poin)</span>
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" id="nilai_embis_input" name="nilai_embis_input">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">(Poin)</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="row mb-3">
-                                                <div class="col-md-12">
-                                                    <span class="text-danger">[+Embiis Rp.0]</span>
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-md-3">
+                                                    <label>Sub Total</label>
                                                 </div>
-                                            </div>
-
-                                            <div class="row mb-3">
-                                                <div class="col-md-4">
-                                                    <label>Sub Total :</label>
+                                                <div class="col-md-1">
+                                                    <label>:</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="border-bottom border-dark"></div>
+                                                    <label id="sub_total">Rp 0</label>
+
+                                                    <input type="hidden" id="sub_total_hidden" name="sub_total_hidden">
                                                 </div>
                                             </div>
 
-                                            <div class="row mb-3">
-                                                <div class="col-md-4">
-                                                    <label>Total :</label>
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-md-3">
+                                                    <label class="text-danger">Embis</label>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <label class="text-danger">:</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="border-bottom border-dark"></div>
+                                                    <label class="text-danger" id="embalase_total">Rp 0</label>
+
+                                                    <input type="hidden" id="embalase_total_hidden" name="embalase_total_hidden">
                                                 </div>
                                             </div>
 
-                                            <div class="row">
-                                                <div class="col-md-12 text-right">
-                                                    <button class="btn btn-info mr-2">Simpan</button>
-                                                    <button class="btn btn-info">Reload</button>
+                                            <div class="form-group">
+                                                <div style="width: 95%; border-top: 2px solid black; position: relative; margin-top: 20px;">
+                                                    <span style="position: absolute; right: -10px; top: -15px; font-weight: bold;">-</span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-md-3">
+                                                    <label>Total</label>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <label>:</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <label id="total">Rp 0</label>
+
+                                                    <input type="hidden" id="total_hidden" name="total_hidden">
                                                 </div>
                                             </div>
                                         </div>
@@ -290,7 +307,16 @@
                                 <h3 class="card-title">Informasi Resep</h3>
                             </div>
                             <div class="card-body p-3">
-                                <div class="border border-dark" style="height: 242px; background-color: #fff;"></div>
+                                {{-- <div class="border border-dark" style="height: 242px; background-color: #fff;"></div> --}}
+                                <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 300px;">
+                                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                        <table class="table" id="tabel_resep_sementara" style="border: none;">
+                                            <tbody>
+                                                {{-- DATA TERISI OTOMATIS NANTI --}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
 
                                 <div class="p-3 bg-light border mt-3" style="min-height: 300px;">
                                     <div class="row mb-3">
@@ -298,7 +324,7 @@
                                             <label>No R:</label>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" class="form-control" id="no_r">
+                                            <input type="text" class="form-control" id="no_r" name="no_r" placeholder="Masukkan ID resep">
                                         </div>
                                     </div>
 
@@ -307,7 +333,7 @@
                                             <label>Jumlah:</label>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" class="form-control" id="jumlah">
+                                            <input type="text" class="form-control" id="jumlah_r" name="jumlah_r">
                                         </div>
                                     </div>
 
@@ -322,12 +348,12 @@
 
                                     <div class="row mt-4">
                                         <div class="col-md-4">
-                                            <button class="btn btn-info btn-block btn-sm">
+                                            <button id="loadPerR" class="btn btn-info btn-block btn-sm">
                                                 <i class="fas fa-file-download"></i> Load Per R/
                                             </button>
                                         </div>
                                         <div class="col-md-4">
-                                            <button class="btn btn-info btn-block btn-sm">
+                                            <button id="loadFull" class="btn btn-info btn-block btn-sm">
                                                 <i class="fas fa-file-download"></i> Load R/ Full
                                             </button>
                                         </div>
@@ -384,24 +410,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data_soap as $index => $data_soapdata)
+                        @foreach ($data_soap as $index => $data_soap)
                             <tr>
                                 <td class="text-center">{{ $index + 1 }}</td>
-                                <td class="text-center">{{ $data_soapdata->nomor_rm }}</td>
-                                <td class="text-center">{{ $data_soapdata->no_rawat }}</td>
-                                <td class="text-center">{{ $data_soapdata->nama }}</td>
-                                <td class="text-center">{{ $data_soapdata->sex }}</td>
-                                <td class="text-center">{{ $data_soapdata->penjamin }}</td>
+                                <td class="text-center">{{ $data_soap->nomor_rm }}</td>
+                                <td class="text-center">{{ $data_soap->no_rawat }}</td>
+                                <td class="text-center">{{ $data_soap->nama }}</td>
+                                <td class="text-center">{{ $data_soap->sex }}</td>
+                                <td class="text-center">{{ $data_soap->penjamin }}</td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-success" onclick="cariResepObat(this)"
-                                        data-no_rawat="{{ $data_soapdata->no_rawat }}"
-                                        data-no_rm="{{ $data_soapdata->nomor_rm }}"
-                                        data-nama="{{ $data_soapdata->nama }}"
-                                        data-alamat="{{ $data_soapdata->pasien->alamat }}"
-                                        data-dokter="{{ $data_soapdata->pendaftaran->dokter->namauser->name }}"
-                                        data-poli="{{ $data_soapdata->pendaftaran->poli->nama }}"
-                                        data-penjamin="{{ $data_soapdata->penjamin }}"
-                                        data-resep_obat="{{ $data_soapdata->resep }}"
+                                        data-no_rawat="{{ $data_soap->no_rawat }}"
+                                        data-no_rm="{{ $data_soap->nomor_rm }}"
+                                        data-nama="{{ $data_soap->nama }}"
+                                        data-alamat="{{ $data_soap->pasien->alamat }}"
+                                        data-dokter="{{ $data_soap->pendaftaran->dokter->namauser->name }}"
+                                        data-poli="{{ $data_soap->pendaftaran->poli->nama }}"
+                                        data-penjamin="{{ $data_soap->penjamin }}"
+                                        data-resep_obat='@json($data_soap->resep->Resep_obat)'
                                     >Pilih</button>
                                 </td>
                             </tr>
@@ -416,79 +442,6 @@
         </div>
     </div>
 </div>
-
-{{-- <style>
-    .card {
-        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
-        margin-bottom: 1rem;
-        border: 1px solid rgba(0,0,0,.125);
-        border-radius: 0.25rem;
-    }
-    .card-header {
-        padding: 0.75rem 1.25rem;
-        border-bottom: 1px solid rgba(0,0,0,.125);
-    }
-    .h-100 {
-        height: 100%!important;
-    }
-    .table {
-        margin-bottom: 0;
-    }
-    .table thead th {
-        vertical-align: middle;
-        text-align: center;
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #dee2e6;
-        font-weight: 600;
-        padding: 0.5rem;
-        height: 42px;
-    }
-    .table td, .table th {
-        border: 1px solid #dee2e6;
-        padding: 0.5rem;
-    }
-    .btn {
-        border-radius: 0.25rem;
-    }
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-    .btn-secondary {
-        background-color: #6c757d;
-        border-color: #6c757d;
-    }
-    .btn-success {
-        background-color: #28a745;
-        border-color: #28a745;
-    }
-    .btn-info {
-        background-color: #17a2b8;
-        border-color: #17a2b8;
-    }
-    .btn-danger {
-        background-color: #dc3545;
-        border-color: #dc3545;
-    }
-    .form-control {
-        border-radius: 0.25rem;
-        height: calc(1.5em + 0.75rem + 2px);
-        padding: 0.375rem 0.75rem;
-        font-size: 0.875rem;
-    }
-    .border {
-        border: 1px solid #dee2e6!important;
-    }
-    .border-dark {
-        border-color: #343a40!important;
-    }
-    .bg-light {
-        background-color: #f8f9fa!important;
-    }
-    .align-items-center {
-        align-items: center!important;
-    }
-</style> --}}
 
 {{-- SCRIPT GLOBAL --}}
     <script>
@@ -509,8 +462,241 @@
     </script>
 
     <script>
+        let semuaResepObj = {};
+        const embalasePoin = {{ $embalase ?? 0 }};
+
+        //HITUNG TOTAL
+        function updateTotal() {
+            const subtotal = parseInt($('#sub_total_hidden').val()) || 0;
+            const embalase = parseInt($('#embalase_total_hidden').val()) || 0;
+            const total = subtotal - embalase;
+
+            const formatted = 'Rp ' + total.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            $('#total').text(formatted);
+            $('#total_hidden').val(total);
+        }
+
+        //HITUNG EMBIS
+        $(document).ready(function () {
+            $('#sub_total_hidden, #embalase_total_hidden').on('input change', updateTotal);
+
+            $('#nilai_embis_input').on('input', function () {
+                const poin = parseInt($(this).val()) || 0;
+
+                const total = embalasePoin * poin;
+                const formatted = 'Rp ' + total.toLocaleString('id-ID', {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+
+                $('#embalase_total').text(formatted);
+                $('#embalase_total_hidden').val(total);
+                $('#embalase_total_hidden').trigger('change');
+            });
+        });
+
+
+        //HITUNG SUB TOTAL
+        function hitungTotalHargaKeseluruhan() {
+            let total = 0;
+            const totalTds = document.querySelectorAll('#tabel_apotek_harga tbody tr td:last-child');
+
+            totalTds.forEach(td => {
+                const text = td.textContent || td.innerText;
+                const angka = parseInt(text.replace(/[^0-9]/g, ''), 10); // Hilangkan Rp dan titik
+                if (!isNaN(angka)) {
+                    total += angka;
+                }
+            });
+
+            // Format angka total ke dalam format Rp Indonesia
+            const formatted = 'Rp ' + total.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            // Tampilkan ke <label id="sub_total">
+            document.getElementById('sub_total').textContent = formatted;
+
+            // Simpan nilai angka bersih ke hidden input
+            document.getElementById('sub_total_hidden').value = total;
+            $('#sub_total_hidden').trigger('change');
+        }
+
+        //SCRIPT BUTTON PER R DAN R FULL
+        document.addEventListener('DOMContentLoaded', () => {
+
+            document.getElementById('loadPerR').addEventListener('click', () => {
+                const idInput = document.getElementById('no_r').value.trim();
+                if (!idInput) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Nomor Resep Kosong',
+                        text: 'Masukkan nomor resep terlebih dahulu!',
+                    });
+                    return;
+                }
+
+                // Cek apakah ID ada di semuaResepObj
+                const data = semuaResepObj[idInput];
+                if (data) {
+                    const { jenis, resep } = data;
+                    Swal.fire({
+                        title: `${jenis} (ID ${idInput})`,
+                        icon: 'info',
+                        html: `<pre style="text-align:left; white-space:pre-wrap;">${resep}</pre>`,
+                        confirmButtonText: 'Tambahkan ke Tabel'
+                    }).then(() => {
+                        insertResepToTable(resep); // ← ini menambahkan ke tabel
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Resep Tidak Ditemukan',
+                        text: `Resep dengan ID ${idInput} tidak ditemukan.`,
+                    });
+                }
+            });
+
+            document.getElementById('loadFull').addEventListener('click', () => {
+                const rows = document.querySelectorAll('#tabel_resep_sementara tbody tr');
+                if (rows.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Resep Kosong',
+                        text: 'Pilih pasien terlebih dahulu!',
+                    });
+                    return;
+                }
+
+                semuaResepObj = {}; // reset isi
+
+                rows.forEach(row => {
+                    const id = row.getAttribute('data-id');
+                    const jenis = row.getAttribute('data-jenis');
+                    const resep = row.getAttribute('data-resep');
+
+                    semuaResepObj[id] = {
+                    jenis,
+                    resep
+                    };
+                });
+
+                let alertText = 'Semua Resep:\n';
+                let allResepText = '';
+
+                for (const id in semuaResepObj) {
+                    const { jenis, resep } = semuaResepObj[id];
+                    alertText += `${jenis} (ID ${id}): ${resep}\n`;
+                    allResepText += resep + ' | ';
+                }
+
+                Swal.fire({
+                    title: 'Daftar Semua Resep',
+                    icon: 'info',
+                    html: `<pre style="text-align:left; white-space:pre-wrap;">${alertText.trim()}</pre>`,
+                    confirmButtonText: 'Tutup'
+                });
+
+                const tbody = document.querySelector('#tabel_apotek_harga tbody');
+
+                // Kosongkan tabel sebelum isi ulang (optional, tergantung kebutuhan)
+                tbody.innerHTML = '';
+
+                // Masukkan ke tabel
+                insertResepToTable(allResepText.trim().replace(/\|\s*$/, '')); // buang | terakhir
+            });
+        });
+
+        //SCRIPT MEMINDAHKAN DATA DARI TABEL KECIL KE TABEL BESAR
+        function insertResepToTable(resepString) {
+            const tbody = document.querySelector('#tabel_apotek_harga tbody');
+            let jumlah_r = parseInt(document.getElementById('jumlah_r').value) || 1; // default = 1
+            let penjamin = document.getElementById('penjamin').value;
+
+            const resepArray = resepString.split('|').map(i => i.trim());
+
+            const promises = resepArray.map((item, index) => {
+                return new Promise((resolve) => {
+                    const namaMatch = item.match(/^(.+\))/);
+                    const nama = namaMatch ? namaMatch[1].trim() : '-';
+
+                    const kuantitasMatch = item.match(/\)\s*(\d+)/);
+                    let kuantitas = '-';
+                    if (kuantitasMatch) {
+                        const nilai = parseInt(kuantitasMatch[1]);
+                        kuantitas = nilai * jumlah_r;
+                    }
+
+                    $.ajax({
+                        url: '/api/apotek/kodeObat',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ nama: nama, penjamin: penjamin }),
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+                            const kode = data.kode || '-';
+                            const harga = data.harga || 0; // Ambil harga dari response API
+
+                            resolve({ index, nama, kuantitas, kode, harga });
+                        },
+                        error: function() {
+                            resolve({ index, nama, kuantitas, kode: 'Error', harga: '-' });
+                        }
+                    });
+                });
+            });
+
+            Promise.all(promises).then(results => {
+                results.sort((a, b) => a.index - b.index);
+
+                results.forEach(({ index, nama, kuantitas, kode, harga }) => {
+                    // 1. Bersihkan harga dari prefix dan titik
+                    const hargaBersih = parseInt((harga || '0').replace(/[Rp.\s]/g, ''));
+
+                    // 2. Kalikan dengan kuantitas (pastikan kuantitas sudah number)
+                    const jumlah = hargaBersih * parseInt(kuantitas);
+
+                    // 3. Format jumlah dengan prefix dan pemisah ribuan
+                    const jumlahFormatted = 'Rp ' + jumlah.toLocaleString('id-ID', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    });
+
+                    // 4. Format harga agar tetap terlihat rapi
+                    const hargaFormatted = 'Rp ' + hargaBersih.toLocaleString('id-ID', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    });
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${tbody.rows.length + 1}</td>
+                        <td>${nama}</td>
+                        <td class="kode-item">${kode}</td>
+                        <td>${hargaFormatted}</td>
+                        <td>${kuantitas}</td>
+                        <td>${jumlahFormatted}</td>
+                    `;
+                    tbody.appendChild(row);
+                    hitungTotalHargaKeseluruhan();
+                    updateTotal();
+                });
+            });
+
+
+            document.getElementById('no_r').value = "";
+            document.getElementById('jumlah_r').value = "";
+        }
+
+        //SCRIPT CARI DATA PASIEN DAN RESEP OBATNYA
         function cariResepObat(button) {
-            // Ambil data dari atribut data- di tombol
             const noRawat = button.dataset.no_rawat;
             const noRm = button.dataset.no_rm;
             const nama = button.dataset.nama;
@@ -518,18 +704,133 @@
             const dokter = button.dataset.dokter;
             const poli = button.dataset.poli;
             const penjamin = button.dataset.penjamin;
-            const resepObat = button.dataset.resep_obat;
+            const resepObatRaw = button.dataset.resep_obat;
 
-            // Tampilkan di console
-            console.log('no_rawat:', noRawat);
-            console.log('nomor_rm:', noRm);
-            console.log('nama:', nama);
-            console.log('alamat:', alamat);
-            console.log('dokter:', dokter);
-            console.log('poli:', poli);
-            console.log('penjamin:', penjamin);
-            console.log('resep_obat:', resepObat);
+            document.getElementById('no_rawat').value = noRawat;
+            document.getElementById('no_rm').value = noRm;
+            document.getElementById('nama').value = nama;
+            document.getElementById('alamat').value = alamat;
+            document.getElementById('dokter').value = dokter;
+            document.getElementById('poli').value = poli;
+            document.getElementById('penjamin').value = penjamin;
+            document.getElementById('resep').value = "RESEP";
+            $('#poli').val(poli).trigger('change');
+
+            // Step 1: decode unicode escape
+            const decodedUnicode = JSON.parse(resepObatRaw);
+
+            const cleanJSONString = decodedUnicode.replace(/^"(.*)"$/, '$1');
+
+            // Step 2: parse string jadi array
+            const dataArray = JSON.parse(cleanJSONString);
+
+            // Step 3: kelompokkan berdasarkan 'R:/'
+            const groups = [];
+            let currentGroup = [];
+
+            dataArray.forEach(item => {
+                if (item === 'R:/') {
+                    if (currentGroup.length > 0) {
+                        groups.push(currentGroup);
+                    }
+                    currentGroup = [];
+                } else {
+                    currentGroup.push(
+                        item.replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim()
+                    );
+                }
+            });
+
+            if (currentGroup.length > 0) {
+                groups.push(currentGroup);
+            }
+
+            const cleanedStrings = groups.map(group => {
+            if (Array.isArray(group)) {
+                return group.join(' | ');  // gabungkan obat-obat dalam satu group jadi satu string
+            }
+            return group;
+            });
+
+            // baru render
+            renderResepTable(cleanedStrings);
+
+            $('#cariPasienModal').modal('hide');
+        }
+
+        //SCRIPT MASUKAN KE TABEL KECIL
+        function renderResepTable(dataArr) {
+            const tbody = document.querySelector('#tabel_resep_sementara tbody');
+            tbody.innerHTML = '';
+            semuaResepObj = {}; // reset setiap render ulang
+
+            let idCounter = 1;
+
+            dataArr.forEach(item => {
+                const jumlahObat = item.split('|').length;
+                const jenis = jumlahObat > 1 ? 'Resep Racik' : 'Resep Obat';
+
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', idCounter);
+                row.setAttribute('data-resep', item);
+                row.setAttribute('data-jenis', jenis);
+                row.innerHTML = `
+                    <td><strong>${jenis} (${idCounter})</strong></td>
+                    <td>${item.split('|').map(o => `• ${o.trim()}`).join('<br>')}</td>
+                `;
+                tbody.appendChild(row);
+
+                // Simpan ke object global
+                semuaResepObj[idCounter] = {
+                    jenis,
+                    resep: item
+                };
+
+                idCounter++;
+            });
         }
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Inputmask({
+                alias: "numeric",
+                groupSeparator: ".",
+                radixPoint: ",",
+                autoGroup: true,
+                digitsOptional: true,
+                digits: 0,
+                placeholder: "",
+                prefix: "Rp ",
+                rightAlign: false,
+                removeMaskOnSubmit: true
+            }).mask("#harga_barang_bebas");
+        });
+
+        $(document).ready(function () {
+            $('#barang_bebas').on('change', function () {
+                var kode = $(this).find(':selected').data('kode');
+
+                if (!kode) return;
+
+                $.ajax({
+                    url: '/api/apotek/hargaBebas',
+                    method: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        kode: kode
+                    },
+                    success: function (response) {
+                        $('#harga_barang_bebas').val(response.harga || 0);
+                    },
+                    error: function () {
+                        alert('Gagal mengambil harga.');
+                        $('#harga_barang_bebas').val(0);
+                    }
+                });
+            });
+        });
+    </script>
+
 
 @endsection

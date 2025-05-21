@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('sex');
             $table->string('penjamin');
             $table->date('tanggal_lahir');
-            $table->string('Resep_obat')->nullable();
+            $table->longText('Resep_obat')->nullable();
             $table->timestamps();
         });
     }
