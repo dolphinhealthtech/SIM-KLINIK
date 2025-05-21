@@ -2280,7 +2280,7 @@ class SuperadminController extends Controller
     public function apotek()
     {
         $title = "Apotek";
-        $data_soap = pelayanan_soap_dokter::with('resep_obat','pendaftaran','pasien')->get();
+        $data_soap = pelayanan_soap_dokter::with('resep','pendaftaran','pasien')->get();
         return view('dashboard.apotek', compact('title','data_soap'));
         // dd($data_soap);
     }

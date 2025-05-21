@@ -18,10 +18,6 @@ class pelayanan_soap_dokter_obat extends Model
         'Resep_obat',
     ];
 
-    protected $casts = [
-        'Resep_obat' => 'array', // agar Laravel otomatis decode JSON ke array
-    ];
-
     public function pelayanan()
     {
         return $this->belongsTo(pelayanan_soap_dokter::class,'no_rawat','no_rawat');

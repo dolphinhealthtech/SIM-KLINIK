@@ -401,7 +401,7 @@
                                         data-dokter="{{ $data_soapdata->pendaftaran->dokter->namauser->name }}"
                                         data-poli="{{ $data_soapdata->pendaftaran->poli->nama }}"
                                         data-penjamin="{{ $data_soapdata->penjamin }}"
-                                        data-resep_obat="{{ $data_soapdata->resep_obat }}"
+                                        data-resep_obat="{{ $data_soapdata->resep }}"
                                     >Pilih</button>
                                 </td>
                             </tr>
