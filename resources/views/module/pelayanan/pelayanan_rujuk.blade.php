@@ -91,7 +91,20 @@
 
                                               <!-- your steps content here -->
                                               <div id="Subyektif-part" class="content" role="tabpanel" aria-labelledby="Subyektif-part-trigger">
-
+                                                <div class="form-group row">
+                                                    <div class="col-md-12">
+                                                        <label for="eye">EYE</label>
+                                                        <select class="form-control select2bs4" style="width: 100%;" id="eye" name="eye">
+                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <label for="verbal">VERBAL</label>
+                                                        <select class="form-control select2bs4" style="width: 100%;" id="verbal" name="verbal">
+                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
                                               </div>
 
