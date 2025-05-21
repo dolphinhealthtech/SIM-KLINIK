@@ -48,6 +48,7 @@ use App\Models\pembelian_details;
 use App\Models\gudang_setting_harga;
 use App\Models\gudang_barang_harga;
 use App\Models\gudang_barang_stok;
+use App\Models\pelayanan_soap_dokter;
 use App\Exports\Gudang_barangExport;
 use App\Imports\Gudang_barangImport;
 use App\Models\external_database;
@@ -2274,11 +2275,16 @@ class SuperadminController extends Controller
     // Pembelian end
 
 
-// Tambahkan metode apotek ke SuperadminController
-public function apotek()
-{
-    $title = "Apotek";
-    return view('dashboard.apotek', compact('title'));
-}
+    // Apotek
+
+    public function apotek()
+    {
+        $title = "Apotek";
+        $data_soap = pelayanan_soap_dokter::with('resep_obat','pendaftaran','pasien')->get();
+        return view('dashboard.apotek', compact('title','data_soap'));
+        // dd($data_soap);
+    }
+
+    // Apotek End
 }
 

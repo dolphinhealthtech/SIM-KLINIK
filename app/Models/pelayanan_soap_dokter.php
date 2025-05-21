@@ -43,4 +43,20 @@ class pelayanan_soap_dokter extends Model
     protected $casts = [
         'tableData' => 'array', // Mengonversi kolom JSON menjadi array
     ];
+
+    // Model pelayanan_soap_dokter
+
+    public function resep_obat()
+    {
+        return $this->hasMany(Pelayanan_soap_dokter_obat::class, 'no_rawat','no_rawat');
+    }
+    public function pendaftaran()
+    {
+        return $this->belongsTo(Pendaftaran_rawat_jalan::class, 'no_rawat', 'nomor_register');
+    }
+
+    public function pasien()
+    {
+        return $this->belongsTo(pasien::class, 'nomor_rm','no_rm');
+    }
 }

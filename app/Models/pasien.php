@@ -51,4 +51,9 @@ class pasien extends Model
     {
         return $this->belongsTo(kelamin::class, 'seks','kode');
     }
+
+    public function soap_dokter()
+    {
+        return $this->hasOne(pelayanan_soap_dokter::class, 'nomor_rm', 'no_rm');
+    }
 }

@@ -29,14 +29,14 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-2">
-                            <label>No. Reg</label>
+                            <label>No. Rawat</label>
                         </div>
                         <div class="col-md-1 text-center">:</div>
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" id="no_reg" name="no_reg">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="no_rawat" name="no_rawat">
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
                         <div class="col-md-2">
                             <label>No. RM</label>
@@ -50,7 +50,7 @@
                             <button class="btn btn-info mr-2">Auto</button>
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
                         <div class="col-md-2">
                             <label>Nama</label>
@@ -60,7 +60,7 @@
                             <input type="text" class="form-control" id="nama" name="nama">
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
                         <div class="col-md-2">
                             <label>Alamat</label>
@@ -70,7 +70,7 @@
                             <input type="text" class="form-control" id="alamat" name="alamat">
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
                         <div class="col-md-2">
                             <label>Resep</label>
@@ -97,7 +97,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
                         <div class="col-md-2">
                             <label>Rawat</label>
@@ -106,27 +106,15 @@
                         <div class="col-md-2">
                             <button class="btn btn-secondary btn-block">RAWAT JALAN</button>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select class="form-control" id="poli" name="poli">
                                 <option value="">-- Pilih Poli --</option>
                             </select>
                         </div>
                         <div class="col-md-1">
-                            <label>Jenis PX</label>
-                        </div>
-                        <div class="col-md-3">
-                            <select class="form-control" id="jenis_px" name="jenis_px">
-                                <option value="">-- Pilih --</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-8"></div>
-                        <div class="col-md-1">
                             <label>Penjamin</label>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <select class="form-control" id="penjamin" name="penjamin">
                                 <option value="">-- Pilih --</option>
                             </select>
@@ -139,7 +127,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Step 2: Transaksi Obat -->
             <div id="step2" style="display: none;">
                 <div class="row">
@@ -171,7 +159,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                
+
                                 <div class="p-3 bg-light border mt-3">
                                     <div class="row">
                                         <div class="col-md-6">
@@ -188,7 +176,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-md-2"></div>
                                                 <div class="col-md-3">
@@ -198,7 +186,7 @@
                                                     <input type="number" class="form-control" id="qty">
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-md-2"></div>
                                                 <div class="col-md-3">
@@ -216,7 +204,7 @@
                                                     <small class="text-muted">(button mengubah disc rupiah)</small>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-md-2"></div>
                                                 <div class="col-md-3">
@@ -235,7 +223,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row">
                                                 <div class="col-md-5"></div>
                                                 <div class="col-md-7">
@@ -244,7 +232,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="col-md-6">
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
@@ -257,13 +245,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-md-12">
                                                     <span class="text-danger">[+Embiis Rp.0]</span>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
                                                     <label>Sub Total :</label>
@@ -272,7 +260,7 @@
                                                     <div class="border-bottom border-dark"></div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
                                                     <label>Total :</label>
@@ -281,7 +269,7 @@
                                                     <div class="border-bottom border-dark"></div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="row">
                                                 <div class="col-md-12 text-right">
                                                     <button class="btn btn-info mr-2">Simpan</button>
@@ -294,7 +282,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Panel Kanan - Informasi Resep -->
                     <div class="col-md-4 pl-2">
                         <div class="card h-100">
@@ -303,7 +291,7 @@
                             </div>
                             <div class="card-body p-3">
                                 <div class="border border-dark" style="height: 242px; background-color: #fff;"></div>
-                                
+
                                 <div class="p-3 bg-light border mt-3" style="min-height: 300px;">
                                     <div class="row mb-3">
                                         <div class="col-md-3">
@@ -313,7 +301,7 @@
                                             <input type="text" class="form-control" id="no_r">
                                         </div>
                                     </div>
-                                    
+
                                     <div class="row mb-3">
                                         <div class="col-md-3">
                                             <label>Jumlah:</label>
@@ -322,7 +310,7 @@
                                             <input type="text" class="form-control" id="jumlah">
                                         </div>
                                     </div>
-                                    
+
                                     <div class="row mb-3">
                                         <div class="col-md-3">
                                             <label>Note:</label>
@@ -331,7 +319,7 @@
                                             <input type="text" class="form-control" id="note">
                                         </div>
                                     </div>
-                                    
+
                                     <div class="row mt-4">
                                         <div class="col-md-4">
                                             <button class="btn btn-info btn-block btn-sm">
@@ -354,7 +342,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="card mt-3">
                     <div class="card-footer text-right">
                         <button type="button" class="btn btn-secondary mr-2" onclick="showStep1()">
@@ -372,7 +360,7 @@
 
 <!-- Modal Cari Pasien -->
 <div class="modal fade" id="cariPasienModal" tabindex="-1" role="dialog" aria-labelledby="cariPasienModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="cariPasienModalLabel">Cari Pasien</h5>
@@ -382,7 +370,44 @@
             </div>
             <div class="modal-body">
                 <!-- Isi modal akan ditambahkan nanti -->
-                <p class="text-center">Fitur pencarian pasien akan ditambahkan nanti.</p>
+                {{-- <p class="text-center">Fitur pencarian pasien akan ditambahkan nanti.</p> --}}
+                <table class="table table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">No</th>
+                            <th class="text-center">No RM</th>
+                            <th class="text-center">No Rawat</th>
+                            <th class="text-center">Nama</th>
+                            <th class="text-center">J. Kelamin</th>
+                            <th class="text-center">Penjamin</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($data_soap as $index => $data_soapdata)
+                            <tr>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="text-center">{{ $data_soapdata->nomor_rm }}</td>
+                                <td class="text-center">{{ $data_soapdata->no_rawat }}</td>
+                                <td class="text-center">{{ $data_soapdata->nama }}</td>
+                                <td class="text-center">{{ $data_soapdata->sex }}</td>
+                                <td class="text-center">{{ $data_soapdata->penjamin }}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-success" onclick="cariResepObat(this)"
+                                        data-no_rawat="{{ $data_soapdata->no_rawat }}"
+                                        data-no_rm="{{ $data_soapdata->nomor_rm }}"
+                                        data-nama="{{ $data_soapdata->nama }}"
+                                        data-alamat="{{ $data_soapdata->pasien->alamat }}"
+                                        data-dokter="{{ $data_soapdata->pendaftaran->dokter->namauser->name }}"
+                                        data-poli="{{ $data_soapdata->pendaftaran->poli->nama }}"
+                                        data-penjamin="{{ $data_soapdata->penjamin }}"
+                                        data-resep_obat="{{ $data_soapdata->resep_obat }}"
+                                    >Pilih</button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -392,7 +417,7 @@
     </div>
 </div>
 
-<style>
+{{-- <style>
     .card {
         box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
         margin-bottom: 1rem;
@@ -463,22 +488,48 @@
     .align-items-center {
         align-items: center!important;
     }
-</style>
+</style> --}}
 
-<script>
-    function showStep1() {
-        document.getElementById('step1').style.display = 'block';
-        document.getElementById('step2').style.display = 'none';
-    }
-    
-    function showStep2() {
-        document.getElementById('step1').style.display = 'none';
-        document.getElementById('step2').style.display = 'block';
-    }
-    
-    $(document).ready(function() {
-        // Inisialisasi tampilan awal
-        showStep1();
-    });
-</script>
+{{-- SCRIPT GLOBAL --}}
+    <script>
+        function showStep1() {
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+        }
+
+        function showStep2() {
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+        }
+
+        $(document).ready(function() {
+            // Inisialisasi tampilan awal
+            showStep1();
+        });
+    </script>
+
+    <script>
+        function cariResepObat(button) {
+            // Ambil data dari atribut data- di tombol
+            const noRawat = button.dataset.no_rawat;
+            const noRm = button.dataset.no_rm;
+            const nama = button.dataset.nama;
+            const alamat = button.dataset.alamat;
+            const dokter = button.dataset.dokter;
+            const poli = button.dataset.poli;
+            const penjamin = button.dataset.penjamin;
+            const resepObat = button.dataset.resep_obat;
+
+            // Tampilkan di console
+            console.log('no_rawat:', noRawat);
+            console.log('nomor_rm:', noRm);
+            console.log('nama:', nama);
+            console.log('alamat:', alamat);
+            console.log('dokter:', dokter);
+            console.log('poli:', poli);
+            console.log('penjamin:', penjamin);
+            console.log('resep_obat:', resepObat);
+        }
+    </script>
+
 @endsection
