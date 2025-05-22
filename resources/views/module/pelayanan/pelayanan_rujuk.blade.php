@@ -130,18 +130,73 @@
 
                                               {{-- step ke 3 --}}
                                               <div id="htt-part" class="content" role="tabpanel" aria-labelledby="htt-part-trigger">
-                                                <div id="input_rujukan_khusus" style="display:none; ">
-                                                    <label>Input Rujukan Khusus:</label>
-                                                    <input type="text" class="form-control" name="input_khusus" placeholder="Masukkan data Rujukan Khusus">
+                                                <div id="input_rujukan_khusus" style="display:none;">
+                                                    <div class="form-group row">
+                                                        <div class="col-md-6">
+                                                            <label for="igd_rujukan_khusus">Tujuan</label>
+                                                            <select id="igd_rujukan_khusus" name="igd_rujukan_khusus" class="form-control select2bs4">
+                                                                <option value="" disabled selected>-- Pilih Tujuan --</option>
+                                                                <option value="IGD">IGD</option>
+                                                                <option value="HDL">HDL</option>
+                                                                <option value="JIW">JIW</option>
+                                                                <option value="KLT">KLT</option>
+                                                                <option value="PAR">PAR</option>
+                                                                <option value="KEM">KEM</option>
+                                                                <option value="RAT">RAT</option>
+                                                                <option value="HIV">HIV</option>
+                                                                <option value="THA">THA</option>
+                                                                <option value="HEM">HEM</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label for="subspesialis_khusus">Subspesialis Khusus</label>
+                                                            <select id="subspesialis_khusus" name="subspesialis_khusus" class="form-control select2bs4" disabled>
+                                                                <option value="" disabled selected>-- Pilih Subspesialis Khusus --</option>
+                                                                @foreach ($subspesialis as $subspesialisdata)
+                                                                    <option value="{{ $subspesialisdata->kode }}">{{ $subspesialisdata->nama }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label for="tanggal_rujukan_khusus">Tanggal Rujukan</label>
+                                                            <input type="date" id="tanggal_rujukan_khusus" name="tanggal_rujukan_khusus" class="form-control" />
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label for="tujuan_rujukan_khusus">Tujuan Rujukan</label>
+                                                            <select id="tujuan_rujukan_khusus" name="tujuan_rujukan_khusus" class="form-control select2bs4">
+                                                                <option value="" disabled selected>-- Pilih Tujuan Rujukan --</option>
+                                                                <option value="rs_a">RS A</option>
+                                                                <option value="rs_b">RS B</option>
+                                                                <option value="klinik_c">Klinik C</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-12 mt-3">
+                                                            <button type="button" class="btn btn-primary" id="cari_provider_khusus">
+                                                                <i class="fas fa-search"></i> Cari Provider
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <div id="input_spesialis" style="display:none;">
                                                     <div class="form-group row">
-                                                        <div class="col-md-12">
+                                                        <!-- Checkbox untuk Aktifkan Pilihan Sarana -->
+                                                        <div class="col-md-12 mb-3">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="aktifkan_sarana">
+                                                                <label class="custom-control-label" for="aktifkan_sarana">Aktifkan Pilihan Sarana</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Sarana (hidden by default) -->
+                                                        <div class="col-md-12" id="sarana_container" style="display:none;">
                                                             <label for="sarana">Sarana</label>
-                                                            <select id="sarana" name="sarana" id="sarama" class="form-control select2bs4">
+                                                            <select id="sarana" name="sarana" class="form-control select2bs4">
                                                                 <option value="" disabled selected>-- Pilih Sarana --</option>
                                                                 <option value="tidak ada">tidak ada </option>
+                                                                @foreach ($sarana as $saranadata)
+                                                                    <option value="{{ $saranadata->kode }}">{{ $saranadata->nama }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
 
@@ -159,16 +214,16 @@
 
                                                         <div class="col-md-6">
                                                             <label for="alasan_rujukan">Alasan Rujukan Spesialis</label>
-                                                            <input type="text" id="alasan_rujukan" name="alasan_rujukan" class="form-control" placeholder="Masukkan alasan rujukan" />
+                                                            <input type="text" id="alasan_rujukan" name="alasan_rujukan" class="form-control" placeholder="Masukkan alasan rujukan" disabled />
                                                         </div>
 
                                                         <div class="col-md-6">
                                                             <label for="spesialis">Spesialis</label>
                                                             <select id="spesialis" name="spesialis" class="form-control select2bs4">
                                                             <option value="" disabled selected>-- Pilih Spesialis --</option>
-                                                            <option value="kardiologi">Kardiologi</option>
-                                                            <option value="neurologi">Neurologi</option>
-                                                            <option value="ortopedi">Ortopedi</option>
+                                                            @foreach ($spesialis as $spesialisdata)
+                                                                    <option value="{{ $spesialisdata->kode }}">{{ $spesialisdata->nama }}</option>
+                                                            @endforeach
                                                             </select>
                                                         </div>
 
@@ -186,15 +241,24 @@
 
                                                         <div class="col-md-6">
                                                             <label for="tujuan_rujukan_spesialis">Tujuan Rujukan</label>
-                                                            <select id="tujuan_rujukan_spesialis" name="tujuan_rujukan_spesialis" class="form-control select2bs4" disabled>
+                                                            <select id="tujuan_rujukan_spesialis" name="tujuan_rujukan_spesialis" class="form-control select2bs4">
                                                             <option value="" disabled selected>-- Pilih Tujuan Rujukan --</option>
                                                             <option value="rs_a">RS A</option>
                                                             <option value="rs_b">RS B</option>
                                                             <option value="klinik_c">Klinik C</option>
                                                             </select>
                                                         </div>
+
+                                                        <!-- Tombol Cari Provider -->
+                                                        <div class="col-md-12 mt-3">
+                                                            <button type="button" class="btn btn-primary" id="cari_provider_spesialis">
+                                                                <i class="fas fa-search"></i> Cari Provider
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
+
+
 
 
                                                 <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
@@ -215,6 +279,32 @@
         </section>
     <!-- /.content -->
 </div>
+
+<script>
+$(document).ready(function() {
+    $('#spesialis').on('change', function() {
+        var kodeSpesialis = $(this).val();
+
+        if (kodeSpesialis) {
+            $.ajax({
+                url: '/api/get-subspesialis/' + kodeSpesialis,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#sub_spesialis').empty().append('<option selected disabled>-- Pilih Sub Spesialis --</option>');
+                    $.each(data, function(key, value) {
+                        $('#sub_spesialis').append('<option value="' + value.kode + '">' + value.nama + '</option>');
+                    });
+                    $('#sub_spesialis').prop('disabled', false);
+                }
+            });
+        } else {
+            $('#sub_spesialis').empty().append('<option selected disabled>-- Pilih Sub Spesialis --</option>');
+            $('#sub_spesialis').prop('disabled', true);
+        }
+    });
+});
+</script>
 
 
 <script>
@@ -277,6 +367,89 @@ $(document).ready(function() {
     }
   });
 
+  // Menangani perubahan pada dropdown tujuan rujukan khusus
+  $('#igd_rujukan_khusus').on('change', function() {
+    const tujuanValue = $(this).val();
+    const subspesialisSelect = $('#subspesialis_khusus');
+
+    // Cek apakah tujuan adalah THA atau HEM
+    if (tujuanValue === 'THA' || tujuanValue === 'HEM') {
+      // Enable subspesialis khusus
+      subspesialisSelect.prop('disabled', false);
+    } else {
+      // Disable dan reset nilai
+      subspesialisSelect.prop('disabled', true);
+      subspesialisSelect.val('').trigger('change.select2');
+    }
+  });
+
+  // Tombol cari provider
+  $('#cari_provider_khusus').on('click', function() {
+    // Implementasi pencarian provider
+    alert('Fitur pencarian provider akan diimplementasikan');
+  });
+
+  // Checkbox untuk aktifkan sarana
+  $('#aktifkan_sarana').on('change', function() {
+    if($(this).is(':checked')) {
+      $('#sarana_container').show();
+    } else {
+      $('#sarana_container').hide();
+      $('#sarana').val('').trigger('change.select2');
+    }
+  });
+
+  // Kategori rujukan - disable/enable alasan rujukan
+  $('#kategori_rujukan').on('change', function() {
+    const kategoriValue = $(this).val();
+    const alasanInput = $('#alasan_rujukan');
+
+    if(!kategoriValue || kategoriValue === '' || kategoriValue === '-1') { // Belum dipilih atau Tanpa Alasan
+      alasanInput.prop('disabled', true);
+      alasanInput.val('');
+    } else {
+      alasanInput.prop('disabled', false);
+    }
+  });
+
+  // Spesialis - enable/disable sub spesialis
+  $('#spesialis').on('change', function() {
+    const spesialisValue = $(this).val();
+    const subSpesialisSelect = $('#sub_spesialis');
+
+    if(spesialisValue && spesialisValue !== '') {
+      subSpesialisSelect.prop('disabled', false);
+
+      // Clear existing options except the first one
+      subSpesialisSelect.find('option:not(:first)').remove();
+
+      // Add sub-spesialis options based on selected spesialis
+      if(spesialisValue === 'kardiologi') {
+        subSpesialisSelect.append('<option value="kardiologi_intervensi">Kardiologi Intervensi</option>');
+        subSpesialisSelect.append('<option value="kardiologi_anak">Kardiologi Anak</option>');
+      } else if(spesialisValue === 'neurologi') {
+        subSpesialisSelect.append('<option value="neurologi_anak">Neurologi Anak</option>');
+        subSpesialisSelect.append('<option value="neurologi_stroke">Neurologi Stroke</option>');
+      } else if(spesialisValue === 'ortopedi') {
+        subSpesialisSelect.append('<option value="ortopedi_spine">Ortopedi Spine</option>');
+        subSpesialisSelect.append('<option value="ortopedi_trauma">Ortopedi Trauma</option>');
+      }
+
+      subSpesialisSelect.trigger('change.select2');
+    } else {
+      subSpesialisSelect.prop('disabled', true);
+      subSpesialisSelect.val('').trigger('change.select2');
+    }
+  });
+
+  // Enable tujuan_rujukan_spesialis dropdown (removing disabled attribute)
+  $('#tujuan_rujukan_spesialis').prop('disabled', false);
+
+  // Tombol cari provider untuk spesialis
+  $('#cari_provider_spesialis').on('click', function() {
+    // Implementasi pencarian provider
+    alert('Fitur pencarian provider spesialis akan diimplementasikan');
+  });
 });
 
 </script>
@@ -306,3 +479,34 @@ $(document).ready(function() {
 
 
 @endsection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

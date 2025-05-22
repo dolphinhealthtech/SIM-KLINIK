@@ -25,6 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route untuk Kasir
+Route::get('/kasir', [SuperadminController::class, 'kasir'])->name('kasir');
+Route::get('/kasir_detail', [App\Http\Controllers\SuperadminController::class, 'kasirDetail'])->name('kasir.detail');
 
 //Menu Data Barang (Obat)
 Route::get('/data-barang', [SuperadminController::class,'dabar'])->name('dabar.get');
@@ -39,6 +42,7 @@ Route::post('/data-barang/import', [SuperadminController::class, 'dabarimport'])
 //Menu Pembelian Barang
 Route::get('/pembelian', [SuperadminController::class, 'pembelian'])->name('pembelian.get');
 Route::post('/pembelian/add', [SuperadminController::class, 'pembelianadd'])->name('pembelian.add');
+Route::get('/pembelian/cetak/{nomor_faktur}', [SuperadminController::class, 'cetakPembelianPdf'])->name('pembelian.cetak');
 
 Route::get('/monitor', [SuperadminController::class,'monitor'])->name('monitor.get');
 Route::post('/monitor/add/bpjs', [SuperadminController::class,'monitor_bpjs'])->name('monitor.add.bpjs');
@@ -65,6 +69,15 @@ Route::prefix('dokter')->group(function () {
     Route::post('/update', [SuperadminController::class,'dokteredit'])->name('dokter.update');
     Route::post('/jadwal/store', [SuperadminController::class, 'dokterjadwal'])->name('dokter.jadwal');
     Route::delete('/jadwal/hapus/{id}', [SuperadminController::class, 'dokterjadwalhapus']);
+});
+
+Route::prefix('staff')->group(function () {
+    // Menu Pasien
+    Route::get('/', [SuperadminController::class,'staff'])->name('staff.get');
+    Route::post('/add', [SuperadminController::class,'staffadd'])->name('staff.store');
+    Route::post('/delete', [SuperadminController::class,'staffdelete'])->name('staff.destroy');
+    Route::post('/verifikasi', [SuperadminController::class,'staffverifikasi'])->name('staff.verifikasi');
+    Route::post('/update', [SuperadminController::class,'staffedit'])->name('staff.update');
 });
 
 Route::prefix('pendaftaran')->group(function () {
@@ -195,6 +208,12 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::post('/poli/delete', [DataMasterMedisController::class,'polidelete'])->name('poli.destroy');
     Route::get('/poli/export', [DataMasterMedisController::class, 'poliexport'])->name('poli.export');
     Route::post('/poli/import', [DataMasterMedisController::class, 'poliimport'])->name('poli.import');
+
+    Route::get('/sarana', [DataMasterMedisController::class,'sarana'])->name('sarana.get');
+    Route::get('/sarana/sync', [DataMasterMedisController::class,'saranaadd'])->name('sarana.sync');
+    Route::post('/sarana/delete', [DataMasterMedisController::class,'saranadelete'])->name('sarana.destroy');
+    Route::get('/sarana/export', [DataMasterMedisController::class, 'saranaexport'])->name('sarana.export');
+    Route::post('/sarana/import', [DataMasterMedisController::class, 'saranaimport'])->name('sarana.import');
 
     // Menu Spesialis
     Route::get('/spesialis', [DataMasterMedisController::class,'spesialis'])->name('spesialis.get');
@@ -344,8 +363,15 @@ Route::middleware('auth')->prefix('setting')->group(function () {
 
 });
 
+
+
 require __DIR__.'/auth.php';
 require __DIR__.'/user.php';
+
+
+
+
+
 
 
 

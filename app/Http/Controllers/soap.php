@@ -24,6 +24,9 @@ use App\Models\pelayanan_soap_dokter_tindakan;
 use App\Models\pelayanan_soap_perawat;
 use App\Models\perawatan_kategori;
 use App\Models\perawatan_tindakan;
+use App\Models\sarana;
+use App\Models\spesialis;
+use App\Models\subspesialis;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -511,14 +514,18 @@ class soap extends Controller
         }
         $umur .= $umurHari . ' Hari';
 
-        $gsc_eye = gcs_eye::all();
-        $gcs_verbal = gcs_verbal::all();
-        $gcs_motorik = gcs_motorik::all();
-        $gcs_kesadaran = gcs_kesadaran::all();
+        $sarana = sarana::all();
+        $spesialis = spesialis::all();
+        $subspesialis = subspesialis::all();
 
-        $htt_pemeriksaan = htt_pemeriksaan::all();
-        return view('module.pelayanan.pelayanan_rujuk', compact('title','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
+        return view('module.pelayanan.pelayanan_rujuk', compact('title','pelayanan','umur','sarana','spesialis','subspesialis'));
     }
+    public function getSubSpesialis($kode)
+    {
+        $subSpesialis = subspesialis::where('kode_spesialis', $kode)->get();
+        return response()->json($subSpesialis);
+    }
+
 }
 
 

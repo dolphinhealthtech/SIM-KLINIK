@@ -160,15 +160,17 @@
                                 <div class="row">
                                     <input type="hidden" class="form-control" id="kode_barang" name="kode_barang">
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group position-relative">
                                             <label for="nama_barang">Nama Barang</label>
-                                            <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan nama barang">
+                                            <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan Nama Barang" required>
+                                            <!-- Container untuk saran/suggestions -->
+                                            <div id="suggestions" class="list-group position-absolute w-100" style="z-index: 1000; display: none; max-height: 200px; overflow-y: auto;"></div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="kode_kfa">Kode KFA</label>
-                                            <input type="text" class="form-control" id="kode_kfa" name="kode_kfa" readonly value="001">
+                                            <label for="kfa_kode">Kode KFA</label>
+                                            <input type="text" class="form-control" id="kfa_kode" name="kfa_kode" placeholder="Kode KFA akan terisi otomatis" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -183,8 +185,8 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="industri_barang">Industri Barang</label>
-                                            <input type="text" class="form-control" id="industri_barang" name="industri_barang" readonly value="PT 123">
+                                            <label for="nama_industri_barang">Industri Barang</label>
+                                            <input type="text" class="form-control" id="nama_industri_barang" name="nama_industri_barang" placeholder="Industri Barang akan terisi otomatis" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -1024,4 +1026,125 @@
     });
 </script>
 
+<script>
+    $(document).ready(function () {
+        // Set a debounce timer untuk membatasi jumlah panggilan AJAX
+        let debounceTimer;
+
+        $('#nama_barang').on('input', function () {
+            const query = $(this).val().trim();
+
+            // Clear debounce timer jika user terus mengetik
+            clearTimeout(debounceTimer);
+
+            if (query.length > 2) { // Hanya cari jika minimal 3 karakter
+                // Set debounce time ke 300ms
+                debounceTimer = setTimeout(function () {
+                    // Gantilah __QUERY__ dengan variabel query
+                    let url = "{{ url('api/satusehat/kfa', ['nama' => '__QUERY__']) }}".replace('__QUERY__', query);
+
+                    // AJAX request untuk mengambil data
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        beforeSend: function() {
+                            // Tampilkan indikator loading
+                            $('#nama_barang').addClass('loading');
+                        },
+                        success: function (response) {
+                            $('#nama_barang').removeClass('loading');
+                            const responseData = response; // Response JSON
+                            displaySuggestions(responseData);
+                        },
+                        error: function (error) {
+                            $('#nama_barang').removeClass('loading');
+                            console.error("Error fetching data:", error);
+                            $('#suggestions').hide();
+                        }
+                    });
+                }, 300);
+            } else {
+                // Hide suggestions jika input terlalu pendek
+                $('#suggestions').hide();
+            }
+        });
+
+        // Function untuk menampilkan saran dalam dropdown
+        function displaySuggestions(responseData) {
+            $('#suggestions').empty(); // Bersihkan saran sebelumnya
+
+            // Jika `data` belum berupa array, tangani berdasarkan struktur
+            const items = responseData.data || []; // Gunakan response.data dengan aman
+
+            if (items.length > 0) {
+                items.forEach(item => {
+                    console.log(item);
+                    // Akses `item.name` atau sesuaikan berdasarkan struktur data aktual
+                    const fullName = item.name || "Item Tidak Dikenal"; // Akses name dengan aman
+                    const itemName = fullName.split(" (")[0]; // Ambil bagian sebelum tanda kurung
+                    const itemNamedisplay = item.product_template?.display_name || "Item Tidak Dikenal";
+                    const itemKfaCode = item.kfa_code || ""; // Akses kfa_code dengan aman
+                    const itemManufacturer = item.manufacturer || ""; // Akses manufacturer dengan aman
+
+                    const suggestionItem = $(`
+                        <a href="#" class="list-group-item list-group-item-action" 
+                           data-name="${itemNamedisplay}(${itemManufacturer})" 
+                           data-kfa="${itemKfaCode}" 
+                           data-idn="${itemManufacturer}">
+                            ${itemName} - ${itemManufacturer}
+                        </a>
+                    `);
+
+                    suggestionItem.on('click', function (e) {
+                        e.preventDefault();
+                        $('#nama_barang').val($(this).data('name'));
+                        $('#kfa_kode').val($(this).data('kfa')); // Set kfa_code di field KFA CODE
+                        $('#nama_industri_barang').val($(this).data('idn')); // Set manufacturer di field Industri Barang
+
+                        $('#suggestions').hide();
+                    });
+
+                    $('#suggestions').append(suggestionItem);
+                });
+                $('#suggestions').show();
+            } else {
+                $('#suggestions').hide();
+            }
+        }
+
+        // Sembunyikan saran jika diklik di luar
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('#nama_barang, #suggestions').length) {
+                $('#suggestions').hide();
+            }
+        });
+
+        // Tambahkan CSS untuk container saran
+        $('<style>')
+            .prop('type', 'text/css')
+            .html(`
+                #suggestions {
+                    border: 1px solid #ddd;
+                    border-top: none;
+                    border-radius: 0 0 4px 4px;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                    background-color: white;
+                }
+                #suggestions a:hover {
+                    background-color: #f8f9fa;
+                }
+                .loading {
+                    background-image: url('data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==');
+                    background-repeat: no-repeat;
+                    background-position: right 10px center;
+                }
+            `)
+            .appendTo('head');
+    });
+</script>
+
 @endsection
+
+
+
+
