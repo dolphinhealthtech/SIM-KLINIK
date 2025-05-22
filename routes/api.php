@@ -30,6 +30,7 @@ Route::get('/sub-pemeriksaan/{id}', [soap::class, 'getSubPemeriksaan']);
 Route::get('/alergi/by-jenis/{id}', [soap::class, 'getByJenis']);
 Route::get('/dokter/data/so/{norawat}', [soap::class,'soappelayanandata'])->name('pelayana_dokter_data.get');
 
+Route::get('/get-subspesialis/{kode}', [soap::class, 'getSubSpesialis']);
 
 
 Route::prefix('lokasi')->group(function(){
@@ -42,6 +43,7 @@ Route::prefix('satusehat')->group(function(){
     Route::get('/token', [SatusehatController::class, 'get_token'])->name('satusehat.token'); // di privat fungsi nya
     Route::get('/nik/{nomor}', [SatusehatController::class, 'get_nik_satusehat'])->name('satusehat.nik'); // di privat fungsi nya
     Route::get('/nik-practitioner/{nomor}', [SatusehatController::class, 'get_nik_practitioner_satusehat'])->name('satusehat.nik_practitione'); // di privat fungsi nya
+    Route::get('/kfa/{nama}', [SatusehatController::class, 'get_kfa_satusehat'])->name('satusehat.kfa'); // di privat fungsi nya
 });
 Route::prefix('pcare')->group(function () {
     // pcare
