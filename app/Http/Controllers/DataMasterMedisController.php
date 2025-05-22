@@ -12,6 +12,7 @@ use App\Exports\SpesialisExport;
 use App\Exports\SubspesialisExport;
 use App\Exports\Perawatan_kategoriExport;
 use App\Exports\Perawatan_tindakanExport;
+use App\Exports\SaranaExport;
 use App\Imports\Nama_MakananImport;
 use App\Imports\Jenis_DietImport;
 use App\Imports\Htt_pemeriksaanImport;
@@ -22,6 +23,7 @@ use App\Imports\SpesialisImport;
 use App\Imports\SubspesialisImport;
 use App\Imports\Perawatan_kategoriImport;
 use App\Imports\Perawatan_tindakanImport;
+use App\Imports\SaranaImport;
 use App\Models\alergi;
 use App\Models\jenis_diet;
 use App\Models\nama_makanan;
@@ -34,6 +36,7 @@ use App\Models\spesialis;
 use App\Models\subspesialis;
 use App\Models\perawatan_kategori;
 use App\Models\perawatan_tindakan;
+use App\Models\sarana;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -1263,4 +1266,92 @@ class DataMasterMedisController extends Controller
          Excel::import(new Icd9Import, $request->file('file'));
         return redirect()->route('icd9.get')->with('success', 'Data berhasil diimpor!');
     }
+
+    public function sarana()
+    {
+        $title = "Master Data Sarana";
+        $poli = sarana::all();
+        return view('module.master-data-medis.sarana', compact('title','poli'));
+    }
+
+    public function saranaadd()
+    {
+
+        $response = $this->PcareController->get_sarana_bpjs();
+        $data = json_decode($response->getContent(), true);
+        try {
+            // Simpan data ke database
+            foreach ($data['data'] as $item) {
+                sarana::updateOrCreate(
+                    [
+                        'kode' => $item['kdSarana'],
+                        'nama' => $item['nmSarana']
+                    ]
+                );
+            }
+
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Poli berhasil ditambahkan!'
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Poli Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Poli!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
+
+    public function saranadelete(Request $request)
+    {
+
+        $request->validate([
+            'poliid_delete' => 'required'
+        ]);
+
+        $poli = sarana::find($request->poliid_delete);
+
+        if (!$poli) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Poli tidak ditemukan!'
+            ], 404);
+        }
+
+        $poli->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Poli berhasil dihapus!'
+        ]);
+    }
+
+    public function saranaexport()
+    {
+        return Excel::download(new SaranaExport, 'Poli.xlsx');
+    }
+
+    public function saranaimport(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new SaranaImport, $request->file('file'));
+
+
+        return redirect()->route('sarana.get')->with('success', 'Data berhasil diimpor!');
+    }
+
+
 }

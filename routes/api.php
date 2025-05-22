@@ -18,7 +18,9 @@ Route::get('/get-pasien/{id}', [SuperadminController::class, 'getPasien']);
 Route::post('/get-pasien-nikornoka', [SuperadminController::class, 'cariNikNoka']);
 Route::post('/get-pasien-nikornama', [SuperadminController::class, 'cariNikNama']);
 Route::get('/get-dokter/{id}', [SuperadminController::class, 'getDokter']);
+Route::get('/get-staff/{id}', [SuperadminController::class, 'getStaff']);
 Route::get('/get-dokter-all/{id}', [SuperadminController::class, 'getDokterEdit']);
+Route::get('/get-staff-all/{id}', [SuperadminController::class, 'getStaffEdit']);
 Route::get('/jadwal/json/{id}', [SuperadminController::class, 'dokterjadwaljson']);
 Route::get('/get-dokter-by-poli/{id}', [SuperadminController::class, 'getByPoli']);
 Route::get('/generate-kode-data-barang', [SuperadminController::class, 'generateKodeDataBarang'])->name('generateKodeDataBarang');
@@ -58,6 +60,7 @@ Route::prefix('pcare')->group(function () {
     Route::get('/dpho/{nama}', [PcareController::class, 'get_dphoobat_bpjs'])->name('pcare.dpho');
     Route::get('/prognosa', [PcareController::class, 'get_prognosa_bpjs'])->name('pcare.prognosa');
     Route::get('/alergi/{kode}', [PcareController::class, 'get_alergi_bpjs'])->name('pcare.alergi');
+    Route::get('/sarana', [PcareController::class, 'get_sarana_bpjs'])->name('pcare.sarana');
 });
 
 // Data Master Medis

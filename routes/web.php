@@ -66,6 +66,15 @@ Route::prefix('dokter')->group(function () {
     Route::delete('/jadwal/hapus/{id}', [SuperadminController::class, 'dokterjadwalhapus']);
 });
 
+Route::prefix('staff')->group(function () {
+    // Menu Pasien
+    Route::get('/', [SuperadminController::class,'staff'])->name('staff.get');
+    Route::post('/add', [SuperadminController::class,'staffadd'])->name('staff.store');
+    Route::post('/delete', [SuperadminController::class,'staffdelete'])->name('staff.destroy');
+    Route::post('/verifikasi', [SuperadminController::class,'staffverifikasi'])->name('staff.verifikasi');
+    Route::post('/update', [SuperadminController::class,'staffedit'])->name('staff.update');
+});
+
 Route::prefix('pendaftaran')->group(function () {
     // Menu Pasien
     Route::get('/', [SuperadminController::class,'pendaftaran'])->name('pendaftaran.get');
@@ -194,6 +203,12 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::post('/poli/delete', [DataMasterMedisController::class,'polidelete'])->name('poli.destroy');
     Route::get('/poli/export', [DataMasterMedisController::class, 'poliexport'])->name('poli.export');
     Route::post('/poli/import', [DataMasterMedisController::class, 'poliimport'])->name('poli.import');
+
+    Route::get('/sarana', [DataMasterMedisController::class,'sarana'])->name('sarana.get');
+    Route::get('/sarana/sync', [DataMasterMedisController::class,'saranaadd'])->name('sarana.sync');
+    Route::post('/sarana/delete', [DataMasterMedisController::class,'saranadelete'])->name('sarana.destroy');
+    Route::get('/sarana/export', [DataMasterMedisController::class, 'saranaexport'])->name('sarana.export');
+    Route::post('/sarana/import', [DataMasterMedisController::class, 'saranaimport'])->name('sarana.import');
 
     // Menu Spesialis
     Route::get('/spesialis', [DataMasterMedisController::class,'spesialis'])->name('spesialis.get');
