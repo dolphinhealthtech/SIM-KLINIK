@@ -2278,9 +2278,6 @@ class SuperadminController extends Controller
 
     // Pembelian end
 
-
-
-
 public function cetakPembelianPdf($nomor_faktur)
 {
     // Ambil data pembelian
