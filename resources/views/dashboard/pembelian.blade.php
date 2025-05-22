@@ -405,14 +405,11 @@
                                                                         </select>
                                                                     <br><br><br><br><br><br>
                                                                     <div class="form-group row">
-                                                                        <div class="col-md-4">
+                                                                        <div class="col-md-6">
                                                                             <button type="button" class="btn btn-primary btn-block" onclick="stepper.previous()">Previous</button>
                                                                         </div>
-                                                                        <div class="col-md-4">
-                                                                            <button type="button" class="btn btn-warning btn-block" onclick="cetak_data()">Cetak</button>
-                                                                        </div>
-                                                                        <div class="col-md-4">
-                                                                            <button type="submit" class="btn btn-info btn-block"> Simpan </button>
+                                                                        <div class="col-md-6">
+                                                                            <button type="submit" id="btnSimpanCetak" class="btn btn-info btn-block">Simpan & Cetak</button>
                                                                         </div>
                                                                     </div>
                                                                     </div>
@@ -512,61 +509,86 @@
 
 {{-- SCRIPT ADD --}}
     <script>
-        $('#addFormpembelian').on('submit', function(e) {
-            e.preventDefault();
-
-            $.ajax({
-                url: $(this).attr('action'),
-                method: $(this).attr('method'),
-                data: $(this).serialize(),
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: response.message,
-                            showConfirmButton: true
-                        }).then(() => {
-                            location.reload(); // Reload halaman untuk update data
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: response.message
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    if (xhr.status === 422 && xhr.responseJSON.errors) {
-                        let errorList = '';
-
-                        // Hapus class 'is-invalid' dari semua input dulu (optional, biar bersih)
-                        $('#addFormpembelian').find('.is-invalid').removeClass('is-invalid');
-
-                        Object.entries(xhr.responseJSON.errors).forEach(([key, value]) => {
-                            errorList += `- ${value[0]}<br>`;
-                            $(`#${key}`).addClass('is-invalid'); // Tambahkan class error ke input
-                        });
-
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Validasi Gagal!',
-                            html: `Terdapat beberapa input yang belum valid:<br><br>${errorList}`,
-                        });
-                    } else {
-                        let errorMessage = "Terjadi kesalahan dalam menyimpan data!";
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
+        $(document).ready(function() {
+            // Tambahkan logging untuk debugging
+            console.log('Document ready, setting up form handler');
+            
+            // Tangani submit form dengan ID yang benar
+            $('#addFormpembelian').on('submit', function(e) {
+                e.preventDefault();
+                console.log('Form submitted');
+                
+                // Nonaktifkan tombol untuk mencegah klik ganda
+                $('#btnSimpanCetak').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Menyimpan...');
+                
+                // Ambil data form
+                var formData = $(this).serialize();
+                
+                // Kirim data ke server
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log('Success response:', response);
+                        
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: 'Data berhasil disimpan!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            
+                            // Buka PDF di tab baru tanpa mengganti URL saat ini
+                            setTimeout(function() {
+                                // Buka PDF di tab baru
+                                window.open('{{ url("/pembelian/cetak") }}/' + response.data.nomor_faktur, '_blank');
+                                
+                                // Reset form dan kembali ke awal
+                                $('#addFormpembelian')[0].reset();
+                                
+                                // Reset semua data
+                                resetAllData();
+                                
+                                // Ambil nomor faktur baru
+                                $.ajax({
+                                    url: '/api/generate-faktur-pembelian',
+                                    method: 'GET',
+                                    success: function(response) {
+                                        if (response.success) {
+                                            $('#nomor_faktur').val(response.kode_faktur);
+                                        }
+                                    }
+                                });
+                                
+                                // Reset stepper ke langkah pertama
+                                stepper.to(1);
+                                
+                                // Aktifkan kembali tombol simpan
+                                $('#btnSimpanCetak').prop('disabled', false).text('Simpan & Cetak');
+                            }, 1500);
+                        } else {
+                            $('#btnSimpanCetak').prop('disabled', false).text('Simpan & Cetak');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message || 'Terjadi kesalahan saat menyimpan data!'
+                            });
                         }
-
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error:', xhr.responseText);
+                        $('#btnSimpanCetak').prop('disabled', false).text('Simpan & Cetak');
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error!',
-                            text: errorMessage
+                            title: 'Error',
+                            text: 'Terjadi kesalahan saat menyimpan data!'
                         });
                     }
-                }
+                });
             });
         });
     </script>
@@ -656,9 +678,12 @@
         }
 
         $(document).ready(function() {
+            // Reset data awal
+            resetAllData();
+            
             // Ketika halaman atau modal terbuka, ambil nomor faktur terbaru
             $.ajax({
-                url: '/api/generate-faktur-pembelian', // Mengambil nomor faktur dari controller
+                url: '/api/generate-faktur-pembelian',
                 method: 'GET',
                 success: function(response) {
                     if (response.success) {
@@ -786,21 +811,46 @@
             const checkbox = document.getElementById("tanggal_terima_barangCheck");
             const input = document.getElementById("tanggal_terima_barang");
 
-            // Jika checkbox tidak dicentang, set input menjadi readonly dan set tanggal hari ini
+            // Selalu set tanggal hari ini sebagai default
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const yyyy = today.getFullYear();
+            const formattedDate = yyyy + '-' + mm + '-' + dd;  // Format: yyyy-mm-dd
+
+            // Set nilai tanggal hari ini
+            input.value = formattedDate;
+            
+            // Jika checkbox tidak dicentang, set input menjadi readonly
             if (!checkbox.checked) {
-                const today = new Date();
-                const dd = String(today.getDate()).padStart(2, '0');
-                const mm = String(today.getMonth() + 1).padStart(2, '0');
-                const yyyy = today.getFullYear();
-
-                const formattedDate = yyyy + '-' + mm + '-' + dd;  // Format: yyyy-mm-dd
-
+                // Tambahkan atribut readonly
                 input.setAttribute("readonly", true);
-                input.value = formattedDate;
-                input.blur();
+                
+                // Tambahkan class untuk styling (opsional)
+                input.classList.add("bg-light");
+                
+                // Nonaktifkan event click untuk mencegah date picker muncul
+                $(input).off('click').on('click', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
             } else {
+                // Hapus atribut readonly
                 input.removeAttribute("readonly");
-                input.value = '';
+                
+                // Hapus class styling (opsional)
+                input.classList.remove("bg-light");
+                
+                // Aktifkan kembali event click untuk memunculkan date picker
+                $(input).off('click').on('click', function() {
+                    this.showPicker();
+                });
+                
+                // Fokus ke input dan tampilkan date picker
+                setTimeout(function() {
+                    input.focus();
+                    input.showPicker();
+                }, 100);
             }
         }
 
@@ -871,6 +921,28 @@
                 hitungTotalKeseluruhan();
             });
         });
+
+       // Tambahkan fungsi cetak_data() di sini
+        function cetak_data() {
+            // Ambil nomor faktur
+            const nomorFaktur = $('#nomor_faktur').val();
+            
+            if (!nomorFaktur) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Nomor faktur tidak boleh kosong!'
+                });
+                return;
+            }
+            
+            // Buka halaman cetak PDF dengan download langsung
+            window.location.href = '{{ url("/pembelian/cetak") }}/' + nomorFaktur;
+        }
+
+        function toggleRowSelection(row) {
+            row.classList.toggle('selected-row');
+        }
 
         // Tambahkan CSS ke dalam head
         const style = document.createElement('style');
@@ -1224,9 +1296,72 @@
             $('#total_keseluruhan_input').val(total);
         }
 
-
+        // Fungsi untuk reset semua data
+        function resetAllData() {
+            // Kosongkan tabel
+            $('#dataTable tbody').empty();
+            
+            // Reset nilai perhitungan dan tampilan
+            $('#sub_total_keseluruhan').text('Rp 0');
+            $('#sub_total_keseluruhan_input').val(0);
+            $('#diskon_total_keseluruhan').text('Rp 0');
+            $('#diskon_total_keseluruhan_input').val(0);
+            $('#ppn_total_keseluruhan').text('Rp 0');
+            $('#ppn_total_keseluruhan_input').val(0);
+            $('#total_keseluruhan').text('Rp 0');
+            $('#total_keseluruhan_input').val(0);
+            
+            // Reset input form di langkah pertama
+            $('#tanggal_faktur').val('');
+            $('#tanggal_jatuh_tempo').val('');
+            $('#supplier').val('').trigger('change');
+            $('#pajak_ppn').val('0%');
+            
+            // Reset input form di langkah kedua
+            $('#materai').val('0').trigger('change');
+            $('#koreksi').val('0');
+            $('#penerima_barang').val('').trigger('change');
+            
+            // Reset semua input lainnya
+            $('#nama_obat_alkes').val('').trigger('change');
+            $('#nilai_satuan_kecil').val('');
+            $('#harga_satuan_kecil').val('');
+            $('#diskon_persen').val('');
+            $('#diskon_rupiah').val('');
+            $('#tgl_expired').val('');
+            $('#no_batch').val('');
+            
+            // Reset data JSON
+            $('#data_json_tabel').val('[]');
+            
+            // Pastikan checkbox tidak tercentang
+            $('input[type="checkbox"]').prop('checked', false);
+            
+            // Reset semua pesan error jika ada
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').hide();
+            
+            // Reset semua elemen select2 jika digunakan
+            if ($.fn.select2) {
+                $('select.select2').val(null).trigger('change');
+            }
+            
+            // Jika ada elemen lain yang perlu direset di langkah kedua
+            // tambahkan di sini
+        }
     </script>
 
 
 
 @endsection
+
+
+
+
+
+
+
+
+
+
+
