@@ -47,7 +47,17 @@
                         </div>
                         <div class="col-md-5">
                             <button class="btn btn-info mr-2">Panggil</button>
-                            <button class="btn btn-info mr-2">Auto</button>
+                            <button class="btn btn-info mr-2" onclick="belibebas()">Auto</button>
+
+                            <!-- Icon i dengan tooltip -->
+                            <span
+                                class="ml-1"
+                                data-toggle="tooltip"
+                                title="Opsi Auto untuk penjualan obat langsung"
+                                style="cursor: pointer; color: #17a2b8;"
+                            >
+                                <i class="fas fa-info-circle"></i>
+                            </span>
                         </div>
                     </div>
 
@@ -84,25 +94,18 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <input type="text" class="form-control" id="faktur_apotek" name="faktur_apotek" value="JANGAN LUPA SCRIPT AUTO" readonly>
+                            <input type="text" class="form-control" id="faktur_apotek" name="faktur_apotek" readonly>
                         </div>
                         <div class="col-md-1">
                             <label>Dokter</label>
                         </div>
                         <div class="col-md-4">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <input type="checkbox" id="is_dokter">
-                                    </div>
-                                </div>
-                                <select class="form-control" id="dokter" name="dokter">
-                                    <option value="" disabled selected>Pilih Dokter</option>
-                                    @foreach ($dokter as $dokterData)
-                                        <option value="{{ $dokterData->namauser->name }}">{{ $dokterData->namauser->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <select class="form-control" id="dokter" name="dokter">
+                                <option value="" disabled selected>Pilih Dokter</option>
+                                @foreach ($dokter as $dokterData)
+                                    <option value="{{ $dokterData->namauser->name }}">{{ $dokterData->namauser->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 
@@ -117,6 +120,7 @@
                         <div class="col-md-2">
                             <select class="form-control select2bs4" id="poli" name="poli">
                                 <option value="" disabled selected>Pilih Poli</option>
+                                <option value="APS">APS</option>
                                 @foreach ($poli as $poliData)
                                     <option value="{{ $poliData->nama }}">{{ $poliData->nama }}</option>
                                 @endforeach
@@ -152,6 +156,7 @@
                                 <h3 class="card-title">Form Resep</h3>
                             </div>
                             <div class="card-body p-3">
+                                <input type="hidden" id="tabel_apotek_harga_hidden" name="tabel_apotek_harga_hidden">
                                 <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 300px;">
                                     <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                                         <table class="table" id="tabel_apotek_harga" style="border: none;">
@@ -177,13 +182,13 @@
                                         <div class="col-md-7">
                                             <div class="row mb-3">
                                                 <div class="col-md-1">
-                                                    <button class="btn btn-info btn-sm rounded-circle">R/</button>
+                                                    <button class="btn btn-info btn-sm rounded-circle">R:/</button>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <label>Barang :</label>
                                                 </div>
                                                 <div class="col-md-9">
-                                                    <select class="form-control" id="barang_bebas" name="barang_bebas">
+                                                    <select class="form-control" id="barang_tambahan" name="barang_tambahan">
                                                         <option value="" disabled selected>Pilih Obat / Alkes</option>
                                                         @foreach ($stok as $stokData)
                                                             <option value="{{ $stokData->nama_obat_alkes }}" data-kode="{{ $stokData->kode_obat_alkes}}">
@@ -200,7 +205,7 @@
                                                     <label>Qty :</label>
                                                 </div>
                                                 <div class="col-md-9">
-                                                    <input type="number" class="form-control" id="qty">
+                                                    <input type="number" class="form-control" id="qty_tambahan" name="qty_tambahan">
                                                 </div>
                                             </div>
 
@@ -212,7 +217,7 @@
                                                 <div class="col-md-9">
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <input type="text" class="form-control" id="harga_barang_bebas" name="harga_barang_bebas">
+                                                            <input type="text" class="form-control" id="harga_tambahan" name="harga_tambahan">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -221,8 +226,8 @@
                                             <div class="row">
                                                 <div class="col-md-3"></div>
                                                 <div class="col-md-9">
-                                                    <button class="btn btn-info mr-2">Tambah</button>
-                                                    <button class="btn btn-info">Hapus</button>
+                                                    <button class="btn btn-info mr-2" onclick="tambahanData()">Tambah</button>
+                                                    <button class="btn btn-info" onclick="hapusBarisTerpilih()">Hapus</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -237,7 +242,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="nilai_embis_input" name="nilai_embis_input">
+                                                        <input type="text" class="form-control" id="nilai_embis_input" name="nilai_embis_input" value="0" placeholder="Masukan nilai embis poin">
                                                         <div class="input-group-append">
                                                             <span class="input-group-text">(Poin)</span>
                                                         </div>
@@ -333,7 +338,7 @@
                                             <label>Jumlah:</label>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" class="form-control" id="jumlah_r" name="jumlah_r">
+                                            <input type="text" class="form-control" id="jumlah_r" name="jumlah_r" placeholder="Masukan kuantitas r">
                                         </div>
                                     </div>
 
@@ -342,7 +347,7 @@
                                             <label>Note:</label>
                                         </div>
                                         <div class="col-md-9">
-                                            <input type="text" class="form-control" id="note">
+                                            <input type="text" class="form-control" id="note_apotek" name="note_apotek">
                                         </div>
                                     </div>
 
@@ -374,7 +379,7 @@
                         <button type="button" class="btn btn-secondary mr-2" onclick="showStep1()">
                             <i class="fas fa-arrow-left"></i> Kembali
                         </button>
-                        <button type="button" class="btn btn-success">
+                        <button type="button" class="btn btn-success" onclick="postData()">
                             <i class="fas fa-check"></i> Selesai
                         </button>
                     </div>
@@ -444,6 +449,13 @@
 </div>
 
 {{-- SCRIPT GLOBAL --}}
+    <style>
+    .selected-row {
+        background-color: #003366 !important;
+        color: white;
+    }
+    </style>
+
     <script>
         function showStep1() {
             document.getElementById('step1').style.display = 'block';
@@ -464,6 +476,42 @@
     <script>
         let semuaResepObj = {};
         const embalasePoin = {{ $embalase ?? 0 }};
+
+        function hapusBarisTerpilih() {
+            const tableBody = document.querySelector('#tabel_apotek_harga tbody');
+            const selectedRow = tableBody.querySelector('.selected-row');
+
+            if (!selectedRow) {
+                Swal.fire('Peringatan', 'Pilih baris yang ingin dihapus.', 'warning');
+                return;
+            }
+
+            selectedRow.remove();
+
+            // Reorder nomor dan update ulang JSON
+            tableBody.querySelectorAll('tr').forEach((tr, index) => {
+                tr.cells[0].textContent = index + 1;
+            });
+
+            // Update data JSON di hidden input
+            const dataJsonArray = [];
+            tableBody.querySelectorAll('tr').forEach(tr => {
+                const tds = tr.querySelectorAll('td');
+                dataJsonArray.push({
+                    nama: tds[1].textContent,
+                    kode: tds[2].textContent,
+                    harga: parseInt(tds[3].textContent.replace(/[Rp.\s]/g, '')),
+                    qty: parseInt(tds[4].textContent),
+                    total: parseInt(tds[5].textContent.replace(/[Rp.\s]/g, ''))
+                });
+            });
+
+            document.getElementById('tabel_apotek_harga_hidden').value = JSON.stringify(dataJsonArray);
+
+            hitungTotalHargaKeseluruhan();
+            updateTotal();
+        }
+
 
         //HITUNG TOTAL
         function updateTotal() {
@@ -498,7 +546,6 @@
                 $('#embalase_total_hidden').trigger('change');
             });
         });
-
 
         //HITUNG SUB TOTAL
         function hitungTotalHargaKeseluruhan() {
@@ -602,11 +649,6 @@
                     confirmButtonText: 'Tutup'
                 });
 
-                const tbody = document.querySelector('#tabel_apotek_harga tbody');
-
-                // Kosongkan tabel sebelum isi ulang (optional, tergantung kebutuhan)
-                tbody.innerHTML = '';
-
                 // Masukkan ke tabel
                 insertResepToTable(allResepText.trim().replace(/\|\s*$/, '')); // buang | terakhir
             });
@@ -656,6 +698,8 @@
             Promise.all(promises).then(results => {
                 results.sort((a, b) => a.index - b.index);
 
+                const dataJsonArray = [];
+
                 results.forEach(({ index, nama, kuantitas, kode, harga }) => {
                     // 1. Bersihkan harga dari prefix dan titik
                     const hargaBersih = parseInt((harga || '0').replace(/[Rp.\s]/g, ''));
@@ -685,9 +729,31 @@
                         <td>${jumlahFormatted}</td>
                     `;
                     tbody.appendChild(row);
+
+                    // Simpan data mentah ke array JSON
+                    dataJsonArray.push({
+                        nama: nama,
+                        kode: kode,
+                        harga: hargaBersih,
+                        qty: kuantitas,
+                        total: jumlah
+                    });
+
                     hitungTotalHargaKeseluruhan();
                     updateTotal();
                 });
+
+                // Simpan array sebagai JSON string ke input hidden
+                document.getElementById('tabel_apotek_harga_hidden').value = JSON.stringify(dataJsonArray);
+
+                tbody.querySelectorAll('tr').forEach(row => {
+                    row.addEventListener('click', function () {
+                        tbody.querySelectorAll('tr').forEach(r => r.classList.remove('selected-row'));
+                        this.classList.add('selected-row');
+                    });
+                });
+
+                console.log(JSON.stringify(dataJsonArray));
             });
 
 
@@ -715,6 +781,37 @@
             document.getElementById('penjamin').value = penjamin;
             document.getElementById('resep').value = "RESEP";
             $('#poli').val(poli).trigger('change');
+
+            if (document.getElementById('resep').value === 'RESEP') {
+                // Contoh AJAX untuk generate kode faktur
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Memuat...',
+                    text: 'Mengambil kode faktur',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                $.ajax({
+                    url: '/api/apotek/kodeFaktur',
+                    method: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function (response) {
+                        Swal.close();
+                        $('#faktur_apotek').val(response.kode || '');
+                    },
+                    error: function () {
+                        Swal.close();
+                        Swal.fire('Gagal', 'Gagal mengambil kode faktur.', 'error');
+                        $('#faktur_apotek').val('');
+                    }
+                });
+            } else {
+                // Kalau selain RESEP, kosongkan input faktur
+                $('#faktur_apotek').val('');
+            }
 
             // Step 1: decode unicode escape
             const decodedUnicode = JSON.parse(resepObatRaw);
@@ -804,32 +901,229 @@
                 prefix: "Rp ",
                 rightAlign: false,
                 removeMaskOnSubmit: true
-            }).mask("#harga_barang_bebas");
+            }).mask("#harga_tambahan");
         });
 
+    //NARIK HARGA DI BARANG TAMBAHAN
         $(document).ready(function () {
-            $('#barang_bebas').on('change', function () {
+            $('#barang_tambahan').on('change', function () {
                 var kode = $(this).find(':selected').data('kode');
+                var penjamin = $('#penjamin').val(); // ambil nilai penjamin
 
-                if (!kode) return;
+                if (!kode || !penjamin) return;
+
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Memuat...',
+                    text: 'Mengambil harga barang',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
 
                 $.ajax({
                     url: '/api/apotek/hargaBebas',
                     method: 'POST',
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'),
-                        kode: kode
+                        kode: kode,
+                        penjamin: penjamin
                     },
                     success: function (response) {
-                        $('#harga_barang_bebas').val(response.harga || 0);
+                        $('#harga_tambahan').val(response.harga || 0);
+                        Swal.close();
                     },
                     error: function () {
-                        alert('Gagal mengambil harga.');
-                        $('#harga_barang_bebas').val(0);
+                        Swal.close();
+                        Swal.fire('Gagal', 'Gagal mengambil harga.', 'error');
+                        $('#harga_tambahan').val(0);
                     }
                 });
             });
         });
+
+    //BUTTON BELI BEBAS
+        function belibebas() {
+            $('#nama').val('Beli Bebas / APS');
+            $('#resep').val('BELI BEBAS').trigger('change');
+            $('#poli').val('APS').trigger('change');
+            $('#penjamin').val('UMUM').trigger('change');
+
+            // Tampilkan loading swal
+            Swal.fire({
+                icon: 'info',
+                title: 'Memuat...',
+                text: 'Mengambil data Beli Bebas',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            // Promise untuk generate no_rm
+            const getNoRm = $.ajax({
+                url: '/api/apotek/BeliBebas',
+                method: 'GET'
+            });
+
+            // Promise untuk generate kode_faktur
+            const getKodeFaktur = $.ajax({
+                url: '/api/apotek/KodeFakturBeliBebas',
+                method: 'GET'
+            });
+
+            // Jalankan kedua AJAX dan tunggu hasilnya
+            Promise.all([getNoRm, getKodeFaktur])
+                .then(function ([noRmResponse, kodeFakturResponse]) {
+                    $('#no_rm').val(noRmResponse.no_rm || '');
+                    $('#faktur_apotek').val(kodeFakturResponse.kode_faktur || '');
+                    Swal.close(); // Tutup loading
+                })
+                .catch(function () {
+                    Swal.close();
+                    Swal.fire('Gagal', 'Gagal mengambil data beli bebas.', 'error');
+                    $('#no_rm').val('');
+                    $('#faktur_apotek').val('');
+                });
+        }
+
+    // TAMBAH DATA MANUAL
+        function tambahanData() {
+            const barangSelect = document.getElementById('barang_tambahan');
+            const qtyInput = document.getElementById('qty_tambahan').value;
+            const hargaInput = document.getElementById('harga_tambahan').value;
+
+            const nama = barangSelect.options[barangSelect.selectedIndex].text;
+            const kode = barangSelect.options[barangSelect.selectedIndex].getAttribute('data-kode');
+
+            // Bersihkan format harga: hapus 'Rp', titik ribuan, dan spasi
+            const hargaBersih = parseFloat(hargaInput.replace(/[Rp.\s]/g, '').replace(',', '.')) || 0;
+
+            // Pastikan qty berupa angka
+            const qty = parseInt(qtyInput) || 0;
+
+            // Validasi
+            if (!kode || qty <= 0 || hargaBersih <= 0) {
+                Swal.fire('Peringatan', 'Pastikan semua data terisi dengan benar.', 'warning');
+                return;
+            }
+
+            const total = hargaBersih * qty;
+
+            // Dapatkan elemen tbody dan hitung jumlah baris
+            const tableBody = document.querySelector('#tabel_apotek_harga tbody');
+            const rowCount = tableBody.rows.length + 1;
+
+            // Format angka ke format lokal (Indonesia)
+            const formatRupiah = (angka) => angka.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+
+            // Tambahkan baris ke tabel
+            const row = `
+                <tr>
+                    <td>${rowCount}</td>
+                    <td>${nama}</td>
+                    <td>${kode}</td>
+                    <td>Rp ${formatRupiah(hargaBersih)}</td>
+                    <td>${qty}</td>
+                    <td>Rp ${formatRupiah(total)}</td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML('beforeend', row);
+
+            // Event klik baris untuk seleksi
+            tableBody.querySelectorAll('tr').forEach(row => {
+                row.addEventListener('click', function () {
+                    tableBody.querySelectorAll('tr').forEach(r => r.classList.remove('selected-row'));
+                    this.classList.add('selected-row');
+                });
+            });
+
+            // Reset input
+            $('#barang_tambahan').val('').trigger('change');
+            $('#qty_tambahan').val('');
+            $('#harga_tambahan').val('');
+
+            hitungTotalHargaKeseluruhan();
+            updateTotal();
+
+            const dataJsonArray = [];
+            document.querySelectorAll('#tabel_apotek_harga tbody tr').forEach(tr => {
+                const tds = tr.querySelectorAll('td');
+                const item = {
+                    nama: tds[1].textContent,
+                    kode: tds[2].textContent,
+                    harga: parseInt(tds[3].textContent.replace(/[Rp.\s]/g, '')),
+                    qty: parseInt(tds[4].textContent),
+                    total: parseInt(tds[5].textContent.replace(/[Rp.\s]/g, ''))
+                };
+                dataJsonArray.push(item);
+            });
+
+            document.getElementById('tabel_apotek_harga_hidden').value = JSON.stringify(dataJsonArray);
+
+            console.log(JSON.stringify(dataJsonArray));
+        }
+    </script>
+
+{{-- KIRIM DATABASE --}}
+    <script>
+        function postData() {
+            const data = {
+                _token: '{{ csrf_token() }}',
+                no_rawat: $('#no_rawat').val(),
+                no_rm: $('#no_rm').val(),
+                nama: $('#nama').val(),
+                alamat: $('#alamat').val(),
+                resep: $('#resep').val(),
+                faktur_apotek: $('#faktur_apotek').val(),
+                dokter: $('#dokter').val(),
+                poli: $('#poli').val(),
+                penjamin: $('#penjamin').val(),
+                nilai_embis_input: $('#nilai_embis_input').val(),
+                sub_total_hidden: $('#sub_total_hidden').val(),
+                embalase_total_hidden: $('#embalase_total_hidden').val(),
+                total_hidden: $('#total_hidden').val(),
+                note_apotek: $('#note_apotek').val(),
+                tabel_apotek_harga_hidden: $('#tabel_apotek_harga_hidden').val()
+            };
+
+            $.ajax({
+                url: '/apotek/add',
+                method: 'POST',
+                data: data,
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: response.message || 'Data berhasil disimpan!',
+                        confirmButtonColor: '#3085d6',
+                    }).then(() => {
+                        location.reload(); // Reload halaman untuk update data
+                    });
+                },
+                error: function (xhr) {
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        let errorText = Object.values(errors).map(err => `- ${err.join(', ')}`).join('<br>');
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Validasi Gagal',
+                            html: errorText,
+                            confirmButtonColor: '#f39c12',
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Terjadi kesalahan saat mengirim data!',
+                            confirmButtonColor: '#d33',
+                        });
+                    }
+                }
+            });
+        }
     </script>
 
 

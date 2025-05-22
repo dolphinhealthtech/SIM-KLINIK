@@ -43,6 +43,7 @@ return new class extends Migration
             $table->longText('summernote5')->nullable();
             $table->longText('summernote4')->nullable();
             $table->string('files')->nullable();
+            $table->string('status_apotek');
             $table->timestamps();
         });
     }
