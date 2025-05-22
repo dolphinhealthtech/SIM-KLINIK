@@ -93,15 +93,20 @@
                                               <div id="Subyektif-part" class="content" role="tabpanel" aria-labelledby="Subyektif-part-trigger">
                                                 <div class="form-group row">
                                                     <div class="col-md-12">
-                                                        <label for="eye">EYE</label>
-                                                        <select class="form-control select2bs4" style="width: 100%;" id="eye" name="eye">
+                                                        <label for="jenis_rujukan">Jenis Rujukan</label>
+                                                        <select class="form-control select2bs4" id="jenis_rujukan" name="jenis_rujukan">
                                                             <option value="" disabled selected>-- Pilih --</option>
+                                                            <option value="sehat">Sehat</option>
+                                                            <option value="sakit">Sakit</option>
+
                                                         </select>
                                                     </div>
                                                     <div class="col-md-12">
-                                                        <label for="verbal">VERBAL</label>
-                                                        <select class="form-control select2bs4" style="width: 100%;" id="verbal" name="verbal">
+                                                        <label for="tujuan_rujukan">Tujukan Rujukan</label>
+                                                        <select class="form-control select2bs4" id="tujuan_rujukan" name="tujuan_rujukan">
                                                             <option value="" disabled selected>-- Pilih --</option>
+                                                            <option value="verti">vertikal</option>
+                                                            <option value="horizontal">Horizontal</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -110,7 +115,14 @@
 
                                               {{-- setp ke 2 --}}
                                               <div id="Obyektif-part" class="content" role="tabpanel" aria-labelledby="Obyektif-part-trigger">
-
+                                                <div class="form-group row">
+                                                    <div class="col-md-12">
+                                                        <label for="opsi_rujukan">Opsi Rujukan</label>
+                                                        <select class="form-control select2bs4" id="opsi_rujukan" name="opsi_rujukan">
+                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
 
                                                 <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
                                                 <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
@@ -118,6 +130,72 @@
 
                                               {{-- step ke 3 --}}
                                               <div id="htt-part" class="content" role="tabpanel" aria-labelledby="htt-part-trigger">
+                                                <div id="input_rujukan_khusus" style="display:none; ">
+                                                    <label>Input Rujukan Khusus:</label>
+                                                    <input type="text" class="form-control" name="input_khusus" placeholder="Masukkan data Rujukan Khusus">
+                                                </div>
+
+                                                <div id="input_spesialis" style="display:none;">
+                                                    <div class="form-group row">
+                                                        <div class="col-md-12">
+                                                            <label for="sarana">Sarana</label>
+                                                            <select id="sarana" name="sarana" id="sarama" class="form-control select2bs4">
+                                                                <option value="" disabled selected>-- Pilih Sarana --</option>
+                                                                <option value="tidak ada">tidak ada </option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <label for="kategori_rujukan">Kategori Rujukan</label>
+                                                            <select id="kategori_rujukan" name="kategori_rujukan" class="form-control select2bs4">
+                                                            <option value="" disabled selected>-- Pilih Kategori --</option>
+                                                                <option value="-1">Tanpa Alasan</option>
+                                                                <option value="1">Time</option>
+                                                                <option value="2">Age</option>
+                                                                <option value="3">Complication</option>
+                                                                <option value="4">Comorbidity</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <label for="alasan_rujukan">Alasan Rujukan Spesialis</label>
+                                                            <input type="text" id="alasan_rujukan" name="alasan_rujukan" class="form-control" placeholder="Masukkan alasan rujukan" />
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <label for="spesialis">Spesialis</label>
+                                                            <select id="spesialis" name="spesialis" class="form-control select2bs4">
+                                                            <option value="" disabled selected>-- Pilih Spesialis --</option>
+                                                            <option value="kardiologi">Kardiologi</option>
+                                                            <option value="neurologi">Neurologi</option>
+                                                            <option value="ortopedi">Ortopedi</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <label for="sub_spesialis">Sub Spesialis</label>
+                                                            <select id="sub_spesialis" name="sub_spesialis" class="form-control select2bs4" disabled>
+                                                            <option value="" disabled selected>-- Pilih Sub Spesialis --</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <label for="tanggal_rujukan">Tanggal Rujukan</label>
+                                                            <input type="date" id="tanggal_rujukan" name="tanggal_rujukan" class="form-control" />
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <label for="tujuan_rujukan_spesialis">Tujuan Rujukan</label>
+                                                            <select id="tujuan_rujukan_spesialis" name="tujuan_rujukan_spesialis" class="form-control select2bs4" disabled>
+                                                            <option value="" disabled selected>-- Pilih Tujuan Rujukan --</option>
+                                                            <option value="rs_a">RS A</option>
+                                                            <option value="rs_b">RS B</option>
+                                                            <option value="klinik_c">Klinik C</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
 
                                                 <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
                                                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -137,6 +215,76 @@
         </section>
     <!-- /.content -->
 </div>
+
+
+<script>
+$(document).ready(function() {
+  // Step 1: update tujuan_rujukan saat jenis_rujukan berubah
+  $('#jenis_rujukan').on('change', function() {
+    const jenisValue = $(this).val();
+    console.log('Jenis rujukan berubah:', jenisValue);
+
+    const tujuanSelect = $('#tujuan_rujukan');
+    tujuanSelect.empty().append('<option value="" disabled selected>-- Pilih --</option>');
+
+    if (jenisValue === 'sehat') {
+      tujuanSelect.append('<option value="develop" disabled selected>Develop</option>');
+    } else if (jenisValue === 'sakit') {
+      tujuanSelect.append('<option value="horizontal">Horizontal</option>');
+      tujuanSelect.append('<option value="vertikal">Vertikal</option>');
+    }
+
+    tujuanSelect.trigger('change.select2');
+
+    // Bersihkan opsi rujukan di step 2 tiap kali jenis_rujukan berubah
+    $('#opsi_rujukan').empty().append('<option value="" disabled selected>-- Pilih --</option>').trigger('change.select2');
+  });
+
+  // Step 2: update opsi_rujukan saat tujuan_rujukan berubah
+  $('#tujuan_rujukan').on('change', function() {
+    const tujuanValue = $(this).val();
+    console.log('Tujuan rujukan berubah:', tujuanValue);
+
+    const opsiSelect = $('#opsi_rujukan');
+    opsiSelect.empty().append('<option value="" disabled selected>-- Pilih --</option>');
+
+    if (tujuanValue === 'vertikal') {
+      opsiSelect.append('<option value="rujukan_khusus">Rujukan Khusus</option>');
+      opsiSelect.append('<option value="spesialis">Spesialis</option>');
+    } else if (tujuanValue === 'horizontal') {
+      // Contoh opsi lain jika perlu, atau kosongkan
+      opsiSelect.append('<option value="opsi_horizontal_1">Pelayanan Tindakan Non-Kapitasi</option>');
+      opsiSelect.append('<option value="opsi_horizontal_2">Pelayanan Laboratorium</option>');
+      opsiSelect.append('<option value="opsi_horizontal_3">Pelayanan Program</option>');
+      opsiSelect.append('<option value="opsi_horizontal_4">Rujukan Kacamata</option>');
+    }
+
+    opsiSelect.trigger('change.select2');
+  });
+
+  $('#opsi_rujukan').on('change', function() {
+    const val = $(this).val();
+    console.log('Opsi rujukan dipilih:', val);
+
+    // Hide semua form input dulu
+    $('#input_rujukan_khusus, #input_spesialis').hide();
+
+    // Tampilkan sesuai pilihan
+    if(val === 'rujukan_khusus') {
+      $('#input_rujukan_khusus').show();
+    } else if(val === 'spesialis') {
+      $('#input_spesialis').show();
+    }
+  });
+
+});
+
+</script>
+
+
+
+
+
 
 
 {{-- BS-Stepper --}}
