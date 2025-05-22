@@ -2278,6 +2278,9 @@ class SuperadminController extends Controller
 
     // Pembelian end
 
+
+
+
 public function cetakPembelianPdf($nomor_faktur)
 {
     // Ambil data pembelian
@@ -2316,6 +2319,12 @@ public function kasir()
 {
     $title = "Kasir";
     return view('dashboard.kasir', compact('title'));
+}
+
+public function kasirDetail()
+{
+    $title = "Detail Pembayaran Kasir";
+    return view('dashboard.kasir_detail', compact('title'));
 }
 
 
