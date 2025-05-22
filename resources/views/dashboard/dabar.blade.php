@@ -1028,6 +1028,29 @@
 
 <script>
     $(document).ready(function () {
+        // Simpan data form saat berpindah step
+        let formData = {
+            nama_barang: '',
+            kfa_kode: '',
+            nama_industri_barang: ''
+        };
+        
+        // Simpan data saat tombol next diklik
+        $(document).on('click', '.btn-next, button[onclick="stepper.next()"]', function() {
+            formData.nama_barang = $('#nama_barang').val();
+            formData.kfa_kode = $('#kfa_kode').val();
+            formData.nama_industri_barang = $('#nama_industri_barang').val();
+        });
+        
+        // Kembalikan data saat tombol previous diklik
+        $(document).on('click', '.btn-prev, button[onclick="stepper.previous()"]', function() {
+            setTimeout(function() {
+                $('#nama_barang').val(formData.nama_barang);
+                $('#kfa_kode').val(formData.kfa_kode);
+                $('#nama_industri_barang').val(formData.nama_industri_barang);
+            }, 100); // Delay sedikit untuk memastikan step sudah berubah
+        });
+        
         // Set a debounce timer untuk membatasi jumlah panggilan AJAX
         let debounceTimer;
 
@@ -1078,17 +1101,19 @@
 
             if (items.length > 0) {
                 items.forEach(item => {
-                    console.log(item);
                     // Akses `item.name` atau sesuaikan berdasarkan struktur data aktual
                     const fullName = item.name || "Item Tidak Dikenal"; // Akses name dengan aman
                     const itemName = fullName.split(" (")[0]; // Ambil bagian sebelum tanda kurung
-                    const itemNamedisplay = item.product_template?.display_name || "Item Tidak Dikenal";
+                    const itemNamedisplay = item.product_template?.display_name || fullName;
                     const itemKfaCode = item.kfa_code || ""; // Akses kfa_code dengan aman
                     const itemManufacturer = item.manufacturer || ""; // Akses manufacturer dengan aman
+                    
+                    // Format nama barang dengan industri dalam tanda kurung
+                    const displayName = `${itemName} (${itemManufacturer})`;
 
                     const suggestionItem = $(`
                         <a href="#" class="list-group-item list-group-item-action" 
-                           data-name="${itemNamedisplay}(${itemManufacturer})" 
+                           data-name="${displayName}" 
                            data-kfa="${itemKfaCode}" 
                            data-idn="${itemManufacturer}">
                             ${itemName} - ${itemManufacturer}
@@ -1097,9 +1122,14 @@
 
                     suggestionItem.on('click', function (e) {
                         e.preventDefault();
-                        $('#nama_barang').val($(this).data('name'));
+                        $('#nama_barang').val($(this).data('name')); // Menggunakan nama barang dengan format "nama (industri)"
                         $('#kfa_kode').val($(this).data('kfa')); // Set kfa_code di field KFA CODE
                         $('#nama_industri_barang').val($(this).data('idn')); // Set manufacturer di field Industri Barang
+                        
+                        // Simpan data ke formData saat item dipilih
+                        formData.nama_barang = $(this).data('name');
+                        formData.kfa_kode = $(this).data('kfa');
+                        formData.nama_industri_barang = $(this).data('idn');
 
                         $('#suggestions').hide();
                     });
@@ -1129,21 +1159,35 @@
                     border-radius: 0 0 4px 4px;
                     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                     background-color: white;
+                    position: absolute;
+                    width: 100%;
+                    z-index: 1000;
+                    max-height: 200px;
+                    overflow-y: auto;
                 }
                 #suggestions a:hover {
                     background-color: #f8f9fa;
                 }
                 .loading {
-                    background-image: url('data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==');
+                    background-image: url('data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==');
                     background-repeat: no-repeat;
                     background-position: right 10px center;
                 }
             `)
             .appendTo('head');
+            
+        // Tambahkan div suggestions jika belum ada
+        if ($('#suggestions').length === 0) {
+            $('#nama_barang').after('<div id="suggestions" class="list-group" style="display: none;"></div>');
+        }
     });
 </script>
 
 @endsection
+
+
+
+
 
 
 
