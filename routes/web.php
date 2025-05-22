@@ -46,6 +46,7 @@ Route::post('/monitor/add/nobpjs', [SuperadminController::class,'monitor_nobpjs'
 
 // menu apotek
 Route::get('/apotek', [SuperadminController::class, 'apotek'])->middleware(['auth'])->name('apotek.index');
+Route::post('/apotek/add', [SuperadminController::class, 'apotekadd'])->name('apotek.store');
 
 Route::prefix('pasien')->group(function () {
     // Menu Pasien

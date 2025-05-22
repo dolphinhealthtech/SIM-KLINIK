@@ -39,6 +39,7 @@ class pelayanan_soap_dokter extends Model
         'summernote5',
         'summernote4',
         'files',
+        'status_apotek',
     ];
     protected $casts = [
         'tableData' => 'array', // Mengonversi kolom JSON menjadi array

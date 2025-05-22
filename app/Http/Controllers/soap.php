@@ -383,6 +383,7 @@ class soap extends Controller
                 'summernote2' => $request->summernote2,
                 'summernote4' => $request->summernote4,
                 'summernote5' => $request->summernote5,
+                'status_apotek' => '0',
             ]);
 
             // Simpan tindakan

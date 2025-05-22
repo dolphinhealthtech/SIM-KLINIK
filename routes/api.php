@@ -80,7 +80,14 @@ Route::prefix('data-master-gudang')->group(function(){
 });
 
 //Apotek
+//Apotek
 Route::prefix('apotek')->group(function(){
+    //RESEP
+    Route::post('/kodeFaktur', [SuperadminController::class, 'getKodeFaktur'])->name('apotek.getKodeFaktur');
     Route::post('/kodeObat', [SuperadminController::class, 'getKodeObat'])->name('apotek.getKodeObat');
     Route::post('/hargaBebas', [SuperadminController::class, 'hargaBebas'])->name('apotek.hargaBebas');
+
+    //BELI BEBAS
+    Route::get('/BeliBebas', [SuperadminController::class, 'getBeliBebas'])->name('apotek.getBeliBebas');
+    Route::get('/KodeFakturBeliBebas', [SuperadminController::class, 'getKodeFakturBeliBebas'])->name('apotek.getKodeFakturBeliBebas');
 });
