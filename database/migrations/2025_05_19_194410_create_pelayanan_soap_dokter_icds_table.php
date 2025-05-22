@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('pelayanan_soap_dokter_icds', function (Blueprint $table) {
             $table->id();
+            $table->string('nomor_rm');
+            $table->string('nama');
+            $table->string('no_rawat');
+            $table->string('sex');
+            $table->string('penjamin');
+            $table->date('tanggal_lahir');
+            $table->string('nama_icd10')->nullable();
+            $table->string('kode_icd10')->nullable();
+            $table->string('priority_icd10')->nullable();
+            $table->string('nama_icd9')->nullable();
+            $table->string('kode_icd9')->nullable();
+            $table->string('priority_icd9')->nullable();
             $table->timestamps();
         });
     }

@@ -48,6 +48,7 @@ use App\Models\pembelian_details;
 use App\Models\gudang_setting_harga;
 use App\Models\gudang_barang_harga;
 use App\Models\gudang_barang_stok;
+use App\Models\pelayanan_soap_dokter;
 use App\Exports\Gudang_barangExport;
 use App\Imports\Gudang_barangImport;
 use App\Models\external_database;
@@ -2278,12 +2279,7 @@ class SuperadminController extends Controller
     // Pembelian end
 
 
-// Tambahkan metode apotek ke SuperadminController
-public function apotek()
-{
-    $title = "Apotek";
-    return view('dashboard.apotek', compact('title'));
-}
+
 
 public function cetakPembelianPdf($nomor_faktur)
 {
@@ -2326,5 +2322,71 @@ public function kasir()
 }
 
 
+    // Apotek
+
+    public function apotek()
+    {
+        $title = "Apotek";
+
+        $data_soap = pelayanan_soap_dokter::with('resep','pendaftaran','pasien')->get();
+        $dokter = dokter::with('namauser')->get();
+        $poli = poli::all();
+        $penjamin = penjamin::all();
+        $embalase = gudang_setting_harga::value('embalase_poin');
+        $stok_raw = gudang_barang_stok::selectRaw('MAX(id) as id')
+                ->groupBy('kode_obat_alkes')
+                ->pluck('id');
+
+        $stok = gudang_barang_stok::whereIn('id', $stok_raw)->get();
+
+        return view('dashboard.apotek', compact('title','data_soap','dokter','poli','penjamin','embalase','stok'));
+    }
+
+    public function getKodeObat(Request $request)
+    {
+        $nama = $request->input('nama');
+        $penjamin = $request->input('penjamin');
+
+        // Cari berdasarkan nama_obat_alkes
+        $data = DB::table('gudang_barang_hargas')
+            ->where('nama_obat_alkes', $nama)
+            ->first();
+
+        $query = DB::table('gudang_barang_hargas')
+            ->where('nama_obat_alkes', $nama);
+
+        if ($penjamin === 'BPJS') {
+            // Ambil nilai max dari harga_jual_1
+            $harga_jual = $query->max('harga_jual_1');
+        } elseif ($penjamin === 'ASURANSI') {
+            // Ambil nilai max dari harga_jual_2
+            $harga_jual = $query->max('harga_jual_2');
+        } elseif ($penjamin === 'UMUM') {
+            // Ambil nilai max dari harga_jual_3
+            $harga_jual = $query->max('harga_jual_3');
+        } else {
+            // Default ambil max harga_jual_3
+            $harga_jual = $query->max('harga_jual_3');
+        }
+
+        // $harga_jual sekarang adalah nilai tertinggi sesuai penjamin
+
+        return response()->json([
+            'kode' => $data->kode_obat_alkes ?? null,
+            'harga' => $harga_jual ?? null
+        ]);
+    }
+
+    public function hargaBebas(Request $request)
+    {
+        $kode = $request->kode;
+
+        $harga = gudang_barang_harga::where('kode_obat_alkes', $kode)->value('harga_jual_3');
+
+        return response()->json(['harga' => $harga]);
+    }
+
+
+    // Apotek End
 }
 

@@ -46,4 +46,8 @@ class Pendaftaran_rawat_jalan extends Model
         return $this->belongsTo(penjamin::class, 'Penjamin');
     }
 
+    public function soap_dokter()
+    {
+        return $this->hasOne(pelayanan_soap_dokter::class, 'no_rawat', 'nomor_register');
+    }
 }
