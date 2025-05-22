@@ -28,4 +28,9 @@ class apotek extends Model
         'user_input_id',
         'user_input_name',
     ];
+
+    public function detail()
+    {
+        return $this->hasMany(apotek_prebayar::class, 'kode_faktur', 'kode_faktur');
+    }
 }

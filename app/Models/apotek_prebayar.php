@@ -21,4 +21,10 @@ class apotek_prebayar extends Model
         'user_input_id',
         'user_input_name',
     ];
+
+    public function apotek()
+    {
+        return $this->belongsTo(apotek::class, 'kode_faktur', 'kode_faktur');
+    }
+
 }
