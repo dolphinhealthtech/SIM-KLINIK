@@ -152,10 +152,9 @@
                                                             <label for="subspesialis_khusus">Subspesialis Khusus</label>
                                                             <select id="subspesialis_khusus" name="subspesialis_khusus" class="form-control select2bs4" disabled>
                                                                 <option value="" disabled selected>-- Pilih Subspesialis Khusus --</option>
-                                                                <option value="penyakit_dalam">Penyakit Dalam</option>
-                                                                <option value="hematologi_onkologi_medik">Hematologi-Onkologi Medik</option>
-                                                                <option value="anak">Anak</option>
-                                                                <option value="anak_hematologi_onkologi">Anak Hematologi-Onkologi</option>
+                                                                @foreach ($subspesialis as $subspesialisdata)
+                                                                    <option value="{{ $subspesialisdata->kode }}">{{ $subspesialisdata->nama }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                         <div class="col-md-6">
@@ -188,13 +187,16 @@
                                                                 <label class="custom-control-label" for="aktifkan_sarana">Aktifkan Pilihan Sarana</label>
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <!-- Sarana (hidden by default) -->
                                                         <div class="col-md-12" id="sarana_container" style="display:none;">
                                                             <label for="sarana">Sarana</label>
                                                             <select id="sarana" name="sarana" class="form-control select2bs4">
                                                                 <option value="" disabled selected>-- Pilih Sarana --</option>
                                                                 <option value="tidak ada">tidak ada </option>
+                                                                @foreach ($sarana as $saranadata)
+                                                                    <option value="{{ $saranadata->kode }}">{{ $saranadata->nama }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
 
@@ -219,9 +221,9 @@
                                                             <label for="spesialis">Spesialis</label>
                                                             <select id="spesialis" name="spesialis" class="form-control select2bs4">
                                                             <option value="" disabled selected>-- Pilih Spesialis --</option>
-                                                            <option value="kardiologi">Kardiologi</option>
-                                                            <option value="neurologi">Neurologi</option>
-                                                            <option value="ortopedi">Ortopedi</option>
+                                                            @foreach ($spesialis as $spesialisdata)
+                                                                    <option value="{{ $spesialisdata->kode }}">{{ $spesialisdata->nama }}</option>
+                                                            @endforeach
                                                             </select>
                                                         </div>
 
@@ -246,7 +248,7 @@
                                                             <option value="klinik_c">Klinik C</option>
                                                             </select>
                                                         </div>
-                                                        
+
                                                         <!-- Tombol Cari Provider -->
                                                         <div class="col-md-12 mt-3">
                                                             <button type="button" class="btn btn-primary" id="cari_provider_spesialis">
@@ -256,7 +258,7 @@
                                                     </div>
                                                 </div>
 
-                                                
+
 
 
                                                 <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
@@ -277,6 +279,32 @@
         </section>
     <!-- /.content -->
 </div>
+
+<script>
+$(document).ready(function() {
+    $('#spesialis').on('change', function() {
+        var kodeSpesialis = $(this).val();
+
+        if (kodeSpesialis) {
+            $.ajax({
+                url: '/api/get-subspesialis/' + kodeSpesialis,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#sub_spesialis').empty().append('<option selected disabled>-- Pilih Sub Spesialis --</option>');
+                    $.each(data, function(key, value) {
+                        $('#sub_spesialis').append('<option value="' + value.kode + '">' + value.nama + '</option>');
+                    });
+                    $('#sub_spesialis').prop('disabled', false);
+                }
+            });
+        } else {
+            $('#sub_spesialis').empty().append('<option selected disabled>-- Pilih Sub Spesialis --</option>');
+            $('#sub_spesialis').prop('disabled', true);
+        }
+    });
+});
+</script>
 
 
 <script>
@@ -343,7 +371,7 @@ $(document).ready(function() {
   $('#igd_rujukan_khusus').on('change', function() {
     const tujuanValue = $(this).val();
     const subspesialisSelect = $('#subspesialis_khusus');
-    
+
     // Cek apakah tujuan adalah THA atau HEM
     if (tujuanValue === 'THA' || tujuanValue === 'HEM') {
       // Enable subspesialis khusus
@@ -375,7 +403,7 @@ $(document).ready(function() {
   $('#kategori_rujukan').on('change', function() {
     const kategoriValue = $(this).val();
     const alasanInput = $('#alasan_rujukan');
-    
+
     if(!kategoriValue || kategoriValue === '' || kategoriValue === '-1') { // Belum dipilih atau Tanpa Alasan
       alasanInput.prop('disabled', true);
       alasanInput.val('');
@@ -388,13 +416,13 @@ $(document).ready(function() {
   $('#spesialis').on('change', function() {
     const spesialisValue = $(this).val();
     const subSpesialisSelect = $('#sub_spesialis');
-    
+
     if(spesialisValue && spesialisValue !== '') {
       subSpesialisSelect.prop('disabled', false);
-      
+
       // Clear existing options except the first one
       subSpesialisSelect.find('option:not(:first)').remove();
-      
+
       // Add sub-spesialis options based on selected spesialis
       if(spesialisValue === 'kardiologi') {
         subSpesialisSelect.append('<option value="kardiologi_intervensi">Kardiologi Intervensi</option>');
@@ -406,7 +434,7 @@ $(document).ready(function() {
         subSpesialisSelect.append('<option value="ortopedi_spine">Ortopedi Spine</option>');
         subSpesialisSelect.append('<option value="ortopedi_trauma">Ortopedi Trauma</option>');
       }
-      
+
       subSpesialisSelect.trigger('change.select2');
     } else {
       subSpesialisSelect.prop('disabled', true);
