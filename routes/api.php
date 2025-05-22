@@ -78,3 +78,9 @@ Route::prefix('data-master-gudang')->group(function(){
     Route::get('/utama/getHargaDasar/{kode_obat}', [DataMasterGudangController::class, 'getHargaDasar'])->name('utama.getHargaDasar');
     Route::post('/utama/proses-permintaan', [DataMasterGudangController::class, 'prosesPermintaan'])->name('utama.prosesPermintaan');
 });
+
+//Apotek
+Route::prefix('apotek')->group(function(){
+    Route::post('/kodeObat', [SuperadminController::class, 'getKodeObat'])->name('apotek.getKodeObat');
+    Route::post('/hargaBebas', [SuperadminController::class, 'hargaBebas'])->name('apotek.hargaBebas');
+});
