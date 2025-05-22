@@ -58,6 +58,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Database\Connectors\ConnectionFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class SuperadminController extends Controller
 {
@@ -761,7 +763,9 @@ class SuperadminController extends Controller
             "alamat" => 'required|string|max:255',
             "noka" => 'nullable',
             "noihs" => 'required',
+
             "jenis_kartu" => 'nullable|string',
+
             "kelas" => 'nullable|string',
             "provide" => 'nullable|string',
             "tgl_exp_bpjs" => 'nullable|date',
@@ -2280,5 +2284,47 @@ public function apotek()
     $title = "Apotek";
     return view('dashboard.apotek', compact('title'));
 }
+
+public function cetakPembelianPdf($nomor_faktur)
+{
+    // Ambil data pembelian
+    $pembelian = pembelian::where('nomor_faktur', $nomor_faktur)->first();
+    
+    // Ambil detail pembelian
+    $details = pembelian_details::where('nomor_faktur', $nomor_faktur)->get();
+    
+    // Pastikan data numerik dikonversi dengan benar
+    foreach ($details as $detail) {
+        // Bersihkan format mata uang jika ada
+        $detail->harga_satuan = is_numeric($detail->harga_satuan) ? $detail->harga_satuan : 
+            floatval(str_replace(['Rp', '.', ','], ['', '', '.'], $detail->harga_satuan));
+        
+        // Hitung diskon
+        $diskonValue = 0;
+        if (strpos($detail->diskon, '%') !== false) {
+            // Jika diskon dalam persen
+            $diskonPersen = floatval(str_replace('%', '', $detail->diskon));
+            $diskonValue = ($detail->harga_satuan * $detail->qty) * ($diskonPersen / 100);
+        } elseif (strpos($detail->diskon, 'Rp') !== false) {
+            // Jika diskon dalam rupiah
+            $diskonValue = floatval(str_replace(['Rp', '.', ','], ['', '', '.'], $detail->diskon));
+        }
+        
+        // Hitung subtotal setelah diskon
+        $detail->sub_total = ($detail->harga_satuan * $detail->qty) - $diskonValue;
+    }
+    
+    // Tampilkan PDF
+    $pdf = PDF::loadView('pdf.pembelian', compact('pembelian', 'details'));
+    return $pdf->stream('pembelian-'.$nomor_faktur.'.pdf');
+}
+
+public function kasir()
+{
+    $title = "Kasir";
+    return view('dashboard.kasir', compact('title'));
+}
+
+
 }
 

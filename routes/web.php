@@ -25,6 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route untuk Kasir
+Route::get('/kasir', [SuperadminController::class, 'kasir'])->name('kasir');
+Route::get('/kasir_detail', [App\Http\Controllers\SuperadminController::class, 'kasirDetail'])->name('kasir.detail');
 
 //Menu Data Barang (Obat)
 Route::get('/data-barang', [SuperadminController::class,'dabar'])->name('dabar.get');
@@ -39,6 +42,7 @@ Route::post('/data-barang/import', [SuperadminController::class, 'dabarimport'])
 //Menu Pembelian Barang
 Route::get('/pembelian', [SuperadminController::class, 'pembelian'])->name('pembelian.get');
 Route::post('/pembelian/add', [SuperadminController::class, 'pembelianadd'])->name('pembelian.add');
+Route::get('/pembelian/cetak/{nomor_faktur}', [SuperadminController::class, 'cetakPembelianPdf'])->name('pembelian.cetak');
 
 Route::get('/monitor', [SuperadminController::class,'monitor'])->name('monitor.get');
 Route::post('/monitor/add/bpjs', [SuperadminController::class,'monitor_bpjs'])->name('monitor.add.bpjs');
@@ -341,8 +345,15 @@ Route::middleware('auth')->prefix('setting')->group(function () {
 
 });
 
+
+
 require __DIR__.'/auth.php';
 require __DIR__.'/user.php';
+
+
+
+
+
 
 
 
