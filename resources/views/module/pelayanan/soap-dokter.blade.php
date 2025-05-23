@@ -2147,7 +2147,7 @@
                                     fetch("https://cloud.flowiseai.com/api/v1/prediction/663a90e4-cfe1-4b54-b78e-5a44bc2c2794", {
                                         method: "POST",
                                         headers: {
-                                            Authorization: "Bearer Nmh-j3f6wL2ebBFhZdBzlKM0m_nTmL5Y544F7e2LQ0o",
+                                            Authorization: "Bearer CPJaa0Sj6M-jG2JGDpm2jp2pIH44R1Z3AJHNQs_5EGY",
                                             "Content-Type": "application/json"
                                         },
                                         body: JSON.stringify({ question: question })
