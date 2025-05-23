@@ -2181,16 +2181,59 @@
                                                             white-space: pre-wrap;
                                                             word-wrap: break-word;
                                                             font-size: 14px;
+                                                            border: 1px solid #ccc;
+                                                            padding: 10px;
+                                                            background-color: #fff;
+                                                        }
+                                                        button.copy-btn {
+                                                            margin-top: 10px;
+                                                            padding: 8px 12px;
+                                                            background-color: #4CAF50;
+                                                            color: white;
+                                                            border: none;
+                                                            border-radius: 4px;
+                                                            cursor: pointer;
+                                                        }
+                                                        button.copy-btn:hover {
+                                                            background-color: #45a049;
                                                         }
                                                     </style>
                                                 </head>
                                                 <body>
                                                     <h2>💡 Jawaban dari Dolphi AI</h2>
-                                                    <pre>${answer}</pre>
+                                                    <pre id="answer">${answer}</pre>
+                                                    <button class="copy-btn" id="copyBtn">📋 Salin Jawaban</button>
                                                 </body>
                                             </html>
                                         `);
+
                                         popupWindow.document.close();
+
+                                        // Tambahkan script copy setelah dokumen selesai dimuat
+                                        popupWindow.onload = function () {
+                                            popupWindow.document.getElementById('copyBtn').onclick = function () {
+                                                const text = popupWindow.document.getElementById('answer').innerText;
+
+                                                // Fallback method using textarea and execCommand
+                                                const textArea = popupWindow.document.createElement('textarea');
+                                                textArea.value = text;
+                                                popupWindow.document.body.appendChild(textArea);
+                                                textArea.select();
+                                                try {
+                                                    const successful = popupWindow.document.execCommand('copy');
+                                                    if (successful) {
+                                                        popupWindow.alert('Jawaban berhasil disalin!');
+                                                    } else {
+                                                        popupWindow.alert('Gagal menyalin jawaban.');
+                                                    }
+                                                } catch (err) {
+                                                    popupWindow.alert('Gagal menyalin jawaban: ' + err);
+                                                }
+                                                popupWindow.document.body.removeChild(textArea);
+                                            };
+                                        };
+
+
                                     })
                                     .catch(error => {
                                         Swal.fire('Error', 'Gagal mengambil jawaban dari AI: ' + error.message, 'error');
