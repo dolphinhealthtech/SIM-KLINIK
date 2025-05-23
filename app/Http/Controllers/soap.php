@@ -486,10 +486,29 @@ class soap extends Controller
         return response()->json($data);
     }
 
-    public function dataLrawatJalan()
+    public function dataLrawatJalan($norawat)
     {
-        $title = "SOAP Rawat Jalan";
-        return view('module.pelayanan.soap_rawat_jalan', compact('title'));
+        $nomor_rawat = base64_decode($norawat);
+        $title = "Data RME";
+        $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien.kelamin','pendaftaran.penjamin')->where('nomor_register', $nomor_rawat)->first();
+
+        $tgl_lahir = Carbon::createFromFormat('Y-m-d', $pelayanan->pasien->tanggal_lahir);
+        $diff = $tgl_lahir->diff(Carbon::now());
+
+        $umurTahun = $diff->y;
+        $umurBulan = $diff->m;
+        $umurHari = $diff->d;
+
+        $umur = '';
+        if ($umurTahun > 0) {
+            $umur .= $umurTahun . ' Tahun ';
+        }
+        if ($umurBulan > 0 || $umurTahun > 0) {
+            $umur .= $umurBulan . ' Bulan ';
+        }
+        $umur .= $umurHari . ' Hari';
+
+        return view('module.pelayanan.pelayanan_rme', compact('title','pelayanan','umur',));
     }
 
     public function pelayana_rujukan($norawat)

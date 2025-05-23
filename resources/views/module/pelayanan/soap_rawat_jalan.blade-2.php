@@ -22,7 +22,7 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-           
+
 
             <!-- Kode yang sudah ada untuk SOAP Steps -->
             <div class="row">
@@ -35,11 +35,11 @@
                         <div class="card-body">
                             <!-- Brand Logo dari sidebar dengan path yang diubah ke public/profile/default.png -->
                             <div class="text-center mb-4">
-                                <img src="{{ asset('profile/default.png') }}" 
-                                    alt="Klinik Logo" class="img-circle elevation-2" 
+                                <img src="{{ asset('profile/default.png') }}"
+                                    alt="Klinik Logo" class="img-circle elevation-2"
                                     style="width: 100px; height: 100px; opacity: .8">
                             </div>
-                            
+
                             <!-- Input tanggal dan jam yang simpel tapi bagus -->
                             <div class="row">
                                 <div class="col-md-6">
@@ -70,18 +70,18 @@
                             $(document).ready(function() {
                                 // Set current date and time as default
                                 var now = new Date();
-                                
+
                                 // Format date as YYYY-MM-DD for the date input
                                 var year = now.getFullYear();
                                 var month = ("0" + (now.getMonth() + 1)).slice(-2);
                                 var day = ("0" + now.getDate()).slice(-2);
                                 var formattedDate = year + "-" + month + "-" + day;
-                                
+
                                 // Format time as HH:MM for the time input
                                 var hours = ("0" + now.getHours()).slice(-2);
                                 var minutes = ("0" + now.getMinutes()).slice(-2);
                                 var formattedTime = hours + ":" + minutes;
-                                
+
                                 // Set the values
                                 $('#tanggal').val(formattedDate);
                                 $('#jam').val(formattedTime);
@@ -132,27 +132,27 @@
                                 <label for="id_rawat">Id Rawat</label>
                                 <input type="text" class="form-control bg-light" id="id_rawat" value="2025/04/10/001" readonly>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="nomor_rm">No. RM</label>
                                 <input type="text" class="form-control bg-light" id="nomor_rm" value="000001" readonly>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="nama">Nama Pasien</label>
                                 <input type="text" class="form-control bg-light" id="nama" value="RAHMADI IBRAHIM" readonly>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="jenis_kelamin">Jenis Kelamin</label>
                                 <input type="text" class="form-control bg-light" id="jenis_kelamin" value="Laki-laki" readonly>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="penjamin">Penjamin</label>
                                 <input type="text" class="form-control bg-light" id="penjamin" value="umum" readonly>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -193,11 +193,10 @@
                                 </li>
                             </ul>
                         </div>
-
-                        <div class="card-body">
                     <div class="tab-content" id="custom-tabs-content">
                     </div>
                 </div>
+
                         <div class="card-body">
                             <div class="tab-content" id="mainTabContent">
                                 <!-- Timeline Tab -->
@@ -217,7 +216,7 @@
                                                 <span class="timeline-time">08:15</span>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="timeline-item">
                                             <div class="timeline-icon bg-info">
                                                 <i class="fas fa-stethoscope text-white"></i>
@@ -228,7 +227,7 @@
                                                 <span class="timeline-time">08:30</span>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="timeline-item">
                                             <div class="timeline-icon bg-success">
                                                 <i class="fas fa-user-md text-white"></i>
@@ -239,7 +238,7 @@
                                                 <span class="timeline-time">09:15</span>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Timeline item 2 -->
                                         <div class="timeline-date">
                                             <span class="badge badge-danger">17 May 2025</span>
@@ -254,7 +253,7 @@
                                                 <span class="timeline-time">10:30</span>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="timeline-item">
                                             <div class="timeline-icon bg-info">
                                                 <i class="fas fa-stethoscope text-white"></i>
@@ -265,7 +264,7 @@
                                                 <span class="timeline-time">10:45</span>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="timeline-item">
                                             <div class="timeline-icon bg-success">
                                                 <i class="fas fa-user-md text-white"></i>
@@ -276,7 +275,7 @@
                                                 <span class="timeline-time">11:20</span>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="timeline-item">
                                             <div class="timeline-icon bg-warning">
                                                 <i class="fas fa-pills text-white"></i>
@@ -287,7 +286,7 @@
                                                 <span class="timeline-time">11:45</span>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="timeline-item">
                                             <div class="timeline-icon bg-danger">
                                                 <i class="fas fa-money-bill text-white"></i>
@@ -299,12 +298,12 @@
                                                 <span class="timeline-time">14:55</span>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Timeline line -->
                                         <div class="timeline-line"></div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- CPPT Tab -->
                                 <div class="tab-pane fade" id="cppt" role="tabpanel" aria-labelledby="cppt-tab">
                                     <div class="table-responsive">
@@ -341,17 +340,17 @@
                                         </table>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Laporan Tab -->
                                 <div class="tab-pane fade show active" id="laporan" role="tabpanel" aria-labelledby="laporan-tab">
                                     <form id="formLaporan">
                                         <!-- Struktur navigasi yang lebih rapi -->
                                         <div class="card mb-4">
-                                            
+
                                             <div class="card-body p-0">
                                                 <!-- Progress Bar -->
                                                 <div class="progress mb-0" style="height: 8px; border-radius: 0;">
-                                                    <div id="progress-bar" class="progress-bar bg-secondary progress-bar-striped progress-bar-animated" 
+                                                    <div id="progress-bar" class="progress-bar bg-secondary progress-bar-striped progress-bar-animated"
                                                          role="progressbar" style="width: 12.5%" aria-valuenow="12.5" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
                                             </div>
@@ -432,7 +431,7 @@
                                                         <label class="form-check-label" for="nyeri_ya">Ya, Jelaskan P:</label>
                                                         <input type="text" class="form-control form-control-sm ml-2" style="width: 300px;">
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-2">Q:</div>
                                                         <div class="col-md-10"><input type="text" class="form-control"></div>
@@ -449,7 +448,7 @@
                                                         <div class="col-md-2">T:</div>
                                                         <div class="col-md-10"><input type="text" class="form-control"></div>
                                                     </div>
-                                                    
+
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="card">
@@ -469,7 +468,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mt-3">
                                                         <div class="col-md-6">
                                                             <p><strong>P</strong>: Provoke (pencetus, faktor yang mempengaruhi/gawat tidaknya, atau beratnya nyeri)</p>
@@ -851,7 +850,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-12">
                                                             <div class="form-check form-check-inline">
@@ -880,7 +879,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-check form-check-inline">
@@ -939,7 +938,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">Penggunaan alat bantu diri</div>
                                                         <div class="col-md-9">
@@ -961,7 +960,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">Pasien tinggal di</div>
                                                         <div class="col-md-9">
@@ -984,7 +983,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row">
                                                         <div class="col-md-3">Bantuan yang dibutuhkan pasien</div>
                                                         <div class="col-md-9">
@@ -1044,7 +1043,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">Hambatan edukasi</div>
                                                         <div class="col-md-9">
@@ -1066,7 +1065,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">Metode edukasi</div>
                                                         <div class="col-md-9">
@@ -1084,7 +1083,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">Respon pasien/keluarga</div>
                                                         <div class="col-md-9">
@@ -1117,113 +1116,7 @@
         </div>
     </section>
 </div>
-<!-- Add proper spacing before footer -->
-<div style="margin-bottom: 60px;"></div>
-</div>
-<!-- End of content-wrapper -->
 
-<style>
-    /* Footer styling with minimal margin-top */
-    .main-footer {
-        position: relative;
-        bottom: 0;
-        width: 100%;
-        background-color: #fff;
-        border-top: 1px solid #dee2e6;
-        margin-top: 5px; /* Reduced from 15px to 5px */
-    }
-    
-    /* Remove fixed positioning and adjust spacing */
-    body {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    /* Make content take available space with minimal padding */
-    .content-wrapper {
-        flex: 1;
-        padding-bottom: 5px; /* Reduced from 10px to 5px */
-    }
-    
-    /* DataTables specific adjustments */
-    .dataTables_scrollBody {
-        min-height: 200px;
-        max-height: 70vh;
-    }
-    
-    /* Fix for DataTables FixedHeader plugin */
-    .dtfh-floatingparenthead {
-        top: 0 !important;
-    }
-    
-    .dtfh-floatingparentfoot {
-        bottom: 0 !important;
-    }
-    
-    /* Timeline styling remains the same */
-    .timeline-container {
-        position: relative;
-        padding: 20px 0;
-    }
-    
-    .timeline-line {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 20px;
-        width: 4px;
-        background-color: #e9ecef;
-        z-index: 0;
-    }
-    
-    .timeline-date {
-        margin-left: 45px;
-        margin-bottom: 15px;
-    }
-    
-    .timeline-date .badge {
-        font-size: 14px;
-        padding: 5px 10px;
-    }
-    
-    .timeline-item {
-        position: relative;
-        margin-bottom: 30px;
-        margin-left: 45px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    }
-    
-    .timeline-icon {
-        position: absolute;
-        left: -45px;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 40px;
-    }
-    
-    .timeline-content {
-        padding: 15px;
-    }
-    
-    .timeline-content h4 {
-        margin-top: 0;
-        font-size: 16px;
-        font-weight: 600;
-    }
-    
-    .timeline-time {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        color: #6c757d;
-        font-size: 12px;
-    }
-</style>
 
 <script>
     $(function() {
@@ -1248,7 +1141,7 @@
         }
         return 'step-a'; // Default ke step pertama jika tidak ada yang terlihat
     }
-    
+
     // Fungsi untuk navigasi antar step
     function navigateTo(fromStep, toStep) {
         // Sembunyikan step saat ini
@@ -1257,7 +1150,7 @@
             currentStepElement.style.display = 'none';
             currentStepElement.style.opacity = '0';
         }
-        
+
         // Tampilkan step tujuan
         var nextStepElement = document.getElementById(toStep);
         if (nextStepElement) {
@@ -1268,13 +1161,13 @@
             }, 50);
         }
     }
-    
+
     // Fungsi untuk navigasi ke step berikutnya
     function navigateNext() {
         var currentStep = getCurrentStep();
         var steps = ['step-a', 'step-b', 'step-c', 'step-d', 'step-e', 'step-f', 'step-g', 'step-h'];
         var currentIndex = steps.indexOf(currentStep);
-        
+
         if (currentIndex < steps.length - 1) {
             var nextStep = steps[currentIndex + 1];
             navigateTo(currentStep, nextStep);
@@ -1286,19 +1179,19 @@
             // document.getElementById('form-soap').submit();
         }
     }
-    
+
     // Fungsi untuk navigasi ke step sebelumnya
     function navigateBack() {
         var currentStep = getCurrentStep();
         var steps = ['step-a', 'step-b', 'step-c', 'step-d', 'step-e', 'step-f', 'step-g', 'step-h'];
         var currentIndex = steps.indexOf(currentStep);
-        
+
         if (currentIndex > 0) {
             var prevStep = steps[currentIndex - 1];
             navigateTo(currentStep, prevStep);
         }
     }
-    
+
     // Inisialisasi saat halaman dimuat
     document.addEventListener('DOMContentLoaded', function() {
         // Tampilkan hanya step pertama saat halaman dimuat
@@ -1315,7 +1208,7 @@
                 }
             }
         });
-        
+
         // Tambahkan CSS untuk transisi
         var style = document.createElement('style');
         style.innerHTML = `
@@ -1324,7 +1217,7 @@
             }
         `;
         document.head.appendChild(style);
-        
+
         // Ubah teks tombol Next menjadi Selesai pada step terakhir
         var stepH = document.querySelector('#step-h .btn-next');
         if (stepH) {
@@ -1333,70 +1226,6 @@
     });
 </script>
 
-<!-- CSS untuk Timeline -->
-<style>
-    .timeline-container {
-        position: relative;
-        padding: 20px 0;
-    }
-    
-    .timeline-line {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 20px;
-        width: 4px;
-        background-color: #e9ecef;
-        z-index: 0;
-    }
-    
-    .timeline-date {
-        margin-left: 45px;
-        margin-bottom: 15px;
-    }
-    
-    .timeline-date .badge {
-        font-size: 14px;
-        padding: 5px 10px;
-    }
-    
-    .timeline-item {
-        position: relative;
-        margin-bottom: 30px;
-        margin-left: 45px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    }
-    
-    .timeline-icon {
-        position: absolute;
-        left: -45px;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 40px;
-    }
-    
-    .timeline-content {
-        padding: 15px;
-    }
-    
-    .timeline-content h4 {
-        margin-top: 0;
-        font-size: 16px;
-        font-weight: 600;
-    }
-    
-    .timeline-time {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        color: #6c757d;
-        font-size: 12px;
-    }
-</style>
 
 <script>
     $(function() {

@@ -718,6 +718,23 @@
                 $('#motorik').val(data.motorik).trigger('change');
 
                 $('#summernote').summernote('code', data.summernote);
+
+                // Ambil konten lama dari Summernote
+                let oldContent = $('#summernote5').summernote('code');
+
+                // Konversi konten HTML ke plain text (untuk pengecekan baris)
+                let oldText = $('<div>').html(oldContent).text().trim();
+
+                // Siapkan teks tambahan
+                let newText = dataArray.map(item => {
+                return `${item.penyakit} sejak ${item.durasi} ${item.waktu}`;
+                }).join('\n');
+
+                // Tambahkan ke bawah konten lama (jika ada)
+                let finalText = oldText ? oldText + '\n' + newText : newText;
+
+                // Masukkan kembali ke Summernote
+                $('#summernote5').summernote('code', finalText.replace(/\n/g, '<br>'));
             }
         });
     }
@@ -766,7 +783,12 @@
         const signaSatuan2 = $("#signa-satuan2").val();
 
         if (!nama) {
-        alert("Pilih nama obat!");
+        Swal.fire({
+            icon: 'warning',
+            title: 'Oops...',
+            text: 'Pilih nama obat!',
+            confirmButtonText: 'OK'
+        });
         return;
         }
 
@@ -957,13 +979,23 @@
             const isEditing = $(this).data('edit-index') === 'editing';
 
             if (isNaN(kategoriId) || isNaN(tindakanId) || !pelaksana) {
-                alert('Lengkapi semua input!');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Semua kolom harus diisi!',
+                    confirmButtonText: 'OK'
+                });
                 return;
             }
 
             const tindakanData = perawatanTindakan.find(t => t.id === tindakanId);
             if (!tindakanData) {
-                alert('Tindakan tidak valid!');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Tindakan tidak valid!',
+                    confirmButtonText: 'OK'
+                });
                 return;
             }
 
@@ -1081,7 +1113,12 @@
         const pantang = document.getElementById("makananPantangan").value;
 
         if (!jenis || !anjur || !pantang) {
-            alert("Mohon lengkapi semua pilihan!");
+            Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Mohon lengkapi semua pilihan!',
+                    confirmButtonText: 'OK'
+            });
             return;
         }
 
@@ -1178,9 +1215,28 @@
         });
 
         $('#acceptICD10').on('click', function () {
-            if (!selectedICD10 || !selectedPriorityICD10) return alert('Pilih Diagnosa dan Prioritas!');
-            if (isDuplicate('.icd_10 tbody', selectedICD10.code)) return alert('Data sudah ada.');
-            if (selectedPriorityICD10 === 'Primary' && hasPrimary('.icd_10 tbody')) return alert('Primary hanya boleh satu.');
+            if (!selectedICD10 || !selectedPriorityICD10)
+            return
+            Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Pilih Diagnosa dan Prioritas!',
+                    confirmButtonText: 'OK'
+            });
+            if (isDuplicate('.icd_10 tbody', selectedICD10.code)) return
+            Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Data sudah ada!',
+                    confirmButtonText: 'OK'
+            });
+            if (selectedPriorityICD10 === 'Primary' && hasPrimary('.icd_10 tbody')) return
+            Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Primary hanya boleh satu.',
+                    confirmButtonText: 'OK'
+            });
 
             $('.icd_10 tbody').append(generateRow(selectedICD10, selectedPriorityICD10, 'ICD10'));
             resetFields('#icd10', '#kodeICD10', '#prioritas_icd_10');
@@ -1201,9 +1257,27 @@
         });
 
         $('#acceptICD9').on('click', function () {
-            if (!selectedICD9 || !selectedPriorityICD9) return alert('Pilih Tindakan dan Prioritas!');
-            if (isDuplicate('.icd_9 tbody', selectedICD9.code)) return alert('Data sudah ada.');
-            if (selectedPriorityICD9 === 'Primary' && hasPrimary('.icd_9 tbody')) return alert('Primary hanya boleh satu.');
+            if (!selectedICD9 || !selectedPriorityICD9) return
+            Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Pilih Tindakan dan Prioritas!',
+                            confirmButtonText: 'OK'
+            });
+            if (isDuplicate('.icd_9 tbody', selectedICD9.code)) return
+            Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Data sudah ada!',
+                            confirmButtonText: 'OK'
+            });
+            if (selectedPriorityICD9 === 'Primary' && hasPrimary('.icd_9 tbody')) return
+            Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Primary hanya boleh satu.',
+                            confirmButtonText: 'OK'
+            });
 
             $('.icd_9 tbody').append(generateRow(selectedICD9, selectedPriorityICD9, 'ICD9'));
             resetFields('#icd9', '#kodeICD9', '#prioritas_icd_9');
@@ -1330,7 +1404,12 @@
                 }
             },
             error: function() {
-                alert('Gagal memuat data alergi dari server.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Gagal memuat data alergi dari server.',
+                    confirmButtonText: 'OK'
+                });
             }
         });
     }
@@ -1380,7 +1459,12 @@
                         subSelect.trigger('change');
                     },
                     error: function () {
-                        alert('Gagal mengambil data sub pemeriksaan.');
+                         Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Gagal mengambil data sub pemeriksaan.',
+                            confirmButtonText: 'OK'
+                        });
                     }
                 });
             }
@@ -1396,7 +1480,12 @@
         const detail = $('#htt_pemeriksaan_detail').val().trim();
 
         if (!pemeriksaan || !sub || !detail || pemeriksaan === '-- Silahkan Pilih --') {
-            alert('Harap lengkapi semua data terlebih dahulu.');
+            Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Harap lengkapi semua data terlebih dahulu.',
+                            confirmButtonText: 'OK'
+            });
             return;
         }
 
@@ -2000,11 +2089,21 @@
         const waktu = $('#waktu').val();
 
         if (!penyakit && !durasi && !waktu) {
-            alert("Semua kolom harus diisi!");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Semua kolom harus diisi!',
+                confirmButtonText: 'OK'
+            });
             return;
         }
         if (!penyakit || !durasi || !waktu) {
-            alert("Semua kolom harus diisi!");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Semua kolom harus diisi!',
+                confirmButtonText: 'OK'
+            });
             return;
         }
 
@@ -2221,11 +2320,6 @@
                                                 textArea.select();
                                                 try {
                                                     const successful = popupWindow.document.execCommand('copy');
-                                                    if (successful) {
-                                                        popupWindow.alert('Jawaban berhasil disalin!');
-                                                    } else {
-                                                        popupWindow.alert('Gagal menyalin jawaban.');
-                                                    }
                                                 } catch (err) {
                                                     popupWindow.alert('Gagal menyalin jawaban: ' + err);
                                                 }
