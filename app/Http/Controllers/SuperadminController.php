@@ -2291,16 +2291,16 @@ public function cetakPembelianPdf($nomor_faktur)
 {
     // Ambil data pembelian
     $pembelian = pembelian::where('nomor_faktur', $nomor_faktur)->first();
-    
+
     // Ambil detail pembelian
     $details = pembelian_details::where('nomor_faktur', $nomor_faktur)->get();
-    
+
     // Pastikan data numerik dikonversi dengan benar
     foreach ($details as $detail) {
         // Bersihkan format mata uang jika ada
-        $detail->harga_satuan = is_numeric($detail->harga_satuan) ? $detail->harga_satuan : 
+        $detail->harga_satuan = is_numeric($detail->harga_satuan) ? $detail->harga_satuan :
             floatval(str_replace(['Rp', '.', ','], ['', '', '.'], $detail->harga_satuan));
-        
+
         // Hitung diskon
         $diskonValue = 0;
         if (strpos($detail->diskon, '%') !== false) {
@@ -2311,11 +2311,11 @@ public function cetakPembelianPdf($nomor_faktur)
             // Jika diskon dalam rupiah
             $diskonValue = floatval(str_replace(['Rp', '.', ','], ['', '', '.'], $detail->diskon));
         }
-        
+
         // Hitung subtotal setelah diskon
         $detail->sub_total = ($detail->harga_satuan * $detail->qty) - $diskonValue;
     }
-    
+
     // Tampilkan PDF
     $pdf = PDF::loadView('pdf.pembelian', compact('pembelian', 'details'));
     return $pdf->stream('pembelian-'.$nomor_faktur.'.pdf');
@@ -2324,7 +2324,9 @@ public function cetakPembelianPdf($nomor_faktur)
 public function kasir()
 {
     $title = "Kasir";
-    return view('dashboard.kasir', compact('title'));
+
+    $apotek = apotek::with('detail')->get();
+    return view('dashboard.kasir', compact('title','apotek'));
 }
 
 public function kasirDetail()
@@ -2382,7 +2384,7 @@ public function kasirDetail()
                 'no_rawat' => $validated['no_rawat'],
                 'nama' => $validated['nama'],
                 'alamat' => $validated['alamat'] ?? null,
-                'tanggal' => now(),
+                'tanggal' => now()->format('Y-m-d'),
                 'jenis_resep' => $validated['resep'],
                 'jenis_rawat' => 'RAWAT JALAN',
                 'poli' => $validated['poli'],
@@ -2405,7 +2407,7 @@ public function kasirDetail()
                     'kode_faktur' => $validated['faktur_apotek'],
                     'no_rm' => $validated['no_rm'],
                     'nama' => $validated['nama'],
-                    'tanggal' => now(),
+                    'tanggal' => now()->format('Y-m-d'),
                     'nama_obat_alkes' => $detail['nama'],
                     'kode_obat_alkes' => $detail['kode'],
                     'harga' => $detail['harga'],
