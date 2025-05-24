@@ -49,6 +49,8 @@ use App\Models\gudang_setting_harga;
 use App\Models\gudang_barang_harga;
 use App\Models\gudang_barang_stok;
 use App\Models\pelayanan_soap_dokter;
+use App\Models\pelayanan_soap_dokter_tindakan;
+use App\Models\perawatan_kategori;
 use App\Models\apotek;
 use App\Models\apotek_prebayar;
 use App\Exports\Gudang_barangExport;
@@ -58,6 +60,7 @@ use App\Models\staff;
 use App\Models\staff_pelatihan;
 use App\Models\staff_pendidikan;
 use App\Models\staff_verifikasi;
+use App\Models\kasir;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -2282,59 +2285,294 @@ class SuperadminController extends Controller
             }
         }
 
-    // Pembelian end
+    //CETAK PDF
+        public function cetakPembelianPdf($nomor_faktur)
+        {
+            // Ambil data pembelian
+            $pembelian = pembelian::where('nomor_faktur', $nomor_faktur)->first();
 
+            // Ambil detail pembelian
+            $details = pembelian_details::where('nomor_faktur', $nomor_faktur)->get();
 
+            // Pastikan data numerik dikonversi dengan benar
+            foreach ($details as $detail) {
+                // Bersihkan format mata uang jika ada
+                $detail->harga_satuan = is_numeric($detail->harga_satuan) ? $detail->harga_satuan :
+                    floatval(str_replace(['Rp', '.', ','], ['', '', '.'], $detail->harga_satuan));
 
+                // Hitung diskon
+                $diskonValue = 0;
+                if (strpos($detail->diskon, '%') !== false) {
+                    // Jika diskon dalam persen
+                    $diskonPersen = floatval(str_replace('%', '', $detail->diskon));
+                    $diskonValue = ($detail->harga_satuan * $detail->qty) * ($diskonPersen / 100);
+                } elseif (strpos($detail->diskon, 'Rp') !== false) {
+                    // Jika diskon dalam rupiah
+                    $diskonValue = floatval(str_replace(['Rp', '.', ','], ['', '', '.'], $detail->diskon));
+                }
 
-public function cetakPembelianPdf($nomor_faktur)
-{
-    // Ambil data pembelian
-    $pembelian = pembelian::where('nomor_faktur', $nomor_faktur)->first();
+                // Hitung subtotal setelah diskon
+                $detail->sub_total = ($detail->harga_satuan * $detail->qty) - $diskonValue;
+            }
 
-    // Ambil detail pembelian
-    $details = pembelian_details::where('nomor_faktur', $nomor_faktur)->get();
-
-    // Pastikan data numerik dikonversi dengan benar
-    foreach ($details as $detail) {
-        // Bersihkan format mata uang jika ada
-        $detail->harga_satuan = is_numeric($detail->harga_satuan) ? $detail->harga_satuan :
-            floatval(str_replace(['Rp', '.', ','], ['', '', '.'], $detail->harga_satuan));
-
-        // Hitung diskon
-        $diskonValue = 0;
-        if (strpos($detail->diskon, '%') !== false) {
-            // Jika diskon dalam persen
-            $diskonPersen = floatval(str_replace('%', '', $detail->diskon));
-            $diskonValue = ($detail->harga_satuan * $detail->qty) * ($diskonPersen / 100);
-        } elseif (strpos($detail->diskon, 'Rp') !== false) {
-            // Jika diskon dalam rupiah
-            $diskonValue = floatval(str_replace(['Rp', '.', ','], ['', '', '.'], $detail->diskon));
+            // Tampilkan PDF
+            $pdf = PDF::loadView('pdf.pembelian', compact('pembelian', 'details'));
+            return $pdf->stream('pembelian-'.$nomor_faktur.'.pdf');
         }
 
-        // Hitung subtotal setelah diskon
-        $detail->sub_total = ($detail->harga_satuan * $detail->qty) - $diskonValue;
+    // Pembelian end
+
+    // Kasir
+
+    // public function kasir()
+    // {
+    //     $title = "Kasir";
+
+    //     $apotek = apotek::with('detail_obat','detail_tindakan')->get();
+
+    //     $tanggal = Carbon::now()->format('Ymd');
+
+    //     $tindakan = pelayanan_soap_dokter_tindakan::whereDoesntHave('cek_resep')->get();
+
+    //     $latestFaktur = kasir::where('kode_faktur', 'LIKE', "TND-{$tanggal}-%")
+    //                 ->orderBy('kode_faktur', 'desc')
+    //                 ->first();
+
+    //     $lastNumber = 0;
+    //     if ($latestFaktur) {
+    //         $lastNumber = (int) substr($latestFaktur->kode_faktur, -4);
+    //     }
+
+    //     // Simpan no_rawat yang sudah punya kode_faktur supaya gak duplikat buat no_rawat sama
+    //     $kodeFakturMap = [];
+
+    //     foreach ($tindakan as $item) {
+    //         if (isset($kodeFakturMap[$item->no_rawat])) {
+    //             // Kalau no_rawat sudah ada, pakai kode_faktur yang sudah di-generate
+    //             $item->kode_faktur = $kodeFakturMap[$item->no_rawat];
+    //         } else {
+    //             // Cek di database kalau ada yang sudah punya kode_faktur
+    //             $existing = kasir::where('no_rawat', $item->no_rawat)->first();
+    //             if ($existing) {
+    //                 $kodeFakturMap[$item->no_rawat] = $existing->kode_faktur;
+    //                 $item->kode_faktur = $existing->kode_faktur;
+    //             } else {
+    //                 $lastNumber++;
+    //                 $newNumber = str_pad($lastNumber, 4, '0', STR_PAD_LEFT);
+    //                 $newKodeFaktur = "TND-{$tanggal}-{$newNumber}";
+    //                 $kodeFakturMap[$item->no_rawat] = $newKodeFaktur;
+    //                 $item->kode_faktur = $newKodeFaktur;
+    //             }
+    //         }
+    //     }
+
+    //     return view('dashboard.kasir', compact('title', 'apotek', 'tindakan'));
+    // }
+
+    public function kasir()
+    {
+        $title = "Kasir";
+
+        $apotek = apotek::with('detail_obat','detail_tindakan')->get();
+
+        $tanggal = Carbon::now()->format('Ymd');
+
+        $tindakan = pelayanan_soap_dokter_tindakan::whereDoesntHave('cek_resep')->with('data_soap')->get();
+
+        $latestFaktur = kasir::where('kode_faktur', 'LIKE', "TND-{$tanggal}-%")
+                    ->orderBy('kode_faktur', 'desc')
+                    ->first();
+
+        $lastNumber = 0;
+        if ($latestFaktur) {
+            $lastNumber = (int) substr($latestFaktur->kode_faktur, -4);
+        }
+
+        $kodeFakturMap = [];
+
+        foreach ($tindakan as $item) {
+            if (isset($kodeFakturMap[$item->no_rawat])) {
+                $item->kode_faktur = $kodeFakturMap[$item->no_rawat];
+            } else {
+                $existing = kasir::where('no_rawat', $item->no_rawat)->first();
+                if ($existing) {
+                    $kodeFakturMap[$item->no_rawat] = $existing->kode_faktur;
+                    $item->kode_faktur = $existing->kode_faktur;
+                } else {
+                    $lastNumber++;
+                    $newNumber = str_pad($lastNumber, 4, '0', STR_PAD_LEFT);
+                    $newKodeFaktur = "TND-{$tanggal}-{$newNumber}";
+                    $kodeFakturMap[$item->no_rawat] = $newKodeFaktur;
+                    $item->kode_faktur = $newKodeFaktur;
+                }
+            }
+        }
+
+        // Filter supaya unique berdasarkan no_rawat (hanya 1 data tiap no_rawat)
+        $tindakan = $tindakan->unique('no_rawat')->values();
+
+        return view('dashboard.kasir', compact('title', 'apotek', 'tindakan'));
     }
 
-    // Tampilkan PDF
-    $pdf = PDF::loadView('pdf.pembelian', compact('pembelian', 'details'));
-    return $pdf->stream('pembelian-'.$nomor_faktur.'.pdf');
-}
 
-public function kasir()
-{
-    $title = "Kasir";
+    public function kasirPembayaran(Request $request, $kode_faktur)
+    {
+        $title = "Detail Pembayaran Kasir";
+        $no_rawat = $request->query('no_rawat');
+        $apotek = apotek::with('data_soap','detail_obat')->where('kode_faktur', $kode_faktur)->first();
+        $tindakan = pelayanan_soap_dokter_tindakan::with('data_soap')->where('no_rawat', $no_rawat)->first();
 
-    $apotek = apotek::with('detail')->get();
-    return view('dashboard.kasir', compact('title','apotek'));
-}
+        $apotekTabel = apotek_prebayar::where('kode_faktur', $kode_faktur)->get();
+        $tindakanTabel = pelayanan_soap_dokter_tindakan::with('data_soap')->where('no_rawat', $no_rawat)->get();
 
-public function kasirDetail()
-{
-    $title = "Detail Pembayaran Kasir";
-    return view('dashboard.kasir_detail', compact('title'));
-}
+        $penjamin = penjamin::all();
+        $tindakanTambahan = perawatan_kategori::with('perawatan_tindakan')->get();
 
+        $bank = bank::all();
+
+        // dd($tindakanTabel);
+        return view('dashboard.kasir_pembayaran', compact('title','no_rawat','kode_faktur','apotek','apotekTabel','tindakan','tindakanTabel','penjamin','tindakanTambahan','bank'));
+    }
+
+    public function kasiradd(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'data_hidden' => 'nullable|string',
+                'kode_faktur_hidden' => 'required|string',
+                'no_rawat_hidden' => 'nullable|string',
+                'no_rm' => 'required|string',
+                'nama' => 'required|string',
+                'sex' => 'nullable|string',
+                'usia' => 'nullable|string',
+                'alamat' => 'nullable|string',
+                'poli' => 'required|string',
+                'dokter' => 'nullable|string',
+                'jenis_perawatan' => 'required|string',
+                'penjamin' => 'required|string',
+                'sub_total' => 'required|string',
+                'potongan_harga' => 'nullable|string',
+                'administrasi' => 'nullable|string',
+                'materai' => 'nullable|string',
+                'total' => 'required|string',
+                'tagihan' => 'required|string',
+                'kurang_dibayar' => 'required|string',
+                'payment_method_1' => 'required|string',
+                'payment_nominal_1' => 'required|string',
+                'payment_type_1' => 'nullable|string',
+                'payment_ref_1' => 'nullable|string',
+                'payment_method_2' => 'nullable|string',
+                'payment_nominal_2' => 'nullable|string',
+                'payment_type_2' => 'nullable|string',
+                'payment_ref_2' => 'nullable|string',
+                'payment_method_3' => 'nullable|string',
+                'payment_nominal_3' => 'nullable|string',
+                'payment_type_3' => 'nullable|string',
+                'payment_ref_3' => 'nullable|string',
+            ], [
+                'kode_faktur_hidden'  => 'Kode Faktur',
+                'no_faktur_hidden'    => 'No Rawat',
+                'no_rm'               => 'No RM',
+                'nama'                => 'Nama Pasien',
+                'sex'                 => 'Jenis Kelamin',
+                'usia'                => 'Usia',
+                'alamat'              => 'Alamat',
+                'poli'                => 'Poli',
+                'dokter'              => 'Dokter',
+                'jenis_perawatan'     => 'Jenis Perawatan',
+                'penjamin'            => 'Penjamin',
+                'sub_total'           => 'Subtotal',
+                'potongan_harga'      => 'Potongan Harga',
+                'administrasi'        => 'Administrasi',
+                'materai'             => 'Materai',
+                'total'               => 'Total',
+                'tagihan'             => 'Tagihan',
+                'kurang_dibayar'      => 'Kurang Dibayar',
+                'payment_method_1'    => 'Metode Pembayaran 1',
+                'payment_nominal_1'   => 'Nominal Pembayaran 1',
+                'payment_type_1'      => 'Tipe Pembayaran 1',
+                'payment_ref_1'       => 'Referensi Pembayaran 1',
+                'payment_method_2'    => 'Metode Pembayaran 2',
+                'payment_nominal_2'   => 'Nominal Pembayaran 2',
+                'payment_type_2'      => 'Tipe Pembayaran 2',
+                'payment_ref_2'       => 'Referensi Pembayaran 2',
+                'payment_method_3'    => 'Metode Pembayaran 3',
+                'payment_nominal_3'   => 'Nominal Pembayaran 3',
+                'payment_type_3'      => 'Tipe Pembayaran 3',
+                'payment_ref_3'       => 'Referensi Pembayaran 3',
+            ]);
+
+            $kasir = kasir::create([
+                'kode_faktur'       => $validated['kode_faktur_hidden'],
+                'no_rawat'          => $validated['no_rawat_hidden'] ?? null,
+                'no_rm'             => $validated['no_rm'],
+                'nama'              => $validated['nama'],
+                'sex'               => $validated['sex'] ?? null,
+                'usia'              => $validated['usia'] ?? null,
+                'alamat'            => $validated['alamat'] ?? null,
+                'poli'              => $validated['poli'],
+                'dokter'            => $validated['dokter'] ?? null,
+                'jenis_perawatan'   => $validated['jenis_perawatan'],
+                'penjamin'          => $validated['penjamin'],
+                'tanggal'           => now()->format('Y-m-d'),
+                'sub_total'         => $validated['sub_total'],
+                'potongan_harga'    => $validated['potongan_harga'] ?? '0',
+                'administrasi'      => $validated['administrasi'] ?? '0',
+                'materai'           => $validated['materai'] ?? '0',
+                'total'             => $validated['total'],
+                'tagihan'           => $validated['tagihan'],
+                'kembalian'         => $validated['kurang_dibayar'], // atau hitung: bayar - tagihan?
+
+                'payment_method_1'  => $validated['payment_method_1'],
+                'payment_nominal_1' => $validated['payment_nominal_1'],
+                'payment_type_1'    => $validated['payment_type_1'] ?? null,
+                'payment_ref_1'     => $validated['payment_ref_1'] ?? null,
+
+                'payment_method_2'  => $validated['payment_method_2'] ?? null,
+                'payment_nominal_2' => $validated['payment_nominal_2'] ?? null,
+                'payment_type_2'    => $validated['payment_type_2'] ?? null,
+                'payment_ref_2'     => $validated['payment_ref_2'] ?? null,
+
+                'payment_method_3'  => $validated['payment_method_3'] ?? null,
+                'payment_nominal_3' => $validated['payment_nominal_3'] ?? null,
+                'payment_type_3'    => $validated['payment_type_3'] ?? null,
+                'payment_ref_3'     => $validated['payment_ref_3'] ?? null,
+
+                'user_input_id'     => Auth::user()->id,
+                'user_input_name'   => Auth::user()->name,
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Pembayaran kasir berhasil dilakukan.',
+                'data' => $kasir,
+            ]);
+        } catch (\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function previewData(Request $request)
+    {
+        $noRawat = $request->input('no_rawat');
+
+        $data = DB::table('pelayanan_soap_dokter_tindakans')
+            ->where('no_rawat', $noRawat)
+            ->get(['jenis_tindakan', 'jenis_pelaksana', 'harga']);
+
+        return response()->json($data);
+    }
+
+
+    // End Kasir
 
     // Apotek
 
@@ -2372,7 +2610,7 @@ public function kasirDetail()
                 'penjamin' => 'required|string',
                 'nilai_embis_input' => 'nullable|string',
                 'sub_total_hidden' => 'required|string',
-                'embalase_total_hidden' => 'required|string',
+                'embalase_total_hidden' => 'nullable|string',
                 'total_hidden' => 'required|string',
                 'note_apotek' => 'nullable|string',
                 'tabel_apotek_harga_hidden' => 'required|string',

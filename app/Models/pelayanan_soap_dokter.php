@@ -51,6 +51,7 @@ class pelayanan_soap_dokter extends Model
     {
         return $this->hasOne(Pelayanan_soap_dokter_obat::class, 'no_rawat','no_rawat');
     }
+
     public function pendaftaran()
     {
         return $this->belongsTo(Pendaftaran_rawat_jalan::class, 'no_rawat', 'nomor_register');
@@ -59,5 +60,15 @@ class pelayanan_soap_dokter extends Model
     public function pasien()
     {
         return $this->belongsTo(pasien::class, 'nomor_rm','no_rm');
+    }
+
+    public function apotek()
+    {
+        return $this->hasOne(apotek::class, 'no_rawat','no_rawat');
+    }
+
+    public function tindakan()
+    {
+        return $this->hasOne(Pelayanan_soap_dokter_tindakan::class, 'no_rawat','no_rawat');
     }
 }

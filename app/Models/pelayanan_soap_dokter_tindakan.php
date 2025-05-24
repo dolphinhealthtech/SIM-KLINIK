@@ -19,4 +19,20 @@ class pelayanan_soap_dokter_tindakan extends Model
         'jenis_pelaksana',
         'harga',
     ];
+
+    public function apotek()
+    {
+        return $this->belongsTo(apotek::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function cek_resep()
+    {
+        return $this->belongsTo(pelayanan_soap_dokter_obat::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function data_soap()
+    {
+        return $this->belongsTo(pelayanan_soap_dokter::class, 'no_rawat', 'no_rawat');
+    }
+
 }

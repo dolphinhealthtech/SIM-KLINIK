@@ -27,7 +27,8 @@ Route::middleware('auth')->group(function () {
 
 // Route untuk Kasir
 Route::get('/kasir', [SuperadminController::class, 'kasir'])->name('kasir');
-Route::get('/kasir_detail', [SuperadminController::class, 'kasirDetail'])->name('kasir.detail');
+Route::get('/kasir/pembayaran/{kode_faktur}', [SuperadminController::class, 'kasirPembayaran'])->name('kasir.pembayaran');
+Route::post('/kasir/add', [SuperadminController::class, 'kasiradd'])->name('kasir.store');
 
 //Menu Data Barang (Obat)
 Route::get('/data-barang', [SuperadminController::class,'dabar'])->name('dabar.get');
