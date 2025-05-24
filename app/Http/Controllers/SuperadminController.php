@@ -61,6 +61,10 @@ use App\Models\staff_pelatihan;
 use App\Models\staff_pendidikan;
 use App\Models\staff_verifikasi;
 use App\Models\kasir;
+use App\Models\kasir_detail_lunas;
+use App\Models\kasir_apotek_lunas;
+use App\Models\kasir_tindakan_lunas;
+use App\Models\kasir_diskon;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -2542,6 +2546,105 @@ class SuperadminController extends Controller
                 'user_input_name'   => Auth::user()->name,
             ]);
 
+            // Simpan detail pembelian
+            $dataDetail = json_decode($request->data_hidden, true);
+
+            if (!empty($dataDetail['tindakan'])) {
+                foreach ($dataDetail['tindakan'] as $t) {
+                    kasir_detail_lunas::create([
+                        'kode_faktur'          => $request->kode_faktur_hidden,
+                        'no_rawat'             => $request->no_rawat_hidden ?? null,
+                        'no_rm'                => $request->no_rm,
+                        'nama'                 => $request->nama,
+                        'nama_obat_tindakan'   => $t['jenis_tindakan'],
+                        'harga_obat_tindakan'  => $t['harga'],
+                        'qty_pelaksana'        => $t['jenis_pelaksana'],
+                        'total'                => $t['total'],
+                        'tanggal'              => $t['tanggal'],
+                        'user_input_id'        => Auth::user()->id,
+                        'user_input_name'      => Auth::user()->name,
+                    ]);
+
+                    kasir_tindakan_lunas::create([
+                        'kode_faktur'          => $request->kode_faktur_hidden,
+                        'no_rawat'             => $request->no_rawat_hidden ?? null,
+                        'no_rm'                => $request->no_rm,
+                        'nama'                 => $request->nama,
+                        'nama_tindakan'        => $t['jenis_tindakan'],
+                        'harga_tindakan'       => $t['harga'],
+                        'pelaksana'            => $t['jenis_pelaksana'],
+                        'total'                => $t['total'],
+                        'tanggal'              => $t['tanggal'],
+                        'user_input_id'        => Auth::user()->id,
+                        'user_input_name'      => Auth::user()->name,
+                    ]);
+                }
+            }
+
+            if (!empty($dataDetail['apotek'])) {
+                foreach ($dataDetail['apotek'] as $a) {
+                    kasir_detail_lunas::create([
+                        'kode_faktur'          => $request->kode_faktur_hidden,
+                        'no_rawat'             => $request->no_rawat_hidden ?? null,
+                        'no_rm'                => $request->no_rm,
+                        'nama'                 => $request->nama,
+                        'nama_obat_tindakan'   => $a['nama_obat_alkes'],
+                        'harga_obat_tindakan'  => $a['harga'],
+                        'qty_pelaksana'        => $a['qty'],
+                        'total'                => $a['total'],
+                        'tanggal'              => $a['tanggal'],
+                        'user_input_id'        => Auth::user()->id,
+                        'user_input_name'      => Auth::user()->name,
+                    ]);
+
+                    kasir_apotek_lunas::create([
+                        'kode_faktur'          => $request->kode_faktur_hidden,
+                        'no_rawat'             => $request->no_rawat_hidden ?? null,
+                        'no_rm'                => $request->no_rm,
+                        'nama'                 => $request->nama,
+                        'nama_obat_alkes'      => $a['nama_obat_alkes'],
+                        'harga_obat_alkes'     => $a['harga'],
+                        'qty'                  => $a['qty'],
+                        'total'                => $a['total'],
+                        'tanggal'              => $a['tanggal'],
+                        'user_input_id'        => Auth::user()->id,
+                        'user_input_name'      => Auth::user()->name,
+                    ]);
+                }
+            }
+
+            if (!empty($dataDetail['diskon'])) {
+                foreach ($dataDetail['diskon'] as $d) {
+                    kasir_detail_lunas::create([
+                        'kode_faktur'          => $request->kode_faktur_hidden,
+                        'no_rawat'             => $request->no_rawat_hidden ?? null,
+                        'no_rm'                => $request->no_rm,
+                        'nama'                 => $request->nama,
+                        'nama_obat_tindakan'   => $d['nama'],
+                        'harga_obat_tindakan'  => abs($d['harga']),
+                        'qty_pelaksana'        => $d['jenis'],
+                        'total'                => abs($d['nilai']),
+                        'tanggal'              => $d['tanggal'],
+                        'user_input_id'        => Auth::user()->id,
+                        'user_input_name'      => Auth::user()->name,
+                    ]);
+
+                    kasir_diskon::create([
+                        'kode_faktur'          => $request->kode_faktur_hidden,
+                        'no_rawat'             => $request->no_rawat_hidden ?? null,
+                        'no_rm'                => $request->no_rm,
+                        'nama'                 => $request->nama,
+                        'nama_diskon'          => $d['nama'],
+                        'harga_diskon'         => abs($d['harga']),
+                        'qty'                  => $d['jenis'],
+                        'total'                => abs($d['nilai']),
+                        'tanggal'              => $d['tanggal'],
+                        'user_input_id'        => Auth::user()->id,
+                        'user_input_name'      => Auth::user()->name,
+                    ]);
+                }
+            }
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Pembayaran kasir berhasil dilakukan.',
@@ -2654,6 +2757,29 @@ class SuperadminController extends Controller
                     'user_input_id' => Auth::user()->id,
                     'user_input_name' => Auth::user()->name,
                 ]);
+
+                $qtyToDeduct = $detail['qty']; // Jumlah yang akan dikurangi dari stok
+                $kodeObat = $detail['kode'];
+                $today = now()->startOfDay()->toDateString();
+
+                $stokList = gudang_barang_stok::where('kode_obat_alkes', $kodeObat)
+                    ->where('qty', '>', 0)
+                    ->whereDate('expired', '>=', $today)
+                    ->orderBy('expired', 'asc')
+                    ->get();
+
+                foreach ($stokList as $stok) {
+                    if ($qtyToDeduct <= 0) break;
+
+                    $availableQty = $stok->qty;
+                    $deductQty = min($availableQty, $qtyToDeduct);
+
+                    // Kurangi stok
+                    $stok->qty -= $deductQty;
+                    $stok->save();
+
+                    $qtyToDeduct -= $deductQty;
+                }
             }
 
             $updated = pelayanan_soap_dokter::where('no_rawat', $validated['no_rawat'])

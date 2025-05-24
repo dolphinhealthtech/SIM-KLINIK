@@ -251,6 +251,14 @@
 
             const noRawat = row.getAttribute('data-no_rawat');
 
+            Swal.fire({
+                icon: 'info',
+                title: 'Memuat...',
+                text: 'Mengambil kode faktur',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
             $.ajax({
                 url: '/api/kasir/previewData',
                 type: 'POST',
@@ -259,6 +267,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data) {
+                    Swal.close();
                     const formatRupiah = new Intl.NumberFormat('id-ID', {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0,
@@ -279,6 +288,7 @@
                     tbody.innerHTML = html;
                 },
                 error: function(xhr, status, error) {
+                    Swal.close();
                     console.error('AJAX Error:', error);
                 }
             });

@@ -636,7 +636,7 @@
                     harga: harga,
                     jenis_pelaksana: qtyOrPelaksana,
                     total: total,
-                    created_at: date,
+                    tanggal: date,
                 });
             }
         });
