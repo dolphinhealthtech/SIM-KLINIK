@@ -2643,6 +2643,7 @@ class SuperadminController extends Controller
     // End Kasir
 
     // Data Lunas Kasir
+
     public function datakasir_lunas()
     {
         $title = "Detail Lunas";
@@ -2721,7 +2722,7 @@ class SuperadminController extends Controller
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
 
-
+    // End Data Lunas Kasir
 
     // Apotek
 
@@ -3304,7 +3305,7 @@ class SuperadminController extends Controller
     //     ->whereNotNull('antrian')
     //     ->orderBy('created_at', 'desc')
     //     ->get();
-    
+
     return view('monitor.loket_antrian', compact('title'));
 }
 }
