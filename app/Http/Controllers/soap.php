@@ -22,6 +22,7 @@ use App\Models\pelayanan_soap_dokter_icd;
 use App\Models\pelayanan_soap_dokter_obat;
 use App\Models\pelayanan_soap_dokter_tindakan;
 use App\Models\pelayanan_soap_perawat;
+use App\Models\Pendaftaran_rawat_jalan;
 use App\Models\perawatan_kategori;
 use App\Models\perawatan_tindakan;
 use App\Models\sarana;
@@ -381,10 +382,11 @@ class soap extends Controller
                 'eye' => $request->eye,
                 'verbal' => $request->verbal,
                 'motorik' => $request->motorik,
-                'summernote' => $request->summernote,
-                'summernote2' => $request->summernote2,
-                'summernote4' => $request->summernote4,
-                'summernote5' => $request->summernote5,
+                'htt' => $request->summernote,
+                'assesmen' => $request->summernote2,
+                'evaluasi' => $request->summernote3,
+                'plan' => $request->summernote4,
+                'expertise' => $request->summernote5,
                 'status_apotek' => '0',
             ]);
 
@@ -483,7 +485,7 @@ class soap extends Controller
         return response()->json($data);
     }
 
-    public function dataLrawatJalan($norawat)
+    public function pelayana_rme($norawat)
     {
         $nomor_rawat = base64_decode($norawat);
         $title = "Data RME";
@@ -505,7 +507,228 @@ class soap extends Controller
         }
         $umur .= $umurHari . ' Hari';
 
-        return view('module.pelayanan.pelayanan_rme', compact('title','pelayanan','umur',));
+
+        $step1 = Pendaftaran_rawat_jalan::with([
+            'status',
+            'poli',
+            'dokter',
+            'pasien',
+            'penjamin',
+            'soap_dokter',
+            'apotek'
+        ])->where('nomor_register', $nomor_rawat)->first();
+
+        $timeline = [];
+
+        // Step 1: Registrasi Rawat Jalan
+        if ($step1) {
+            $timeline[] = [
+                'date' => $step1->created_at->format('d M Y'),
+                'time' => $step1->created_at->format('H:i'),
+                'icon' => 'fas fa-hospital-user',
+                'bg' => 'bg-blue',
+                'title' => 'Pasien Registrasi ke Rawat Jalan',
+                'message' => 'Pasien dengan No. Rawat: ' . $step1->nomor_register .
+                            ' atas nama ' . $step1->pasien->nama .
+                            ' telah terdaftar di Rawat Jalan ke Poli ' . $step1->poli->nama
+            ];
+        }
+
+        // Step 2: Pemeriksaan oleh Perawat
+        $step2 = Pelayanan_soap_perawat::with([
+            'alergi_keterangan',
+            'gcs_eye',
+            'gcs_verbal',
+            'gcs_motorik',
+        ])->where('no_rawat', $nomor_rawat)->first();
+
+        if ($step2) {
+            // Handle tableData (gejala)
+            $tableData = json_decode($step2->tableData, true);
+            $gejalaList = [];
+
+            if (is_array($tableData)) {
+                foreach ($tableData as $item) {
+                    $penyakit = $item['penyakit'] ?? '-';
+                    $durasi = $item['durasi'] ?? '-';
+                    $waktu = $item['waktu'] ?? '';
+                    $gejalaList[] = "Sakit {$penyakit} sejak {$durasi} {$waktu}";
+                }
+            }
+
+            // Alergi
+            $jenisAlergi = match($step2->jenis_alergi) {
+                '00' => 'Tidak ada',
+                '01' => 'Makanan',
+                '02' => 'Obat',
+                '03' => 'Udara',
+                default => 'Tidak diketahui'
+            };
+
+            $namaAlergi = $step2->alergi_keterangan->nama_jenis_alergi ?? '-';
+            $alergiText = $jenisAlergi === 'Tidak ada' ? 'Pasien tidak memiliki riwayat alergi.' :
+                "Pasien memiliki alergi jenis <b>{$jenisAlergi}</b> terhadap <b>{$namaAlergi}</b>.";
+
+            // Pemeriksaan tanda vital
+            $pemeriksaan = [
+                "Tensi: {$step2->tensi} mmHg",
+                "Suhu: {$step2->suhu} °C",
+                "Nadi: {$step2->nadi} bpm",
+                "RR: {$step2->rr} x/menit",
+                "Berat: {$step2->berat} kg",
+                "Tinggi: {$step2->tinggi} cm",
+                "Lingkar Perut: {$step2->lingkar_perut} cm",
+                "Spo2: {$step2->spo2} %",
+                "BMI: {$step2->nilai_bmi} ({$step2->status_bmi})"
+            ];
+
+            // GCS
+            $eye = $step2->eye;
+            $verbal = $step2->verbal;
+            $motorik = $step2->motorik;
+            $totalGCS = (int)$eye + (int)$verbal + (int)$motorik;
+
+            $eyeDesc = $step2->gcs_eye->nama ?? '-';
+            $verbalDesc = $step2->gcs_verbal->nama ?? '-';
+            $motorikDesc = $step2->gcs_motorik->nama ?? '-';
+
+            $kesadaran = gcs_kesadaran::where('skor', $totalGCS)->first()?->nama ?? '-';
+
+            $gcsText = "GCS (E{$eye} V{$verbal} M{$motorik}) = {$totalGCS}<br>
+                - Eye: {$eyeDesc}<br>
+                - Verbal: {$verbalDesc}<br>
+                - Motorik: {$motorikDesc}<br>
+                - Kesadaran: {$kesadaran}";
+
+            // Combine semua ke message
+            $message = "";
+            if (!empty($gejalaList)) {
+                $message .= "<b>Keluhan Utama:</b><br>" . implode('<br>', $gejalaList) . "<br><br>";
+            }
+
+            $message .= "<b>Pemeriksaan Fisik:</b><br>" . implode('<br>', $pemeriksaan) . "<br><br>";
+            $message .= "<b>GCS:</b><br>{$gcsText}<br><br>";
+            $message .= "<b>Alergi:</b><br>{$alergiText}<br><br>";
+            $message .= "<b>Head To Toe:</b><br>" . $step2->summernote;
+
+            $timeline[] = [
+                'date' => $step2->created_at->format('d M Y'),
+                'time' => $step2->created_at->format('H:i'),
+                'icon' => 'fas fa-user-nurse',
+                'bg' => 'bg-green',
+                'title' => 'Pemeriksaan Awal oleh Perawat',
+                'message' => $message
+            ];
+        }
+
+
+         $step3 = pelayanan_soap_dokter::with([
+            'alergi_keterangan',
+            'gcs_eye',
+            'gcs_verbal',
+            'gcs_motorik',
+            'icd',
+        ])->where('no_rawat', $nomor_rawat)->first();
+
+        if ($step3) {
+            // Handle tableData (gejala)
+            $tableData = json_decode($step3->tableData, true);
+            $gejalaList = [];
+
+            if (is_array($tableData)) {
+                foreach ($tableData as $item) {
+                    $penyakit = $item['penyakit'] ?? '-';
+                    $durasi = $item['durasi'] ?? '-';
+                    $waktu = $item['waktu'] ?? '';
+                    $gejalaList[] = "Sakit {$penyakit} sejak {$durasi} {$waktu}";
+                }
+            }
+
+            // Alergi
+            $jenisAlergi = match($step3->jenis_alergi) {
+                '00' => 'Tidak ada',
+                '01' => 'Makanan',
+                '02' => 'Obat',
+                '03' => 'Udara',
+                default => 'Tidak diketahui'
+            };
+
+            $namaAlergi = $step3->alergi_keterangan->nama_jenis_alergi ?? '-';
+            $alergiText = $jenisAlergi === 'Tidak ada' ? 'Pasien tidak memiliki riwayat alergi.' :
+                "Pasien memiliki alergi jenis <b>{$jenisAlergi}</b> terhadap <b>{$namaAlergi}</b>.";
+
+            // Pemeriksaan tanda vital
+            $pemeriksaan = [
+                "Tensi: {$step3->tensi} mmHg",
+                "Suhu: {$step3->suhu} °C",
+                "Nadi: {$step3->nadi} bpm",
+                "RR: {$step3->rr} x/menit",
+                "Berat: {$step3->berat} kg",
+                "Tinggi: {$step3->tinggi} cm",
+                "Lingkar Perut: {$step3->lingkar_perut} cm",
+                "Spo2: {$step3->spo2} %",
+                "BMI: {$step3->nilai_bmi} ({$step3->status_bmi})"
+            ];
+
+            // GCS
+            $eye = $step3->eye;
+            $verbal = $step3->verbal;
+            $motorik = $step3->motorik;
+            $totalGCS = (int)$eye + (int)$verbal + (int)$motorik;
+
+            $eyeDesc = $step3->gcs_eye->nama ?? '-';
+            $verbalDesc = $step3->gcs_verbal->nama ?? '-';
+            $motorikDesc = $step3->gcs_motorik->nama ?? '-';
+
+            $kesadaran = gcs_kesadaran::where('skor', $totalGCS)->first()?->nama ?? '-';
+
+            $gcsText = "GCS (E{$eye} V{$verbal} M{$motorik}) = {$totalGCS}<br>
+                - Eye: {$eyeDesc}<br>
+                - Verbal: {$verbalDesc}<br>
+                - Motorik: {$motorikDesc}<br>
+                - Kesadaran: {$kesadaran}";
+
+            // Combine semua ke message
+            $message = "";
+            if (!empty($gejalaList)) {
+                $message .= "<b>Keluhan Utama:</b><br>" . implode('<br>', $gejalaList) . "<br><br>";
+            }
+
+            $message .= "<b>Pemeriksaan Fisik:</b><br>" . implode('<br>', $pemeriksaan) . "<br><br>";
+            $message .= "<b>GCS:</b><br>{$gcsText}<br><br>";
+            $message .= "<b>Alergi:</b><br>{$alergiText}<br><br>";
+            $message .= "<b>Head To Toe:</b>" . $step3->htt;
+            $message .= "<b>Assesmen:</b>" . $step3->assesmen;
+            // $message .= "<b>ICD</b>" . $step3->icd;
+            if ($step3->icd && $step3->icd->count() > 0) {
+                $message .= "<b>ICD:</b><br>";
+                foreach ($step3->icd as $icd) {
+                    if (!$icd->kode_icd10 && !$icd->kode_icd9) {
+                        continue; // skip data kosong
+                    }
+                    $message .= '<b>- Kode ICD-10:</b> ' . ($icd->kode_icd10 ?? '-') . ' - ' . ($icd->nama_icd10 ?? '-');
+                    $message .= ' | <b>Prioritas:</b> ' . ($icd->priority_icd10 ?? '-') . '<br>';
+                    $message .= '<b>- Kode ICD-9:</b> ' . ($icd->kode_icd9 ?? '-') . ' - ' . ($icd->nama_icd9 ?? '-') . '<br>';
+                }
+            }
+            $message .= "<b>expertise:</b><br><br>" . $step3->expertise.'<br><br>';
+            $message .= "<b>evaluasi:</b><br><br>" . $step3->evaluasi.'<br><br>';
+            $message .= "<b>plan:</b><br><br>" . $step3->plan.'<br><br>';
+
+
+            $timeline[] = [
+                'date' => $step3->created_at->format('d M Y'),
+                'time' => $step3->created_at->format('H:i'),
+                'icon' => 'fas fa-user-nurse',
+                'bg' => 'bg-green',
+                'title' => 'Pemeriksaan Awal oleh Perawat',
+                'message' => $message
+            ];
+        }
+
+
+
+        return view('module.pelayanan.pelayanan_rme', compact('title','pelayanan','umur','timeline'));
     }
 
     public function pelayana_rujukan($norawat)

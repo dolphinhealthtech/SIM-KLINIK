@@ -38,10 +38,11 @@ return new class extends Migration
             $table->tinyInteger('eye')->nullable();
             $table->tinyInteger('verbal')->nullable();
             $table->tinyInteger('motorik')->nullable();
-            $table->longText('summernote')->nullable();
-            $table->longText('summernote2')->nullable();
-            $table->longText('summernote5')->nullable();
-            $table->longText('summernote4')->nullable();
+            $table->longText('htt')->nullable();
+            $table->longText('assesmen')->nullable();
+            $table->longText('expertise')->nullable();
+            $table->longText('evaluasi')->nullable();
+            $table->longText('plan')->nullable();
             $table->string('files')->nullable();
             $table->string('status_apotek');
             $table->timestamps();

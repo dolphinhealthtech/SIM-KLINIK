@@ -95,21 +95,21 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="timeline">
-                                            <div class="time-label">
-                                                <span class="bg-red">25 Mar 2025</span>
-                                            </div>
-                                            <div>
-                                                <i class="fas fa-hospital-user bg-blue"></i>
-                                                <div class="timeline-item">
-                                                    <span class="time"><i class="fas fa-clock"></i>03:51</span>
-                                                    <h3 class="timeline-header">Pasien Registrasi ke Rawat Jalan</h3>
+                                            @foreach ($timeline as $item)
+                                                <div class="time-label">
+                                                    <span class="{{ $item['bg'] }}">{{ $item['date'] }}</span>
+                                                </div>
+                                                <div>
+                                                    <i class="{{ $item['icon'] }} {{ $item['bg'] }}"></i>
+                                                    <div class="timeline-item">
+                                                        <span class="time"><i class="fas fa-clock"></i> {{ $item['time'] }}</span>
+                                                        <h3 class="timeline-header">{{ $item['title'] }}</h3>
                                                         <div class="timeline-body">
-                                                            Pasien dengan No. Rawat: 2025/03/25/001 telah terdaftar di Rawat Jalan.
+                                                            {!! $item['message'] !!}
                                                         </div>
-                                                    <div class="timeline-footer">
                                                     </div>
                                                 </div>
-                                            </div>
+                                            @endforeach
                                             <div>
                                                 <i class="fas fa-clock bg-gray"></i>
                                             </div>

@@ -34,10 +34,11 @@ class pelayanan_soap_dokter extends Model
         'eye',
         'verbal',
         'motorik',
-        'summernote',
-        'summernote2',
-        'summernote5',
-        'summernote4',
+        'htt',
+        'assesmen',
+        'expertise',
+        'evaluasi',
+        'plan',
         'files',
         'status_apotek',
     ];
@@ -67,8 +68,37 @@ class pelayanan_soap_dokter extends Model
         return $this->hasOne(apotek::class, 'no_rawat','no_rawat');
     }
 
+    public function icd()
+    {
+        return $this->hasMany(pelayanan_soap_dokter_icd::class, 'no_rawat','no_rawat');
+    }
     public function tindakan()
     {
         return $this->hasOne(Pelayanan_soap_dokter_tindakan::class, 'no_rawat','no_rawat');
+    }
+
+    public function alergi_keterangan()
+    {
+        return $this->belongsTo(alergi::class, 'alergi', 'kode_alergi');
+    }
+
+    public function gcs_eye()
+    {
+        return $this->belongsTo(gcs_eye::class, 'eye');
+    }
+
+    public function gcs_verbal()
+    {
+        return $this->belongsTo(gcs_verbal::class, 'verbal');
+    }
+
+    public function gcs_motorik()
+    {
+        return $this->belongsTo(gcs_motorik::class, 'motorik');
+    }
+
+    public function gcs_kesadaran()
+    {
+        return $this->belongsTo(gcs_kesadaran::class, 'gcs_total', 'skor');
     }
 }

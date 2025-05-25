@@ -41,4 +41,33 @@ class pelayanan_soap_perawat extends Model
     protected $casts = [
         'tableData' => 'array', // Mengonversi kolom JSON menjadi array
     ];
+
+    // pelayanan_soap_perawat.php
+
+    public function alergi_keterangan()
+    {
+        return $this->belongsTo(alergi::class, 'alergi', 'kode_alergi');
+    }
+
+    public function gcs_eye()
+    {
+        return $this->belongsTo(gcs_eye::class, 'eye');
+    }
+
+    public function gcs_verbal()
+    {
+        return $this->belongsTo(gcs_verbal::class, 'verbal');
+    }
+
+    public function gcs_motorik()
+    {
+        return $this->belongsTo(gcs_motorik::class, 'motorik');
+    }
+
+    public function gcs_kesadaran()
+    {
+        return $this->belongsTo(gcs_kesadaran::class, 'gcs_total', 'skor');
+    }
+
+
 }
