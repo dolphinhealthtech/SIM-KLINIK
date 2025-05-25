@@ -29,8 +29,18 @@ class apotek extends Model
         'user_input_name',
     ];
 
-    public function detail()
+    public function detail_obat()
     {
         return $this->hasMany(apotek_prebayar::class, 'kode_faktur', 'kode_faktur');
+    }
+
+    public function detail_tindakan()
+    {
+        return $this->hasMany(pelayanan_soap_dokter_tindakan::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function data_soap()
+    {
+        return $this->belongsTo(Pelayanan_soap_dokter::class, 'no_rawat','no_rawat');
     }
 }
