@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <form action="{{ route('sopelayana.add') }}" method="POST">
+                            <form id="formSoapPerawat" action="{{ route('sopelayana.add') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                             <div class="card-body">
                                 <div class="row">
@@ -1073,7 +1073,59 @@ $(document).ready(function() {
             disableResizeEditor: true // Menonaktifkan resize editor
         });
     })
+
+    
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tangkap form submit
+    document.getElementById('formSoapPerawat').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Ambil data form
+        var formData = new FormData(this);
+        
+        // Kirim dengan fetch API
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            
+            // Tampilkan SweetAlert sukses
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: data.message || 'Data berhasil disimpan!',
+                showConfirmButton: true
+            }).then(function() {
+                // Redirect ke halaman pelayanan
+                window.location.href = "{{ route('pelayana.get') }}";
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            
+            // Tampilkan SweetAlert error
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: 'Terjadi kesalahan saat menyimpan data!',
+                showConfirmButton: true
+            });
+        });
+    });
+});
+</script>
 
 @endsection
+
+
+
+

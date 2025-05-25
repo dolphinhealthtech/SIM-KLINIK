@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <form action="{{ route('pelayana_dokter.add') }}" method="POST">
+                            <form id="addFormsoap" action="{{ route('pelayana_dokter.add') }}" method="POST">
                                 @csrf
                             <div class="card-body">
                                 <div class="row">
@@ -2439,53 +2439,8 @@
 
         });
 
-        $('#form-soap-dokter').submit(function(e) {
-            e.preventDefault();
-            
-            var formData = new FormData(this);
-            
-            $.ajax({
-                url: $(this).attr('action'),
-                method: $(this).attr('method'),
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: 'Data SOAP dokter berhasil disimpan!',
-                            showConfirmButton: true
-                        }).then(() => {
-                            window.location.href = '/soap/pelayanan/dokter';
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Gagal mengedit SOAP dokter',
-                            showConfirmButton: true
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    // Tampilkan SweetAlert untuk error
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: 'Gagal mengedit SOAP dokter',
-                        showConfirmButton: true
-                    });
-                    
-                    // Log error untuk debugging (opsional)
-                    console.error('Error:', xhr.responseJSON);
-                }
-            });
-        });
+    
 
-    });
-</script>
 
         $('#summernote3').summernote({
             height: 100, // Tentukan tinggi editor (dalam px)
@@ -2597,6 +2552,50 @@
             }
         });
     })
+</script>
+
+<script>
+    $('#addFormsoap').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = "Terjadi kesalahan dalam menyimpan data!";
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: errorMessage
+                    });
+                }
+            });
+        });
 </script>
 
 
