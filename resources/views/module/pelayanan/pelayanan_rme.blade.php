@@ -85,7 +85,7 @@
                                 <a class="nav-link" id="custom-tabs-four-CPPT-tab" data-toggle="pill" href="#custom-tabs-four-CPPT" role="tab" aria-controls="custom-tabs-four-CPPT" aria-selected="false">CPPT</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="custom-tabs-four-laporan-tab" data-toggle="pill" href="#custom-tabs-four-laporan" role="tab" aria-controls="custom-tabs-four-laporan" aria-selected="false">Head To Toe</a>
+                                <a class="nav-link" id="custom-tabs-four-laporan-tab" data-toggle="pill" href="#custom-tabs-four-laporan" role="tab" aria-controls="custom-tabs-four-laporan" aria-selected="false">Laporan</a>
                             </li>
                         </ul>
                     </div>
