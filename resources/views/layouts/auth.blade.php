@@ -3,7 +3,7 @@
     <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Log in (v2)</title>
+    <title>dolphinhealthtech</title>
         @include('components.auth.css')
     </head>
     <body class="hold-transition login-page">
@@ -11,7 +11,7 @@
         <!-- /.login-logo -->
             <div class="card card-outline card-primary">
                 <div class="card-header text-center">
-                    <a href="{{ asset('index2.html') }}" class="h1"><b>Admin</b>LTE</a>
+                    <a class="h1"><b>dolphin</b>healthtech</a>
                 </div>
                 @yield('content')
                 <!-- /.card-body -->

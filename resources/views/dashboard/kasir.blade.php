@@ -33,6 +33,7 @@
                                     <thead>
                                         <tr>
                                             <th class="text-center">No</th>
+                                            <th class="text-center">Kode Faktur</th>
                                             <th class="text-center">No RM</th>
                                             <th class="text-center">Nama</th>
                                             <th class="text-center">Poli</th>
@@ -42,20 +43,38 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php $counter = 1; @endphp
+
                                         @foreach ($apotek as $apotekdata)
-                                            <tr onclick="showDetail(event, this)" data-detail='@json($apotekdata->detail)' data-active="false">
-                                                <td class="text-center">{{ $loop->iteration }}</td>
+                                            <tr onclick="showDetail(event, this)" data-active="false"
+                                            data-detail_obat='@json($apotekdata->detail_obat)' data-detail_tindakan='@json($apotekdata->detail_tindakan)'>
+                                                <td class="text-center">{{ $counter++ }}</td>
+                                                <td class="text-center">{{ $apotekdata->kode_faktur }}</td>
                                                 <td class="text-center">{{ $apotekdata->no_rm }}</td>
                                                 <td class="text-center">{{ $apotekdata->nama }}</td>
                                                 <td class="text-center">{{ $apotekdata->poli }}</td>
-                                                <td class="text-center">{{ $apotekdata->total }}</td>
+                                                <td class="text-center">{{ number_format($apotekdata->total, 0, ',', '.') }}</td>
                                                 <td class="text-center">{{ $apotekdata->tanggal }}</td>
                                                 <td class="text-center">
-                                                    <button type="button" class="btn btn-sm btn-info">Bayar</button>
+                                                    <a href="{{ route('kasir.pembayaran', ['kode_faktur' => $apotekdata->kode_faktur, 'no_rawat' => $apotekdata->no_rawat]) }}" class="btn btn-sm btn-info">Bayar</a>
                                                 </td>
                                             </tr>
                                         @endforeach
 
+                                        @foreach ($tindakan as $t)
+                                            <tr onclick="showDetailTindakan(event, this)" data-active="false" data-no_rawat="{{ $t->no_rawat }}">
+                                                <td class="text-center">{{ $counter++ }}</td>
+                                                <td class="text-center">{{ $t->kode_faktur }}</td>
+                                                <td class="text-center">{{ $t->nomor_rm }}</td>
+                                                <td class="text-center">{{ $t->nama }}</td>
+                                                <td class="text-center">{{ $t->data_soap->pendaftaran->poli->nama }}</td>
+                                                <td class="text-center">{{ number_format($t->harga, 0, ',', '.') }}</td>
+                                                <td class="text-center">{{ $t->created_at->format('Y-m-d') }}</td>
+                                                <td class="text-center">
+                                                    <a href="{{ route('kasir.pembayaran', ['kode_faktur' => $t->kode_faktur, 'no_rawat' => $t->no_rawat]) }}" class="btn btn-sm btn-info">Bayar</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -110,7 +129,7 @@
 
     function showDetail(event, row) {
         // Cegah jika yang diklik adalah tombol atau anak elemen dalam kolom terakhir
-        if (event.target.closest('td')?.cellIndex === 6) {
+        if (event.target.closest('td')?.cellIndex === 7) {
             return;
         }
 
@@ -131,20 +150,152 @@
             row.classList.add('table-primary');
             row.setAttribute('data-active', 'true');
 
-            // Tampilkan detail
-            const detail = JSON.parse(row.getAttribute('data-detail'));
-            detail.forEach(item => {
+            // Formatter untuk angka rupiah tanpa Rp dan ,00
+            const formatRupiah = new Intl.NumberFormat('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+            });
+
+            const detail_tindakan = JSON.parse(row.getAttribute('data-detail_tindakan'));
+            detail_tindakan.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.Jenis_tindakan}</td>
+                        <td>${formatRupiah.format(item.harga)}</td>
+                        <td>${item.jenis_pelaksana}</td>
+                        <td>${formatRupiah.format(item.harga)}</td>
+                    </tr>
+                `;
+            });
+
+            const detail_obat = JSON.parse(row.getAttribute('data-detail_obat'));
+            detail_obat.forEach(item => {
                 tbody.innerHTML += `
                     <tr>
                         <td>${item.nama_obat_alkes}</td>
-                        <td>${item.harga}</td>
+                        <td>${formatRupiah.format(item.harga)}</td>
                         <td>${item.qty}</td>
-                        <td>${item.total}</td>
+                        <td>${formatRupiah.format(item.total)}</td>
                     </tr>
                 `;
             });
         }
     }
+
+    // function showDetailTindakan(event, row) {
+    //     // Cegah jika yang diklik adalah tombol atau anak elemen dalam kolom terakhir (index 7 karena 0-based)
+    //     if (event.target.closest('td')?.cellIndex === 7) {
+    //         return;
+    //     }
+
+    //     const isActive = row.getAttribute('data-active') === 'true';
+
+    //     // Reset semua baris pada tabel tindakan (ganti #tindakanTable sesuai id tabelmu)
+    //     const rows = document.querySelectorAll('#kasirTable tbody tr');
+    //     rows.forEach(r => {
+    //         r.classList.remove('table-primary');
+    //         r.setAttribute('data-active', 'false');
+    //     });
+
+    //     // Target tbody preview tindakan
+    //     const tbody = document.querySelector('#previewTabel tbody');
+    //     tbody.innerHTML = '';
+
+    //     if (!isActive) {
+    //         row.classList.add('table-primary');
+    //         row.setAttribute('data-active', 'true');
+
+    //         const formatRupiah = new Intl.NumberFormat('id-ID', {
+    //             minimumFractionDigits: 0,
+    //             maximumFractionDigits: 0,
+    //         });
+
+    //         // Ambil data langsung dari kolom tabel
+    //         const jenisTindakan = row.querySelector('td:nth-child(5)').textContent.trim();
+    //         const jenisPelaksana = row.querySelector('td:nth-child(6)').textContent.trim();
+    //         let hargaText = row.querySelector('td:nth-child(7)').textContent.trim();
+    //         // Ubah format harga ke number (hapus titik ribuan)
+    //         const hargaNumber = parseInt(hargaText.replace(/\./g, ''), 10) || 0;
+
+    //         tbody.innerHTML = `
+    //             <tr>
+    //                 <td>${jenisTindakan}</td>
+    //                 <td>${formatRupiah.format(hargaNumber)}</td>
+    //                 <td>${jenisPelaksana}</td>
+    //                 <td>${formatRupiah.format(hargaNumber)}</td>
+    //             </tr>
+    //         `;
+    //     }
+    // }
+
+    function showDetailTindakan(event, row) {
+        if (event.target.closest('td')?.cellIndex === 7) {
+            return;
+        }
+
+        const isActive = row.getAttribute('data-active') === 'true';
+
+        // Reset semua baris dan preview
+        const rows = document.querySelectorAll('#kasirTable tbody tr');
+        rows.forEach(r => {
+            r.classList.remove('table-primary');
+            r.setAttribute('data-active', 'false');
+        });
+
+        const tbody = document.querySelector('#previewTabel tbody');
+        tbody.innerHTML = '';
+
+        if (!isActive) {
+            row.classList.add('table-primary');
+            row.setAttribute('data-active', 'true');
+
+            const noRawat = row.getAttribute('data-no_rawat');
+
+            Swal.fire({
+                icon: 'info',
+                title: 'Memuat...',
+                text: 'Mengambil kode faktur',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            $.ajax({
+                url: '/api/kasir/previewData',
+                type: 'POST',
+                data: { no_rawat: noRawat },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    Swal.close();
+                    const formatRupiah = new Intl.NumberFormat('id-ID', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                    });
+
+                    let html = '';
+                    data.forEach(item => {
+                        html += `
+                            <tr>
+                                <td>${item.jenis_tindakan}</td>
+                                <td>${formatRupiah.format(item.harga)}</td>
+                                <td>${item.jenis_pelaksana}</td>
+                                <td>${formatRupiah.format(item.harga)}</td>
+                            </tr>
+                        `;
+                    });
+
+                    tbody.innerHTML = html;
+                },
+                error: function(xhr, status, error) {
+                    Swal.close();
+                    console.error('AJAX Error:', error);
+                }
+            });
+        }
+    }
+
+
 
 </script>
 

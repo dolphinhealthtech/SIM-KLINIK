@@ -326,10 +326,10 @@ class DataMasterController extends Controller
     {
 
         $request->validate([
-            'bangsaid_delete' => 'required'
+            'bahasaid_delete' => 'required'
         ]);
 
-        $bangsa = bangsa::find($request->bangsaid_delete);
+        $bangsa = bangsa::find($request->bahasaid_delete);
         if (!$bangsa) {
             return response()->json([
                 'success' => false,

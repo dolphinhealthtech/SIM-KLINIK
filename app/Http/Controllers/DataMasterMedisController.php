@@ -1289,8 +1289,6 @@ class DataMasterMedisController extends Controller
                     ]
                 );
             }
-
-
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
@@ -1306,6 +1304,7 @@ class DataMasterMedisController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menyimpan Poli!',
+                'data' => $data,
                 'error' => $e->getMessage()
             ], 500);
         }

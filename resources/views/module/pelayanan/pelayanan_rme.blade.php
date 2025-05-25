@@ -11,7 +11,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">SOAP Rawat Jalan</li>
                     </ol>
                 </div>
             </div>
@@ -21,9 +22,6 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-           
-
-            <!-- Kode yang sudah ada untuk SOAP Steps -->
             <div class="row">
                 <!-- Data Pasien -->
                 <div class="col-md-4">
@@ -34,323 +32,103 @@
                         <div class="card-body">
                             <!-- Brand Logo dari sidebar dengan path yang diubah ke public/profile/default.png -->
                             <div class="text-center mb-4">
-                                <img src="{{ asset('profile/default.png') }}" 
-                                    alt="Klinik Logo" class="img-circle elevation-2" 
+                                <img src="{{ asset('profile/default.png') }}"
+                                    alt="Klinik Logo" class="img-circle elevation-2"
                                     style="width: 100px; height: 100px; opacity: .8">
                             </div>
-                            
-                            <!-- Input tanggal dan jam yang simpel tapi bagus -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="tanggal">Tanggal</label>
-                                        <div class="input-group">
-                                            <input type="date" class="form-control custom-date-input" id="tanggal" name="tanggal">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="jam">Jam</label>
-                                        <div class="input-group">
-                                            <input type="time" class="form-control custom-time-input" id="jam" name="jam">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text"><i class="far fa-clock"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <script>
-                            $(document).ready(function() {
-                                // Set current date and time as default
-                                var now = new Date();
-                                
-                                // Format date as YYYY-MM-DD for the date input
-                                var year = now.getFullYear();
-                                var month = ("0" + (now.getMonth() + 1)).slice(-2);
-                                var day = ("0" + now.getDate()).slice(-2);
-                                var formattedDate = year + "-" + month + "-" + day;
-                                
-                                // Format time as HH:MM for the time input
-                                var hours = ("0" + now.getHours()).slice(-2);
-                                var minutes = ("0" + now.getMinutes()).slice(-2);
-                                var formattedTime = hours + ":" + minutes;
-                                
-                                // Set the values
-                                $('#tanggal').val(formattedDate);
-                                $('#jam').val(formattedTime);
-                            });
-                            </script>
-
-                            <style>
-                            /* Custom styling for date and time inputs */
-                            .custom-date-input, .custom-time-input {
-                                border-radius: 4px;
-                                border: 1px solid #ced4da;
-                                padding: 0.375rem 0.75rem;
-                                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-                            }
-
-                            .custom-date-input:focus, .custom-time-input:focus {
-                                border-color: #80bdff;
-                                outline: 0;
-                                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-                            }
-
-                            /* Make the calendar and clock icons look better */
-                            .input-group-text {
-                                background-color: #f8f9fa;
-                                border: 1px solid #ced4da;
-                                border-radius: 0 4px 4px 0;
-                            }
-
-                            /* Improve the appearance of the native date/time pickers */
-                            input[type="date"]::-webkit-calendar-picker-indicator,
-                            input[type="time"]::-webkit-calendar-picker-indicator {
-                                opacity: 0;
-                                width: 100%;
-                                height: 100%;
-                                position: absolute;
-                                top: 0;
-                                left: 0;
-                                cursor: pointer;
-                            }
-
-                            /* Make inputs look consistent across browsers */
-                            input[type="date"], input[type="time"] {
-                                position: relative;
-                            }
-                            </style>
-
-                            <div class="form-group">
-                                <label for="id_rawat">Id Rawat</label>
-                                <input type="text" class="form-control bg-light" id="id_rawat" value="2025/04/10/001" readonly>
-                            </div>
-                            
                             <div class="form-group">
                                 <label for="nomor_rm">No. RM</label>
-                                <input type="text" class="form-control bg-light" id="nomor_rm" value="000001" readonly>
+                                <input type="text" class="form-control bg-light" id="nomor_rm" value="{{ $pelayanan->nomor_rm }}" readonly>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="nama">Nama Pasien</label>
-                                <input type="text" class="form-control bg-light" id="nama" value="RAHMADI IBRAHIM" readonly>
+                                <input type="text" class="form-control bg-light" id="nama" value="{{ $pelayanan->pasien->nama }}" readonly>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="jenis_kelamin">Jenis Kelamin</label>
-                                <input type="text" class="form-control bg-light" id="jenis_kelamin" value="Laki-laki" readonly>
+                                <input type="text" class="form-control bg-light" id="jenis_kelamin" value="{{ $pelayanan->pasien->kelamin->nama }}" readonly>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="penjamin">Penjamin</label>
-                                <input type="text" class="form-control bg-light" id="penjamin" value="umum" readonly>
+                                <input type="text" class="form-control bg-light" id="penjamin" value="{{ $pelayanan->pendaftaran->penjamin->nama }}" readonly>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="tanggal_lahir">Tanggal Lahir</label>
-                                        <input type="text" class="form-control bg-light" id="tanggal_lahir" value="1985-02-25" readonly>
+                                        <input type="text" class="form-control bg-light" id="tanggal_lahir" value="{{ $pelayanan->pasien->tanggal_lahir }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="umur">Umur</label>
-                                        <input type="text" class="form-control bg-light" id="umur" value="40 Tahun 2 Bulan" readonly>
+                                        <input type="text" class="form-control bg-light" id="umur" value="{{ $umur }}" readonly>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Main Tabs -->
                 <div class="col-md-8">
                     <div class="card card-primary card-outline card-outline-tabs">
                         <div class="card-header p-0 border-bottom-0">
-                            <ul class="nav nav-tabs" id="mainTab" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link" id="timeline-tab" data-toggle="pill" href="#timeline" role="tab" aria-controls="timeline" aria-selected="false">
-                                        <i class="fas fa-stream mr-1"></i> Timeline
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="cppt-tab" data-toggle="pill" href="#cppt" role="tab" aria-controls="cppt" aria-selected="false">
-                                        <i class="fas fa-notes-medical mr-1"></i> CPPT
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="laporan-tab" data-toggle="pill" href="#laporan" role="tab" aria-controls="laporan" aria-selected="true">
-                                        <i class="fas fa-file-medical-alt mr-1"></i> Laporan
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="card-body">
-                    <div class="tab-content" id="custom-tabs-content">
+                        <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="custom-tabs-four-Timeline-tab" data-toggle="pill" href="#custom-tabs-four-Timeline" role="tab" aria-controls="custom-tabs-four-Timeline" aria-selected="true">Timeline</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="custom-tabs-four-CPPT-tab" data-toggle="pill" href="#custom-tabs-four-CPPT" role="tab" aria-controls="custom-tabs-four-CPPT" aria-selected="false">CPPT</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="custom-tabs-four-laporan-tab" data-toggle="pill" href="#custom-tabs-four-laporan" role="tab" aria-controls="custom-tabs-four-laporan" aria-selected="false">Laporan</a>
+                            </li>
+                        </ul>
                     </div>
-                </div>
-                        <div class="card-body">
-                            <div class="tab-content" id="mainTabContent">
-                                <!-- Timeline Tab -->
-                                <div class="tab-pane fade" id="timeline" role="tabpanel" aria-labelledby="timeline-tab">
-                                    <div class="timeline-container">
-                                        <!-- Timeline item 1 -->
-                                        <div class="timeline-date">
-                                            <span class="badge badge-danger">06 May 2025</span>
-                                        </div>
-                                        <div class="timeline-item">
-                                            <div class="timeline-icon bg-primary">
-                                                <i class="fas fa-user-plus text-white"></i>
+                    <div class="card-body">
+                        <div class="tab-content" id="custom-tabs-four-tabContent">
+                            <div class="tab-pane fade show active" id="custom-tabs-four-Timeline" role="tabpanel" aria-labelledby="custom-tabs-four-Timeline-tab">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="timeline">
+                                            <div class="time-label">
+                                                <span class="bg-red">25 Mar 2025</span>
                                             </div>
-                                            <div class="timeline-content">
-                                                <h4>Pasien Registrasi ke Rawat Jalan</h4>
-                                                <p>Pasien dengan No. Rawat: 2025/05/06/001 telah terdaftar di Poli Umum.</p>
-                                                <span class="timeline-time">08:15</span>
+                                            <div>
+                                                <i class="fas fa-hospital-user bg-blue"></i>
+                                                <div class="timeline-item">
+                                                    <span class="time"><i class="fas fa-clock"></i>03:51</span>
+                                                    <h3 class="timeline-header">Pasien Registrasi ke Rawat Jalan</h3>
+                                                        <div class="timeline-body">
+                                                            Pasien dengan No. Rawat: 2025/03/25/001 telah terdaftar di Rawat Jalan.
+                                                        </div>
+                                                    <div class="timeline-footer">
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        
-                                        <div class="timeline-item">
-                                            <div class="timeline-icon bg-info">
-                                                <i class="fas fa-stethoscope text-white"></i>
-                                            </div>
-                                            <div class="timeline-content">
-                                                <h4>Pemeriksaan Awal oleh Perawat</h4>
-                                                <p>Tensi: 120/80 mmHg, Suhu: 36.5°C, Nadi: 80/menit, RR: 20/menit</p>
-                                                <span class="timeline-time">08:30</span>
+                                            <div>
+                                                <i class="fas fa-clock bg-gray"></i>
                                             </div>
                                         </div>
-                                        
-                                        <div class="timeline-item">
-                                            <div class="timeline-icon bg-success">
-                                                <i class="fas fa-user-md text-white"></i>
-                                            </div>
-                                            <div class="timeline-content">
-                                                <h4>Pemeriksaan oleh Dokter</h4>
-                                                <p>Diagnosis: Hipertensi Grade I, ISPA</p>
-                                                <span class="timeline-time">09:15</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Timeline item 2 -->
-                                        <div class="timeline-date">
-                                            <span class="badge badge-danger">17 May 2025</span>
-                                        </div>
-                                        <div class="timeline-item">
-                                            <div class="timeline-icon bg-primary">
-                                                <i class="fas fa-user-plus text-white"></i>
-                                            </div>
-                                            <div class="timeline-content">
-                                                <h4>Kunjungan Ulang Rawat Jalan</h4>
-                                                <p>Pasien dengan No. Rawat: 2025/05/17/042 terdaftar di Poli Umum.</p>
-                                                <span class="timeline-time">10:30</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="timeline-item">
-                                            <div class="timeline-icon bg-info">
-                                                <i class="fas fa-stethoscope text-white"></i>
-                                            </div>
-                                            <div class="timeline-content">
-                                                <h4>Pemeriksaan Awal oleh Perawat</h4>
-                                                <p>Tensi: 130/85 mmHg, Suhu: 36.8°C, Nadi: 76/menit, RR: 18/menit</p>
-                                                <span class="timeline-time">10:45</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="timeline-item">
-                                            <div class="timeline-icon bg-success">
-                                                <i class="fas fa-user-md text-white"></i>
-                                            </div>
-                                            <div class="timeline-content">
-                                                <h4>Pemeriksaan oleh Dokter</h4>
-                                                <p>Diagnosis: Hipertensi Grade I, Kontrol rutin</p>
-                                                <span class="timeline-time">11:20</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="timeline-item">
-                                            <div class="timeline-icon bg-warning">
-                                                <i class="fas fa-pills text-white"></i>
-                                            </div>
-                                            <div class="timeline-content">
-                                                <h4>Pengambilan Obat di Farmasi</h4>
-                                                <p>Amlodipine 5mg (30 tab), Paracetamol 500mg (10 tab)</p>
-                                                <span class="timeline-time">11:45</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="timeline-item">
-                                            <div class="timeline-icon bg-danger">
-                                                <i class="fas fa-money-bill text-white"></i>
-                                            </div>
-                                            <div class="timeline-content">
-                                                <h4>Pembayaran Pasien</h4>
-                                                <p><span class="text-danger"><i class="fas fa-times-circle"></i> Belum Membayar</span><br>
-                                                Silakan lakukan pembayaran.</p>
-                                                <span class="timeline-time">14:55</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Timeline line -->
-                                        <div class="timeline-line"></div>
                                     </div>
                                 </div>
-                                
-                                <!-- CPPT Tab -->
-                                <div class="tab-pane fade" id="cppt" role="tabpanel" aria-labelledby="cppt-tab">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th>Tanggal</th>
-                                                    <th>Tensi(mmHg)</th>
-                                                    <th>Suhu(°C)</th>
-                                                    <th>Nadi(menit)</th>
-                                                    <th>RR(menit)</th>
-                                                    <th>Tinggi(cm)</th>
-                                                    <th>Berat(Kg)</th>
-                                                    <th>SPO2</th>
-                                                    <th>L. Perut</th>
-                                                    <th>Alergi</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- Data CPPT akan ditampilkan di sini -->
-                                                <tr>
-                                                    <td>2023-05-06</td>
-                                                    <td>120/80</td>
-                                                    <td>36.5</td>
-                                                    <td>80</td>
-                                                    <td>20</td>
-                                                    <td>170</td>
-                                                    <td>65</td>
-                                                    <td>98%</td>
-                                                    <td>85</td>
-                                                    <td>Tidak ada</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                
-                                <!-- Laporan Tab -->
-                                <div class="tab-pane fade show active" id="laporan" role="tabpanel" aria-labelledby="laporan-tab">
-                                    <form id="formLaporan">
-                                        <!-- Struktur navigasi yang lebih rapi -->
+                            </div>
+
+                            <div class="tab-pane fade" id="custom-tabs-four-CPPT" role="tabpanel" aria-labelledby="custom-tabs-four-CPPT-tab">
+                            </div>
+
+                            <div class="tab-pane fade" id="custom-tabs-four-laporan" role="tabpanel" aria-labelledby="custom-tabs-four-laporan-tab">
+                                <form id="formLaporan">
+                                    <!-- Struktur navigasi yang lebih rapi -->
                                         <div class="card mb-4">
-                                            
                                             <div class="card-body p-0">
                                                 <!-- Progress Bar -->
                                                 <div class="progress mb-0" style="height: 8px; border-radius: 0;">
-                                                    <div id="progress-bar" class="progress-bar bg-secondary progress-bar-striped progress-bar-animated" 
+                                                    <div id="progress-bar" class="progress-bar bg-secondary progress-bar-striped progress-bar-animated"
                                                          role="progressbar" style="width: 12.5%" aria-valuenow="12.5" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
                                             </div>
@@ -431,7 +209,7 @@
                                                         <label class="form-check-label" for="nyeri_ya">Ya, Jelaskan P:</label>
                                                         <input type="text" class="form-control form-control-sm ml-2" style="width: 300px;">
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-2">Q:</div>
                                                         <div class="col-md-10"><input type="text" class="form-control"></div>
@@ -448,7 +226,7 @@
                                                         <div class="col-md-2">T:</div>
                                                         <div class="col-md-10"><input type="text" class="form-control"></div>
                                                     </div>
-                                                    
+
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="card">
@@ -468,7 +246,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mt-3">
                                                         <div class="col-md-6">
                                                             <p><strong>P</strong>: Provoke (pencetus, faktor yang mempengaruhi/gawat tidaknya, atau beratnya nyeri)</p>
@@ -850,7 +628,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-12">
                                                             <div class="form-check form-check-inline">
@@ -879,7 +657,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-check form-check-inline">
@@ -938,7 +716,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">Penggunaan alat bantu diri</div>
                                                         <div class="col-md-9">
@@ -960,7 +738,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">Pasien tinggal di</div>
                                                         <div class="col-md-9">
@@ -983,7 +761,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row">
                                                         <div class="col-md-3">Bantuan yang dibutuhkan pasien</div>
                                                         <div class="col-md-9">
@@ -1043,7 +821,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">Hambatan edukasi</div>
                                                         <div class="col-md-9">
@@ -1065,7 +843,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">Metode edukasi</div>
                                                         <div class="col-md-9">
@@ -1083,7 +861,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="row mb-3">
                                                         <div class="col-md-3">Respon pasien/keluarga</div>
                                                         <div class="col-md-9">
@@ -1106,8 +884,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -1116,293 +893,117 @@
         </div>
     </section>
 </div>
-<!-- Add proper spacing before footer -->
-<div style="margin-bottom: 60px;"></div>
-</div>
-<!-- End of content-wrapper -->
 
-<style>
-    /* Footer styling with minimal margin-top */
-    .main-footer {
-        position: relative;
-        bottom: 0;
-        width: 100%;
-        background-color: #fff;
-        border-top: 1px solid #dee2e6;
-        margin-top: 5px; /* Reduced from 15px to 5px */
-    }
-    
-    /* Remove fixed positioning and adjust spacing */
-    body {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    /* Make content take available space with minimal padding */
-    .content-wrapper {
-        flex: 1;
-        padding-bottom: 5px; /* Reduced from 10px to 5px */
-    }
-    
-    /* DataTables specific adjustments */
-    .dataTables_scrollBody {
-        min-height: 200px;
-        max-height: 70vh;
-    }
-    
-    /* Fix for DataTables FixedHeader plugin */
-    .dtfh-floatingparenthead {
-        top: 0 !important;
-    }
-    
-    .dtfh-floatingparentfoot {
-        bottom: 0 !important;
-    }
-    
-    /* Timeline styling remains the same */
-    .timeline-container {
-        position: relative;
-        padding: 20px 0;
-    }
-    
-    .timeline-line {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 20px;
-        width: 4px;
-        background-color: #e9ecef;
-        z-index: 0;
-    }
-    
-    .timeline-date {
-        margin-left: 45px;
-        margin-bottom: 15px;
-    }
-    
-    .timeline-date .badge {
-        font-size: 14px;
-        padding: 5px 10px;
-    }
-    
-    .timeline-item {
-        position: relative;
-        margin-bottom: 30px;
-        margin-left: 45px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    }
-    
-    .timeline-icon {
-        position: absolute;
-        left: -45px;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 40px;
-    }
-    
-    .timeline-content {
-        padding: 15px;
-    }
-    
-    .timeline-content h4 {
-        margin-top: 0;
-        font-size: 16px;
-        font-weight: 600;
-    }
-    
-    .timeline-time {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        color: #6c757d;
-        font-size: 12px;
-    }
-</style>
 
 <script>
-    $(function() {
-        // Pastikan tab berfungsi dengan benar
+    document.addEventListener('DOMContentLoaded', function () {
+        // Inisialisasi tabs bootstrap (jika ada)
         $('#custom-tabs a').on('click', function (e) {
             e.preventDefault();
             $(this).tab('show');
         });
-    });
-</script>
-@endsection
 
-<script>
-    // Fungsi untuk mendapatkan step yang sedang aktif
-    function getCurrentStep() {
-        var steps = ['step-a', 'step-b', 'step-c', 'step-d', 'step-e', 'step-f', 'step-g', 'step-h'];
-        for (var i = 0; i < steps.length; i++) {
-            var step = document.getElementById(steps[i]);
-            if (step && (step.style.display === 'block' || step.style.display === '')) {
-                return steps[i];
-            }
-        }
-        return 'step-a'; // Default ke step pertama jika tidak ada yang terlihat
-    }
-    
-    // Fungsi untuk navigasi antar step
-    function navigateTo(fromStep, toStep) {
-        // Sembunyikan step saat ini
-        var currentStepElement = document.getElementById(fromStep);
-        if (currentStepElement) {
-            currentStepElement.style.display = 'none';
-            currentStepElement.style.opacity = '0';
-        }
-        
-        // Tampilkan step tujuan
-        var nextStepElement = document.getElementById(toStep);
-        if (nextStepElement) {
-            nextStepElement.style.display = 'block';
-            // Gunakan setTimeout untuk memberikan efek transisi
-            setTimeout(function() {
-                nextStepElement.style.opacity = '1';
-            }, 50);
-        }
-    }
-    
-    // Fungsi untuk navigasi ke step berikutnya
-    function navigateNext() {
-        var currentStep = getCurrentStep();
-        var steps = ['step-a', 'step-b', 'step-c', 'step-d', 'step-e', 'step-f', 'step-g', 'step-h'];
-        var currentIndex = steps.indexOf(currentStep);
-        
-        if (currentIndex < steps.length - 1) {
-            var nextStep = steps[currentIndex + 1];
-            navigateTo(currentStep, nextStep);
-        } else if (currentIndex === steps.length - 1) {
-            // Jika ini adalah step terakhir, lakukan aksi selesai
-            // Misalnya submit form atau redirect
-            alert('Proses selesai!');
-            // Atau submit form jika ada
-            // document.getElementById('form-soap').submit();
-        }
-    }
-    
-    // Fungsi untuk navigasi ke step sebelumnya
-    function navigateBack() {
-        var currentStep = getCurrentStep();
-        var steps = ['step-a', 'step-b', 'step-c', 'step-d', 'step-e', 'step-f', 'step-g', 'step-h'];
-        var currentIndex = steps.indexOf(currentStep);
-        
-        if (currentIndex > 0) {
-            var prevStep = steps[currentIndex - 1];
-            navigateTo(currentStep, prevStep);
-        }
-    }
-    
-    // Inisialisasi saat halaman dimuat
-    document.addEventListener('DOMContentLoaded', function() {
-        // Tampilkan hanya step pertama saat halaman dimuat
-        var steps = ['step-a', 'step-b', 'step-c', 'step-d', 'step-e', 'step-f', 'step-g', 'step-h'];
-        steps.forEach(function(step, index) {
-            var el = document.getElementById(step);
+        // Langkah-langkah step
+        const steps = ['step-a', 'step-b', 'step-c', 'step-d', 'step-e', 'step-f', 'step-g', 'step-h'];
+
+        // Inisialisasi: tampilkan hanya step pertama
+        steps.forEach((step, index) => {
+            const el = document.getElementById(step);
             if (el) {
-                if (index === 0) {
-                    el.style.display = 'block';
-                    el.style.opacity = '1';
-                } else {
-                    el.style.display = 'none';
-                    el.style.opacity = '0';
-                }
+                el.style.display = index === 0 ? 'block' : 'none';
+                el.style.opacity = index === 0 ? '1' : '0';
             }
         });
-        
-        // Tambahkan CSS untuk transisi
-        var style = document.createElement('style');
+
+        // Tambahkan CSS transisi
+        const style = document.createElement('style');
         style.innerHTML = `
             .step-content {
                 transition: opacity 0.3s ease-in-out;
             }
         `;
         document.head.appendChild(style);
-        
-        // Ubah teks tombol Next menjadi Selesai pada step terakhir
-        var stepH = document.querySelector('#step-h .btn-next');
-        if (stepH) {
-            stepH.innerText = 'Selesai';
+
+        // Ubah teks tombol "Next" jadi "Selesai" di step terakhir
+        const lastStepNextBtn = document.querySelector('#step-h .btn-next');
+        if (lastStepNextBtn) {
+            lastStepNextBtn.innerText = 'Selesai';
         }
     });
+
+    // Dapatkan step aktif
+    function getCurrentStep() {
+        const steps = ['step-a', 'step-b', 'step-c', 'step-d', 'step-e', 'step-f', 'step-g', 'step-h'];
+        for (let i = 0; i < steps.length; i++) {
+            const step = document.getElementById(steps[i]);
+            if (step && (step.style.display === 'block' || step.style.display === '')) {
+                return steps[i];
+            }
+        }
+        return 'step-a'; // default jika tidak ditemukan
+    }
+
+    // Navigasi antar step
+    function navigateTo(fromStep, toStep) {
+        const currentStepElement = document.getElementById(fromStep);
+        if (currentStepElement) {
+            currentStepElement.style.display = 'none';
+            currentStepElement.style.opacity = '0';
+        }
+
+        const nextStepElement = document.getElementById(toStep);
+        if (nextStepElement) {
+            nextStepElement.style.display = 'block';
+            setTimeout(() => {
+                nextStepElement.style.opacity = '1';
+            }, 50);
+        }
+    }
+
+    function updateProgressBar(currentIndex) {
+        const totalSteps = 8;
+        const percentage = ((currentIndex + 1) / totalSteps) * 100;
+        const progressBar = document.getElementById('progress-bar');
+
+        if (progressBar) {
+            progressBar.style.width = `${percentage}%`;
+            progressBar.setAttribute('aria-valuenow', percentage.toFixed(1));
+        }
+    }
+
+
+    // Navigasi ke step berikutnya
+    function navigateNext() {
+        const currentStep = getCurrentStep();
+        const steps = ['step-a', 'step-b', 'step-c', 'step-d', 'step-e', 'step-f', 'step-g', 'step-h'];
+        const currentIndex = steps.indexOf(currentStep);
+
+        if (currentIndex < steps.length - 1) {
+            const nextStep = steps[currentIndex + 1];
+            navigateTo(currentStep, nextStep);
+            updateProgressBar(currentIndex + 1); // ← Tambahkan ini
+
+        } else if (currentIndex === steps.length - 1) {
+            // Step terakhir
+            alert('Proses selesai!');
+            // document.getElementById('form-soap').submit(); // jika ingin langsung submit
+
+        }
+    }
+
+    // Navigasi ke step sebelumnya
+    function navigateBack() {
+        const currentStep = getCurrentStep();
+        const steps = ['step-a', 'step-b', 'step-c', 'step-d', 'step-e', 'step-f', 'step-g', 'step-h'];
+        const currentIndex = steps.indexOf(currentStep);
+
+        if (currentIndex > 0) {
+            const prevStep = steps[currentIndex - 1];
+            navigateTo(currentStep, prevStep);
+            updateProgressBar(currentIndex - 1); // ← Tambahkan ini
+        }
+    }
 </script>
 
-<!-- CSS untuk Timeline -->
-<style>
-    .timeline-container {
-        position: relative;
-        padding: 20px 0;
-    }
-    
-    .timeline-line {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 20px;
-        width: 4px;
-        background-color: #e9ecef;
-        z-index: 0;
-    }
-    
-    .timeline-date {
-        margin-left: 45px;
-        margin-bottom: 15px;
-    }
-    
-    .timeline-date .badge {
-        font-size: 14px;
-        padding: 5px 10px;
-    }
-    
-    .timeline-item {
-        position: relative;
-        margin-bottom: 30px;
-        margin-left: 45px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    }
-    
-    .timeline-icon {
-        position: absolute;
-        left: -45px;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 40px;
-    }
-    
-    .timeline-content {
-        padding: 15px;
-    }
-    
-    .timeline-content h4 {
-        margin-top: 0;
-        font-size: 16px;
-        font-weight: 600;
-    }
-    
-    .timeline-time {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        color: #6c757d;
-        font-size: 12px;
-    }
-</style>
 
-<script>
-    $(function() {
-        // Pastikan tab berfungsi dengan benar
-        $('#custom-tabs a').on('click', function (e) {
-            e.preventDefault();
-            $(this).tab('show');
-        });
-    });
-</script>
+@endsection

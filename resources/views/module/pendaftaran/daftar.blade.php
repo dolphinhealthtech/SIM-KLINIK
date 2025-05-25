@@ -100,6 +100,7 @@
                                         <th class="text-center">No Registarsi</th>
                                         <th class="text-center">Tanggal Registarsi</th>
                                         <th class="text-center">No RM</th>
+                                        <th class="text-center">No. Antrian</th>
                                         <th class="text-center">Poli Tujuan</th>
                                         <th class="text-center">Nama Dokter</th>
                                         <th class="text-center" width="15%">Action</th>
@@ -237,7 +238,7 @@
     </div>
 </div>
 
-{{-- modal Delete Role --}}
+{{-- modal Panggil Role --}}
 <div class="modal fade" id="panggilModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
         <form id="deleteFormbatal" action="{{ route('pendaftaran.hadir') }}" method="POST">
@@ -255,12 +256,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger">Hapus</button>
+                    <button type="submit" class="btn btn-info">Hadir</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
 {{-- modal Delete Role --}}
 <div class="modal fade" id="deletebatalModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
@@ -324,7 +326,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger">Hapus</button>
+                    <button type="submit" class="btn btn-info">Update</button>
                 </div>
             </div>
         </form>

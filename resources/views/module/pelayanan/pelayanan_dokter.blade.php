@@ -73,6 +73,9 @@
                                                                 <a class="dropdown-item" href="{{ route('pelayana_rujuk.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-edit"></i> Rujukan
                                                                 </a>
+                                                                <a class="dropdown-item" href="{{ route('pelayana_rme.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                                    <i class="fas fa-edit"></i> Data RME
+                                                                </a>
                                                             @endif
                                                         </div>
                                                     </div>

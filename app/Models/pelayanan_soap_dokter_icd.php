@@ -20,7 +20,6 @@ class pelayanan_soap_dokter_icd extends Model
         'priority_icd10',
         'nama_icd9',
         'kode_icd9',
-        'priority_icd9',
     ];
 
 }

@@ -344,7 +344,6 @@ class soap extends Controller
         'icd10_priority' => 'nullable|array',
         'icd9_code' => 'nullable|array',
         'icd9_name' => 'nullable|array',
-        'icd9_priority' => 'nullable|array',
         'diet_jenis' => 'nullable|array',
         'diet_anjuran' => 'nullable|array',
         'diet_pantangan' => 'nullable|array',
@@ -416,7 +415,6 @@ class soap extends Controller
             // Gabungkan array ICD-9 jadi string
             $namaIcd9 = is_array($request->icd9_name) ? implode(', ', $request->icd9_name) : null;
             $kodeIcd9 = is_array($request->icd9_code) ? implode(', ', $request->icd9_code) : null;
-            $priorityIcd9 = is_array($request->icd9_priority) ? implode(', ', $request->icd9_priority) : null;
 
             $pemeriksaan = pelayanan_soap_dokter_icd::create([
                 'nomor_rm' => $request->nomor_rm,
@@ -430,7 +428,6 @@ class soap extends Controller
                 'priority_icd10' => $priorityIcd10,
                 'nama_icd9' => $namaIcd9,
                 'kode_icd9' => $kodeIcd9,
-                'priority_icd9' => $priorityIcd9,
             ]);
 
             $jenis = is_array($request->diet_jenis) ? implode(', ', $request->diet_jenis) : $request->diet_jenis;
@@ -486,10 +483,29 @@ class soap extends Controller
         return response()->json($data);
     }
 
-    public function dataLrawatJalan()
+    public function dataLrawatJalan($norawat)
     {
-        $title = "SOAP Rawat Jalan";
-        return view('module.pelayanan.soap_rawat_jalan', compact('title'));
+        $nomor_rawat = base64_decode($norawat);
+        $title = "Data RME";
+        $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien.kelamin','pendaftaran.penjamin')->where('nomor_register', $nomor_rawat)->first();
+
+        $tgl_lahir = Carbon::createFromFormat('Y-m-d', $pelayanan->pasien->tanggal_lahir);
+        $diff = $tgl_lahir->diff(Carbon::now());
+
+        $umurTahun = $diff->y;
+        $umurBulan = $diff->m;
+        $umurHari = $diff->d;
+
+        $umur = '';
+        if ($umurTahun > 0) {
+            $umur .= $umurTahun . ' Tahun ';
+        }
+        if ($umurBulan > 0 || $umurTahun > 0) {
+            $umur .= $umurBulan . ' Bulan ';
+        }
+        $umur .= $umurHari . ' Hari';
+
+        return view('module.pelayanan.pelayanan_rme', compact('title','pelayanan','umur',));
     }
 
     public function pelayana_rujukan($norawat)

@@ -27,7 +27,8 @@ Route::middleware('auth')->group(function () {
 
 // Route untuk Kasir
 Route::get('/kasir', [SuperadminController::class, 'kasir'])->name('kasir');
-Route::get('/kasir_detail', [SuperadminController::class, 'kasirDetail'])->name('kasir.detail');
+Route::get('/kasir/pembayaran/{kode_faktur}', [SuperadminController::class, 'kasirPembayaran'])->name('kasir.pembayaran');
+Route::post('/kasir/add', [SuperadminController::class, 'kasiradd'])->name('kasir.store');
 
 //Menu Data Barang (Obat)
 Route::get('/data-barang', [SuperadminController::class,'dabar'])->name('dabar.get');
@@ -97,6 +98,7 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::post('/dokter/so/add', [soap::class,'soappelayananandd'])->name('pelayana_dokter.add');
     Route::get('/dokter/so/hadir/{norawat}', [soap::class,'soappelayananpanggil'])->name('pelayana_dokter.hadir');
     Route::get('/rujuk/{norawat}', [soap::class,'pelayana_rujukan'])->name('pelayana_rujuk.get');
+    Route::get('/rme/{norawat}', [soap::class, 'dataLrawatJalan'])->name('pelayana_rme.get');
     // Menu Pasien
     Route::get('/perawat', [soap::class,'pelayana'])->name('pelayana.get');
     Route::get('/perawat/so/{norawat}', [soap::class,'sopelayanan'])->name('sopelayana.get');
@@ -313,9 +315,6 @@ Route::prefix('pemeriksaan')->group(function () {
             Route::get('/setting-harga-jual/singkron/{id}', [DataMasterGudangController::class, 'sethargasingkron'])->name('setharga.singkron');
             Route::get('/harga-barang-jual', [DataMasterGudangController::class,'hargajual'])->name('hargajual.get');
             Route::get('/stok-obat-alkes', [DataMasterGudangController::class,'stokobatalkes'])->name('stokobatalkes.get');
-
-            // Route untuk menampilkan SOAP Rawat Jalan
-            Route::get('/pelayanan/soap-rawat-jalan', [soap::class, 'dataLrawatJalan'])->name('soap.rawat.jalan');
 
             // Menu Request Obat Klinik Omega
             Route::get('/gudang-request', [DataMasterGudangController::class, 'gudangrequest'])->name('gudangrequest.get');
