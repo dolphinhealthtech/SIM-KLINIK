@@ -48,6 +48,7 @@ Route::get('/pembelian/cetak/{nomor_faktur}', [SuperadminController::class, 'cet
 Route::get('/monitor', [SuperadminController::class,'monitor'])->name('monitor.get');
 Route::post('/monitor/add/bpjs', [SuperadminController::class,'monitor_bpjs'])->name('monitor.add.bpjs');
 Route::post('/monitor/add/nobpjs', [SuperadminController::class,'monitor_nobpjs'])->name('monitor.add.nobpjs');
+Route::get('/monitor/loket-antrian', [SuperadminController::class, 'loketAntrian'])->name('monitor.loket.antrian');
 
 // Menu apotek
 Route::get('/apotek', [SuperadminController::class, 'apotek'])->middleware(['auth'])->name('apotek.index');
@@ -377,6 +378,7 @@ Route::middleware('auth')->prefix('setting')->group(function () {
 
 require __DIR__.'/auth.php';
 require __DIR__.'/user.php';
+
 
 
 

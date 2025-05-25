@@ -3294,5 +3294,19 @@ class SuperadminController extends Controller
             ], 422);
         }
     }
+
+    public function loketAntrian()
+{
+    $title = "Loket Antrian";
+    // You can fetch active queue data here
+    // For example:
+    // $activeQueues = Pendaftaran_rawat_jalan::whereDate('created_at', Carbon::today())
+    //     ->whereNotNull('antrian')
+    //     ->orderBy('created_at', 'desc')
+    //     ->get();
+    
+    return view('monitor.loket_antrian', compact('title'));
 }
+}
+
 
