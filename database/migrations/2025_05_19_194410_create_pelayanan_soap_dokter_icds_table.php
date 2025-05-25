@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('priority_icd10')->nullable();
             $table->string('nama_icd9')->nullable();
             $table->string('kode_icd9')->nullable();
-            $table->string('priority_icd9')->nullable();
             $table->timestamps();
         });
     }

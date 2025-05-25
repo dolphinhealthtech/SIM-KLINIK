@@ -472,16 +472,21 @@ class SuperadminController extends Controller
             // Gabungkan format akhir: 1234-25113
             $no_registrasi = $angkaAcak . '-' . $tanggalKode;
 
-            // Cari antrian terakhir berdasarkan kode poli
+            // Ambil tanggal hari ini (tanpa jam)
+            $tanggalHariIni = Carbon::today();
+
+            // Cari antrian terakhir HANYA untuk hari ini berdasarkan kode poli
             $last = Pendaftaran_rawat_jalan::where('antrian', 'like', $antrian->nama . '-%')
-            ->orderBy('created_at', 'desc')
-            ->first();
+                ->whereDate('created_at', $tanggalHariIni)
+                ->orderBy('created_at', 'desc')
+                ->first();
 
             if ($last) {
                 // Ambil angka terakhir dan increment
                 $lastNumber = (int) str_replace($antrian->nama . '-', '', $last->antrian);
                 $nextNumber = $lastNumber + 1;
             } else {
+                // Jika belum ada antrian hari ini, mulai dari 1
                 $nextNumber = 1;
             }
 
@@ -584,16 +589,21 @@ class SuperadminController extends Controller
             // Gabungkan format akhir: 1234-25113
             $no_registrasi = $angkaAcak . '-' . $tanggalKode;
 
-            // Cari antrian terakhir berdasarkan kode poli
+            // Ambil tanggal hari ini (tanpa jam)
+            $tanggalHariIni = Carbon::today();
+
+            // Cari antrian terakhir HANYA untuk hari ini berdasarkan kode poli
             $last = Pendaftaran_rawat_jalan::where('antrian', 'like', $antrian->nama . '-%')
-            ->orderBy('created_at', 'desc')
-            ->first();
+                ->whereDate('created_at', $tanggalHariIni)
+                ->orderBy('created_at', 'desc')
+                ->first();
 
             if ($last) {
                 // Ambil angka terakhir dan increment
                 $lastNumber = (int) str_replace($antrian->nama . '-', '', $last->antrian);
                 $nextNumber = $lastNumber + 1;
             } else {
+                // Jika belum ada antrian hari ini, mulai dari 1
                 $nextNumber = 1;
             }
 
@@ -1419,11 +1429,13 @@ class SuperadminController extends Controller
         $pasiens = pasien::all();
         $poli = poli::all();
 
-        $pendaftaran = Pendaftaran_rawat_jalan::with('status' ,'poli','dokter.namauser', 'pasien')
-        ->whereHas('status', function($query) {
+        $pendaftaran = Pendaftaran_rawat_jalan::with('status', 'poli', 'dokter.namauser', 'pasien')
+        ->whereHas('status', function ($query) {
             $query->whereIn('status_pendaftaran', ['1', '2']);
         })
+        ->whereDoesntHave('apotek') // Filter: yang belum ada di tabel apotek
         ->get();
+
 
         $pasiennoverif = Pasien::where('verifikasi', 1)->count();
         $pasienallold = Pasien::where('created_at', '<', now()->subDays(30))->count();
@@ -2650,7 +2662,7 @@ class SuperadminController extends Controller
                 'message' => 'Pembayaran kasir berhasil dilakukan.',
                 'data' => $kasir,
             ]);
-        } catch (\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'status' => 'error',
                 'errors' => $e->errors(),
@@ -2790,7 +2802,7 @@ class SuperadminController extends Controller
                 'message' => 'Data berhasil disimpan',
                 'data' => $apotek,
             ]);
-        } catch (\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'status' => 'error',
                 'errors' => $e->errors(),

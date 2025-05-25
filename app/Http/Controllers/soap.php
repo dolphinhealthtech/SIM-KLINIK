@@ -344,7 +344,6 @@ class soap extends Controller
         'icd10_priority' => 'nullable|array',
         'icd9_code' => 'nullable|array',
         'icd9_name' => 'nullable|array',
-        'icd9_priority' => 'nullable|array',
         'diet_jenis' => 'nullable|array',
         'diet_anjuran' => 'nullable|array',
         'diet_pantangan' => 'nullable|array',
@@ -416,7 +415,6 @@ class soap extends Controller
             // Gabungkan array ICD-9 jadi string
             $namaIcd9 = is_array($request->icd9_name) ? implode(', ', $request->icd9_name) : null;
             $kodeIcd9 = is_array($request->icd9_code) ? implode(', ', $request->icd9_code) : null;
-            $priorityIcd9 = is_array($request->icd9_priority) ? implode(', ', $request->icd9_priority) : null;
 
             $pemeriksaan = pelayanan_soap_dokter_icd::create([
                 'nomor_rm' => $request->nomor_rm,
@@ -430,7 +428,6 @@ class soap extends Controller
                 'priority_icd10' => $priorityIcd10,
                 'nama_icd9' => $namaIcd9,
                 'kode_icd9' => $kodeIcd9,
-                'priority_icd9' => $priorityIcd9,
             ]);
 
             $jenis = is_array($request->diet_jenis) ? implode(', ', $request->diet_jenis) : $request->diet_jenis;

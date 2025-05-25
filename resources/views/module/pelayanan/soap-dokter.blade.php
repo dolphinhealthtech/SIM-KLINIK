@@ -346,14 +346,6 @@
                                                                     <div class="ml-1">
                                                                         <!-- Tombol yang akan menampilkan kode ICD 9 -->
                                                                         <button type="button" class="ml-2 btn btn-default" id="kodeICD9">KODE ICD 9</button>
-                                                                        <!-- Dropdown Prioritas -->
-                                                                        <button type="button" class="ml-2 btn btn-default dropdown-toggle" id="dropdownMenuButtonICD9" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                            <span id="prioritas_icd_9" class="caret">Pilih</span>
-                                                                        </button>
-                                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButtonICD9">
-                                                                            <li><a class="dropdown-item" data-value="Primary">Primary</a></li>
-                                                                            <li><a class="dropdown-item" data-value="Sekunder">Sekunder</a></li>
-                                                                        </ul>
                                                                     </div>
                                                                 </div>
 
@@ -719,23 +711,43 @@
 
                 $('#summernote').summernote('code', data.summernote);
 
-                // Ambil konten lama dari Summernote
-                let oldContent = $('#summernote5').summernote('code');
+                function formatPatientData(data) {
+                    let keluhan = '';
+                    if(data.keluhan && data.durasi && data.waktu) {
+                        keluhan = `- Keluhan: ${data.keluhan}, sejak ${data.durasi} ${data.waktu}`;
+                    }
 
-                // Konversi konten HTML ke plain text (untuk pengecekan baris)
-                let oldText = $('<div>').html(oldContent).text().trim();
+                    const lines = [
+                        keluhan,
+                        `- Tensi: ${data.sistol}/${data.distol} mmHg`,
+                        `- Suhu: ${data.suhu} °C`,
+                        `- Nadi: ${data.nadi} /mnt, RR: ${data.rr} /mnt`,
+                        `- Tinggi: ${data.tinggi} cm, Berat: ${data.berat} kg`,
+                        `- SpO2: ${data.spo2}`,
+                        `- Alergi: ${data.jenis_alergi} - ${data.alergi}`,
+                        `- Lingkar Perut: ${data.lingkar_perut} cm`,
+                        `- BMI: ${data.nilai_bmi} (${data.status_bmi})`,
+                        `- GCS: E${data.eye} V${data.verbal} M${data.motorik} → Kesadaran: ${data.sadar || 'N/A'}`,
+                    ];
 
-                // Siapkan teks tambahan
-                let newText = dataArray.map(item => {
-                return `${item.penyakit} sejak ${item.durasi} ${item.waktu}`;
-                }).join('\n');
+                    // Ambil isi summernote (bisa berupa HTML), convert ke teks polos tanpa tag HTML supaya rapi
+                    const headToToeRaw = data.summernote || '';
+                    const headToToeText = $('<div>').html(headToToeRaw).text().replace(/\n/g, '').trim() || 'Tidak ada pemeriksaan';
+                    lines.push(`- Head to Toe: ${headToToeText}`);
 
-                // Tambahkan ke bawah konten lama (jika ada)
-                let finalText = oldText ? oldText + '\n' + newText : newText;
+                    // Gabungkan jadi string dengan newline
+                    const fullText = lines.filter(line => line && line.trim() !== '').join('\n');
 
-                // Masukkan kembali ke Summernote
-                $('#summernote5').summernote('code', finalText.replace(/\n/g, '<br>'));
-            }
+                    // Ubah newline jadi <br> untuk HTML Summernote
+                    const htmlText = fullText.replace(/\n/g, '<br>');
+
+                    return htmlText;
+                    }
+
+                    // Contoh pakai:
+                    const formatted = formatPatientData(data);
+                    $('#summernote5').summernote('code', formatted);
+                }
         });
     }
 </script>
@@ -1099,8 +1111,6 @@
     });
 </script>
 
-
-
 {{-- Script Diet --}}
 <script>
     let editIndex = null;
@@ -1249,39 +1259,41 @@
             const opt = $(this).find('option:selected');
             selectedICD9 = { code: opt.val(), name: opt.data('nama') };
             $('#kodeICD9').text(selectedICD9.code);
-        });
 
-        $('#dropdownMenuButtonICD9').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
-            selectedPriorityICD9 = $(this).data('value');
-            $('#prioritas_icd_9').text(selectedPriorityICD9);
+            // Set prioritas langsung ke Secondary tanpa pilihan
+            selectedPriorityICD9 = 'Sekunder';
+            $('#prioritas_icd_9').text(selectedPriorityICD9); // Opsional, jika kamu ingin tampilkan prioritas
         });
 
         $('#acceptICD9').on('click', function () {
-            if (!selectedICD9 || !selectedPriorityICD9) return
-            Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Pilih Tindakan dan Prioritas!',
-                            confirmButtonText: 'OK'
-            });
-            if (isDuplicate('.icd_9 tbody', selectedICD9.code)) return
-            Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Data sudah ada!',
-                            confirmButtonText: 'OK'
-            });
-            if (selectedPriorityICD9 === 'Primary' && hasPrimary('.icd_9 tbody')) return
-            Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Primary hanya boleh satu.',
-                            confirmButtonText: 'OK'
-            });
+            if (!selectedICD9) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Pilih Tindakan!',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            // Karena prioritas selalu Secondary, tidak perlu cek selectedPriorityICD9
+
+            if (isDuplicate('.icd_9 tbody', selectedICD9.code)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Data sudah ada!',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            // Tidak perlu cek Primary untuk ICD9 karena prioritas selalu Secondary
 
             $('.icd_9 tbody').append(generateRow(selectedICD9, selectedPriorityICD9, 'ICD9'));
             resetFields('#icd9', '#kodeICD9', '#prioritas_icd_9');
-            selectedICD9 = selectedPriorityICD9 = null;
+            selectedICD9 = null;
+            selectedPriorityICD9 = null;
             updateTableState();
         });
 
@@ -2191,9 +2203,6 @@
                         // Fungsi mengumpulkan seluruh data form medis
                         function collectAllMedicalData() {
                             return {
-                                keluhan: document.getElementById('penyakit')?.value || '',
-                                durasi: document.getElementById('durasi')?.value || '',
-                                waktu: document.getElementById('waktu')?.value || '',
                                 sistol: document.getElementById('sistol')?.value || '',
                                 distol: document.getElementById('distol')?.value || '',
                                 suhu: document.getElementById('suhu')?.value || '',
@@ -2211,15 +2220,105 @@
                                 verbal: document.getElementById('verbal')?.value || '',
                                 motorik: document.getElementById('motorik')?.value || '',
                                 sadar: document.getElementById('sadar')?.value || '',
-                                htt_pemeriksaan: document.getElementById('htt_pemeriksaan')?.value || '',
-                                sub_pemeriksaan: document.getElementById('sub-pemeriksaan-select')?.value || '',
-                                htt_pemeriksaan_detail: document.getElementById('htt_pemeriksaan_detail')?.value || ''
+
                             };
                         }
 
+                        function getKeluhanFormatted() {
+                            const rawValue = document.getElementById('tableData')?.value || '[]';
+                            let keluhanText = '';
+
+                            try {
+                                const keluhanArray = JSON.parse(rawValue);
+                                keluhanText = keluhanArray.map(item =>
+                                    `Keluhan: ${item.penyakit}, sejak ${item.durasi} ${item.waktu}`
+                                ).join('\n- ');
+                            } catch (e) {
+                                keluhanText = 'Keluhan: (data tidak valid)';
+                            }
+
+                            return keluhanText;
+                        }
+
+                        function getHTTFromSummernote() {
+                            const summernoteElem = $('#summernote');
+                            if (!summernoteElem.length) {
+                                return 'Tidak ada pemeriksaan';
+                            }
+
+                            const html = summernoteElem.summernote('code') || '';
+                            const container = $('<div>').html(html);
+
+                            // Fungsi parsing nested list menjadi kalimat
+                            function parseInspection(element) {
+                                const results = [];
+
+                                $(element).children('li').each(function() {
+                                // Level 1 (misal: Kepala)
+                                let level1 = '';
+                                const firstChild = $(this).contents().get(0);
+                                if (firstChild) {
+                                    if (firstChild.nodeType === 3) { // text node
+                                    level1 = $(this).contents().filter(function() { return this.nodeType === 3; }).first().text().trim();
+                                    } else if (firstChild.nodeType === 1 && firstChild.tagName === 'STRONG') {
+                                    level1 = $(firstChild).text().trim();
+                                    }
+                                }
+
+                                // Level 2 (anak <ul><li>)
+                                const level2ul = $(this).children('ul').first();
+                                if (level2ul.length) {
+                                    level2ul.children('li').each(function() {
+                                    const level2 = $(this).contents().filter(function() {
+                                        return this.nodeType === 3;
+                                    }).first().text().trim();
+
+                                    // Level 3 (anak <ul><li>)
+                                    const level3ul = $(this).children('ul').first();
+                                    if (level3ul.length) {
+                                        level3ul.children('li').each(function() {
+                                        const level3 = $(this).text().trim();
+                                        if (level1 && level2 && level3) {
+                                            results.push(`Inspeksi Pemeriksaan ${level1} pada ${level2} di ${level3}`);
+                                        }
+                                        });
+                                    } else {
+                                        if (level1 && level2) {
+                                        results.push(`Inspeksi Pemeriksaan ${level1} pada ${level2}`);
+                                        }
+                                    }
+                                    });
+                                } else {
+                                    if (level1) {
+                                    results.push(`Inspeksi Pemeriksaan ${level1}`);
+                                    }
+                                }
+                                });
+
+                                return results.join('\n');
+                            }
+
+                            // Coba parsing dulu
+                            const parsedText = parseInspection(container);
+
+                            if (parsedText) {
+                                return parsedText;
+                            }
+
+                            // Kalau parsing kosong, fallback ke teks polos
+                            const plainText = container.text().trim();
+                            return plainText || 'Tidak ada pemeriksaan';
+                        }
+
+
                         function formatMedicalQuestion(data) {
+
+                            const keluhan = getKeluhanFormatted();
+                            const htt = getHTTFromSummernote();
+
+
                             return `Berikut adalah data medis pasien:
-                            - Keluhan: ${data.keluhan}, sejak ${data.durasi} ${data.waktu}
+                            - ${keluhan}
                             - Tensi: ${data.sistol}/${data.distol} mmHg
                             - Suhu: ${data.suhu} °C
                             - Nadi: ${data.nadi} /mnt, RR: ${data.rr} /mnt
@@ -2229,7 +2328,7 @@
                             - Lingkar Perut: ${data.lingkar_perut} cm
                             - BMI: ${data.nilai_bmi} (${data.status_bmi})
                             - GCS: E${data.eye} V${data.verbal} M${data.motorik} → Kesadaran: ${data.sadar}
-                            - Head to Toe: ${data.htt_pemeriksaan} di ${data.sub_pemeriksaan} pada ${data.htt_pemeriksaan_detail}
+                            - Head to Toe: ${htt}
 
                             Apa kemungkinan diagnosis dan saran tindak lanjut berdasarkan data di atas?`;
                         }
