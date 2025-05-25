@@ -304,9 +304,14 @@
     <div class="footer">
         <table class="signature-table">
             <tr>
-                <td style="width: 33%;">Petugas Entry Apotik</td>
-                <td style="width: 33%;">Petugas Penerima Apotik</td>
-                <td style="width: 33%;">Penanggung Jawab Apotek</td>
+                <td style="width: 33%; padding-bottom: 20px;">Petugas Entry Apotik</td>
+                <td style="width: 33%; padding-bottom: 20px;">Petugas Penerima Apotik</td>
+                <td style="width: 33%; padding-bottom: 20px;">Penanggung Jawab Apotek</td>
+            </tr>
+            <tr>
+                <td style="height: 60px;"></td>
+                <td style="height: 60px;"></td>
+                <td style="height: 60px;"></td>
             </tr>
             <tr>
                 <td><div class="signature-line"></div></td>

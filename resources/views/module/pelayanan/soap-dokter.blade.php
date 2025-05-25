@@ -8,12 +8,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Dashboard</h1>
+                        <h1 class="m-0">SOAP Dokter</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Dashboard v1</li>
+
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -2204,6 +2203,54 @@
 
         });
 
+        $('#form-soap-dokter').submit(function(e) {
+            e.preventDefault();
+            
+            var formData = new FormData(this);
+            
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Data SOAP dokter berhasil disimpan!',
+                            showConfirmButton: true
+                        }).then(() => {
+                            window.location.href = '/soap/pelayanan/dokter';
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: 'Gagal mengedit SOAP dokter',
+                            showConfirmButton: true
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    // Tampilkan SweetAlert untuk error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Gagal mengedit SOAP dokter',
+                        showConfirmButton: true
+                    });
+                    
+                    // Log error untuk debugging (opsional)
+                    console.error('Error:', xhr.responseJSON);
+                }
+            });
+        });
+
+    });
+</script>
+
         $('#summernote3').summernote({
             height: 100, // Tentukan tinggi editor (dalam px)
             tabsize: 2
@@ -2318,3 +2365,8 @@
 
 
 @endsection
+
+
+
+
+

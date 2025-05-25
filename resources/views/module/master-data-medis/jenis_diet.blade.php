@@ -8,12 +8,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Dashboard</h1>
+                        <h1 class="m-0">Jenis diet</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Dashboard v1</li>
+
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -29,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">jenis_diet</h3>
+                                <h3 class="card-title">jenis diet</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#addjenis_dietModal">
@@ -92,7 +91,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data jenis_diet</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Master Data jenis diet</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -103,8 +102,8 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama jenis_diet</label>
-                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama jenis_diet" required>
+                                <label>Nama jenis diet</label>
+                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama jenis diet" required>
                             </div>
                         </div>
                     </div>
@@ -123,7 +122,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Master Data jenis_diet</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Master Data jenis diet</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -135,8 +134,8 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama jenis_diet</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama jenis_diet" required>
+                                <label>Nama jenis diet</label>
+                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama jenis diet" required>
                             </div>
                         </div>
                     </div>
@@ -156,7 +155,7 @@
         <form id="deleteFormjenis_diet" action="{{ route('jenis_diet.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data jenis_diet</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data jenis diet</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -180,7 +179,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importjenis_dietModalLabel">Import Data jenis_diet</h5>
+                <h5 class="modal-title" id="importjenis_dietModalLabel">Import Data jenis diet</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -301,7 +300,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate jenis_diet!',
+                        text: 'Terjadi kesalahan saat mengupdate jenis diet!',
                     });
                 }
             });
@@ -313,7 +312,7 @@
 
             $('#jenis_dietid_delete').val(id);
             $('#deleteTextjenis_diet').html(
-            `<span>Apa Anda yakin ingin menghapus data jenis_diet <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data jenis diet <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormjenis_diet').on('submit', function(e) {
@@ -350,7 +349,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                        text: 'Terjadi kesalahan saat menghapus Jenis diet!',
                     });
                 }
             });
