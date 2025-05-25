@@ -75,13 +75,13 @@ class DataMasterController extends Controller
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Goldar Sudah ada!',
+                'message' => 'Golongan darah Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Goldar!',
+                'message' => 'Terjadi kesalahan saat menyimpan Golongan darah!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -100,7 +100,7 @@ class DataMasterController extends Controller
         if (!$goldar) {
             return response()->json([
                 'success' => false,
-                'message' => 'Goldar tidak ditemukan!'
+                'message' => 'Golongan darah tidak ditemukan!'
             ], 404);
         }
 
@@ -110,7 +110,7 @@ class DataMasterController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Goldar berhasil diperbarui!'
+            'message' => 'Golongan darah berhasil diperbarui!'
         ]);
     }
 
@@ -126,7 +126,7 @@ class DataMasterController extends Controller
         if (!$goldar) {
             return response()->json([
                 'success' => false,
-                'message' => 'Goldar tidak ditemukan!'
+                'message' => 'Golongan darah tidak ditemukan!'
             ], 404);
         }
 
@@ -134,7 +134,7 @@ class DataMasterController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Goldar berhasil dihapus!'
+            'message' => 'Golongan darah berhasil dihapus!'
         ]);
     }
 
@@ -1231,7 +1231,7 @@ class DataMasterController extends Controller
 
              return response()->json([
                  'success' => true,
-                 'message' => 'Penjamin berhasil ditambahkan!',
+                 'message' => 'Loket berhasil ditambahkan!',
                  'data' => $penjamin
              ], 201);
          } catch (ValidationException $e) {

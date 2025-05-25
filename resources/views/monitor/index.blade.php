@@ -593,4 +593,111 @@
                 window.stepper = new Stepper(document.querySelector('.bs-stepper'))
             })
         </script>
+        <script>
+            $(document).ready(function() {
+                // Add novalidate attribute to your form to disable browser validation
+                $('form').attr('novalidate', 'novalidate');
+                
+                // Custom form validation and submission
+                $('form').on('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form data
+                    let form = $(this);
+                    let formData = new FormData(this);
+                    let isValid = true;
+                    let errorMessages = [];
+                    
+                    // Check required fields
+                    form.find('[required]').each(function() {
+                        let field = $(this);
+                        let fieldName = field.attr('name');
+                        let fieldLabel = field.prev('label').text() || fieldName;
+                        
+                        // Remove is-invalid class first
+                        field.removeClass('is-invalid');
+                        
+                        if (!field.val()) {
+                            isValid = false;
+                            field.addClass('is-invalid');
+                            errorMessages.push(`${fieldLabel} harus diisi`);
+                        }
+                    });
+                    
+                    // If validation fails, show SweetAlert with errors
+                    if (!isValid) {
+                        let errorList = errorMessages.map(msg => `- ${msg}`).join('<br>');
+                        
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Validasi Gagal!',
+                            html: `Terdapat beberapa input yang belum valid:<br><br>${errorList}`,
+                            confirmButtonText: 'OK'
+                        });
+                        
+                        return false;
+                    }
+                    
+                    // If validation passes, submit the form via AJAX
+                    $.ajax({
+                        url: form.attr('action'),
+                        method: form.attr('method'),
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: response.message,
+                                    showConfirmButton: true
+                                }).then(() => {
+                                    // Redirect or reload page if needed
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal!',
+                                    text: response.message || 'Terjadi kesalahan saat memproses data'
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            if (xhr.status === 422 && xhr.responseJSON.errors) {
+                                let errorList = '';
+                                
+                                // Loop through validation errors
+                                Object.entries(xhr.responseJSON.errors).forEach(([key, value]) => {
+                                    errorList += `- ${value[0]}<br>`;
+                                    // Add is-invalid class to the field
+                                    $(`[name="${key}"]`).addClass('is-invalid');
+                                });
+                                
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Validasi Gagal!',
+                                    html: `Terdapat beberapa input yang belum valid:<br><br>${errorList}`,
+                                    confirmButtonText: 'OK'
+                                });
+                            } else {
+                                let errorMessage = "Terjadi kesalahan dalam menyimpan data!";
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                }
+                                
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: errorMessage,
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        }
+                    });
+                });
+            });
+        </script>
 @endsection
+

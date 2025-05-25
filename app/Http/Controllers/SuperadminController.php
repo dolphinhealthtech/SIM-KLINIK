@@ -2340,51 +2340,6 @@ class SuperadminController extends Controller
 
     // Kasir
 
-    // public function kasir()
-    // {
-    //     $title = "Kasir";
-
-    //     $apotek = apotek::with('detail_obat','detail_tindakan')->get();
-
-    //     $tanggal = Carbon::now()->format('Ymd');
-
-    //     $tindakan = pelayanan_soap_dokter_tindakan::whereDoesntHave('cek_resep')->get();
-
-    //     $latestFaktur = kasir::where('kode_faktur', 'LIKE', "TND-{$tanggal}-%")
-    //                 ->orderBy('kode_faktur', 'desc')
-    //                 ->first();
-
-    //     $lastNumber = 0;
-    //     if ($latestFaktur) {
-    //         $lastNumber = (int) substr($latestFaktur->kode_faktur, -4);
-    //     }
-
-    //     // Simpan no_rawat yang sudah punya kode_faktur supaya gak duplikat buat no_rawat sama
-    //     $kodeFakturMap = [];
-
-    //     foreach ($tindakan as $item) {
-    //         if (isset($kodeFakturMap[$item->no_rawat])) {
-    //             // Kalau no_rawat sudah ada, pakai kode_faktur yang sudah di-generate
-    //             $item->kode_faktur = $kodeFakturMap[$item->no_rawat];
-    //         } else {
-    //             // Cek di database kalau ada yang sudah punya kode_faktur
-    //             $existing = kasir::where('no_rawat', $item->no_rawat)->first();
-    //             if ($existing) {
-    //                 $kodeFakturMap[$item->no_rawat] = $existing->kode_faktur;
-    //                 $item->kode_faktur = $existing->kode_faktur;
-    //             } else {
-    //                 $lastNumber++;
-    //                 $newNumber = str_pad($lastNumber, 4, '0', STR_PAD_LEFT);
-    //                 $newKodeFaktur = "TND-{$tanggal}-{$newNumber}";
-    //                 $kodeFakturMap[$item->no_rawat] = $newKodeFaktur;
-    //                 $item->kode_faktur = $newKodeFaktur;
-    //             }
-    //         }
-    //     }
-
-    //     return view('dashboard.kasir', compact('title', 'apotek', 'tindakan'));
-    // }
-
     public function kasir()
     {
         $title = "Kasir";
@@ -2429,7 +2384,6 @@ class SuperadminController extends Controller
 
         return view('dashboard.kasir', compact('title', 'apotek', 'tindakan'));
     }
-
 
     public function kasirPembayaran(Request $request, $kode_faktur)
     {
@@ -2686,8 +2640,89 @@ class SuperadminController extends Controller
         return response()->json($data);
     }
 
-
     // End Kasir
+
+    // Data Lunas Kasir
+
+    public function datakasir_lunas()
+    {
+        $title = "Detail Lunas";
+
+        $header = kasir::all();
+
+        return view('dashboard.datakasir_lunas', compact('title','header'));
+    }
+
+    public function datakasir_lunas_print(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+
+        $total_invoice = count($data);
+
+        $cash = 0;
+        $debit = 0;
+        $credit = 0;
+        $transfer = 0;
+
+        foreach ($data as $item) {
+            for ($i = 1; $i <= 3; $i++) {
+                $methodKey = "payment_method_$i";
+                $nominalKey = "payment_nominal_$i";
+
+                if (!empty($item[$methodKey]) && !empty($item[$nominalKey])) {
+                    $method = strtolower($item[$methodKey]);
+                    // Hilangkan 'Rp ', titik dan spasi dari nominal sebelum konversi
+                    $nominalStr = str_replace(['Rp', '.', ' '], '', $item[$nominalKey]);
+
+                    // Cek apakah setelah dibersihkan adalah angka
+                    if ($nominalStr) {
+                        $nominal = $nominalStr;
+
+                        switch ($method) {
+                            case 'cash':
+                                $cash += $nominal;
+                                break;
+                            case 'debit':
+                                $debit += $nominal;
+                                break;
+                            case 'credit':
+                                $credit += $nominal;
+                                break;
+                            case 'transfer':
+                                $transfer += $nominal;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Contoh format rupiah tanpa desimal
+        function formatRupiah($angka) {
+            return 'Rp ' . number_format($angka, 0, ',', '.');
+        }
+
+        // Contoh penggunaan:
+        $cashFormatted = formatRupiah($cash);
+        $debitFormatted = formatRupiah($debit);
+        $creditFormatted = formatRupiah($credit);
+        $transferFormatted = formatRupiah($transfer);
+
+        $pendapatan = $cash + $debit + $credit + $transfer;
+        $pendapatanFormatted = formatRupiah($pendapatan);
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice', 'cashFormatted', 'debitFormatted', 'creditFormatted', 'transferFormatted', 'pendapatanFormatted'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'kasir_lunas_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    // End Data Lunas Kasir
 
     // Apotek
 
@@ -3260,5 +3295,19 @@ class SuperadminController extends Controller
             ], 422);
         }
     }
+
+    public function loketAntrian()
+{
+    $title = "Loket Antrian";
+    // You can fetch active queue data here
+    // For example:
+    // $activeQueues = Pendaftaran_rawat_jalan::whereDate('created_at', Carbon::today())
+    //     ->whereNotNull('antrian')
+    //     ->orderBy('created_at', 'desc')
+    //     ->get();
+
+    return view('monitor.loket_antrian', compact('title'));
 }
+}
+
 

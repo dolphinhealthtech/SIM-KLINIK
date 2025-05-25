@@ -8,12 +8,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Dashboard</h1>
+                        <h1 class="m-0">SOAP Dokter</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Dashboard v1</li>
+
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -28,7 +27,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <form action="{{ route('pelayana_dokter.add') }}" method="POST">
+                            <form id="addFormsoap" action="{{ route('pelayana_dokter.add') }}" method="POST">
                                 @csrf
                             <div class="card-body">
                                 <div class="row">
@@ -2440,6 +2439,9 @@
 
         });
 
+    
+
+
         $('#summernote3').summernote({
             height: 100, // Tentukan tinggi editor (dalam px)
             tabsize: 2
@@ -2552,5 +2554,54 @@
     })
 </script>
 
+<script>
+    $('#addFormsoap').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = "Terjadi kesalahan dalam menyimpan data!";
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: errorMessage
+                    });
+                }
+            });
+        });
+</script>
+
 
 @endsection
+
+
+
+
+

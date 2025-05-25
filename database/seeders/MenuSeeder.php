@@ -22,30 +22,257 @@ class MenuSeeder extends Seeder
         DB::table('menus')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
         
+        // Ambil semua role
+        $superAdminRole = Role::where('name', 'Super-admin')->first();
+        $dokterRole = Role::where('name', 'Dokter')->first();
+        $resepsionisRole = Role::where('name', 'Resepsionis')->first();
+        $perawatRole = Role::where('name', 'Perawat')->first();
+        $kasirRole = Role::where('name', 'Kasir')->first();
+        $sdmRole = Role::where('name', 'SDM')->first();
+        $apotekerRole = Role::where('name', 'Apoteker')->first();
+        
         // Buat menu utama terlebih dahulu
+        $dashboard = Menu::create([
+            'name' => 'Dashboard',
+            'url' => '/dashboard',
+            'icon' => 'tachometer-alt',
+            'parent_id' => null,
+            'order' => 1,
+        ]);
+
+        $antrian = Menu::create([
+            'name' => 'Antrian',
+            'url' => '/monitor',
+            'icon' => 'users-cog',
+            'parent_id' => null,
+            'order' => 2,
+        ]);
+        
+        $pasien = Menu::create([
+            'name' => 'Pasien',
+            'url' => '/pasien',
+            'icon' => 'hospital-user',
+            'parent_id' => null,
+            'order' => 3,
+        ]);
+
+        $pendaftaran = Menu::create([
+            'name' => 'Pendaftaran',
+            'url' => '/pendaftaran',
+            'icon' => 'clipboard-list',
+            'parent_id' => null,
+            'order' => 4,
+        ]);
+
+        $pemeriksaan = Menu::create([
+            'name' => 'Pemeriksaan',
+            'url' => '#',
+            'icon' => 'stethoscope',
+            'parent_id' => null,
+            'order' => 5,
+        ]);
+
+        $apotek = Menu::create([
+            'name' => 'Apotek',
+            'url' => '/apotek',
+            'icon' => 'clinic-medical',
+            'parent_id' => null,
+            'order' => 6,
+        ]);
+
+        $kasir = Menu::create([
+            'name' => 'Kasir',
+            'url' => '/kasir',
+            'icon' => 'cash-register',
+            'parent_id' => null,
+            'order' => 7,
+        ]);
+
+        $sdm = Menu::create([
+            'name' => 'SDM',
+            'url' => '#',
+            'icon' => 'users',
+            'parent_id' => null,
+            'order' => 8,
+        ]);
+
+        $pembelian = Menu::create([
+            'name' => 'Pembelian',
+            'url' => '/pembelian',
+            'icon' => 'shopping-cart',
+            'parent_id' => null,
+            'order' => 9,
+        ]);
+
+        $dataBarang = Menu::create([
+            'name' => 'Data Barang',
+            'url' => '/data-barang',
+            'icon' => 'pills',
+            'parent_id' => null,
+            'order' => 10,
+        ]);
+
         $dataMaster = Menu::create([
             'name' => 'Data Master',
             'url' => '#',
             'icon' => 'database',
             'parent_id' => null,
+            'order' => 11,
+        ]);
+
+        $pengaturan = Menu::create([
+            'name' => 'Setting',
+            'url' => '#', // Use # for dropdown menu
+            'icon' => 'cog',
+            'parent_id' => null,
+            'order' => 12,
+        ]);
+        
+        // Tambahkan role ke menu utama untuk Super-admin
+        if ($superAdminRole) {
+            $dashboard->roles()->attach($superAdminRole->id);
+            $antrian->roles()->attach($superAdminRole->id);
+            $pasien->roles()->attach($superAdminRole->id);
+            $pendaftaran->roles()->attach($superAdminRole->id);
+            $pemeriksaan->roles()->attach($superAdminRole->id);
+            $apotek->roles()->attach($superAdminRole->id);
+            $kasir->roles()->attach($superAdminRole->id);
+            $sdm->roles()->attach($superAdminRole->id);
+            $pembelian->roles()->attach($superAdminRole->id);
+            $dataBarang->roles()->attach($superAdminRole->id);
+            $dataMaster->roles()->attach($superAdminRole->id);
+            $pengaturan->roles()->attach($superAdminRole->id);
+        }
+        
+        // Tambahkan role ke menu untuk Dokter
+        if ($dokterRole) {
+            $dashboard->roles()->attach($dokterRole->id);
+            $pemeriksaan->roles()->attach($dokterRole->id);
+        }
+        
+        // Tambahkan role ke menu untuk Resepsionis
+        if ($resepsionisRole) {
+            $dashboard->roles()->attach($resepsionisRole->id);
+            $antrian->roles()->attach($resepsionisRole->id);
+            $pasien->roles()->attach($resepsionisRole->id);
+            $pendaftaran->roles()->attach($resepsionisRole->id);
+        }
+        
+        // Tambahkan role ke menu untuk Perawat
+        if ($perawatRole) {
+            $dashboard->roles()->attach($perawatRole->id);
+            $pemeriksaan->roles()->attach($perawatRole->id);
+        }
+        
+        // Tambahkan role ke menu untuk Kasir
+        if ($kasirRole) {
+            $dashboard->roles()->attach($kasirRole->id);
+            $kasir->roles()->attach($kasirRole->id);
+        }
+        
+        // Tambahkan role ke menu untuk SDM
+        if ($sdmRole) {
+            $dashboard->roles()->attach($sdmRole->id);
+            $sdm->roles()->attach($sdmRole->id);
+            $dataMaster->roles()->attach($sdmRole->id);
+        }
+        
+        // Tambahkan role ke menu untuk Apoteker
+        if ($apotekerRole) {
+            $dashboard->roles()->attach($apotekerRole->id);
+            $apotek->roles()->attach($apotekerRole->id);
+        }
+        
+        // Submenu Pemeriksaan
+        $subMenusPemeriksaan = [
+            ['name' => 'Dokter', 'url' => '/pemeriksaan/dokter', 'icon' => 'user-md', 'order' => 1],
+            ['name' => 'Perawat', 'url' => '/pemeriksaan/perawat', 'icon' => 'user-nurse', 'order' => 2],
+        ];
+        
+        foreach ($subMenusPemeriksaan as $subMenu) {
+            $menu = Menu::create([
+                'name' => $subMenu['name'],
+                'url' => $subMenu['url'],
+                'icon' => $subMenu['icon'],
+                'parent_id' => $pemeriksaan->id,
+                'order' => $subMenu['order'],
+            ]);
+            
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
+            
+            // Tambahkan submenu Dokter untuk role Dokter
+            if ($subMenu['name'] === 'Dokter' && $dokterRole) {
+                $menu->roles()->attach($dokterRole->id);
+            }
+            
+            // Tambahkan submenu Perawat untuk role Perawat
+            if ($subMenu['name'] === 'Perawat' && $perawatRole) {
+                $menu->roles()->attach($perawatRole->id);
+            }
+        }
+        
+        // Submenu SDM
+        $subMenusSDM = [
+            ['name' => 'Dokter', 'url' => '/dokter', 'icon' => 'user-md', 'order' => 1],
+            ['name' => 'Staff', 'url' => '/staff', 'icon' => 'user-tie', 'order' => 2],
+        ];
+        
+        foreach ($subMenusSDM as $subMenu) {
+            $menu = Menu::create([
+                'name' => $subMenu['name'],
+                'url' => $subMenu['url'],
+                'icon' => $subMenu['icon'],
+                'parent_id' => $sdm->id,
+                'order' => $subMenu['order'],
+            ]);
+            
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
+            
+            if ($sdmRole) {
+                $menu->roles()->attach($sdmRole->id);
+            }
+        }
+        
+        // Submenu Data Master - Loket
+        $loket = Menu::create([
+            'name' => 'Loket',
+            'url' => '/data-master/loket',
+            'icon' => 'door-open',
+            'parent_id' => $dataMaster->id,
             'order' => 1,
         ]);
         
-        $pengaturan = Menu::create([
-            'name' => 'Pengaturan',
+        if ($superAdminRole) {
+            $loket->roles()->attach($superAdminRole->id);
+        }
+        
+        if ($sdmRole) {
+            $loket->roles()->attach($sdmRole->id);
+        }
+        
+        // 1. Buat submenu Data Master Umum di bawah Data Master
+        $dataMasterUmum = Menu::create([
+            'name' => 'Data Master Umum',
             'url' => '#',
-            'icon' => 'cogs',
-            'parent_id' => null,
+            'icon' => 'folder',
+            'parent_id' => $dataMaster->id,
             'order' => 2,
         ]);
         
-        // Tambahkan role ke menu utama
-        $role = Role::where('name', 'Super-admin')->first();
-        $dataMaster->roles()->attach($role->id);
-        $pengaturan->roles()->attach($role->id);
+        if ($superAdminRole) {
+            $dataMasterUmum->roles()->attach($superAdminRole->id);
+        }
         
-        // Submenu Data Master
-        $subMenusDataMaster = [
+        if ($sdmRole) {
+            $dataMasterUmum->roles()->attach($sdmRole->id);
+        }
+        
+        // Submenu Data Master Umum
+        $subMenusDataMasterUmum = [
             ['name' => 'Golongan Darah', 'url' => '/data-master/goldar', 'icon' => 'tint', 'order' => 1],
             ['name' => 'Suku', 'url' => '/data-master/suku', 'icon' => 'users', 'order' => 2],
             ['name' => 'Bangsa', 'url' => '/data-master/bangsa', 'icon' => 'globe', 'order' => 3],
@@ -56,38 +283,55 @@ class MenuSeeder extends Seeder
             ['name' => 'Pernikahan', 'url' => '/data-master/pernikahan', 'icon' => 'ring', 'order' => 8],
             ['name' => 'Pekerjaan', 'url' => '/data-master/pekerjaan', 'icon' => 'briefcase', 'order' => 9],  
             ['name' => 'Penjamin', 'url' => '/data-master/penjamin', 'icon' => 'money-bill-alt', 'order' => 10],
-            ['name' => 'Loket', 'url' => '/data-master/loket', 'icon' => 'door-open', 'order' => 11],
+            ['name' => 'Bank', 'url' => '/data-master/bank', 'icon' => 'university', 'order' => 11],
         ];
         
-        foreach ($subMenusDataMaster as $subMenu) {
+        foreach ($subMenusDataMasterUmum as $subMenu) {
             $menu = Menu::create([
                 'name' => $subMenu['name'],
                 'url' => $subMenu['url'],
                 'icon' => $subMenu['icon'],
-                'parent_id' => $dataMaster->id,
+                'parent_id' => $dataMasterUmum->id,
                 'order' => $subMenu['order'],
             ]);
-            $menu->roles()->attach($role->id);
+            
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
+            
+            if ($sdmRole) {
+                $menu->roles()->attach($sdmRole->id);
+            }
         }
         
-        // 1. Buat submenu Data Master Medis di bawah Data Master
+        // 2. Buat submenu Data Master Medis di bawah Data Master
         $dataMasterMedis = Menu::create([
             'name' => 'Data Master Medis',
-            'url' => '#', // Penting: URL '#' menandakan ini adalah dropdown
+            'url' => '#',
             'icon' => 'medkit',
             'parent_id' => $dataMaster->id,
-            'order' => 12,
+            'order' => 3,
         ]);
-        $dataMasterMedis->roles()->attach($role->id);
+        
+        if ($superAdminRole) {
+            $dataMasterMedis->roles()->attach($superAdminRole->id);
+        }
+        
+        if ($sdmRole) {
+            $dataMasterMedis->roles()->attach($sdmRole->id);
+        }
         
         // Submenu untuk Data Master Medis
         $subMenusDataMasterMedis = [
             ['name' => 'Poli', 'url' => '/data-master-medis/poli', 'icon' => 'hospital', 'order' => 1],
-            ['name' => 'Spesialis', 'url' => '/data-master-medis/spesialis', 'icon' => 'user-md', 'order' => 2],
-            ['name' => 'Kategori Perawatan', 'url' => '/data-master-medis/katper', 'icon' => 'list', 'order' => 3],
-            ['name' => 'Perawatan & Tindakan', 'url' => '/data-master-medis/perawatan-tindakan', 'icon' => 'procedures', 'order' => 4],
-            ['name' => 'HTT Pemeriksaan', 'url' => '/data-master-medis/htt-pemeriksaan', 'icon' => 'stethoscope', 'order' => 5],
-            ['name' => 'Alergi', 'url' => '/data-master-medis/alergi', 'icon' => 'allergies', 'order' => 6],
+            ['name' => 'Sarana', 'url' => '/data-master-medis/sarana', 'icon' => 'building', 'order' => 2],
+            ['name' => 'Spesialis', 'url' => '/data-master-medis/spesialis', 'icon' => 'user-md', 'order' => 3],
+            ['name' => 'Kategori Perawatan', 'url' => '/data-master-medis/katper', 'icon' => 'list', 'order' => 4],
+            ['name' => 'Perawatan & Tindakan', 'url' => '/data-master-medis/perawatan-tindakan', 'icon' => 'procedures', 'order' => 5],
+            ['name' => 'HTT Pemeriksaan', 'url' => '/data-master-medis/htt-pemeriksaan', 'icon' => 'stethoscope', 'order' => 6],
+            ['name' => 'Alergi', 'url' => '/data-master-medis/alergi', 'icon' => 'allergies', 'order' => 7],
+            ['name' => 'Jenis Diet', 'url' => '/data-master-medis/jenis-diet', 'icon' => 'utensils', 'order' => 8],
+            ['name' => 'Nama Makanan', 'url' => '/data-master-medis/nama-makanan', 'icon' => 'hamburger', 'order' => 9],
         ];
         
         foreach ($subMenusDataMasterMedis as $subMenu) {
@@ -95,27 +339,44 @@ class MenuSeeder extends Seeder
                 'name' => $subMenu['name'],
                 'url' => $subMenu['url'],
                 'icon' => $subMenu['icon'],
-                'parent_id' => $dataMasterMedis->id, // Penting: parent_id adalah ID dari Data Master Medis
+                'parent_id' => $dataMasterMedis->id,
                 'order' => $subMenu['order'],
             ]);
-            $menu->roles()->attach($role->id);
+            
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
+            
+            if ($sdmRole) {
+                $menu->roles()->attach($sdmRole->id);
+            }
         }
         
-        // 2. Buat submenu Data Master Gudang di bawah Data Master
+        // 3. Buat submenu Data Master Gudang di bawah Data Master
         $dataMasterGudang = Menu::create([
             'name' => 'Data Master Gudang',
             'url' => '#',
             'icon' => 'warehouse',
             'parent_id' => $dataMaster->id,
-            'order' => 13,
+            'order' => 4,
         ]);
-        $dataMasterGudang->roles()->attach($role->id);
+        
+        if ($superAdminRole) {
+            $dataMasterGudang->roles()->attach($superAdminRole->id);
+        }
+        
+        if ($sdmRole) {
+            $dataMasterGudang->roles()->attach($sdmRole->id);
+        }
         
         // Submenu untuk Data Master Gudang
         $subMenusDataMasterGudang = [
             ['name' => 'Satuan', 'url' => '/data-master-gudang/satuan', 'icon' => 'ruler', 'order' => 1],
             ['name' => 'Kategori', 'url' => '/data-master-gudang/kategori', 'icon' => 'tags', 'order' => 2],
             ['name' => 'Supplier Industri', 'url' => '/data-master-gudang/supplier-industri', 'icon' => 'industry', 'order' => 3],
+            ['name' => 'Setting Harga Jual', 'url' => '/data-master-gudang/setting-harga-jual', 'icon' => 'money-bill-wave', 'order' => 4],
+            ['name' => 'Harga Jual', 'url' => '/data-master-gudang/harga-barang-jual', 'icon' => 'tag', 'order' => 5],
+            ['name' => 'Stok', 'url' => '/data-master-gudang/stok-obat-alkes', 'icon' => 'boxes', 'order' => 6],
         ];
         
         foreach ($subMenusDataMasterGudang as $subMenu) {
@@ -126,44 +387,25 @@ class MenuSeeder extends Seeder
                 'parent_id' => $dataMasterGudang->id,
                 'order' => $subMenu['order'],
             ]);
-            $menu->roles()->attach($role->id);
+            
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
+            
+            if ($sdmRole) {
+                $menu->roles()->attach($sdmRole->id);
+            }
         }
         
-        // 3. Buat submenu Data Master Manajemen di bawah Data Master
-        $dataMasterManajemen = Menu::create([
-            'name' => 'Data Master Manajemen',
-            'url' => '#',
-            'icon' => 'sitemap',
-            'parent_id' => $dataMaster->id,
-            'order' => 14,
-        ]);
-        $dataMasterManajemen->roles()->attach($role->id);
-        
-        // Submenu untuk Data Master Manajemen
-        $subMenusDataMasterManajemen = [
-            ['name' => 'Posisi Kerja', 'url' => '/data-master-manajemen/posker', 'icon' => 'user-tie', 'order' => 1],
-        ];
-        
-        foreach ($subMenusDataMasterManajemen as $subMenu) {
-            $menu = Menu::create([
-                'name' => $subMenu['name'],
-                'url' => $subMenu['url'],
-                'icon' => $subMenu['icon'],
-                'parent_id' => $dataMasterManajemen->id,
-                'order' => $subMenu['order'],
-            ]);
-            $menu->roles()->attach($role->id);
-        }
-        
-        // Submenu Pengaturan
-        $subMenusPengaturan = [
-            ['name' => 'Role', 'url' => '/setting/role', 'icon' => 'user-shield', 'order' => 1],
+        // Submenu Setting
+        $subMenusSetting = [
+            ['name' => 'Role', 'url' => '/setting/role', 'icon' => 'user-tag', 'order' => 1],
             ['name' => 'Permission', 'url' => '/setting/permission', 'icon' => 'key', 'order' => 2],
-            ['name' => 'Users', 'url' => '/setting/user', 'icon' => 'users-cog', 'order' => 3],
-            ['name' => 'Web Setting', 'url' => '/setting/web', 'icon' => 'tools', 'order' => 4],
+            ['name' => 'User', 'url' => '/setting/user', 'icon' => 'users', 'order' => 3],
+            ['name' => 'Web Setting', 'url' => '/setting/web', 'icon' => 'globe', 'order' => 4],
         ];
         
-        foreach ($subMenusPengaturan as $subMenu) {
+        foreach ($subMenusSetting as $subMenu) {
             $menu = Menu::create([
                 'name' => $subMenu['name'],
                 'url' => $subMenu['url'],
@@ -171,10 +413,16 @@ class MenuSeeder extends Seeder
                 'parent_id' => $pengaturan->id,
                 'order' => $subMenu['order'],
             ]);
-            $menu->roles()->attach($role->id);
+            
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
         }
     }
 }
+
+
+
 
 
 

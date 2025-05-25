@@ -564,19 +564,19 @@ class DataMasterMedisController extends Controller
 
              return response()->json([
                  'success' => true,
-                 'message' => 'Perawatan tindakan berhasil ditambahkan!',
+                 'message' => 'Kategori Perawatan berhasil ditambahkan!',
                  'data' => $htt_pemeriksaan
              ], 201);
          } catch (ValidationException $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Perawatan tindakan Sudah ada!',
+                 'message' => 'Kategori Perawatan Sudah ada!',
                  'errors' => $e->errors()
              ], 422);
          } catch (\Exception $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Terjadi kesalahan saat menyimpan perawatan tindakan!',
+                 'message' => 'Terjadi kesalahan saat menyimpan Kategori Perawatan!',
                  'error' => $e->getMessage()
              ], 500);
          }
@@ -593,7 +593,7 @@ class DataMasterMedisController extends Controller
          if (!$htt_pemeriksaan) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Perawatan tindakan tidak ditemukan!'
+                 'message' => 'Kategori Perawatan tidak ditemukan!'
              ], 404);
          }
 
@@ -602,7 +602,7 @@ class DataMasterMedisController extends Controller
 
          return response()->json([
              'success' => true,
-             'message' => 'Perawatan tindakan berhasil diperbarui!'
+             'message' => 'Kategori Perawatan berhasil diperbarui!'
          ]);
     }
 
@@ -617,14 +617,14 @@ class DataMasterMedisController extends Controller
         if (!$htt_pemeriksaan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Perawatan tindakan tidak ditemukan!'
+                'message' => 'Kategori Perawatan tidak ditemukan!'
             ], 404);
         }
         $htt_pemeriksaan->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Perawatan tindakan berhasil dihapus!'
+            'message' => 'Kategori Perawatan berhasil dihapus!'
         ]);
     }
 
@@ -832,20 +832,20 @@ class DataMasterMedisController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'jenis_diet berhasil ditambahkan!',
+                'message' => 'jenis diet berhasil ditambahkan!',
                 'data' => $jenis_diet,
             'data' => $jenis_diet
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'jenis_diet Sudah ada!',
+                'message' => 'jenis diet Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan jenis_diet!',
+                'message' => 'Terjadi kesalahan saat menyimpan jenis diet!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -903,7 +903,7 @@ class DataMasterMedisController extends Controller
         if (!$jenis_diet) {
             return response()->json([
                 'success' => false,
-                'message' => 'jenis_diet tidak ditemukan!'
+                'message' => 'jenis diet tidak ditemukan!'
             ], 404);
         }
 
@@ -912,7 +912,7 @@ class DataMasterMedisController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'jenis_diet berhasil diperbarui!'
+            'message' => 'jenis diet berhasil diperbarui!'
         ]);
     }
 
@@ -927,14 +927,14 @@ class DataMasterMedisController extends Controller
         if (!$jenis_diet) {
             return response()->json([
                 'success' => false,
-                'message' => 'jenis_diet tidak ditemukan!'
+                'message' => 'jenis diet tidak ditemukan!'
             ], 404);
         }
         $jenis_diet->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'jenis_diet berhasil dihapus!'
+            'message' => 'jenis diet berhasil dihapus!'
         ]);
     }
 
@@ -1093,7 +1093,7 @@ class DataMasterMedisController extends Controller
         if (!$nama_makanan) {
             return response()->json([
                 'success' => false,
-                'message' => 'nama_makanan tidak ditemukan!'
+                'message' => 'nama makanan tidak ditemukan!'
             ], 404);
         }
 
@@ -1102,7 +1102,7 @@ class DataMasterMedisController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'nama_makanan berhasil diperbarui!'
+            'message' => 'nama makanan berhasil diperbarui!'
         ]);
     }
 
@@ -1117,14 +1117,14 @@ class DataMasterMedisController extends Controller
         if (!$nama_makanan) {
             return response()->json([
                 'success' => false,
-                'message' => 'nama_makanan tidak ditemukan!'
+                'message' => 'nama makanan tidak ditemukan!'
             ], 404);
         }
         $nama_makanan->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'nama_makanan berhasil dihapus!'
+            'message' => 'nama makanan berhasil dihapus!'
         ]);
     }
 

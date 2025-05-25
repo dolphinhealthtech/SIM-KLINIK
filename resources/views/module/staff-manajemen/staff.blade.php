@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Pasien</h1>
+                        <h1 class="m-0">Staff</h1>
                     </div><!-- /.col -->
 
                 </div><!-- /.row -->
@@ -1243,7 +1243,7 @@
                     $('#cabang_bank_edit').val(data.dokter.verifikasi.cabang_bank);
 
                 }).fail(function (error) {
-                    console.error("Gagal mengambil data pasien:", error);
+                    console.error("Gagal mengambil data staff:", error);
                 });
             });
         });

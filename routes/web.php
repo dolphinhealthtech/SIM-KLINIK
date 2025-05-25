@@ -48,10 +48,18 @@ Route::get('/pembelian/cetak/{nomor_faktur}', [SuperadminController::class, 'cet
 Route::get('/monitor', [SuperadminController::class,'monitor'])->name('monitor.get');
 Route::post('/monitor/add/bpjs', [SuperadminController::class,'monitor_bpjs'])->name('monitor.add.bpjs');
 Route::post('/monitor/add/nobpjs', [SuperadminController::class,'monitor_nobpjs'])->name('monitor.add.nobpjs');
+Route::get('/monitor/loket-antrian', [SuperadminController::class, 'loketAntrian'])->name('monitor.loket.antrian');
 
 // Menu apotek
 Route::get('/apotek', [SuperadminController::class, 'apotek'])->middleware(['auth'])->name('apotek.index');
 Route::post('/apotek/add', [SuperadminController::class, 'apotekadd'])->name('apotek.store');
+
+//Menu Keuangan
+Route::get('/datakasir', [SuperadminController::class, 'datakasir_lunas'])->name('datakasir_lunas.index');
+Route::post('/datakasir/print', [SuperadminController::class, 'datakasir_lunas_print'])->name('datakasir_lunas.print');
+Route::get('/datakasir/apotek', [SuperadminController::class, 'datakasir_apotek'])->name('datakasir_apotek.index');
+Route::get('/datakasir/tindakan', [SuperadminController::class, 'datakasir_tindakan'])->name('datakasir_tindakan.index');
+Route::get('/datakasir/diskon', [SuperadminController::class, 'datakasir_diskon'])->name('datakasir_diskon.index');
 
 // Menu SDM
     // Menu Pasien
@@ -370,6 +378,7 @@ Route::middleware('auth')->prefix('setting')->group(function () {
 
 require __DIR__.'/auth.php';
 require __DIR__.'/user.php';
+
 
 
 
