@@ -163,7 +163,7 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">Laporan Setor Kasir</div>
+    <div class="document-title">Laporan Detail Setor Kasir</div>
 
     <table class="info-table" style="width: 100%;">
         <tr>
@@ -173,7 +173,7 @@
         </tr>
 
         <tr>
-            <td class="info-label">Laporan Setoran Kasir</td>
+            <td class="info-label">Laporan Detail Setoran Kasir</td>
             <td class="info-separator">:</td>
             <td>[{{ auth()->user()->name ?? 'Petugas' }}]</td>
         </tr>
@@ -197,6 +197,10 @@
                     <th>Poli</th>
                     <th>Dokter</th>
                     <th>Penjamin</th>
+                    <th>Nama Tindakan / Obat</th>
+                    <th>Harga Tindakan / Obat</th>
+                    <th>Qty / Pelaksana</th>
+                    <th>Total</th>
                     <th>Sub Total</th>
                     <th>Tambahan</th>
                     <th>Total</th>
@@ -216,6 +220,10 @@
                         <td>{{ $item['poli'] }}</td>
                         <td>{{ $item['dokter'] ?? '-' }}</td>
                         <td>{{ $item['penjamin'] }}</td>
+                        <td>{{ $item['nama_obat_tindakan'] }}</td>
+                        <td>{{ $item['harga_obat_tindakan'] }}</td>
+                        <td>{{ $item['qty_pelaksana'] }}</td>
+                        <td>{{ $item['total_sementara'] }}</td>
                         <td>{{ $item['sub_total'] }}</td>
                         <td>
                             @php

@@ -25,11 +25,11 @@
                             <div class="row mb-3">
                                 <div class="col-md-3">
                                     <label for="tanggalAwal">Tanggal Awal:</label>
-                                    <input type="date" id="tanggalAwal" class="form-control">
+                                    <input type="date" id="tanggalAwal" class="form-control" onfocus="this.showPicker()">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="tanggalAkhir">Tanggal Akhir:</label>
-                                    <input type="date" id="tanggalAkhir" class="form-control">
+                                    <input type="date" id="tanggalAkhir" class="form-control" onfocus="this.showPicker()">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="filterPoli">Poli:</label>

@@ -57,6 +57,8 @@ Route::post('/apotek/add', [SuperadminController::class, 'apotekadd'])->name('ap
 //Menu Keuangan
 Route::get('/datakasir', [SuperadminController::class, 'datakasir_lunas'])->name('datakasir_lunas.index');
 Route::post('/datakasir/print', [SuperadminController::class, 'datakasir_lunas_print'])->name('datakasir_lunas.print');
+Route::get('/datakasir/detail', [SuperadminController::class, 'datakasir_detail'])->name('datakasir_detail.index');
+Route::post('/datakasir/detail/print', [SuperadminController::class, 'datakasir_detail_print'])->name('datakasir_detail.print');
 Route::get('/datakasir/apotek', [SuperadminController::class, 'datakasir_apotek'])->name('datakasir_apotek.index');
 Route::get('/datakasir/tindakan', [SuperadminController::class, 'datakasir_tindakan'])->name('datakasir_tindakan.index');
 Route::get('/datakasir/diskon', [SuperadminController::class, 'datakasir_diskon'])->name('datakasir_diskon.index');

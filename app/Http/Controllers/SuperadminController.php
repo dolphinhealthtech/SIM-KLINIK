@@ -2646,7 +2646,7 @@ class SuperadminController extends Controller
 
     public function datakasir_lunas()
     {
-        $title = "Detail Lunas";
+        $title = "Kasir Lunas";
 
         $header = kasir::all();
 
@@ -2723,6 +2723,89 @@ class SuperadminController extends Controller
     }
 
     // End Data Lunas Kasir
+
+    // Data Lunas Detail
+
+    public function datakasir_detail()
+    {
+        $title = "Kasir Detail Lunas";
+
+        $header = kasir::with('detail_lunas')->get();
+
+        // dd($header);
+        return view('dashboard.datakasir_detail_lunas', compact('title','header'));
+    }
+
+    public function datakasir_detail_print(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+
+        $total_invoice = count($data);
+
+        $cash = 0;
+        $debit = 0;
+        $credit = 0;
+        $transfer = 0;
+
+        foreach ($data as $item) {
+            for ($i = 1; $i <= 3; $i++) {
+                $methodKey = "payment_method_$i";
+                $nominalKey = "payment_nominal_$i";
+
+                if (!empty($item[$methodKey]) && !empty($item[$nominalKey])) {
+                    $method = strtolower($item[$methodKey]);
+                    // Hilangkan 'Rp ', titik dan spasi dari nominal sebelum konversi
+                    $nominalStr = str_replace(['Rp', '.', ' '], '', $item[$nominalKey]);
+
+                    // Cek apakah setelah dibersihkan adalah angka
+                    if ($nominalStr) {
+                        $nominal = $nominalStr;
+
+                        switch ($method) {
+                            case 'cash':
+                                $cash += $nominal;
+                                break;
+                            case 'debit':
+                                $debit += $nominal;
+                                break;
+                            case 'credit':
+                                $credit += $nominal;
+                                break;
+                            case 'transfer':
+                                $transfer += $nominal;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Contoh format rupiah tanpa desimal
+        function formatRupiah($angka) {
+            return 'Rp ' . number_format($angka, 0, ',', '.');
+        }
+
+        // Contoh penggunaan:
+        $cashFormatted = formatRupiah($cash);
+        $debitFormatted = formatRupiah($debit);
+        $creditFormatted = formatRupiah($credit);
+        $transferFormatted = formatRupiah($transfer);
+
+        $pendapatan = $cash + $debit + $credit + $transfer;
+        $pendapatanFormatted = formatRupiah($pendapatan);
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_detail', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice', 'cashFormatted', 'debitFormatted', 'creditFormatted', 'transferFormatted', 'pendapatanFormatted'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'kasir_detail_lunas_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    // End Data Lunas Detail
 
     // Apotek
 

@@ -44,4 +44,9 @@ class kasir extends Model
         'user_input_id',
         'user_input_name',
     ];
+
+    public function detail_lunas()
+    {
+        return $this->hasMany(kasir_detail_lunas::class, 'kode_faktur', 'kode_faktur');
+    }
 }
