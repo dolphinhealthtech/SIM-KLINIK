@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Pendataan Faktur Lunas Kasir</h1>
+                    <h1 class="m-0">Pendataan Faktur Diskon Kasir</h1>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -47,21 +47,21 @@
                             <div class="table-responsive">
                                 <table id="kasirTable" class="table table-bordered table-striped thin-table-border kasir-table" style="min-width: 1500px">
                                     <thead>
-                                        <tr>
-                                            <th class="text-center">No</th>
-                                            <th class="text-center">Invoice</th>
-                                            <th class="text-center">No RM</th>
-                                            <th class="text-center">No Rawat</th>
-                                            <th class="text-center">Nama</th>
-                                            <th class="text-center">Poli</th>
-                                            <th class="text-center">Dokter</th>
-                                            <th class="text-center">Penjamin</th>
-                                            <th class="text-center">Sub Total</th>
-                                            <th class="text-center">TAMBAHAN</th>
-                                            <th class="text-center">Total</th>
-                                            <th class="text-center">Pembayaran</th>
-                                            <th class="text-center">Tanggal</th>
-                                            <th class="text-center">Petugas Entry</th>
+                                         <tr>
+                                            <th>No</th>
+                                            <th>Kode Faktur</th>
+                                            <th>No RM</th>
+                                            <th>No Rawat</th>
+                                            <th>Nama</th>
+                                            <th>Nama Diskon</th>
+                                            <th>Nominal Diskon</th>
+                                            <th>Jumlah Diskon</th>
+                                            <th>Total Diskon</th>
+                                            <th>Poli</th>
+                                            <th>Dokter</th>
+                                            <th>Penjamin</th>
+                                            <th>Tanggal</th>
+                                            <th>User Input</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -84,78 +84,117 @@
 </div>
 
 <script>
-    const kasirData = @json($header);
+    const kasirData = @json($header);  // data dari Laravel
+
+    console.log(kasirData);
+
+    let tableData = [];
+
+    kasirData.forEach((item, index) => {
+        const detailList = item.diskon || [];
+
+        // Ambil detail pertama (jika ada)
+        const firstDetail = detailList[0];
+
+        // Baris header dengan detail pertama jika ada
+        tableData.push({
+            no: index + 1,
+            kode_faktur: item.kode_faktur,
+            no_rm: item.no_rm,
+            no_rawat: item.no_rawat,
+            nama: item.nama,
+            poli: item.poli,
+            dokter: item.dokter,
+            penjamin: item.penjamin,
+            tanggal: item.tanggal,
+            user_input_name: item.user_input_name,
+            nama_obat_tindakan: firstDetail?.nama_diskon || '-',
+            harga_obat_tindakan: firstDetail?.harga_diskon || '-',
+            qty_pelaksana: firstDetail?.qty || '-',
+            total_sementara: firstDetail?.total || '-',
+            is_detail: false
+        });
+
+        // Sisanya dimasukkan sebagai baris detail
+        detailList.slice(1).forEach(detail => {
+            tableData.push({
+                no: "",
+                kode_faktur: "",
+                no_rm: "",
+                no_rawat: "",
+                nama: "",
+                poli: "",
+                dokter: "",
+                penjamin: "",
+                tanggal: "",
+                user_input_name: "",
+                nama_obat_tindakan: detail.nama_diskon,
+                harga_obat_tindakan: detail.harga_diskon,
+                qty_pelaksana: detail.qty,
+                total_sementara: detail.total,
+                is_detail: true
+            });
+        });
+    });
 
     $(document).ready(function() {
-        // Inisialisasi DataTable sederhana
+        // Inisialisasi DataTable tanpa data dulu
         let table = $('#kasirTable').DataTable({
-            data: [], // Awalnya kosong
+            data: [],
             columns: [
                 { data: 'no', className: "text-center" },
                 { data: 'kode_faktur', className: "text-center" },
                 { data: 'no_rm', className: "text-center" },
+                // { data: 'no_rawat', className: "text-center" },
                 {
-                    data: 'no_rawat',
-                    className: 'text-center',
+                    data: null,
+                    className: "text-center",
                     render: function(data, type, row) {
-                        if (data === null || data === undefined || data === '') {
-                        return '-';
-                        }
-                        return data;
+                        if(row.is_detail) return '';
+                        return data.no_rawat || '-';
                     }
                 },
                 { data: 'nama', className: "text-center" },
-                { data: 'poli', className: "text-center" },
+                // Kolom detail, jika baris detail maka tampilkan nama obat/tindakan, harga, qty, total
                 {
-                    data: 'dokter',
-                    className: 'text-center',
+                    data: null,
+                    className: "text-center",
                     render: function(data, type, row) {
-                        if (data === null || data === undefined || data === '') {
-                        return '-';
-                        }
-                        return data;
+                        return row.nama_obat_tindakan || '-';
+                    }
+                },
+                {
+                    data: null,
+                    className: "text-center",
+                    render: function(data, type, row) {
+                        return row.harga_obat_tindakan || '-';
+                    }
+                },
+                {
+                    data: null,
+                    className: "text-center",
+                    render: function(data, type, row) {
+                        return row.qty_pelaksana || '-';
+                    }
+                },
+                {
+                    data: null,
+                    className: "text-center",
+                    render: function(data, type, row) {
+                        return row.total_sementara || '-';
+                    }
+                },
+                { data: 'poli', className: "text-center" },
+                // { data: 'dokter', className: "text-center" },
+                {
+                    data: null,
+                    className: "text-center",
+                    render: function(data, type, row) {
+                        if(row.is_detail) return '';
+                        return data.dokter || '-';
                     }
                 },
                 { data: 'penjamin', className: "text-center" },
-                { data: 'sub_total', className: "text-center" },
-                {
-                    data: null,
-                    className: "text-center",
-                    render: function(data, type, row) {
-                        let result = [];
-                        if (row.potongan_harga && row.potongan_harga != 0) {
-                        result.push(`Diskon: ${row.potongan_harga}`);
-                        }
-                        if (row.administrasi && row.administrasi != 0) {
-                        result.push(`Administrasi: ${row.administrasi}`);
-                        }
-                        if (row.materai && row.materai != 0) {
-                        result.push(`Materai: ${row.materai}`);
-                        }
-                        return result.join('<br>') || '-';  // Kalau semua 0 atau kosong, tampilkan tanda strip
-                    }
-                },
-                { data: 'total', className: "text-center" },
-                {
-                    data: null,
-                    className: "text-center",
-                    render: function(data, type, row) {
-                        let paymentTexts = [];
-
-                        for (let i = 1; i <= 3; i++) {
-                            let method = row[`payment_method_${i}`];
-                            let nominal = row[`payment_nominal_${i}`];
-
-                            if (method && nominal) {
-                                // Tulis format: Method : Nominal (contoh: Cash : 100.000)
-                                paymentTexts.push(`${method.charAt(0).toUpperCase() + method.slice(1)}: ${nominal}`);
-                            }
-                        }
-
-                        // Gabung semua metode pembayaran dengan <br>
-                        return paymentTexts.join('<br>');
-                    }
-                },
                 { data: 'tanggal', className: "text-center" },
                 { data: 'user_input_name', className: "text-center" },
             ],
@@ -172,45 +211,68 @@
             }
         });
 
-
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            const tanggalAwal = $('#tanggalAwal').val();
-            const tanggalAkhir = $('#tanggalAkhir').val();
-            const poli = $('#filterPoli').val();
-
-            const tanggal = data[12]; // kolom ke-13 (index ke-12) = Tanggal
-            const dataPoli = data[5]; // kolom ke-6 (index ke-5) = Poli
-
-            // Filter tanggal
-            if (tanggalAwal && tanggal < tanggalAwal) return false;
-            if (tanggalAkhir && tanggal > tanggalAkhir) return false;
-
-            // Filter poli
-            if (poli && dataPoli !== poli) return false;
-
-            return true;
-        });
-
         $('#btnFilter').on('click', function () {
             const tanggalAwal = $('#tanggalAwal').val();
             const tanggalAkhir = $('#tanggalAkhir').val();
             const poli = $('#filterPoli').val();
 
-            // Filter manual dari kasirData
-            const filteredData = kasirData.filter(item => {
+            // Filter hanya data header
+            let filteredData = kasirData.filter(item => {
                 if (tanggalAwal && item.tanggal < tanggalAwal) return false;
                 if (tanggalAkhir && item.tanggal > tanggalAkhir) return false;
                 if (poli && item.poli !== poli) return false;
                 return true;
             });
 
-            // Tambahkan nomor urut
+            // Susun ulang data untuk tabel
+            let filteredTableData = [];
             filteredData.forEach((item, index) => {
-                item.no = index + 1;
+                const detailList = item.diskon || [];
+                const firstDetail = detailList[0];
+
+                // Baris header dengan isi detail pertama (jika ada)
+                filteredTableData.push({
+                    no: index + 1,
+                    kode_faktur: item.kode_faktur,
+                    no_rm: item.no_rm,
+                    no_rawat: item.no_rawat,
+                    nama: item.nama,
+                    poli: item.poli,
+                    dokter: item.dokter,
+                    penjamin: item.penjamin,
+                    tanggal: item.tanggal,
+                    user_input_name: item.user_input_name,
+                    nama_obat_tindakan: firstDetail?.nama_diskon || '-',
+                    harga_obat_tindakan: firstDetail?.harga_diskon || '-',
+                    qty_pelaksana: firstDetail?.qty || '-',
+                    total_sementara: firstDetail?.total || '-',
+                    is_detail: false
+                });
+
+                // Baris detail kedua dan seterusnya
+                detailList.slice(1).forEach(detail => {
+                    filteredTableData.push({
+                        no: "",
+                        kode_faktur: "",
+                        no_rm: "",
+                        no_rawat: "",
+                        nama: "",
+                        poli: "",
+                        dokter: "",
+                        penjamin: "",
+                        tanggal: "",
+                        user_input_name: "",
+                        nama_obat_tindakan: detail.nama_diskon,
+                        harga_obat_tindakan: detail.harga_diskon,
+                        qty_pelaksana: detail.qty,
+                        total_sementara: detail.total,
+                        is_detail: true
+                    });
+                });
             });
 
-            // Tampilkan hasil ke tabel
-            table.clear().rows.add(filteredData).draw();
+            // Perbarui isi DataTable
+            table.clear().rows.add(filteredTableData).draw();
         });
 
         $('#btnPrint').on('click', function () {
@@ -231,9 +293,10 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Buat form dinamis
+                    console.log(allData);
                     var form = $('<form>', {
                         method: 'POST',
-                        action: "{{ route('datakasir_lunas.print') }}",
+                        action: "{{ route('datakasir_diskon.print') }}",
                         target: '_blank'
                     });
 
@@ -278,7 +341,7 @@
             $('#tanggalAwal').val('');
             $('#tanggalAkhir').val('');
             $('#filterPoli').val('');
-            table.draw(); // reload datatable jika perlu
+            table.clear().draw(); // reload datatable jika perlu
         });
 
     });

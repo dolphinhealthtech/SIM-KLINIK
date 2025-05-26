@@ -22,4 +22,9 @@ class kasir_detail_lunas extends Model
         'user_input_id',
         'user_input_name',
     ];
+
+    public function kasir()
+    {
+        return $this->belongsTo(kasir::class, 'kode_faktur', 'kode_faktur');
+    }
 }
