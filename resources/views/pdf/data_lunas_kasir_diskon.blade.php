@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Tanda Terima Apotek</title>
+    <title>Tanda Terima Diskon</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -163,7 +163,7 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">Laporan Detail Setor Kasir</div>
+    <div class="document-title">Laporan Diskon Setor</div>
 
     <table class="info-table" style="width: 100%;">
         <tr>
@@ -173,7 +173,7 @@
         </tr>
 
         <tr>
-            <td class="info-label">Laporan Detail Setoran Kasir</td>
+            <td class="info-label">Laporan Diskon Setoran</td>
             <td class="info-separator">:</td>
             <td>[{{ auth()->user()->name ?? 'Petugas' }}]</td>
         </tr>
@@ -194,17 +194,13 @@
                     <th>No RM</th>
                     <th>No Rawat</th>
                     <th>Nama</th>
+                    <th>Nama Diskon</th>
+                    <th>Nominal Diskon</th>
+                    <th>Jumlah Diskon</th>
+                    <th>Total</th>
                     <th>Poli</th>
                     <th>Dokter</th>
                     <th>Penjamin</th>
-                    <th>Nama Tindakan / Obat</th>
-                    <th>Harga Tindakan / Obat</th>
-                    <th>Qty / Pelaksana</th>
-                    <th>Total</th>
-                    <th>Sub Total</th>
-                    <th>Tambahan</th>
-                    <th>Total</th>
-                    <th>Pembayaran</th>
                     <th>Tanggal</th>
                     <th>Petugas Entry</th>
                 </tr>
@@ -217,55 +213,13 @@
                         <td>{{ $item['no_rm'] }}</td>
                         <td>{{ $item['no_rawat'] ?? '-' }}</td>
                         <td>{{ $item['nama'] }}</td>
-                        <td>{{ $item['poli'] }}</td>
-                        <td>{{ $item['dokter'] ?? '-' }}</td>
-                        <td>{{ $item['penjamin'] }}</td>
                         <td>{{ $item['nama_obat_tindakan'] }}</td>
                         <td>{{ $item['harga_obat_tindakan'] }}</td>
                         <td>{{ $item['qty_pelaksana'] }}</td>
                         <td>{{ $item['total_sementara'] }}</td>
-                        <td>{{ $item['sub_total'] }}</td>
-                        <td>
-                            @php
-                                $tambahan = [];
-
-                                // Cek apakah is_detail false
-                                if (!$item['is_detail']) {
-                                    if (!empty($item['potongan_harga']) && $item['potongan_harga'] != 0) {
-                                        $tambahan[] = 'Diskon: ' . $item['potongan_harga'];
-                                    }
-                                    if (!empty($item['administrasi']) && $item['administrasi'] != 0) {
-                                        $tambahan[] = 'Administrasi: ' . $item['administrasi'];
-                                    }
-                                    if (!empty($item['materai']) && $item['materai'] != 0) {
-                                        $tambahan[] = 'Materai: ' . $item['materai'];
-                                    }
-                                }
-                            @endphp
-
-                            {!! !$item['is_detail'] ? (count($tambahan) > 0 ? implode('<br>', $tambahan) : '-') : '' !!}
-                        </td>
-                        <td>{{ $item['total'] }}</td>
-                        <td>
-                            @php
-                                $paymentTexts = [];
-
-                                if (!$item['is_detail']){
-                                    for ($i = 1; $i <= 3; $i++) {
-                                        $methodKey = "payment_method_$i";
-                                        $nominalKey = "payment_nominal_$i";
-
-                                        if (!empty($item[$methodKey]) && isset($item[$nominalKey])) {
-                                            $method = ucfirst($item[$methodKey]);
-                                            $nominal = $item[$nominalKey];
-                                            $paymentTexts[] = "{$method} : {$nominal}";
-                                        }
-                                    }
-                                }
-                            @endphp
-
-                            {!! !$item['is_detail'] ? (count($paymentTexts) > 0 ? implode('<br>', $paymentTexts) : '-') : '' !!}
-                        </td>
+                        <td>{{ $item['poli'] }}</td>
+                        <td>{{ $item['dokter'] ?? '-' }}</td>
+                        <td>{{ $item['penjamin'] }}</td>
                         <td>{{ $item['tanggal'] }}</td>
                         <td>{{ $item['user_input_name'] }}</td>
                     </tr>
@@ -284,26 +238,6 @@
                     <td>Jumlah Invoice</td>
                     <td>:</td>
                     <td style="text-align: right;">{{ $total_invoice }} Lembar</td>
-                </tr>
-                <tr>
-                    <td>Cash</td>
-                    <td>:</td>
-                    <td style="text-align: right;">{{ $cashFormatted }}</td>
-                </tr>
-                <tr>
-                    <td>Debit</td>
-                    <td>:</td>
-                    <td style="text-align: right;">{{ $debitFormatted }}</td>
-                </tr>
-                <tr>
-                    <td>Credit</td>
-                    <td>:</td>
-                    <td style="text-align: right;">{{ $creditFormatted }}</td>
-                </tr>
-                <tr>
-                    <td>Transfer</td>
-                    <td>:</td>
-                    <td style="text-align: right;">{{ $transferFormatted }}</td>
                 </tr>
                 <tr>
                     <td>Pendapatan</td>

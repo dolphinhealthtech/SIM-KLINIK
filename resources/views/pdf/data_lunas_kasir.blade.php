@@ -313,7 +313,7 @@
             <tr>
                 <td></td>
                 <td></td>
-                <td style="height: 60px;"></td>
+                <td style="height: 40px;"></td>
             </tr>
             <tr>
                 <td></td>

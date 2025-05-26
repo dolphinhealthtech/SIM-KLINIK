@@ -2732,7 +2732,6 @@ class SuperadminController extends Controller
 
         $header = kasir::with('detail_lunas')->get();
 
-        // dd($header);
         return view('dashboard.datakasir_detail_lunas', compact('title','header'));
     }
 
@@ -2743,7 +2742,13 @@ class SuperadminController extends Controller
         $tanggal_akhir = $request->input('tanggal_akhir');
         $poli = $request->input('poli');
 
-        $total_invoice = count($data);
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            if (isset($item['is_detail']) && $item['is_detail'] == false) {
+                $total_invoice++;
+            }
+        }
 
         $cash = 0;
         $debit = 0;
@@ -2806,6 +2811,153 @@ class SuperadminController extends Controller
     }
 
     // End Data Lunas Detail
+
+    // Data Lunas Apotek
+
+    public function datakasir_apotek()
+    {
+        $title = "Kasir Apotek Lunas";
+
+        $header = kasir::has('apotek_lunas')->with('apotek_lunas')->get();
+
+        return view('dashboard.datakasir_apotek_lunas', compact('title','header'));
+    }
+
+    public function datakasir_apotek_print(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            if (isset($item['is_detail']) && $item['is_detail'] == false) {
+                $total_invoice++;
+            }
+        }
+
+        $pendapatan = 0;
+
+        foreach ($data as $item) {
+            $pendapatan += $item['total_sementara'];
+        }
+
+        // Contoh format rupiah tanpa desimal
+        function formatRupiah($angka) {
+            return 'Rp ' . number_format($angka, 0, ',', '.');
+        }
+
+        $pendapatanFormatted = formatRupiah($pendapatan);
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_apotek', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'kasir_apotek_lunas_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    // End Data Lunas Apotek
+
+    // Data Lunas Tindakan
+
+    public function datakasir_tindakan()
+    {
+        $title = "Kasir Tindakan Lunas";
+
+        $header = kasir::has('tindakan_lunas')->with('tindakan_lunas')->get();
+
+        return view('dashboard.datakasir_tindakan_lunas', compact('title','header'));
+    }
+
+    public function datakasir_tindakan_print(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            if (isset($item['is_detail']) && $item['is_detail'] == false) {
+                $total_invoice++;
+            }
+        }
+
+        $pendapatan = 0;
+
+        foreach ($data as $item) {
+            $pendapatan += $item['total_sementara'];
+        }
+
+        // Contoh format rupiah tanpa desimal
+        function formatRupiah($angka) {
+            return 'Rp ' . number_format($angka, 0, ',', '.');
+        }
+
+        $pendapatanFormatted = formatRupiah($pendapatan);
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_tindakan', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'kasir_tindakan_lunas_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    // End Data Lunas Tindakan
+
+    // Data Diskon
+
+    public function datakasir_diskon()
+    {
+        $title = "Kasir Diskon";
+
+        $header = kasir::has('diskon')->with('diskon')->get();
+
+        return view('dashboard.datakasir_diskon', compact('title','header'));
+    }
+
+    public function datakasir_diskon_print(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            if (isset($item['is_detail']) && $item['is_detail'] == false) {
+                $total_invoice++;
+            }
+        }
+
+        $pendapatan = 0;
+
+        foreach ($data as $item) {
+            $pendapatan += $item['total_sementara'];
+        }
+
+        // Contoh format rupiah tanpa desimal
+        function formatRupiah($angka) {
+            return 'Rp ' . number_format($angka, 0, ',', '.');
+        }
+
+        $pendapatanFormatted = formatRupiah($pendapatan);
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_diskon', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'kasir_diskon_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    // End Data Diskon
 
     // Apotek
 
