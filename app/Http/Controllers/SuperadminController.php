@@ -1520,7 +1520,7 @@ class SuperadminController extends Controller
                 'nomor_register' => $no_registrasi,
                 'tanggal_kujungan' => $request->tanggal_kunjungan,
                 'register_id'=> $pendaftaran->id,
-                'status_panggil'=> 0, // 0 = pendaftaran , 1 = perawat, 2 = dokter
+                'status_panggil'=> 0, // 0 = pendaftaran , 1 = perawat, 2 = dokter ,3 = selesai
                 'status_pendaftaran' => 1, // 0 = batal, 1 = pendaftaran , 2 = hadir
                 'Status_aplikasi' => 1 , // 1 = app manual , 2 = app Onlain ,3 = bpjs
                 ]);

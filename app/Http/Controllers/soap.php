@@ -459,6 +459,10 @@ class soap extends Controller
                 'Resep_obat' => $request->resep_data,
             ]);
 
+            $pelayanan = Pelayanan::with('pendaftaran.status')->where('nomor_register', $request->no_rawat)->first();
+            $pelayanan->pendaftaran->status->status_panggil = 3;
+            $pelayanan->pendaftaran->status->save();
+
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
