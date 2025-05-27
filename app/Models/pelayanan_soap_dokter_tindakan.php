@@ -18,6 +18,7 @@ class pelayanan_soap_dokter_tindakan extends Model
         'Jenis_tindakan',
         'jenis_pelaksana',
         'harga',
+        'status_kasir',
     ];
 
     public function apotek()

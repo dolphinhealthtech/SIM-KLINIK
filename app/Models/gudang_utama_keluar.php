@@ -15,6 +15,7 @@ class gudang_utama_keluar extends Model
         'tanggal_request',
         'kode_obat_alkes',
         'nama_obat_alkes',
+        'harga_dasar',
         'qty',
         'tanggal_terima_obat',
         'expired',

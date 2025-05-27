@@ -25,6 +25,7 @@ class apotek extends Model
         'embis_total',
         'total',
         'note_apotek',
+        'status_kasir',
         'user_input_id',
         'user_input_name',
     ];
