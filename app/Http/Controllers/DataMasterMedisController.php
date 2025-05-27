@@ -1280,15 +1280,25 @@ class DataMasterMedisController extends Controller
         $response = $this->PcareController->get_sarana_bpjs();
         $data = json_decode($response->getContent(), true);
         try {
-            // Simpan data ke database
-            foreach ($data['data'] as $item) {
-                sarana::updateOrCreate(
-                    [
-                        'kode' => $item['kdSarana'],
-                        'nama' => $item['nmSarana']
-                    ]
-                );
+             // Validasi struktur data
+            if (!isset($data['data']['list']) || !is_array($data['data']['list'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data dari BPJS tidak valid atau kosong.',
+                ], 400);
             }
+
+            // Siapkan data untuk upsert
+            $dataInsert = collect($data['data']['list'])->map(function ($item) {
+                return [
+                    'kode' => $item['kdSarana'],
+                    'nama' => $item['nmSarana'],
+                ];
+            })->toArray();
+
+            // Simpan sekaligus: insert baru atau update jika sudah ada berdasarkan 'kode'
+            sarana::upsert($dataInsert, ['kode'], ['nama']);
+
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
