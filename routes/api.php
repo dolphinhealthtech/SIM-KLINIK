@@ -63,6 +63,8 @@ Route::prefix('pcare')->group(function () {
     Route::get('/prognosa', [PcareController::class, 'get_prognosa_bpjs'])->name('pcare.prognosa');
     Route::get('/alergi/{kode}', [PcareController::class, 'get_alergi_bpjs'])->name('pcare.alergi');
     Route::get('/sarana', [PcareController::class, 'get_sarana_bpjs'])->name('pcare.sarana');
+    Route::get('/provide_rujuk/{spesialis}/{sarana}/{tanggal}', [PcareController::class, 'get_rujukan_spesialis_bpjs'])->name('pcare.provide_rujuk');
+    Route::get('/provide_rujuk_husus/{spesialis}/{noKartu}/{tanggal}', [PcareController::class, 'get_rujukan_husus_bpjs'])->name('pcare.provide_rujuk_husus');
 });
 
 // Data Master Medis

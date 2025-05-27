@@ -576,48 +576,67 @@
                                                                 <label for="instruksi">Instruksi</label>
                                                                 <select class="form-control" id="instruksi">
                                                                 <option value="">-- Pilih Instruksi --</option>
-                                                                <option value="oral">Oral</option>
-                                                                <option value="injeksi">Injeksi</option>
-                                                                <option value="topikal">Topikal</option>
+                                                                <option value="CITO">CITO</option>
+                                                                <option value="ITER">ITER</option>
+                                                                <option value="Equal qs">Equal qs</option>
+                                                                <option value="m.f pulv da in caps">m.f pulv da in caps</option>
+                                                                <option value="s.u.e">s.u.e</option>
+                                                                <option value="m.f pulv dtd no X">m.f pulv dtd no X</option>
+                                                                <option value="m.f pulv dtd no XV">m.f pulv dtd no XV</option>
+                                                                <option value="s.q.d.d.c">s.q.d.d.c</option>
+                                                                <option value="haust">haust</option>
+                                                                <option value="s.i.m.m">s.i.m.m</option>
                                                                 </select>
                                                             </div>
                                                             </div>
 
                                                             <!-- Input Signa -->
                                                             <div class="form-row align-items-end mb-3">
-                                                            <div class="col-md-6">
-                                                                <label>Signa</label>
-                                                                <div class="form-row align-items-center">
-                                                                    <div class="col">
-                                                                    <input type="text" id="signa-jumlah1" class="form-control" placeholder="Contoh: 1">
-                                                                    </div>
-                                                                    <div class="col-auto">
-                                                                    <strong>x</strong>
-                                                                    </div>
-                                                                    <div class="col">
-                                                                    <input type="text" id="signa-jumlah2" class="form-control" placeholder="Contoh: 3">
+                                                                <div class="col-md-6">
+                                                                    <label>Signa</label>
+                                                                    <div class="form-row align-items-center">
+                                                                        <div class="col">
+                                                                            <input type="text" id="signa-jumlah1" class="form-control" placeholder="Contoh: 1">
+                                                                        </div>
+                                                                        <div class="col-auto">
+                                                                            <strong>x</strong>
+                                                                        </div>
+                                                                        <div class="col">
+                                                                            <input type="text" id="signa-jumlah2" class="form-control" placeholder="Contoh: 3">
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <label for="signa-satuan1">Signa Satuan 1</label>
-                                                                <input type="text" id="dosis3" class="form-control" readonly>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <label for="signa-satuan2">Signa Satuan 2</label>
-                                                                <select class="form-control" id="signa-satuan2">
-                                                                <option value="">-- Pilih Satuan --</option>
-                                                                <option value="hari">Hari</option>
-                                                                <option value="minggu">Minggu</option>
-                                                                <option value="bulan">Bulan</option>
-                                                                </select>
-                                                            </div>
+
+                                                                <div class="col-md-3">
+                                                                    <div style="visibility: hidden;"><label for="signa-satuan1">Signa Satuan 1</label></div>
+                                                                    <select class="form-control" id="dosis3">
+                                                                        @foreach ($satuan as $satuandata)
+                                                                            <option value="{{ $satuandata->nama }}">{{ $satuandata->nama }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="col-md-3">
+                                                                    <div style="visibility: hidden;"><label for="signa-satuan2">Signa Satuan 2</label></div>
+                                                                    <select class="form-control" id="signa-satuan2">
+                                                                        <option value="">-- Pilih Satuan --</option>
+                                                                        <option value="SEBELUM MAKAN">SEBELUM MAKAN</option>
+                                                                        <option value="SESUDAH MAKAN">SESUDAH MAKAN</option>
+                                                                        <option value="SEBELUM/SESUDAH MAKAN">SEBELUM/SESUDAH MAKAN</option>
+                                                                        <option value="JIKA MUAL-MUAL">JIKA MUAL-MUAL</option>
+                                                                        <option value="JIKA BUANG AIR BESAR">JIKA BUANG AIR BESAR</option>
+                                                                        <option value="JIKA MERASA NYERI">JIKA MERASA NYERI</option>
+                                                                        <option value="DIMINUM SETELAH SUAPAN PERTAMA">DIMINUM SETELAH SUAPAN PERTAMA</option>
+                                                                    </select>
+                                                                </div>
+
                                                             </div>
 
                                                             <!-- Tombol Tambah -->
                                                             <div class="form-group mb-3">
                                                             <button type="button" id="btn-add-obat" class="btn btn-primary">Tambah Obat ke Resep</button>
+                                                            <button type="button" class="btn btn-secondary" id="btn-print-resep-ajax">🖨️ Print Resep (PDF)</button>
+
                                                             </div>
 
                                                             <!-- Tampilan Resep -->
@@ -646,7 +665,6 @@
         </section>
     <!-- /.content -->
 </div>
-
 
 
 {{-- Script load data --}}
@@ -784,16 +802,17 @@
         renderResep();
     });
 
-    $("#btn-add-obat").click(function () {
-        const nama = $("#nama-obat").val();
-        const dosis1 = $("#dosis1").val().trim();
-        const dosis2 = $("#dosis2").val().trim();
-        const signaJumlah1 = $("#signa-jumlah1").val().trim();
-        const signaJumlah2 = $("#signa-jumlah2").val().trim();
-        const dosis3 = $("#dosis3").val().trim();
-        const signaSatuan2 = $("#signa-satuan2").val();
+   $("#btn-add-obat").click(function () {
+    const nama = $("#nama-obat").val();
+    const dosis1 = $("#dosis1").val().trim();
+    const dosis2 = $("#dosis2").val().trim();
+    const signaJumlah1 = $("#signa-jumlah1").val().trim();
+    const signaJumlah2 = $("#signa-jumlah2").val().trim();
+    const dosis3 = $("#dosis3").val().trim();
+    const signaSatuan2 = $("#signa-satuan2").val();
+    const instruksi = $("#instruksi").val().trim();
 
-        if (!nama) {
+    if (!nama) {
         Swal.fire({
             icon: 'warning',
             title: 'Oops...',
@@ -801,40 +820,44 @@
             confirmButtonText: 'OK'
         });
         return;
-        }
+    }
 
-        // Susun format output sesuai permintaan
-        let line = `${nama}`;
-        if (dosis1) line += ` ${dosis1}`;
-        if (dosis2) line += ` ${dosis2}`;
-        line += "\n"; // newline untuk instruksi
+    let line = `${nama}`;
+    if (dosis1) line += ` ${dosis1}`;
+    if (dosis2) line += ` ${dosis2}`;
 
-        const instruksi = $("#instruksi").val().trim();
-        if (instruksi) line += `${instruksi}\n`;
+    line += "\n";
 
-        if (signaJumlah1 && signaJumlah2 && dosis3 && signaSatuan2) {
-        line += `${signaJumlah1} x ${signaJumlah2} ${dosis3} ${signaSatuan2}`;
-        }
+    if (instruksi) {
+        line += `${instruksi}\n`;
+    }
 
-        resepList.push(line);
-        renderResep();
+    // Susun signa walau tidak lengkap
+    if (signaJumlah1 && signaJumlah2) {
+        line += `${signaJumlah1} x ${signaJumlah2}`;
+        if (dosis3) line += ` ${dosis3}`;
+        if (signaSatuan2) line += ` ${signaSatuan2}`;
+    }
 
-        // Reset input
-        $("#nama-obat").val("");
-        $("#dosis1").val("");
-        $("#dosis2").val("");
-        $("#instruksi").val("");
-        $("#signa-jumlah1").val("");
-        $("#signa-jumlah2").val("");
-        $("#dosis3").val("");
-        $("#signa-satuan2").val("");
-    });
+    resepList.push(line);
+    renderResep();
 
-    // Auto isi dosis2 & dosis3 dari data-satuan
+    // Reset input
+    $("#nama-obat").val("");
+    $("#dosis1").val("");
+    $("#dosis2").val("");
+    $("#instruksi").val("");
+    $("#signa-jumlah1").val("");
+    $("#signa-jumlah2").val("");
+    $("#dosis3").val("");
+    $("#signa-satuan2").val("");
+});
+
+
+    // Auto isi dosis2
     $("#nama-obat").on("change", function () {
         const satuan = $(this).find(":selected").data("satuan");
         $("#dosis2").val(satuan ?? "");
-        $("#dosis3").val(satuan ?? "");
     });
 
     $("#summernote-resep").on("click", ".resep-line", function () {
@@ -872,51 +895,99 @@
     });
 
     $("#summernote-resep").on("click", ".btn-edit", function (e) {
-        e.stopPropagation();
-        const idx = $(this).closest(".resep-line").data("index");
-        const line = resepList[idx];
+    e.stopPropagation();
+    const idx = $(this).closest(".resep-line").data("index");
+    const line = resepList[idx];
 
-        if (line.startsWith("R:/")) {
+    // Reset form yang pasti diisi (nama & dosis)
+    $("#nama-obat").val("");
+    $("#dosis1").val("");
+    $("#dosis2").val("");
+    $("#instruksi").val("");
+    $("#signa-jumlah1").val("");
+    $("#signa-jumlah2").val("");
+    $("#dosis3").val("");
+    $("#signa-satuan2").val("");
+    $("#r-text").val("");
+
+    if (line.startsWith("R:/")) {
+        // Jika ini resep bebas
         const content = line.replace(/^R:\/*\s*/, "");
         $("#r-text").val(content);
-        } else {
-        // reset input
-        $("#nama-obat").val("");
-        $("#dosis1").val("");
-        $("#dosis2").val("");
-        $("#instruksi").val("");
-        $("#signa-jumlah1").val("");
-        $("#signa-jumlah2").val("");
-        $("#dosis3").val("");
-        $("#signa-satuan2").val("");
+    } else {
+        // Pisah berdasarkan newline, hilangkan baris kosong
+        const parts = line.split("\n").map(p => p.trim()).filter(p => p.length > 0);
 
-        const parts = line.split("\n");
-
-        // Baris 1: nama dosis1 dosis2
-        const baris1 = parts[0]?.trim().split(" ") || [];
-        if (baris1.length > 0) $("#nama-obat").val(baris1[0]);
-        if (baris1.length > 1) $("#dosis1").val(baris1[1]);
-        if (baris1.length > 2) $("#dosis2").val(baris1[2]);
-
-        // Baris 2: instruksi
-        if (parts[1]) $("#instruksi").val(parts[1].trim());
-
-        // Baris 3: signa (format: x x dosis3 satuan)
-        if (parts[2]) {
-            const signaRegex = /(\d+)\s*x\s*(\d+)\s+(\S+)\s+(\S+)/;
-            const match = parts[2].match(signaRegex);
-            if (match) {
-            $("#signa-jumlah1").val(match[1]);
-            $("#signa-jumlah2").val(match[2]);
-            $("#dosis3").val(match[3]);
-            $("#signa-satuan2").val(match[4]);
+        // === PARSING BARIS 1: nama obat + dosis1 + dosis2 ===
+        if (parts.length > 0) {
+            const tokens = parts[0].split(" ");
+            if (tokens.length >= 3) {
+                // Ambil 2 terakhir sebagai dosis
+                $("#dosis2").val(tokens.pop());
+                $("#dosis1").val(tokens.pop());
+                $("#nama-obat").val(tokens.join(" "));
+            } else if (tokens.length === 2) {
+                $("#dosis1").val(tokens.pop());
+                $("#nama-obat").val(tokens.join(" "));
+            } else if (tokens.length === 1) {
+                $("#nama-obat").val(tokens[0]);
             }
         }
+
+        // === PARSING BARIS 2: instruksi (opsional) ===
+        if (parts.length > 1 && !/^\d+\s*x\s*\d+/.test(parts[1])) {
+            // Pastikan ini bukan signa
+            $("#instruksi").val(parts[1]);
         }
 
-        resepList.splice(idx, 1);
-        selectedIndex = -1;
-        renderResep();
+        // === PARSING BARIS 3 atau BARIS 2 (jika tidak ada instruksi): signa ===
+        const signaLine = parts.find(p => /^\d+\s*x\s*\d+/.test(p));
+        if (signaLine) {
+            const signaRegex = /^(\d+)\s*x\s*(\d+)(?:\s+(\S+))?(?:\s+(.*))?$/;
+            const match = signaLine.match(signaRegex);
+            if (match) {
+                if (match[1]) $("#signa-jumlah1").val(match[1]);
+                if (match[2]) $("#signa-jumlah2").val(match[2]);
+                if (match[3]) $("#dosis3").val(match[3]);
+                if (match[4]) $("#signa-satuan2").val(match[4]);
+            }
+        }
+    }
+
+    // Hapus item yang sedang diedit dan render ulang
+    resepList.splice(idx, 1);
+    selectedIndex = -1;
+    renderResep();
+});
+
+
+
+    $("#btn-print-resep-ajax").click(function () {
+        const resepData = JSON.stringify(resepList);
+
+        $.ajax({
+            url: '{{ route('resep.print') }}',
+            type: 'POST',
+            data: {
+                resep_data: resepData,
+                _token: '{{ csrf_token() }}'
+            },
+            xhrFields: {
+                responseType: 'blob' // penting agar bisa buka PDF dari binary
+            },
+            success: function (response, status, xhr) {
+                const blob = new Blob([response], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                window.open(url, '_blank');
+            },
+            error: function (xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Gagal mencetak resep.'
+                });
+            }
+        });
     });
     });
 </script>
@@ -2439,7 +2510,7 @@
 
         });
 
-    
+
 
 
         $('#summernote3').summernote({
@@ -2564,14 +2635,14 @@
                 data: $(this).serialize(),
                 success: function(response) {
                     if (response.success) {
-                        
+
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
                             text: response.message,
                             showConfirmButton: true
                         }).then(() => {
-                            
+
                             location.reload(); // Reload halaman untuk update data
                         });
                     } else {

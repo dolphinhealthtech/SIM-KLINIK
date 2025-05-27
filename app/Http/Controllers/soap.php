@@ -9,6 +9,7 @@ use App\Models\gcs_kesadaran;
 use App\Models\gcs_motorik;
 use App\Models\gcs_verbal;
 use App\Models\gudang_barang;
+use App\Models\gudang_satuan;
 use App\Models\htt_pemeriksaan;
 use App\Models\htt_sub_pemeriksaan;
 use App\Models\icd10;
@@ -28,6 +29,7 @@ use App\Models\perawatan_tindakan;
 use App\Models\sarana;
 use App\Models\spesialis;
 use App\Models\subspesialis;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -303,7 +305,8 @@ class soap extends Controller
         $jenis_makanan_diet = nama_makanan::all();
 
         $obat = gudang_barang::all();
-        return view('module.pelayanan.soap-dokter', compact('title','jenis_diete','obat','jenis_makanan_diet','tindakan','kategori','icd10','icd9','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
+        $satuan = gudang_satuan::all();
+        return view('module.pelayanan.soap-dokter', compact('title','satuan','jenis_diete','obat','jenis_makanan_diet','tindakan','kategori','icd10','icd9','pelayanan','umur','gsc_eye','gcs_verbal','gcs_motorik','gcs_kesadaran','htt_pemeriksaan'));
 
     }
 
@@ -768,6 +771,14 @@ class soap extends Controller
         $subSpesialis = subspesialis::where('kode_spesialis', $kode)->get();
         return response()->json($subSpesialis);
     }
+
+    public function print(Request $request)
+    {
+        $resepList = json_decode($request->input('resep_data'), true);
+        $pdf = Pdf::loadView('pdf.resep', ['resepList' => $resepList])->setPaper('a6', 'portrait');
+        return $pdf->download('resep-obat.pdf'); // akan dibuka lewat blob di JS
+    }
+
 
 }
 
