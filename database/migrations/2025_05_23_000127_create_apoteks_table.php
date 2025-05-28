@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('embis_total');
             $table->string('total');
             $table->string('note_apotek')->nullable();
+            $table->string('status_kasir');
             $table->string('user_input_id');
             $table->string('user_input_name');
             $table->timestamps();

@@ -2346,11 +2346,11 @@ class SuperadminController extends Controller
     {
         $title = "Kasir";
 
-        $apotek = apotek::with('detail_obat','detail_tindakan')->get();
+        $apotek = apotek::with('detail_obat','detail_tindakan')->where('status_kasir', 0)->get();
 
         $tanggal = Carbon::now()->format('Ymd');
 
-        $tindakan = pelayanan_soap_dokter_tindakan::whereDoesntHave('cek_resep')->with('data_soap')->get();
+        $tindakan = pelayanan_soap_dokter_tindakan::where('status_kasir', 0)->whereDoesntHave('cek_resep')->with('data_soap')->get();
 
         $latestFaktur = kasir::where('kode_faktur', 'LIKE', "TND-{$tanggal}-%")
                     ->orderBy('kode_faktur', 'desc')
@@ -2613,6 +2613,22 @@ class SuperadminController extends Controller
                 }
             }
 
+            $updateApotek = apotek::where('kode_faktur', $request->kode_faktur_hidden)->first();
+
+            if ($updateApotek) {
+                $updateApotek->status_kasir = 1;
+                $updateApotek->save();
+            }
+
+            $updateTindakan = pelayanan_soap_dokter_tindakan::where('no_rawat', $request->no_rawat_hidden)->get();
+
+            if ($updateTindakan->isNotEmpty()) {
+                foreach ($updateTindakan as $item) {
+                    $item->status_kasir = 1;
+                    $item->save();
+                }
+            }
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Pembayaran kasir berhasil dilakukan.',
@@ -2641,6 +2657,15 @@ class SuperadminController extends Controller
 
         return response()->json($data);
     }
+
+    public function generatePdf($kode_faktur)
+    {
+        $kasir = kasir::with('detail_lunas')->where('kode_faktur', $kode_faktur)->firstOrFail();
+
+        $pdf = Pdf::loadView('pdf.kasir_bil', compact('kasir'))->setPaper('a5', 'landscape');
+        return $pdf->stream('kasir_' . $kode_faktur . '.pdf');
+    }
+
 
     // End Kasir
 
@@ -3008,6 +3033,7 @@ class SuperadminController extends Controller
                 'embis_total' => $validated['embalase_total_hidden'] ?? 0,
                 'total' => $validated['total_hidden'] ?? 0,
                 'note_apotek' => $validated['note_apotek'] ?? null,
+                'status_kasir' => 0,
                 'user_input_id' => Auth::user()->id,
                 'user_input_name' => Auth::user()->name,
             ]);

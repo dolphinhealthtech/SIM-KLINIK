@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('tanggal_request');
             $table->string('kode_obat_alkes');
             $table->string('nama_obat_alkes');
+            $table->string('harga_dasar');
             $table->string('qty');
             $table->string('tanggal_terima_obat');
             $table->string('expired');

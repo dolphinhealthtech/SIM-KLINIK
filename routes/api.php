@@ -85,6 +85,7 @@ Route::prefix('data-master-gudang')->group(function(){
 
     Route::get('/utama/getHargaDasar/{kode_obat}', [DataMasterGudangController::class, 'getHargaDasar'])->name('utama.getHargaDasar');
     Route::post('/utama/proses-permintaan', [DataMasterGudangController::class, 'prosesPermintaan'])->name('utama.prosesPermintaan');
+    Route::get('/pdf/{kodeRequest}', [DataMasterGudangController::class, 'generatePdf'])->name('utama.pdf');
 });
 
 //Apotek
@@ -102,4 +103,5 @@ Route::prefix('apotek')->group(function(){
 //KASIR
 Route::prefix('kasir')->group(function(){
     Route::post('/previewData', [SuperadminController::class, 'previewData'])->name('kasir.previewData');
+    Route::get('/pdf/{kode_faktur}', [SuperadminController::class, 'generatePdf'])->name('kasir.pdf');
 });

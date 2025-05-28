@@ -122,7 +122,7 @@
             "autoWidth": false,
             "responsive": true,
             "language": {
-                "zeroRecords": "No matching records found"
+                "zeroRecords": "Tidak ada data, silahkan refresh halaman."
             }
         });
     });

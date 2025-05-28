@@ -475,6 +475,7 @@
                             text: response.message,
                             confirmButtonText: 'OK'
                         }).then(() => {
+                            window.open('/api/data-master-gudang/pdf/' + response.data);
                             location.reload(); // Reload halaman setelah klik OK
                         });
                     } else {

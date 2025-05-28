@@ -408,6 +408,7 @@ class soap extends Controller
                 'Jenis_tindakan'=> $namaTindakan,
                 'jenis_pelaksana'=> $pelaksana,
                 'harga'=> $harga,
+                'status_kasir'=> 0,
             ]);
 
 
