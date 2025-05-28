@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             WebSettingSeeder::class,
             KelaminSeeder::class,
+            GcsSeeder::class,
         ]);
     }
 }
