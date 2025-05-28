@@ -373,7 +373,8 @@ Route::middleware('auth')->prefix('setting')->group(function () {
     Route::post('/web/bpjs', [WebSettingController::class, 'set_bpjs'])->name('web.update.bpjs');
 
 });
-
+// Route untuk panggil pasien
+Route::post('/pasien/panggil/{id}', [App\Http\Controllers\SuperadminController::class, 'panggilPasien'])->name('pasien.panggil');
 
 
 require __DIR__.'/auth.php';
