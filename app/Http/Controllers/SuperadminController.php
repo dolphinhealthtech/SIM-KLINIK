@@ -1437,14 +1437,16 @@ class SuperadminController extends Controller
         ->get();
 
 
-        $pasiennoverif = Pasien::where('verifikasi', 1)->count();
-        $pasienallold = Pasien::where('created_at', '<', now()->subDays(30))->count();
-        $pasienall = Pasien::count();
-        $pasienallnewnow = Pasien::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+        $pasienallold = Pendaftaran_rawat_jalan::count();
+        $pasienallnewnow = Pendaftaran_rawat_jalan::with('status')
+        ->whereHas('status', function ($query) {
+            $query->whereIn('status_pendaftaran', ['3']);
+        })
         ->count();
+
         $penjamin = penjamin::all();
 
-        return view('module.pendaftaran.daftar', compact('title', 'pendaftaran','pasiens','penjamin','poli','pasiennoverif','pasienall','pasienallnewnow','pasienallold'));
+        return view('module.pendaftaran.daftar', compact('title', 'pendaftaran','pasiens','penjamin','poli','pasienallnewnow','pasienallold'));
     }
 
     public function getByPoli($id, Request $request)
@@ -2653,6 +2655,12 @@ class SuperadminController extends Controller
         return view('dashboard.datakasir_lunas', compact('title','header'));
     }
 
+    // Contoh format rupiah tanpa desimal
+    private function formatRupiah($angka)
+    {
+        return 'Rp ' . number_format($angka, 0, ',', '.');
+    }
+
     public function datakasir_lunas_print(Request $request)
     {
         $data = json_decode($request->input('data'), true); // penting! decode data JSON
@@ -2700,19 +2708,16 @@ class SuperadminController extends Controller
             }
         }
 
-        // Contoh format rupiah tanpa desimal
-        function formatRupiah($angka) {
-            return 'Rp ' . number_format($angka, 0, ',', '.');
-        }
+
 
         // Contoh penggunaan:
-        $cashFormatted = formatRupiah($cash);
-        $debitFormatted = formatRupiah($debit);
-        $creditFormatted = formatRupiah($credit);
-        $transferFormatted = formatRupiah($transfer);
+        $cashFormatted = $this->formatRupiah($cash);
+        $debitFormatted = $this->formatRupiah($debit);
+        $creditFormatted = $this->formatRupiah($credit);
+        $transferFormatted = $this->formatRupiah($transfer);
 
         $pendapatan = $cash + $debit + $credit + $transfer;
-        $pendapatanFormatted = formatRupiah($pendapatan);
+        $pendapatanFormatted = $this->formatRupiah($pendapatan);
 
         $pdf = Pdf::loadView('pdf.data_lunas_kasir', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice', 'cashFormatted', 'debitFormatted', 'creditFormatted', 'transferFormatted', 'pendapatanFormatted'))
                 ->setPaper('a4', 'landscape');
@@ -2788,19 +2793,14 @@ class SuperadminController extends Controller
             }
         }
 
-        // Contoh format rupiah tanpa desimal
-        function formatRupiah($angka) {
-            return 'Rp ' . number_format($angka, 0, ',', '.');
-        }
-
         // Contoh penggunaan:
-        $cashFormatted = formatRupiah($cash);
-        $debitFormatted = formatRupiah($debit);
-        $creditFormatted = formatRupiah($credit);
-        $transferFormatted = formatRupiah($transfer);
+        $cashFormatted = $this->formatRupiah($cash);
+        $debitFormatted = $this->formatRupiah($debit);
+        $creditFormatted = $this->formatRupiah($credit);
+        $transferFormatted = $this->formatRupiah($transfer);
 
         $pendapatan = $cash + $debit + $credit + $transfer;
-        $pendapatanFormatted = formatRupiah($pendapatan);
+        $pendapatanFormatted = $this->formatRupiah($pendapatan);
 
         $pdf = Pdf::loadView('pdf.data_lunas_kasir_detail', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice', 'cashFormatted', 'debitFormatted', 'creditFormatted', 'transferFormatted', 'pendapatanFormatted'))
                 ->setPaper('a4', 'landscape');
@@ -2844,12 +2844,7 @@ class SuperadminController extends Controller
             $pendapatan += $item['total_sementara'];
         }
 
-        // Contoh format rupiah tanpa desimal
-        function formatRupiah($angka) {
-            return 'Rp ' . number_format($angka, 0, ',', '.');
-        }
-
-        $pendapatanFormatted = formatRupiah($pendapatan);
+        $pendapatanFormatted = $this->formatRupiah($pendapatan);
 
         $pdf = Pdf::loadView('pdf.data_lunas_kasir_apotek', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted'))
                 ->setPaper('a4', 'landscape');
@@ -2893,12 +2888,7 @@ class SuperadminController extends Controller
             $pendapatan += $item['total_sementara'];
         }
 
-        // Contoh format rupiah tanpa desimal
-        function formatRupiah($angka) {
-            return 'Rp ' . number_format($angka, 0, ',', '.');
-        }
-
-        $pendapatanFormatted = formatRupiah($pendapatan);
+        $pendapatanFormatted = $this->formatRupiah($pendapatan);
 
         $pdf = Pdf::loadView('pdf.data_lunas_kasir_tindakan', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted'))
                 ->setPaper('a4', 'landscape');

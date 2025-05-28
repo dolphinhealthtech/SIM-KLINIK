@@ -49,8 +49,8 @@
                                 <table id="politabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Kode poli</th>
-                                            <th class="text-center">Nama poli</th>
+                                            <th class="text-center">Kode Sarana</th>
+                                            <th class="text-center">Nama Sarana</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>

@@ -344,19 +344,27 @@ $(document).ready(function () {
     // Tombol "Cari Provider Khusus"
     $('#cari_provider_khusus').on('click', function () {
         const spesialishusus = $('#igd_rujukan_khusus').val();
+        const subspesialishusus = $('#subspesialis_khusus').val();
         const nobpjs = $('#no_bpjs').val() || "0";
         const tanggal = formatTanggal($('#tanggal_rujukan_khusus').val());
 
         if (!spesialishusus || !nobpjs || !tanggal) {
             showWarning('Harap isi Spesialis, No BPJS, dan Tanggal Rujukan terlebih dahulu.');
             console.log(`Spesialis: ${spesialishusus}, No BPJS: ${nobpjs}, Tanggal: ${tanggal}`);
-
             return;
+        }
+
+        let url = '';
+
+        if (subspesialishusus) {
+            url = `/api/pcare/provide_rujuk_husus_subspesialis/${subspesialishusus}/${spesialishusus}/${nobpjs}/${tanggal}`;
+        } else {
+            url = `/api/pcare/provide_rujuk_husus/${spesialishusus}/${nobpjs}/${tanggal}`;
         }
 
         const $btn = $(this);
         $.ajax({
-            url: `/api/pcare/provide_rujuk_husus/${spesialishusus}/${nobpjs}/${tanggal}`,
+            url: url,
             type: 'GET',
             beforeSend: function () {
                 $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Mencari...');
@@ -376,6 +384,7 @@ $(document).ready(function () {
             }
         });
     });
+
 
 });
 </script>

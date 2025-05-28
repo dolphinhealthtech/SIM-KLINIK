@@ -21,13 +21,13 @@
         <div class="container-fluid">
             <!-- Small boxes (Stat box) -->
             <div class="row">
-                <div class="col-lg-3 col-6">
+                <div class="col-lg-6 col-6">
                     <!-- small box -->
                     <div class="small-box bg-info">
                         <div class="inner">
                             <h3>{{ $pasienallold }}</h3>
 
-                            <p>Total Pasien lama</p>
+                            <p>Total Pasien Terdaftar</p>
                         </div>
                         <div class="icon">
                             <i class="ion ion-bag"></i>
@@ -35,44 +35,16 @@
                     </div>
                 </div>
                 <!-- ./col -->
-                <div class="col-lg-3 col-6">
+                <div class="col-lg-6 col-6">
                     <!-- small box -->
                     <div class="small-box bg-success">
                         <div class="inner">
                             <h3>{{ $pasienallnewnow }}</h3>
 
-                            <p>Total Pasien Baru Bulan ini</p>
+                            <p>Total Pasien Selesai Di layani</p>
                         </div>
                         <div class="icon">
                             <i class="ion ion-stats-bars"></i>
-                        </div>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-6">
-                    <!-- small box -->
-                    <div class="small-box bg-warning">
-                        <div class="inner">
-                            <h3>{{ $pasienall }}</h3>
-
-                            <p>Total Pasien</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-6">
-                    <!-- small box -->
-                    <div class="small-box bg-danger">
-                        <div class="inner">
-                            <h3>{{ $pasiennoverif }}</h3>
-
-                            <p>Pasien Belun Verifikasi</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-pie-graph"></i>
                         </div>
                     </div>
                 </div>
