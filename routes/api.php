@@ -105,3 +105,5 @@ Route::prefix('kasir')->group(function(){
     Route::post('/previewData', [SuperadminController::class, 'previewData'])->name('kasir.previewData');
     Route::get('/pdf/{kode_faktur}', [SuperadminController::class, 'generatePdf'])->name('kasir.pdf');
 });
+
+

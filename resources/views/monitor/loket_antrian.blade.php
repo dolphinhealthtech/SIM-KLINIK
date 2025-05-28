@@ -163,6 +163,12 @@
         color: var(--primary-color);
         font-weight: 500;
     }
+
+    .auto-announce-label {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-left: 0.5rem;
+    }
 </style>
 
 <div class="content-wrapper py-4">
@@ -186,98 +192,69 @@
                         </div>
                        <div class="card-body text-center py-5 bg-theme-primary">
         @php
-            // Cek prioritas panggilan
-            $antrianDipanggil = App\Models\pasien_antrian::where('status_panggil', '1')
+            // Ambil semua antrian yang tersedia untuk hari ini
+            $allQueues = collect();
+            
+            // Ambil antrian A (pasien_antrian)
+            $antrianA = App\Models\pasien_antrian::where('nomor_antrian', 'like', 'A-%')
+                ->where('status_panggil', '1')
                 ->whereDate('created_at', \Carbon\Carbon::today())
+                ->select('nomor_antrian as antrian', 'created_at', DB::raw("'A' as loket"), DB::raw("'LOKET A' as loket_nama"))
                 ->first();
             
-            // Jika tidak ada, cek yang dilayani perawat
-            if (!$antrianDipanggil) {
-                $antrianPerawat = DB::table('pendaftaran_rawat_jalans')
-                    ->join('pendaftaran_rawat_jalan_statuses', 'pendaftaran_rawat_jalan_statuses.nomor_register', '=', 'pendaftaran_rawat_jalans.nomor_register')
-                    ->where('pendaftaran_rawat_jalan_statuses.status_panggil', 1)
-                    ->whereDate('pendaftaran_rawat_jalans.created_at', \Carbon\Carbon::today())
-                    ->select('pendaftaran_rawat_jalans.antrian', 'pendaftaran_rawat_jalans.nomor_register')
-                    ->first();
+            if ($antrianA) {
+                $allQueues->push([
+                    'antrian' => $antrianA->antrian,
+                    'loket' => 'A',
+                    'loket_nama' => 'LOKET A',
+                    'status_display' => 'SILAHKAN KE LOKET A',
+                    'created_at' => $antrianA->created_at
+                ]);
             }
             
-            // Jika tidak ada, cek yang dilayani dokter
-            if (!$antrianDipanggil && !isset($antrianPerawat)) {
-                $antrianDokter = DB::table('pendaftaran_rawat_jalans')
-                    ->join('pendaftaran_rawat_jalan_statuses', 'pendaftaran_rawat_jalan_statuses.nomor_register', '=', 'pendaftaran_rawat_jalans.nomor_register')
-                    ->where('pendaftaran_rawat_jalan_statuses.status_panggil', 2)
-                    ->whereDate('pendaftaran_rawat_jalans.created_at', \Carbon\Carbon::today())
-                    ->select('pendaftaran_rawat_jalans.antrian', 'pendaftaran_rawat_jalans.nomor_register')
-                    ->first();
+            // Ambil antrian B (perawat)
+            $antrianB = DB::table('pendaftaran_rawat_jalans')
+                ->join('pendaftaran_rawat_jalan_statuses', 'pendaftaran_rawat_jalan_statuses.nomor_register', '=', 'pendaftaran_rawat_jalans.nomor_register')
+                ->where('pendaftaran_rawat_jalan_statuses.status_panggil', 1)
+                ->whereDate('pendaftaran_rawat_jalans.created_at', \Carbon\Carbon::today())
+                ->select('pendaftaran_rawat_jalans.antrian', 'pendaftaran_rawat_jalans.created_at')
+                ->first();
+            
+            if ($antrianB) {
+                $allQueues->push([
+                    'antrian' => $antrianB->antrian,
+                    'loket' => 'B',
+                    'loket_nama' => 'LOKET B',
+                    'status_display' => 'SILAHKAN KE LOKET B',
+                    'created_at' => $antrianB->created_at
+                ]);
             }
             
-            // Tentukan nomor antrian dan loket yang akan ditampilkan
-            $nomorAntrianDisplay = '--';
-            $loketNama = '';
-            $loketKode = '';
-            $nomorRegister = '';
+            // Ambil antrian C (dokter)
+            $antrianC = DB::table('pendaftaran_rawat_jalans')
+                ->join('pendaftaran_rawat_jalan_statuses', 'pendaftaran_rawat_jalan_statuses.nomor_register', '=', 'pendaftaran_rawat_jalans.nomor_register')
+                ->where('pendaftaran_rawat_jalan_statuses.status_panggil', 2)
+                ->whereDate('pendaftaran_rawat_jalans.created_at', \Carbon\Carbon::today())
+                ->select('pendaftaran_rawat_jalans.antrian', 'pendaftaran_rawat_jalans.created_at')
+                ->first();
             
-            // Gunakan session untuk melacak nomor yang sudah diumumkan
-            $lastAnnouncedNumber = session('last_announced_number', '');
-            $lastAnnouncedLoket = session('last_announced_loket', '');
-            $shouldPlaySound = false;
-            
-            if ($antrianDipanggil) {
-                $nomorAntrianDisplay = $antrianDipanggil->nomor_antrian;
-                $loketKode = substr($nomorAntrianDisplay, 0, 1);
-                $loketNama = 'LOKET '.$loketKode;
-                $statusDisplay = 'SILAHKAN KE ' . $loketNama;
-                
-                // Cek apakah nomor antrian berbeda dari yang terakhir diumumkan atau loket berbeda
-                if ($lastAnnouncedNumber !== $nomorAntrianDisplay || $lastAnnouncedLoket !== $loketKode) {
-                    $shouldPlaySound = true;
-                    session(['last_announced_time' => now()]);
-                }
-            } elseif (isset($antrianPerawat) && $antrianPerawat) {
-                $nomorAntrianDisplay = $antrianPerawat->antrian;
-                $loketKode = 'B';
-                $loketNama = 'LOKET B';
-                $statusDisplay = 'SILAHKAN KE ' . $loketNama;
-                $nomorRegister = $antrianPerawat->nomor_register;
-                
-                // Cek apakah nomor antrian berbeda dari yang terakhir diumumkan atau loket berbeda
-                if ($lastAnnouncedNumber !== $nomorAntrianDisplay || $lastAnnouncedLoket !== $loketKode) {
-                    $shouldPlaySound = true;
-                    session(['last_announced_time' => now()]);
-                }
-            } elseif (isset($antrianDokter) && $antrianDokter) {
-                $nomorAntrianDisplay = $antrianDokter->antrian;
-                $loketKode = 'C';
-                $loketNama = 'LOKET C';
-                $statusDisplay = 'SILAHKAN KE ' . $loketNama;
-                $nomorRegister = $antrianDokter->nomor_register;
-                
-                // Cek apakah nomor antrian berbeda dari yang terakhir diumumkan atau loket berbeda
-                if ($lastAnnouncedNumber !== $nomorAntrianDisplay || $lastAnnouncedLoket !== $loketKode) {
-                    $shouldPlaySound = true;
-                    session(['last_announced_time' => now()]);
-                }
-            } else {
-                $statusDisplay = 'MENUNGGU PANGGILAN';
+            if ($antrianC) {
+                $allQueues->push([
+                    'antrian' => $antrianC->antrian,
+                    'loket' => 'C',
+                    'loket_nama' => 'LOKET C',
+                    'status_display' => 'SILAHKAN KE LOKET C',
+                    'created_at' => $antrianC->created_at
+                ]);
             }
             
-            // Cek apakah sudah 15 detik sejak pengumuman terakhir
-            $lastAnnouncedTime = session('last_announced_time');
-            if ($lastAnnouncedTime && now()->diffInSeconds($lastAnnouncedTime) > 15) {
-                $nomorAntrianDisplay = '--';
-                $statusDisplay = 'MENUNGGU PANGGILAN';
-            }
-            
-            // Simpan nomor antrian dan loket saat ini ke session jika perlu diumumkan
-            if ($shouldPlaySound && $nomorAntrianDisplay != '--') {
-                session(['last_announced_number' => $nomorAntrianDisplay]);
-                session(['last_announced_loket' => $loketKode]);
-            }
+            // Convert collection to array for JavaScript
+            $allQueuesArray = $allQueues->toArray();
         @endphp
         
         <div class="bg-white rounded-lg p-4 shadow-sm mx-auto" style="max-width: 400px;">
-            <h1 class="queue-number mb-0">{{ $nomorAntrianDisplay }}</h1>
-            <h3 class="text-theme-primary font-weight-bold mt-3">{{ $statusDisplay }}</h3>
+            <h1 class="queue-number mb-0" id="displayed-queue-number">--</h1>
+            <h3 class="text-theme-primary font-weight-bold mt-3" id="displayed-status">MENUNGGU PANGGILAN</h3>
         </div>
         
         <div class="time-date-box mt-4">
@@ -289,14 +266,29 @@
         <!-- Toggle untuk auto-announce -->
         <div class="custom-control custom-switch mt-3">
             <input type="checkbox" class="custom-control-input" id="autoAnnounceToggle">
-            <label class="custom-control-label" for="autoAnnounceToggle"></label>
+            <label class="custom-control-label auto-announce-label" for="autoAnnounceToggle">Pengumuman Otomatis</label>
         </div>
         
         <script>
+        // Data antrian dari PHP
+        const allQueues = @json($allQueuesArray);
+        
         document.addEventListener('DOMContentLoaded', function() {
-            // Simpan nomor antrian saat ini
-            const currentQueueNumber = "{{ $nomorAntrianDisplay }}";
-            const currentLoket = "{{ $loketKode }}";
+            let displayInterval;
+            
+            // Track which queues have been displayed (persist in sessionStorage)
+            let displayedQueues = [];
+            
+            // Try to load previously displayed queues from sessionStorage
+            try {
+                const savedDisplayedQueues = sessionStorage.getItem('displayedQueues');
+                if (savedDisplayedQueues) {
+                    displayedQueues = JSON.parse(savedDisplayedQueues);
+                }
+            } catch (e) {
+                console.error('Error loading displayed queues:', e);
+                displayedQueues = [];
+            }
             
             // Simpan status autoplay di localStorage
             const autoAnnounceToggle = document.getElementById('autoAnnounceToggle');
@@ -305,39 +297,105 @@
             autoAnnounceToggle.addEventListener('change', function() {
                 localStorage.setItem('autoAnnounce', this.checked);
                 
-                // Jika diaktifkan, coba putar pengumuman
                 if (this.checked) {
-                    playAnnouncement();
+                    startContinuousDisplay();
+                } else {
+                    stopContinuousDisplay();
+                    // Reset display ke "--"
+                    document.getElementById('displayed-queue-number').textContent = '--';
+                    document.getElementById('displayed-status').textContent = 'MENUNGGU PANGGILAN';
                 }
             });
             
-            // Fungsi untuk memainkan pengumuman
-            function playAnnouncement() {
-                // Siapkan teks pengumuman
-                let announcementText = "";
-                const queueNumber = "{{ $nomorAntrianDisplay }}";
-                const loket = "{{ $loketNama }}";
-                
-                // Customize announcement based on loket
-                if (queueNumber !== '--') {
-                    announcementText = `Nomor Antrian: ${queueNumber}, silakan menuju ${loket}`;
+            // Fungsi untuk memulai tampilan bergantian
+            function startContinuousDisplay() {
+                if (allQueues.length === 0) {
+                    document.getElementById('displayed-queue-number').textContent = '--';
+                    document.getElementById('displayed-status').textContent = 'TIDAK ADA ANTRIAN';
+                    return;
                 }
                 
-                if (announcementText) {
-                    // Gunakan Web Speech API untuk mengucapkan
-                    const utterance = new SpeechSynthesisUtterance(announcementText);
-                    utterance.lang = 'id-ID';
-                    utterance.rate = 0.9;
-                    utterance.pitch = 1;
-                    utterance.volume = 1;
-                    
-                    // Speak
-                    speechSynthesis.speak(utterance);
-                    
-                    // Simpan nomor antrian dan loket yang telah diumumkan
-                    localStorage.setItem('lastAnnouncedNumber', queueNumber);
-                    localStorage.setItem('lastAnnouncedLoket', currentLoket);
+                // Set interval untuk memeriksa antrian baru setiap 5 detik
+                displayInterval = setInterval(function() {
+                    checkAndDisplayNewQueues();
+                }, 5000);
+                
+                // Periksa dan tampilkan antrian baru segera
+                checkAndDisplayNewQueues();
+            }
+            
+            // Fungsi untuk memeriksa dan menampilkan antrian baru
+            function checkAndDisplayNewQueues() {
+                console.log('Checking for new queues. Currently displayed:', displayedQueues);
+                console.log('All queues:', allQueues);
+                
+                // Filter queues that haven't been displayed for their current counter
+                const newQueues = allQueues.filter(queue => {
+                    const key = queue.antrian + '-' + queue.loket;
+                    return !displayedQueues.includes(key);
+                });
+                
+                console.log('New queues to display:', newQueues);
+                
+                if (newQueues.length === 0) {
+                    document.getElementById('displayed-queue-number').textContent = '--';
+                    document.getElementById('displayed-status').textContent = 'MENUNGGU PANGGILAN';
+                    return;
                 }
+                
+                // Ambil antrian pertama yang belum ditampilkan
+                const queueToDisplay = newQueues[0];
+                
+                // Tampilkan antrian
+                document.getElementById('displayed-queue-number').textContent = queueToDisplay.antrian;
+                document.getElementById('displayed-status').textContent = queueToDisplay.status_display;
+                
+                // Tandai antrian ini sudah ditampilkan
+                const queueKey = queueToDisplay.antrian + '-' + queueToDisplay.loket;
+                displayedQueues.push(queueKey);
+                
+                // Save displayed queues to sessionStorage
+                try {
+                    sessionStorage.setItem('displayedQueues', JSON.stringify(displayedQueues));
+                } catch (e) {
+                    console.error('Error saving displayed queues:', e);
+                }
+                
+                // Umumkan antrian ini
+                if (autoAnnounceToggle.checked) {
+                    announceQueue(queueToDisplay);
+                }
+            }
+            
+            // Fungsi untuk mengumumkan antrian
+            function announceQueue(queue) {
+                const announcementText = `Nomor Antrian ${queue.antrian}, silakan menuju ${queue.loket_nama}`;
+                
+                // Hentikan pengumuman sebelumnya jika masih berjalan
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(announcementText);
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.8;
+                utterance.pitch = 1;
+                utterance.volume = 1;
+                
+                speechSynthesis.speak(utterance);
+            }
+            
+            // Fungsi untuk menghentikan tampilan bergantian
+            function stopContinuousDisplay() {
+                if (displayInterval) {
+                    clearInterval(displayInterval);
+                    displayInterval = null;
+                }
+                // Hentikan speech synthesis
+                speechSynthesis.cancel();
+            }
+            
+            // Mulai tampilan bergantian jika toggle aktif
+            if (autoAnnounceToggle.checked) {
+                startContinuousDisplay();
             }
             
             // Fungsi untuk update waktu dan tanggal
@@ -357,7 +415,7 @@
             
             // Fungsi untuk auto-refresh halaman
             function setupAutoRefresh() {
-                let countdown = 10; // 30 detik
+                let countdown = 30; // 30 detik
                 const countdownElement = document.getElementById('countdown');
                 
                 function updateCountdown() {
@@ -381,20 +439,6 @@
             
             // Setup auto-refresh
             setupAutoRefresh();
-            
-            // Cek apakah ada nomor antrian baru yang perlu diumumkan
-            const lastAnnouncedNumber = localStorage.getItem('lastAnnouncedNumber') || '';
-            const lastAnnouncedLoket = localStorage.getItem('lastAnnouncedLoket') || '';
-            
-            if (currentQueueNumber !== '--' && 
-                (currentQueueNumber !== lastAnnouncedNumber || currentLoket !== lastAnnouncedLoket) && 
-                autoAnnounceToggle.checked) {
-                
-                // Coba putar pengumuman jika autoplay diaktifkan
-                setTimeout(function() {
-                    playAnnouncement();
-                }, 1000);
-            }
         });
         </script>
         
@@ -467,17 +511,9 @@
                                                         $iconStatus         = '<i class="fas fa-user-md mr-1"></i>';
                                                     }
                                                 }
-
-                                                // **Jika bottom card loket sama dengan kotak tengah yang aktif DAN nomornya sama,
-                                                // maka sembunyikan (tampilkan "--")**
-                                                if ($loketPrefix === $loketKode && $nomorAntrianDiLoket === $nomorAntrianDisplay) {
-                                                    $nomorAntrianDiLoket = '--';
-                                                    $labelStatus        = 'Siap Melayani';
-                                                    $iconStatus         = '<i class="fas fa-check-circle mr-1"></i>';
-                                                }
                                             @endphp
 
-                                            {{-- Tampilkan nomor antrian (atau "--" jika kosong / sama dengan kotak tengah) --}}
+                                            {{-- Tampilkan nomor antrian --}}
                                             <h2 class="loket-number text-theme-primary">{{ $nomorAntrianDiLoket }}</h2>
                                             {{-- Badge / Label status --}}
                                             <div class="badge-custom bg-theme-primary mt-2">
@@ -541,7 +577,5 @@
     // Update time every second
     setInterval(updateDateTime, 1000);
     updateDateTime(); // Initial call
-    
-
 </script>
 @endsection
