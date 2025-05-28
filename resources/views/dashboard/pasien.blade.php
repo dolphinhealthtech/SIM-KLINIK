@@ -104,17 +104,25 @@
                                                 <td>{{ $pasiensdata->telepon }}</td>
                                                 <td>
                                                     @if ($pasiensdata->verifikasi == 1)
-                                                    <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
-                                                        data-target="#lengkapiModal"
-                                                        data-id="{{ $pasiensdata->id }}">
-                                                        <i class="fa fa-exclamation-circle"></i> Lengkapi
-                                                    </a>
+                                                        <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
+                                                            data-target="#lengkapiModal"
+                                                            data-id="{{ $pasiensdata->id }}">
+                                                            <i class="fa fa-exclamation-circle"></i> Lengkapi
+                                                        </a>
+                                                        
+                                                        <!-- Tombol Panggil untuk data yang belum dilengkapi -->
+                                                        <a class="btn btn-primary rounded-pill panggil-btn" data-toggle="modal"
+                                                            data-target="#panggilModal"
+                                                            data-id="{{ $pasiensdata->id }}"
+                                                            data-nama="{{ $pasiensdata->nama }}">
+                                                            <i class="fa fa-bullhorn"></i> Panggil
+                                                        </a>
                                                     @else
-                                                    <a class="btn btn-warning rounded-pill edit-btn" data-toggle="modal"
-                                                        data-target="#EditModal"
-                                                        data-id="{{ $pasiensdata->id }}">
-                                                        <i class="fa-solid fa-user-pen"></i> Edit
-                                                    </a>
+                                                        <a class="btn btn-warning rounded-pill edit-btn" data-toggle="modal"
+                                                            data-target="#EditModal"
+                                                            data-id="{{ $pasiensdata->id }}">
+                                                            <i class="fa-solid fa-user-pen"></i> Edit
+                                                        </a>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -131,6 +139,73 @@
         <!-- /.content -->
     </div>
 
+    <!-- Modal Panggil Pasien -->
+<div class="modal fade" id="panggilModal" tabindex="-1" role="dialog" aria-labelledby="panggilModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="panggilModalLabel">Konfirmasi Panggil Pasien</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="panggilText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-primary" id="konfirmasiPanggil">Panggil Sekarang</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script untuk modal panggil
+    $(document).on('click', '.panggil-btn', function() {
+        let id = $(this).data('id');
+        let nama = $(this).data('nama');
+        
+        $('#panggilText').html(`<span>Apakah Anda yakin ingin memanggil pasien <b>${nama}</b>?</span>`);
+        
+        // Ketika tombol konfirmasi diklik
+        $('#konfirmasiPanggil').off('click').on('click', function() {
+            $.ajax({
+                url: "{{ route('pasien.panggil', ['id' => '__ID__']) }}".replace('__ID__', id),
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#panggilModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Terjadi kesalahan saat memanggil pasien.'
+                    });
+                }
+            });
+        });
+    });
+</script>
 
     <!-- Modal XL -->
     <div class="modal fade" id="lengkapiModal" tabindex="-1"
@@ -539,6 +614,7 @@
             </div>
         </div>
     </div>
+    
 
     <!-- Modal XL -->
     <div class="modal fade" id="EditModal" tabindex="-1"
@@ -1416,5 +1492,11 @@
                 ]
             }).buttons().container().appendTo('#userstabel_wrapper .col-md-6:eq(0)');
         });
+
+        
     </script>
+    
+
+    
 @endsection
+

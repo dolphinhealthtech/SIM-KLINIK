@@ -65,6 +65,7 @@ use App\Models\kasir_detail_lunas;
 use App\Models\kasir_apotek_lunas;
 use App\Models\kasir_tindakan_lunas;
 use App\Models\kasir_diskon;
+use App\Models\pasien_antrian;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -695,6 +696,37 @@ class SuperadminController extends Controller
         return $newNoRM;
     }
 
+    public function createNomorAntrian()
+{
+    // Prefix untuk nomor antrian
+    $prefix = 'A-';
+    
+    // Ambil tanggal hari ini
+    $today = Carbon::today();
+    
+    // Cari nomor antrian terbesar untuk hari ini
+    $lastAntrian = pasien_antrian::whereDate('created_at', $today)
+                    ->orderBy('nomor_antrian', 'desc')
+                    ->first();
+    
+    if ($lastAntrian) {
+        // Jika sudah ada antrian hari ini
+        // Ekstrak angka dari nomor antrian terakhir (format: A-xx)
+        $lastNumber = (int) str_replace($prefix, '', $lastAntrian->nomor_antrian);
+        
+        // Tambahkan 1 untuk nomor berikutnya
+        $nextNumber = $lastNumber + 1;
+    } else {
+        // Jika belum ada antrian hari ini, mulai dari 1
+        $nextNumber = 1;
+    }
+    
+    // Format nomor antrian: A-xx
+    $nomorAntrian = $prefix . $nextNumber;
+    
+    return $nomorAntrian;
+}
+
     public function pasiens()
     {
         $title = "Pasien";
@@ -758,6 +790,13 @@ class SuperadminController extends Controller
                 'verifikasi' => "1",
             ]);
 
+            $NomorAntrian = $this->createNomorAntrian();
+            pasien_antrian::create([
+                'pasien_id' => $pasiens->id,
+                'nomor_antrian' => $NomorAntrian,
+                'status_panggil' => '0', // 0 = belum panggil, 1 = sedang dipanggil, 2 = selesai
+            ]);
+
             return response()->json([
                 'message' => 'Data pasien berhasil disimpan.',
                 'data'    => $pasiens
@@ -768,6 +807,45 @@ class SuperadminController extends Controller
             ], 422);
         }
     }
+
+    /**
+ * Mengubah status panggil pasien dari 0 menjadi 1
+ */
+public function panggilPasien($id)
+{
+    try {
+        // Cari data antrian pasien
+        $antrian = pasien_antrian::where('pasien_id', $id)
+                    ->where('status_panggil', '0')
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+        
+        if ($antrian) {
+            // Update status panggil menjadi 1
+            $antrian->status_panggil = '1';
+            $antrian->save();
+            
+            // Ambil data pasien
+            $pasien = pasien::find($id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Pasien ' . $pasien->nama . ' berhasil dipanggil.',
+                'data' => $antrian
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data antrian pasien tidak ditemukan atau sudah dipanggil.'
+            ], 404);
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
     public function pasienvefiv(Request $request)
     {
@@ -884,6 +962,22 @@ class SuperadminController extends Controller
                 'user_name_input' => $request->userinput,
             ]);
 
+            // Update status panggil menjadi 2 (selesai)
+            $antrian = pasien_antrian::where('pasien_id', $pasien->id)
+                ->whereDate('created_at', now()->toDateString())
+                ->first();
+                
+            if ($antrian) {
+                $antrian->status_panggil = '2'; // 2 = selesai
+                $antrian->save();
+                
+                Log::info('Status panggil pasien diubah menjadi selesai', [
+                    'pasien_id' => $pasien->id,
+                    'no_rm' => $pasien->no_rm,
+                    'status_panggil' => $antrian->status_panggil,
+                    'waktu' => now()
+                ]);
+            }
 
 
             // Logging perubahan data
