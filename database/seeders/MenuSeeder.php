@@ -32,7 +32,7 @@ class MenuSeeder extends Seeder
         $apotekerRole = Role::where('name', 'Apoteker')->first();
 
         // Buat menu utama terlebih dahulu
-        $dashboard = menu::create([
+        $dashboard = Menu::create([
             'name' => 'Dashboard',
             'url' => '/dashboard',
             'icon' => 'tachometer-alt',
