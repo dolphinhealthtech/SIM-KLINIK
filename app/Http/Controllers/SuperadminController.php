@@ -1531,14 +1531,16 @@ public function panggilPasien($id)
         ->get();
 
 
-        $pasiennoverif = Pasien::where('verifikasi', 1)->count();
-        $pasienallold = Pasien::where('created_at', '<', now()->subDays(30))->count();
-        $pasienall = Pasien::count();
-        $pasienallnewnow = Pasien::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+        $pasienallold = Pendaftaran_rawat_jalan::count();
+        $pasienallnewnow = Pendaftaran_rawat_jalan::with('status')
+        ->whereHas('status', function ($query) {
+            $query->whereIn('status_pendaftaran', ['3']);
+        })
         ->count();
+
         $penjamin = penjamin::all();
 
-        return view('module.pendaftaran.daftar', compact('title', 'pendaftaran','pasiens','penjamin','poli','pasiennoverif','pasienall','pasienallnewnow','pasienallold'));
+        return view('module.pendaftaran.daftar', compact('title', 'pendaftaran','pasiens','penjamin','poli','pasienallnewnow','pasienallold'));
     }
 
     public function getByPoli($id, Request $request)
@@ -1614,7 +1616,7 @@ public function panggilPasien($id)
                 'nomor_register' => $no_registrasi,
                 'tanggal_kujungan' => $request->tanggal_kunjungan,
                 'register_id'=> $pendaftaran->id,
-                'status_panggil'=> 0, // 0 = pendaftaran , 1 = perawat, 2 = dokter
+                'status_panggil'=> 0, // 0 = pendaftaran , 1 = perawat, 2 = dokter ,3 = selesai
                 'status_pendaftaran' => 1, // 0 = batal, 1 = pendaftaran , 2 = hadir
                 'Status_aplikasi' => 1 , // 1 = app manual , 2 = app Onlain ,3 = bpjs
                 ]);
@@ -2438,11 +2440,11 @@ public function panggilPasien($id)
     {
         $title = "Kasir";
 
-        $apotek = apotek::with('detail_obat','detail_tindakan')->get();
+        $apotek = apotek::with('detail_obat','detail_tindakan')->where('status_kasir', 0)->get();
 
         $tanggal = Carbon::now()->format('Ymd');
 
-        $tindakan = pelayanan_soap_dokter_tindakan::whereDoesntHave('cek_resep')->with('data_soap')->get();
+        $tindakan = pelayanan_soap_dokter_tindakan::where('status_kasir', 0)->whereDoesntHave('cek_resep')->with('data_soap')->get();
 
         $latestFaktur = kasir::where('kode_faktur', 'LIKE', "TND-{$tanggal}-%")
                     ->orderBy('kode_faktur', 'desc')
@@ -2705,6 +2707,22 @@ public function panggilPasien($id)
                 }
             }
 
+            $updateApotek = apotek::where('kode_faktur', $request->kode_faktur_hidden)->first();
+
+            if ($updateApotek) {
+                $updateApotek->status_kasir = 1;
+                $updateApotek->save();
+            }
+
+            $updateTindakan = pelayanan_soap_dokter_tindakan::where('no_rawat', $request->no_rawat_hidden)->get();
+
+            if ($updateTindakan->isNotEmpty()) {
+                foreach ($updateTindakan as $item) {
+                    $item->status_kasir = 1;
+                    $item->save();
+                }
+            }
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Pembayaran kasir berhasil dilakukan.',
@@ -2734,17 +2752,32 @@ public function panggilPasien($id)
         return response()->json($data);
     }
 
+    public function generatePdf($kode_faktur)
+    {
+        $kasir = kasir::with('detail_lunas')->where('kode_faktur', $kode_faktur)->firstOrFail();
+
+        $pdf = Pdf::loadView('pdf.kasir_bil', compact('kasir'))->setPaper('a5', 'landscape');
+        return $pdf->stream('kasir_' . $kode_faktur . '.pdf');
+    }
+
+
     // End Kasir
 
     // Data Lunas Kasir
 
     public function datakasir_lunas()
     {
-        $title = "Detail Lunas";
+        $title = "Kasir Lunas";
 
         $header = kasir::all();
 
         return view('dashboard.datakasir_lunas', compact('title','header'));
+    }
+
+    // Contoh format rupiah tanpa desimal
+    private function formatRupiah($angka)
+    {
+        return 'Rp ' . number_format($angka, 0, ',', '.');
     }
 
     public function datakasir_lunas_print(Request $request)
@@ -2794,19 +2827,16 @@ public function panggilPasien($id)
             }
         }
 
-        // Contoh format rupiah tanpa desimal
-        function formatRupiah($angka) {
-            return 'Rp ' . number_format($angka, 0, ',', '.');
-        }
+
 
         // Contoh penggunaan:
-        $cashFormatted = formatRupiah($cash);
-        $debitFormatted = formatRupiah($debit);
-        $creditFormatted = formatRupiah($credit);
-        $transferFormatted = formatRupiah($transfer);
+        $cashFormatted = $this->formatRupiah($cash);
+        $debitFormatted = $this->formatRupiah($debit);
+        $creditFormatted = $this->formatRupiah($credit);
+        $transferFormatted = $this->formatRupiah($transfer);
 
         $pendapatan = $cash + $debit + $credit + $transfer;
-        $pendapatanFormatted = formatRupiah($pendapatan);
+        $pendapatanFormatted = $this->formatRupiah($pendapatan);
 
         $pdf = Pdf::loadView('pdf.data_lunas_kasir', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice', 'cashFormatted', 'debitFormatted', 'creditFormatted', 'transferFormatted', 'pendapatanFormatted'))
                 ->setPaper('a4', 'landscape');
@@ -2817,6 +2847,226 @@ public function panggilPasien($id)
     }
 
     // End Data Lunas Kasir
+
+    // Data Lunas Detail
+
+    public function datakasir_detail()
+    {
+        $title = "Kasir Detail Lunas";
+
+        $header = kasir::with('detail_lunas')->get();
+
+        return view('dashboard.datakasir_detail_lunas', compact('title','header'));
+    }
+
+    public function datakasir_detail_print(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            if (isset($item['is_detail']) && $item['is_detail'] == false) {
+                $total_invoice++;
+            }
+        }
+
+        $cash = 0;
+        $debit = 0;
+        $credit = 0;
+        $transfer = 0;
+
+        foreach ($data as $item) {
+            for ($i = 1; $i <= 3; $i++) {
+                $methodKey = "payment_method_$i";
+                $nominalKey = "payment_nominal_$i";
+
+                if (!empty($item[$methodKey]) && !empty($item[$nominalKey])) {
+                    $method = strtolower($item[$methodKey]);
+                    // Hilangkan 'Rp ', titik dan spasi dari nominal sebelum konversi
+                    $nominalStr = str_replace(['Rp', '.', ' '], '', $item[$nominalKey]);
+
+                    // Cek apakah setelah dibersihkan adalah angka
+                    if ($nominalStr) {
+                        $nominal = $nominalStr;
+
+                        switch ($method) {
+                            case 'cash':
+                                $cash += $nominal;
+                                break;
+                            case 'debit':
+                                $debit += $nominal;
+                                break;
+                            case 'credit':
+                                $credit += $nominal;
+                                break;
+                            case 'transfer':
+                                $transfer += $nominal;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Contoh penggunaan:
+        $cashFormatted = $this->formatRupiah($cash);
+        $debitFormatted = $this->formatRupiah($debit);
+        $creditFormatted = $this->formatRupiah($credit);
+        $transferFormatted = $this->formatRupiah($transfer);
+
+        $pendapatan = $cash + $debit + $credit + $transfer;
+        $pendapatanFormatted = $this->formatRupiah($pendapatan);
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_detail', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice', 'cashFormatted', 'debitFormatted', 'creditFormatted', 'transferFormatted', 'pendapatanFormatted'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'kasir_detail_lunas_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    // End Data Lunas Detail
+
+    // Data Lunas Apotek
+
+    public function datakasir_apotek()
+    {
+        $title = "Kasir Apotek Lunas";
+
+        $header = kasir::has('apotek_lunas')->with('apotek_lunas')->get();
+
+        return view('dashboard.datakasir_apotek_lunas', compact('title','header'));
+    }
+
+    public function datakasir_apotek_print(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            if (isset($item['is_detail']) && $item['is_detail'] == false) {
+                $total_invoice++;
+            }
+        }
+
+        $pendapatan = 0;
+
+        foreach ($data as $item) {
+            $pendapatan += $item['total_sementara'];
+        }
+
+        $pendapatanFormatted = $this->formatRupiah($pendapatan);
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_apotek', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'kasir_apotek_lunas_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    // End Data Lunas Apotek
+
+    // Data Lunas Tindakan
+
+    public function datakasir_tindakan()
+    {
+        $title = "Kasir Tindakan Lunas";
+
+        $header = kasir::has('tindakan_lunas')->with('tindakan_lunas')->get();
+
+        return view('dashboard.datakasir_tindakan_lunas', compact('title','header'));
+    }
+
+    public function datakasir_tindakan_print(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            if (isset($item['is_detail']) && $item['is_detail'] == false) {
+                $total_invoice++;
+            }
+        }
+
+        $pendapatan = 0;
+
+        foreach ($data as $item) {
+            $pendapatan += $item['total_sementara'];
+        }
+
+        $pendapatanFormatted = $this->formatRupiah($pendapatan);
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_tindakan', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'kasir_tindakan_lunas_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    // End Data Lunas Tindakan
+
+    // Data Diskon
+
+    public function datakasir_diskon()
+    {
+        $title = "Kasir Diskon";
+
+        $header = kasir::has('diskon')->with('diskon')->get();
+
+        return view('dashboard.datakasir_diskon', compact('title','header'));
+    }
+
+    public function datakasir_diskon_print(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            if (isset($item['is_detail']) && $item['is_detail'] == false) {
+                $total_invoice++;
+            }
+        }
+
+        $pendapatan = 0;
+
+        foreach ($data as $item) {
+            $pendapatan += $item['total_sementara'];
+        }
+
+        // Contoh format rupiah tanpa desimal
+        function formatRupiah($angka) {
+            return 'Rp ' . number_format($angka, 0, ',', '.');
+        }
+
+        $pendapatanFormatted = formatRupiah($pendapatan);
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_diskon', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'kasir_diskon_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    // End Data Diskon
 
     // Apotek
 
@@ -2877,6 +3127,7 @@ public function panggilPasien($id)
                 'embis_total' => $validated['embalase_total_hidden'] ?? 0,
                 'total' => $validated['total_hidden'] ?? 0,
                 'note_apotek' => $validated['note_apotek'] ?? null,
+                'status_kasir' => 0,
                 'user_input_id' => Auth::user()->id,
                 'user_input_name' => Auth::user()->name,
             ]);

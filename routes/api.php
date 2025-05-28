@@ -63,6 +63,9 @@ Route::prefix('pcare')->group(function () {
     Route::get('/prognosa', [PcareController::class, 'get_prognosa_bpjs'])->name('pcare.prognosa');
     Route::get('/alergi/{kode}', [PcareController::class, 'get_alergi_bpjs'])->name('pcare.alergi');
     Route::get('/sarana', [PcareController::class, 'get_sarana_bpjs'])->name('pcare.sarana');
+    Route::get('/provide_rujuk/{spesialis}/{sarana}/{tanggal}', [PcareController::class, 'get_rujukan_spesialis_bpjs'])->name('pcare.provide_rujuk');
+    Route::get('/provide_rujuk_husus/{spesialis}/{noKartu}/{tanggal}', [PcareController::class, 'get_rujukan_husus_bpjs'])->name('pcare.provide_rujuk_husus');
+    Route::get('/provide_rujuk_husus_subspesialis/{husus}/{spesialis}/{noKartu}/{tanggal}', [PcareController::class, 'get_rujukan_husus_subspesialis_bpjs'])->name('pcare.provide_rujuk_husus_subspesialis');
 });
 
 // Data Master Medis
@@ -82,6 +85,7 @@ Route::prefix('data-master-gudang')->group(function(){
 
     Route::get('/utama/getHargaDasar/{kode_obat}', [DataMasterGudangController::class, 'getHargaDasar'])->name('utama.getHargaDasar');
     Route::post('/utama/proses-permintaan', [DataMasterGudangController::class, 'prosesPermintaan'])->name('utama.prosesPermintaan');
+    Route::get('/pdf/{kodeRequest}', [DataMasterGudangController::class, 'generatePdf'])->name('utama.pdf');
 });
 
 //Apotek
@@ -99,4 +103,5 @@ Route::prefix('apotek')->group(function(){
 //KASIR
 Route::prefix('kasir')->group(function(){
     Route::post('/previewData', [SuperadminController::class, 'previewData'])->name('kasir.previewData');
+    Route::get('/pdf/{kode_faktur}', [SuperadminController::class, 'generatePdf'])->name('kasir.pdf');
 });

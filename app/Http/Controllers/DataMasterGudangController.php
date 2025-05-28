@@ -25,6 +25,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Connectors\ConnectionFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DataMasterGudangController extends Controller
 {
@@ -851,7 +852,23 @@ class DataMasterGudangController extends Controller
                     'user_input_name' => $request->input('user_name'),
                     'created_at' => now(),
                     'updated_at' => now(),
-                    ]);
+                ]);
+
+                gudang_barang_harga::create([
+                    'kode_obat_alkes' => $data->kode_obat_alkes,
+                    'nama_obat_alkes' => $data->nama_obat_alkes,
+                    'harga_dasar' => $data->harga_dasar,
+                    'harga_jual_1' => null,
+                    'harga_jual_2' => null,
+                    'harga_jual_3' => null,
+                    'diskon' => 0,
+                    'ppn' => 0,
+                    'tanggal_obat_masuk' => Carbon::now()->toDateString(),
+                    'user_input_id' => $request->input('user_id'),
+                    'user_input_name' => $request->input('user_name'),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
                 // Hapus dari gudang_utama_keluars (opsional)
                 $connection->table('gudang_utama_keluars')->where('id', $id)->delete();
@@ -1015,6 +1032,9 @@ class DataMasterGudangController extends Controller
                 $kodeObat = $item['kode_obat'];
                 $jumlahDibutuhkan = intval($item['jumlah']);
 
+                $hargaDasarRaw = $item['harga_dasar'];
+                $hargaDasar = intval(str_replace(['Rp', '.', ' '], '', $hargaDasarRaw));
+
                 // Skip jika jumlah kosong/tidak valid
                 if ($jumlahDibutuhkan <= 0) {
                     continue;
@@ -1050,6 +1070,7 @@ class DataMasterGudangController extends Controller
                         'tanggal_request' => $tanggalRequest,
                         'kode_obat_alkes' => $kodeObat,
                         'nama_obat_alkes' => $stok->nama_obat_alkes,
+                        'harga_dasar' => $hargaDasar,
                         'qty' => $ambil,
                         'tanggal_terima_obat' => $stok->tanggal_terima_obat,
                         'expired' => $stok->expired,
@@ -1057,14 +1078,13 @@ class DataMasterGudangController extends Controller
                         'user_input_name' => $request->input('user_name'),
                     ]);
                 }
+                // Return jika berhasil
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Permintaan berhasil diproses!',
+                    'data' => $kodeRequest,
+                ], 201);
             }
-
-            // Return jika berhasil
-            return response()->json([
-                'success' => true,
-                'message' => 'Permintaan berhasil diproses!',
-            ], 201);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -1074,7 +1094,23 @@ class DataMasterGudangController extends Controller
         }
     }
 
+    public function generatePdf($kodeRequest)
+    {
+        $data = gudang_utama_keluar::where('kode_request', $kodeRequest)->get();
 
+        $data_sendiri = gudang_utama_keluar::where('kode_request', $kodeRequest)
+        ->select('kode_request', 'nama_klinik', 'tanggal_request')
+        ->first();
+
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            $total_invoice++;
+        }
+
+        $pdf = Pdf::loadView('pdf.faktur_pengiriman', compact('data','data_sendiri','total_invoice'))->setPaper('a4', 'landscape');
+        return $pdf->stream('faktur_pengiriman_' . $kodeRequest . '.pdf');
+    }
 
 
     // END Gudang Utama (OMEGA)

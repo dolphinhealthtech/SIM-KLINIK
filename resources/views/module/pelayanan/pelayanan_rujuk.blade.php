@@ -56,6 +56,7 @@
                                             <div class="col-md-2">
                                                 <label for="tanggal_lahir">Tanggal Lahir</label>
                                                 <input type="text" class="form-control" id="tanggal_lahir" name="tanggal_lahir" value="{{$pelayanan->pasien->tanggal_lahir}}" readonly>
+                                                <input type="hidden" class="form-control" id="no_bpjs" name="no_bpjs" value="{{$pelayanan->pasien->no_bpjs}}" readonly>
                                             </div>
                                             <div class="col-md-2">
                                                 <label for="umur">Umur</label>
@@ -164,9 +165,6 @@
                                                             <label for="tujuan_rujukan_khusus">Tujuan Rujukan</label>
                                                             <select id="tujuan_rujukan_khusus" name="tujuan_rujukan_khusus" class="form-control select2bs4">
                                                                 <option value="" disabled selected>-- Pilih Tujuan Rujukan --</option>
-                                                                <option value="rs_a">RS A</option>
-                                                                <option value="rs_b">RS B</option>
-                                                                <option value="klinik_c">Klinik C</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-md-12 mt-3">
@@ -242,9 +240,6 @@
                                                             <label for="tujuan_rujukan_spesialis">Tujuan Rujukan</label>
                                                             <select id="tujuan_rujukan_spesialis" name="tujuan_rujukan_spesialis" class="form-control select2bs4">
                                                             <option value="" disabled selected>-- Pilih Tujuan Rujukan --</option>
-                                                            <option value="rs_a">RS A</option>
-                                                            <option value="rs_b">RS B</option>
-                                                            <option value="klinik_c">Klinik C</option>
                                                             </select>
                                                         </div>
 
@@ -280,184 +275,282 @@
 </div>
 
 <script>
-$(document).ready(function() {
-    $('#spesialis').on('change', function() {
-        var kodeSpesialis = $(this).val();
+$(document).ready(function () {
 
-        if (kodeSpesialis) {
-            $.ajax({
-                url: '/api/get-subspesialis/' + kodeSpesialis,
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    $('#sub_spesialis').empty().append('<option selected disabled>-- Pilih Sub Spesialis --</option>');
-                    $.each(data, function(key, value) {
-                        $('#sub_spesialis').append('<option value="' + value.kode + '">' + value.nama + '</option>');
-                    });
-                    $('#sub_spesialis').prop('disabled', false);
-                }
+    function formatTanggal(rawTanggal) {
+        if (!rawTanggal) return '';
+        const parts = rawTanggal.split('-');
+        return `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD → DD-MM-YYYY
+    }
+
+    function showWarning(msg = 'Harap lengkapi semua isian terlebih dahulu.') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Data Belum Lengkap',
+            text: msg
+        });
+    }
+
+    function tampilkanHasil(response, targetSelectId) {
+        const providers = response.data.list;
+        const $select = $(targetSelectId);
+
+        $select.empty().append('<option disabled selected>-- Pilih Tujuan Rujukan --</option>');
+
+        providers.forEach(function (item) {
+            const option = $('<option>', {
+                value: item.kdppk,
+                text: `${item.nmppk} (${item.kdppk})`,
+                'data-info': JSON.stringify(item)
             });
-        } else {
-            $('#sub_spesialis').empty().append('<option selected disabled>-- Pilih Sub Spesialis --</option>');
-            $('#sub_spesialis').prop('disabled', true);
+            $select.append(option);
+        });
+    }
+
+    // Tombol "Cari Provider Spesialis"
+    $('#cari_provider_spesialis').on('click', function () {
+        const spesialis = $('#sub_spesialis').val();
+        const sarana = $('#sarana').val() || "0";
+        const tanggal = formatTanggal($('#tanggal_rujukan').val());
+
+        if (!spesialis || !sarana || !tanggal) {
+            showWarning('Harap isi Sub Spesialis, Sarana, dan Tanggal Rujukan terlebih dahulu.');
+            return;
         }
+
+        const $btn = $(this);
+        $.ajax({
+            url: `/api/pcare/provide_rujuk/${spesialis}/${sarana}/${tanggal}`,
+            type: 'GET',
+            beforeSend: function () {
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Mencari...');
+            },
+            success: function (response) {
+                tampilkanHasil(response, '#tujuan_rujukan_spesialis');
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Mengambil Data',
+                    text: 'Terjadi kesalahan saat mengambil data provider.'
+                });
+            },
+            complete: function () {
+                $btn.prop('disabled', false).html('<i class="fas fa-search"></i> Cari Provider');
+            }
+        });
     });
+
+    // Tombol "Cari Provider Khusus"
+    $('#cari_provider_khusus').on('click', function () {
+        const spesialishusus = $('#igd_rujukan_khusus').val();
+        const subspesialishusus = $('#subspesialis_khusus').val();
+        const nobpjs = $('#no_bpjs').val() || "0";
+        const tanggal = formatTanggal($('#tanggal_rujukan_khusus').val());
+
+        if (!spesialishusus || !nobpjs || !tanggal) {
+            showWarning('Harap isi Spesialis, No BPJS, dan Tanggal Rujukan terlebih dahulu.');
+            console.log(`Spesialis: ${spesialishusus}, No BPJS: ${nobpjs}, Tanggal: ${tanggal}`);
+            return;
+        }
+
+        let url = '';
+
+        if (subspesialishusus) {
+            url = `/api/pcare/provide_rujuk_husus_subspesialis/${subspesialishusus}/${spesialishusus}/${nobpjs}/${tanggal}`;
+        } else {
+            url = `/api/pcare/provide_rujuk_husus/${spesialishusus}/${nobpjs}/${tanggal}`;
+        }
+
+        const $btn = $(this);
+        $.ajax({
+            url: url,
+            type: 'GET',
+            beforeSend: function () {
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Mencari...');
+            },
+            success: function (response) {
+                tampilkanHasil(response, '#tujuan_rujukan_khusus');
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Mengambil Data',
+                    text: 'Terjadi kesalahan saat mengambil data provider.'
+                });
+            },
+            complete: function () {
+                $btn.prop('disabled', false).html('<i class="fas fa-search"></i> Cari Provider');
+            }
+        });
+    });
+
+
 });
+</script>
+
+
+
+<script>
+    $(document).ready(function() {
+        $('#spesialis').on('change', function() {
+            var kodeSpesialis = $(this).val();
+
+            if (kodeSpesialis) {
+                $.ajax({
+                    url: '/api/get-subspesialis/' + kodeSpesialis,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#sub_spesialis').empty().append('<option selected disabled>-- Pilih Sub Spesialis --</option>');
+                        $.each(data, function(key, value) {
+                            $('#sub_spesialis').append('<option value="' + value.kode + '">' + value.nama + '</option>');
+                        });
+                        $('#sub_spesialis').prop('disabled', false);
+                    }
+                });
+            } else {
+                $('#sub_spesialis').empty().append('<option selected disabled>-- Pilih Sub Spesialis --</option>');
+                $('#sub_spesialis').prop('disabled', true);
+            }
+        });
+    });
 </script>
 
 
 <script>
-$(document).ready(function() {
-  // Step 1: update tujuan_rujukan saat jenis_rujukan berubah
-  $('#jenis_rujukan').on('change', function() {
-    const jenisValue = $(this).val();
-    console.log('Jenis rujukan berubah:', jenisValue);
+    $(document).ready(function() {
+    // Step 1: update tujuan_rujukan saat jenis_rujukan berubah
+    $('#jenis_rujukan').on('change', function() {
+        const jenisValue = $(this).val();
+        console.log('Jenis rujukan berubah:', jenisValue);
 
-    const tujuanSelect = $('#tujuan_rujukan');
-    tujuanSelect.empty().append('<option value="" disabled selected>-- Pilih --</option>');
+        const tujuanSelect = $('#tujuan_rujukan');
+        tujuanSelect.empty().append('<option value="" disabled selected>-- Pilih --</option>');
 
-    if (jenisValue === 'sehat') {
-      tujuanSelect.append('<option value="develop" disabled selected>Develop</option>');
-    } else if (jenisValue === 'sakit') {
-      tujuanSelect.append('<option value="horizontal">Horizontal</option>');
-      tujuanSelect.append('<option value="vertikal">Vertikal</option>');
-    }
+        if (jenisValue === 'sehat') {
+        tujuanSelect.append('<option value="develop" disabled selected>Develop</option>');
+        } else if (jenisValue === 'sakit') {
+        tujuanSelect.append('<option value="horizontal">Horizontal</option>');
+        tujuanSelect.append('<option value="vertikal">Vertikal</option>');
+        }
 
-    tujuanSelect.trigger('change.select2');
+        tujuanSelect.trigger('change.select2');
 
-    // Bersihkan opsi rujukan di step 2 tiap kali jenis_rujukan berubah
-    $('#opsi_rujukan').empty().append('<option value="" disabled selected>-- Pilih --</option>').trigger('change.select2');
-  });
+        // Bersihkan opsi rujukan di step 2 tiap kali jenis_rujukan berubah
+        $('#opsi_rujukan').empty().append('<option value="" disabled selected>-- Pilih --</option>').trigger('change.select2');
+    });
 
-  // Step 2: update opsi_rujukan saat tujuan_rujukan berubah
-  $('#tujuan_rujukan').on('change', function() {
-    const tujuanValue = $(this).val();
-    console.log('Tujuan rujukan berubah:', tujuanValue);
+    // Step 2: update opsi_rujukan saat tujuan_rujukan berubah
+    $('#tujuan_rujukan').on('change', function() {
+        const tujuanValue = $(this).val();
+        console.log('Tujuan rujukan berubah:', tujuanValue);
 
-    const opsiSelect = $('#opsi_rujukan');
-    opsiSelect.empty().append('<option value="" disabled selected>-- Pilih --</option>');
+        const opsiSelect = $('#opsi_rujukan');
+        opsiSelect.empty().append('<option value="" disabled selected>-- Pilih --</option>');
 
-    if (tujuanValue === 'vertikal') {
-      opsiSelect.append('<option value="rujukan_khusus">Rujukan Khusus</option>');
-      opsiSelect.append('<option value="spesialis">Spesialis</option>');
-    } else if (tujuanValue === 'horizontal') {
-      // Contoh opsi lain jika perlu, atau kosongkan
-      opsiSelect.append('<option value="opsi_horizontal_1">Pelayanan Tindakan Non-Kapitasi</option>');
-      opsiSelect.append('<option value="opsi_horizontal_2">Pelayanan Laboratorium</option>');
-      opsiSelect.append('<option value="opsi_horizontal_3">Pelayanan Program</option>');
-      opsiSelect.append('<option value="opsi_horizontal_4">Rujukan Kacamata</option>');
-    }
+        if (tujuanValue === 'vertikal') {
+        opsiSelect.append('<option value="rujukan_khusus">Rujukan Khusus</option>');
+        opsiSelect.append('<option value="spesialis">Spesialis</option>');
+        } else if (tujuanValue === 'horizontal') {
+        // Contoh opsi lain jika perlu, atau kosongkan
+        opsiSelect.append('<option value="opsi_horizontal_1">Pelayanan Tindakan Non-Kapitasi</option>');
+        opsiSelect.append('<option value="opsi_horizontal_2">Pelayanan Laboratorium</option>');
+        opsiSelect.append('<option value="opsi_horizontal_3">Pelayanan Program</option>');
+        opsiSelect.append('<option value="opsi_horizontal_4">Rujukan Kacamata</option>');
+        }
 
-    opsiSelect.trigger('change.select2');
-  });
+        opsiSelect.trigger('change.select2');
+    });
 
-  $('#opsi_rujukan').on('change', function() {
-    const val = $(this).val();
-    console.log('Opsi rujukan dipilih:', val);
+    $('#opsi_rujukan').on('change', function() {
+        const val = $(this).val();
+        console.log('Opsi rujukan dipilih:', val);
 
-    // Hide semua form input dulu
-    $('#input_rujukan_khusus, #input_spesialis').hide();
+        // Hide semua form input dulu
+        $('#input_rujukan_khusus, #input_spesialis').hide();
 
-    // Tampilkan sesuai pilihan
-    if(val === 'rujukan_khusus') {
-      $('#input_rujukan_khusus').show();
-    } else if(val === 'spesialis') {
-      $('#input_spesialis').show();
-    }
-  });
+        // Tampilkan sesuai pilihan
+        if(val === 'rujukan_khusus') {
+        $('#input_rujukan_khusus').show();
+        } else if(val === 'spesialis') {
+        $('#input_spesialis').show();
+        }
+    });
 
-  // Menangani perubahan pada dropdown tujuan rujukan khusus
-  $('#igd_rujukan_khusus').on('change', function() {
-    const tujuanValue = $(this).val();
-    const subspesialisSelect = $('#subspesialis_khusus');
+    // Menangani perubahan pada dropdown tujuan rujukan khusus
+    $('#igd_rujukan_khusus').on('change', function() {
+        const tujuanValue = $(this).val();
+        const subspesialisSelect = $('#subspesialis_khusus');
 
-    // Cek apakah tujuan adalah THA atau HEM
-    if (tujuanValue === 'THA' || tujuanValue === 'HEM') {
-      // Enable subspesialis khusus
-      subspesialisSelect.prop('disabled', false);
-    } else {
-      // Disable dan reset nilai
-      subspesialisSelect.prop('disabled', true);
-      subspesialisSelect.val('').trigger('change.select2');
-    }
-  });
+        // Cek apakah tujuan adalah THA atau HEM
+        if (tujuanValue === 'THA' || tujuanValue === 'HEM') {
+        // Enable subspesialis khusus
+        subspesialisSelect.prop('disabled', false);
+        } else {
+        // Disable dan reset nilai
+        subspesialisSelect.prop('disabled', true);
+        subspesialisSelect.val('').trigger('change.select2');
+        }
+    });
 
-  // Tombol cari provider
-  $('#cari_provider_khusus').on('click', function() {
-    // Implementasi pencarian provider
-    alert('Fitur pencarian provider akan diimplementasikan');
-  });
+    // Checkbox untuk aktifkan sarana
+    $('#aktifkan_sarana').on('change', function() {
+        if($(this).is(':checked')) {
+        $('#sarana_container').show();
+        } else {
+        $('#sarana_container').hide();
+        $('#sarana').val('').trigger('change.select2');
+        }
+    });
 
-  // Checkbox untuk aktifkan sarana
-  $('#aktifkan_sarana').on('change', function() {
-    if($(this).is(':checked')) {
-      $('#sarana_container').show();
-    } else {
-      $('#sarana_container').hide();
-      $('#sarana').val('').trigger('change.select2');
-    }
-  });
+    // Kategori rujukan - disable/enable alasan rujukan
+    $('#kategori_rujukan').on('change', function() {
+        const kategoriValue = $(this).val();
+        const alasanInput = $('#alasan_rujukan');
 
-  // Kategori rujukan - disable/enable alasan rujukan
-  $('#kategori_rujukan').on('change', function() {
-    const kategoriValue = $(this).val();
-    const alasanInput = $('#alasan_rujukan');
+        if(!kategoriValue || kategoriValue === '' || kategoriValue === '-1') { // Belum dipilih atau Tanpa Alasan
+        alasanInput.prop('disabled', true);
+        alasanInput.val('');
+        } else {
+        alasanInput.prop('disabled', false);
+        }
+    });
 
-    if(!kategoriValue || kategoriValue === '' || kategoriValue === '-1') { // Belum dipilih atau Tanpa Alasan
-      alasanInput.prop('disabled', true);
-      alasanInput.val('');
-    } else {
-      alasanInput.prop('disabled', false);
-    }
-  });
+    // Spesialis - enable/disable sub spesialis
+    $('#spesialis').on('change', function() {
+        const spesialisValue = $(this).val();
+        const subSpesialisSelect = $('#sub_spesialis');
 
-  // Spesialis - enable/disable sub spesialis
-  $('#spesialis').on('change', function() {
-    const spesialisValue = $(this).val();
-    const subSpesialisSelect = $('#sub_spesialis');
+        if(spesialisValue && spesialisValue !== '') {
+        subSpesialisSelect.prop('disabled', false);
 
-    if(spesialisValue && spesialisValue !== '') {
-      subSpesialisSelect.prop('disabled', false);
+        // Clear existing options except the first one
+        subSpesialisSelect.find('option:not(:first)').remove();
 
-      // Clear existing options except the first one
-      subSpesialisSelect.find('option:not(:first)').remove();
+        // Add sub-spesialis options based on selected spesialis
+        if(spesialisValue === 'kardiologi') {
+            subSpesialisSelect.append('<option value="kardiologi_intervensi">Kardiologi Intervensi</option>');
+            subSpesialisSelect.append('<option value="kardiologi_anak">Kardiologi Anak</option>');
+        } else if(spesialisValue === 'neurologi') {
+            subSpesialisSelect.append('<option value="neurologi_anak">Neurologi Anak</option>');
+            subSpesialisSelect.append('<option value="neurologi_stroke">Neurologi Stroke</option>');
+        } else if(spesialisValue === 'ortopedi') {
+            subSpesialisSelect.append('<option value="ortopedi_spine">Ortopedi Spine</option>');
+            subSpesialisSelect.append('<option value="ortopedi_trauma">Ortopedi Trauma</option>');
+        }
 
-      // Add sub-spesialis options based on selected spesialis
-      if(spesialisValue === 'kardiologi') {
-        subSpesialisSelect.append('<option value="kardiologi_intervensi">Kardiologi Intervensi</option>');
-        subSpesialisSelect.append('<option value="kardiologi_anak">Kardiologi Anak</option>');
-      } else if(spesialisValue === 'neurologi') {
-        subSpesialisSelect.append('<option value="neurologi_anak">Neurologi Anak</option>');
-        subSpesialisSelect.append('<option value="neurologi_stroke">Neurologi Stroke</option>');
-      } else if(spesialisValue === 'ortopedi') {
-        subSpesialisSelect.append('<option value="ortopedi_spine">Ortopedi Spine</option>');
-        subSpesialisSelect.append('<option value="ortopedi_trauma">Ortopedi Trauma</option>');
-      }
+        subSpesialisSelect.trigger('change.select2');
+        } else {
+        subSpesialisSelect.prop('disabled', true);
+        subSpesialisSelect.val('').trigger('change.select2');
+        }
+    });
 
-      subSpesialisSelect.trigger('change.select2');
-    } else {
-      subSpesialisSelect.prop('disabled', true);
-      subSpesialisSelect.val('').trigger('change.select2');
-    }
-  });
-
-  // Enable tujuan_rujukan_spesialis dropdown (removing disabled attribute)
-  $('#tujuan_rujukan_spesialis').prop('disabled', false);
-
-  // Tombol cari provider untuk spesialis
-  $('#cari_provider_spesialis').on('click', function() {
-    // Implementasi pencarian provider
-    alert('Fitur pencarian provider spesialis akan diimplementasikan');
-  });
-});
-
+    // Enable tujuan_rujukan_spesialis dropdown (removing disabled attribute)
+    $('#tujuan_rujukan_spesialis').prop('disabled', false);
+    });
 </script>
-
-
-
-
-
-
 
 {{-- BS-Stepper --}}
 <script>
@@ -475,7 +568,6 @@ $(document).ready(function() {
         });
     })
 </script>
-
 
 @endsection
 

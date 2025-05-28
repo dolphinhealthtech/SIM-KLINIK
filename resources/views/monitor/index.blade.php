@@ -347,6 +347,44 @@
             </div>
     </div>
 
+<script>
+$(document).ready(function() {
+    let sudahRequest = false;
+
+    $('#noka').on('input', function() {
+        let noka = $(this).val();
+
+        if (noka.length === 13 && !sudahRequest) {
+            sudahRequest = true;
+
+            // Jalankan AJAX
+            $.ajax({
+                url: '/api/pcare/noka/' + noka,
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    // Misal isi otomatis field lain:
+                    $('#patientName').val(response.data.nama);
+                    $('#nik').val(response.data.noKTP);
+                    $('#phoneNumber').val(response.data.noHP);
+                    let tgl = response.data.tglLahir;
+                    if (tgl.includes('-')) {
+                        let parts = tgl.split('-'); // DD-MM-YYYY
+                        let isoDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+                        $('#tanggallahir').val(isoDate);
+                    }
+                }
+            });
+        }
+
+        if (noka.length < 13) {
+            sudahRequest = false; // reset kalau panjang kurang
+        }
+    });
+});
+</script>
+
+
         <!-- Modal Kamera -->
         <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -597,47 +635,47 @@
             $(document).ready(function() {
                 // Add novalidate attribute to your form to disable browser validation
                 $('form').attr('novalidate', 'novalidate');
-                
+
                 // Custom form validation and submission
                 $('form').on('submit', function(e) {
                     e.preventDefault();
-                    
+
                     // Get form data
                     let form = $(this);
                     let formData = new FormData(this);
                     let isValid = true;
                     let errorMessages = [];
-                    
+
                     // Check required fields
                     form.find('[required]').each(function() {
                         let field = $(this);
                         let fieldName = field.attr('name');
                         let fieldLabel = field.prev('label').text() || fieldName;
-                        
+
                         // Remove is-invalid class first
                         field.removeClass('is-invalid');
-                        
+
                         if (!field.val()) {
                             isValid = false;
                             field.addClass('is-invalid');
                             errorMessages.push(`${fieldLabel} harus diisi`);
                         }
                     });
-                    
+
                     // If validation fails, show SweetAlert with errors
                     if (!isValid) {
                         let errorList = errorMessages.map(msg => `- ${msg}`).join('<br>');
-                        
+
                         Swal.fire({
                             icon: 'warning',
                             title: 'Validasi Gagal!',
                             html: `Terdapat beberapa input yang belum valid:<br><br>${errorList}`,
                             confirmButtonText: 'OK'
                         });
-                        
+
                         return false;
                     }
-                    
+
                     // If validation passes, submit the form via AJAX
                     $.ajax({
                         url: form.attr('action'),
@@ -667,14 +705,14 @@
                         error: function(xhr) {
                             if (xhr.status === 422 && xhr.responseJSON.errors) {
                                 let errorList = '';
-                                
+
                                 // Loop through validation errors
                                 Object.entries(xhr.responseJSON.errors).forEach(([key, value]) => {
                                     errorList += `- ${value[0]}<br>`;
                                     // Add is-invalid class to the field
                                     $(`[name="${key}"]`).addClass('is-invalid');
                                 });
-                                
+
                                 Swal.fire({
                                     icon: 'warning',
                                     title: 'Validasi Gagal!',
@@ -686,7 +724,7 @@
                                 if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMessage = xhr.responseJSON.message;
                                 }
-                                
+
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error!',

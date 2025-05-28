@@ -44,4 +44,24 @@ class kasir extends Model
         'user_input_id',
         'user_input_name',
     ];
+
+    public function detail_lunas()
+    {
+        return $this->hasMany(kasir_detail_lunas::class, 'kode_faktur', 'kode_faktur');
+    }
+
+    public function apotek_lunas()
+    {
+        return $this->hasMany(kasir_apotek_lunas::class, 'kode_faktur', 'kode_faktur');
+    }
+
+    public function tindakan_lunas()
+    {
+        return $this->hasMany(kasir_tindakan_lunas::class, 'kode_faktur', 'kode_faktur');
+    }
+
+    public function diskon()
+    {
+        return $this->hasMany(kasir_diskon::class, 'kode_faktur', 'kode_faktur');
+    }
 }

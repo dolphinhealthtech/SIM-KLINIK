@@ -1162,6 +1162,7 @@
                         text: response.message,
                         showConfirmButton: true
                     }).then(() => {
+                        window.open('/api/kasir/pdf/' + response.data.kode_faktur);
                         window.location.href = "{{ route('kasir') }}";
                     });
                 } else {

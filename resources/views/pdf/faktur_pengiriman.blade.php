@@ -44,9 +44,16 @@
             margin: 5px 0;
         }
         .document-title {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
             margin: 8px 0;
+            text-align: center;
+        }
+        .document-title-faktur {
+            font-size: 10px;
+            font-weight: bold;
+            margin: 8px 0;
+            text-align: center;
         }
         .info-table {
             width: 100%;
@@ -73,15 +80,13 @@
             border: 1px solid #000;
             padding: 2px;
             text-align: center;
-            font-size: 8px;
-            height: 30px;
+            height: 20px;
         }
         table.items td {
             border: 1px solid #000;
             padding: 2px;
             text-align: left;
-            font-size: 8px;
-            height: 30px;
+            height: 20px;
         }
         table.items th {
             background-color: #f2f2f2;
@@ -111,10 +116,10 @@
             position: fixed;
             bottom: 5px;
             width: 100%;
+            text-align: center;
         }
-
         .signature-table {
-            width: 175%;
+            width: 100%;
             text-align: center;
         }
 
@@ -155,7 +160,7 @@
                 style="width: 80px; height: 80px; opacity: .8">
         </div>
         <div class="header-text">
-            <div class="header-title">KLINIK OMEGA CITRA RAYA</div>
+            <div class="header-title">GUDANG UTAMA OMEGA CITRA RAYA</div>
             <div class="header-address">Ruko Danau Citra, Jl. Citra Raya Boulevard No.10, Kec. Cikupa, Kabupaten Tangerang, Banten 15131</div>
             <div class="header-phone">0813-1089-4294</div>
         </div>
@@ -163,25 +168,25 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">Laporan Setor Kasir</div>
+    <div class="document-title">Faktur Pengiriman Obat / Alkes</div>
+
+    <div class="document-title-faktur">{{ $data_sendiri->kode_request }}</div>
 
     <table class="info-table" style="width: 100%;">
         <tr>
-            <td class="info-label">Dicetak pada</td>
+            <td class="info-label">Nama Klinik</td>
             <td class="info-separator">:</td>
-            <td>{{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</td>
+            <td>[{{ $data_sendiri->nama_klinik }}]</td>
         </tr>
-
         <tr>
-            <td class="info-label">Laporan Setoran Kasir</td>
+            <td class="info-label">Tanggal Mengajukan</td>
             <td class="info-separator">:</td>
-            <td>[{{ auth()->user()->name ?? 'Petugas' }}]</td>
+            <td>{{ $data_sendiri->tanggal_request }}</td>
         </tr>
-
         <tr>
-            <td colspan="3">
-                Periode : {{ $tanggal_awal }} sampai {{ $tanggal_akhir }}
-            </td>
+            <td class="info-label">Waktu Pengiriman</td>
+            <td class="info-separator">:</td>
+            <td>{{ \Carbon\Carbon::now()->format('Y/m/d H:i') }}</td>
         </tr>
     </table>
 
@@ -190,71 +195,22 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Invoice</th>
-                    <th>No RM</th>
-                    <th>No Rawat</th>
-                    <th>Nama</th>
-                    <th>Poli</th>
-                    <th>Dokter</th>
-                    <th>Penjamin</th>
-                    <th>Sub Total</th>
-                    <th>Tambahan</th>
-                    <th>Total</th>
-                    <th>Pembayaran</th>
-                    <th>Tanggal</th>
-                    <th>Petugas Entry</th>
+                    <th>Kode Obat / Alkes</th>
+                    <th>Nama Obat / Alkes</th>
+                    <th>Harga Dasar</th>
+                    <th>Kuantitas</th>
+                    <th>Expired Obat / Alkes</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($data as $i => $item)
                     <tr>
                         <td>{{ $i + 1 }}</td>
-                        <td>{{ $item['kode_faktur'] }}</td>
-                        <td>{{ $item['no_rm'] }}</td>
-                        <td>{{ $item['no_rawat'] ?? '-' }}</td>
-                        <td>{{ $item['nama'] }}</td>
-                        <td>{{ $item['poli'] }}</td>
-                        <td>{{ $item['dokter'] ?? '-' }}</td>
-                        <td>{{ $item['penjamin'] }}</td>
-                        <td>{{ $item['sub_total'] }}</td>
-                        <td>
-                            @php
-                                $tambahan = [];
-
-                                if (!empty($item['potongan_harga']) && $item['potongan_harga'] != 0) {
-                                    $tambahan[] = 'Diskon: ' . $item['potongan_harga'];
-                                }
-                                if (!empty($item['administrasi']) && $item['administrasi'] != 0) {
-                                    $tambahan[] = 'Administrasi: ' . $item['administrasi'];
-                                }
-                                if (!empty($item['materai']) && $item['materai'] != 0) {
-                                    $tambahan[] = 'Materai: ' . $item['materai'];
-                                }
-                            @endphp
-
-                            {!! count($tambahan) > 0 ? implode('<br>', $tambahan) : '-' !!}
-                        </td>
-                        <td>{{ $item['total'] }}</td>
-                        <td>
-                            @php
-                                $paymentTexts = [];
-
-                                for ($i = 1; $i <= 3; $i++) {
-                                    $methodKey = "payment_method_$i";
-                                    $nominalKey = "payment_nominal_$i";
-
-                                    if (!empty($item[$methodKey]) && isset($item[$nominalKey])) {
-                                        $method = ucfirst($item[$methodKey]);
-                                        $nominal = $item[$nominalKey];
-                                        $paymentTexts[] = "{$method} : {$nominal}";
-                                    }
-                                }
-                            @endphp
-
-                            {!! count($paymentTexts) > 0 ? implode('<br>', $paymentTexts) : '-' !!}
-                        </td>
-                        <td>{{ $item['tanggal'] }}</td>
-                        <td>{{ $item['user_input_name'] }}</td>
+                        <td>{{ $item['kode_obat_alkes'] }}</td>
+                        <td>{{ $item['nama_obat_alkes'] }}</td>
+                        <td>{{ number_format($item['harga_dasar'], 0, ',', '.') }}</td>
+                        <td>{{ $item['qty'] }}</td>
+                        <td>{{ $item['expired'] }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -262,40 +218,15 @@
 
         <!-- Catatan kaki untuk menjelaskan subtotal - Diperbaiki dengan font yang lebih jelas -->
         <div style="font-size: 8px; font-style: italic; margin-top: 3px; margin-bottom: 8px; text-align: right; font-weight: bold;">
-            * Subtotal sudah termasuk diskon per item
+            * Dimohon dicek kembali kesesuaian barang
         </div>
 
         <div class="clearfix">
             <table class="summary-table">
                 <tr>
-                    <td>Jumlah Invoice</td>
+                    <td>Jumlah Data</td>
                     <td>:</td>
-                    <td style="text-align: right;">{{ $total_invoice }} Lembar</td>
-                </tr>
-                <tr>
-                    <td>Cash</td>
-                    <td>:</td>
-                    <td style="text-align: right;">{{ $cashFormatted }}</td>
-                </tr>
-                <tr>
-                    <td>Debit</td>
-                    <td>:</td>
-                    <td style="text-align: right;">{{ $debitFormatted }}</td>
-                </tr>
-                <tr>
-                    <td>Credit</td>
-                    <td>:</td>
-                    <td style="text-align: right;">{{ $creditFormatted }}</td>
-                </tr>
-                <tr>
-                    <td>Transfer</td>
-                    <td>:</td>
-                    <td style="text-align: right;">{{ $transferFormatted }}</td>
-                </tr>
-                <tr>
-                    <td>Pendapatan</td>
-                    <td>:</td>
-                    <td style="text-align: right;">{{ $pendapatanFormatted }}</td>
+                    <td style="text-align: right;">{{ $total_invoice }} Data Obat / Alkes</td>
                 </tr>
             </table>
         </div>
@@ -306,24 +237,24 @@
     <div class="footer">
         <table class="signature-table">
             <tr>
-                <td></td>
-                <td></td>
-                <td>Paraf Petugas</td>
+                <td>Petugas Gudang Utama</td>
+                <td>Petugas Pengirim</td>
+                <td>Petugas Klinik</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
+                <td style="height: 40px;"></td>
+                <td style="height: 40px;"></td>
                 <td style="height: 40px;"></td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
+                <td><div class="signature-line"></div></td>
+                <td><div class="signature-line"></div></td>
                 <td><div class="signature-line"></div></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
-                <td>{{ auth()->user()->name ?? 'Petugas' }}</td>
+                <td></td>
             </tr>
         </table>
     </div>

@@ -57,9 +57,18 @@ Route::post('/apotek/add', [SuperadminController::class, 'apotekadd'])->name('ap
 //Menu Keuangan
 Route::get('/datakasir', [SuperadminController::class, 'datakasir_lunas'])->name('datakasir_lunas.index');
 Route::post('/datakasir/print', [SuperadminController::class, 'datakasir_lunas_print'])->name('datakasir_lunas.print');
+
+Route::get('/datakasir/detail', [SuperadminController::class, 'datakasir_detail'])->name('datakasir_detail.index');
+Route::post('/datakasir/detail/print', [SuperadminController::class, 'datakasir_detail_print'])->name('datakasir_detail.print');
+
 Route::get('/datakasir/apotek', [SuperadminController::class, 'datakasir_apotek'])->name('datakasir_apotek.index');
+Route::post('/datakasir/apotek/print', [SuperadminController::class, 'datakasir_apotek_print'])->name('datakasir_apotek.print');
+
 Route::get('/datakasir/tindakan', [SuperadminController::class, 'datakasir_tindakan'])->name('datakasir_tindakan.index');
+Route::post('/datakasir/tindakan/print', [SuperadminController::class, 'datakasir_tindakan_print'])->name('datakasir_tindakan.print');
+
 Route::get('/datakasir/diskon', [SuperadminController::class, 'datakasir_diskon'])->name('datakasir_diskon.index');
+Route::post('/datakasir/diskon/print', [SuperadminController::class, 'datakasir_diskon_print'])->name('datakasir_diskon.print');
 
 // Menu SDM
     // Menu Pasien
@@ -97,6 +106,7 @@ Route::prefix('pendaftaran')->group(function () {
     Route::post('/batal', [SuperadminController::class,'pendaftaranbatal'])->name('pendaftaran.batal');
     Route::post('/dokterup', [SuperadminController::class,'pendaftaranupdokter'])->name('pendaftaran.dokter.update');
     Route::post('/hadir', [SuperadminController::class,'pendaftaranhadir'])->name('pendaftaran.hadir');
+
 });
 
 // Menu pemeriksaan
@@ -107,6 +117,7 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::get('/dokter/so/hadir/{norawat}', [soap::class,'soappelayananpanggil'])->name('pelayana_dokter.hadir');
     Route::get('/rujuk/{norawat}', [soap::class,'pelayana_rujukan'])->name('pelayana_rujuk.get');
     Route::get('/rme/{norawat}', [soap::class, 'pelayana_rme'])->name('pelayana_rme.get');
+    Route::post('/resep/print', [soap::class, 'print'])->name('resep.print');
     // Menu Pasien
     Route::get('/perawat', [soap::class,'pelayana'])->name('pelayana.get');
     Route::get('/perawat/so/{norawat}', [soap::class,'sopelayanan'])->name('sopelayana.get');

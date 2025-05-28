@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('Jenis_tindakan')->nullable();
             $table->string('jenis_pelaksana')->nullable();
             $table->string('harga')->nullable();
+            $table->string('status_kasir');
             $table->timestamps();
         });
     }
