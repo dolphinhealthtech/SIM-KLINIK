@@ -54,6 +54,9 @@ Route::get('/monitor/loket-antrian', [SuperadminController::class, 'loketAntrian
 Route::get('/apotek', [SuperadminController::class, 'apotek'])->middleware(['auth'])->name('apotek.index');
 Route::post('/apotek/add', [SuperadminController::class, 'apotekadd'])->name('apotek.store');
 
+Route::post('/apotek/print-resep/dokter', [SuperadminController::class, 'resep_dokter'])->name('apotek.resep_dokter');
+Route::post('/apotek/print-resep/revisi', [SuperadminController::class, 'resep_revisi'])->name('apotek.resep_revisi');
+
 //Menu Keuangan
 Route::get('/datakasir', [SuperadminController::class, 'datakasir_lunas'])->name('datakasir_lunas.index');
 Route::post('/datakasir/print', [SuperadminController::class, 'datakasir_lunas_print'])->name('datakasir_lunas.print');
