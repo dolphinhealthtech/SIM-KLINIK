@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Golongan Darah</h3>
+                                <h3 class="card-title">ICD 10</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#addalergiModal">
@@ -55,8 +55,8 @@
                                 <table id="icd10tabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Golongan Darah</th>
-                                            <th class="text-center">Rhesus Darah </th>
+                                            <th class="text-center">Nama Icd 10</th>
+                                            <th class="text-center">Kode ICD 10 </th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
