@@ -306,6 +306,7 @@ Route::prefix('pemeriksaan')->group(function () {
             Route::get('/icd10', [DataMasterMedisController::class,'icd10'])->name('icd10.get');
             Route::get('/icd10/sync', [DataMasterMedisController::class,'icd10singkron'])->name('icd10.store');
             Route::get('/icd10/add', [DataMasterMedisController::class,'icd10add'])->name('icd10.singkron');
+            Route::post('/icd10/update', [DataMasterMedisController::class,'icd10edit'])->name('icd10.update');
             Route::post('/icd10/delete', [DataMasterMedisController::class,'icd10delete'])->name('icd10.destroy');
             Route::get('/icd10/export', [DataMasterMedisController::class, 'icd10export'])->name('icd10.export');
             Route::post('/icd10/import', [DataMasterMedisController::class, 'icd10import'])->name('sarana.import');
