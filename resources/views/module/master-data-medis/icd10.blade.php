@@ -100,7 +100,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data alergi</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Master Data ICD10</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -141,7 +141,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addicd10Label">Tambah Master Golongan Darah</h5>
+                <h5 class="modal-title" id="addicd10Label">Tambah Master ICD 10</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -178,7 +178,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Master Golongan Darah</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Master ICD 10</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -190,13 +190,13 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Nama Golongan Darah</label>
+                                <label>Nama ICD 10</label>
                                 <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Golongan" required>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="kode_edit">Rhesus Darah </label>
+                                <label for="kode_edit">KODE ICD 10 </label>
                                 <input type="text" class="form-control" id="kode_edit" name="kode_edit" placeholder="Nama Golongan" required>
                             </div>
                         </div>
@@ -217,7 +217,7 @@
         <form id="deleteFormicd10" action="{{ route('icd10.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data Golongan Darah</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data ICD 10</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -241,7 +241,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importGoldarModalLabel">Import Data Golongan Darah</h5>
+                <h5 class="modal-title" id="importGoldarModalLabel">Import Data ICD 10</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

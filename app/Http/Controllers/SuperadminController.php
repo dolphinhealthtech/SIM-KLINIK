@@ -798,6 +798,7 @@ class SuperadminController extends Controller
             ]);
 
             return response()->json([
+                'success' => true,
                 'message' => 'Data pasien berhasil disimpan.',
                 'data'    => $pasiens
             ]);
