@@ -300,9 +300,10 @@
                                                 <div class="form-group">
                                                     <label for="maritalStatus">Status Perkawinan</label>
                                                     <select class="form-control" id="maritalStatus" name="maritalStatus">
-                                                        <option value="Belum Menikah">Belum Menikah</option>
-                                                        <option value="Menikah">Menikah</option>
-                                                        <option value="Cerai">Cerai</option>
+                                                        <option value="" disabled>Pilih Status Pernikahan</option>
+                                                        @foreach ($pernikaha as $pernikahadata)
+                                                            <option value="{{ $pernikahadata->id }} Menikah">{{ $pernikahadata->nama }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>

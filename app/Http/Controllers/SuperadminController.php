@@ -439,8 +439,9 @@ class SuperadminController extends Controller
         $goldar = goldar::all();
         $kelamin = kelamin::all();
         $poli = poli::all();
+        $pernikaha = pernikahan::all();
 
-        return view('monitor.index', compact('title','poli','goldar','kelamin'));
+        return view('monitor.index', compact('title','poli','goldar','kelamin','pernikaha'));
     }
 
     public function monitor_bpjs(Request $request)
