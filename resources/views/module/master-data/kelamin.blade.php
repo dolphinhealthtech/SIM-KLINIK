@@ -317,7 +317,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate kelamin!',
+                        text: 'Terjadi kesalahan saat mengupdate Jenis kelamin!',
                     });
                 }
             });
@@ -329,7 +329,7 @@
 
             $('#kelaminid_delete').val(id);
             $('#deleteTextkelamin').html(
-            `<span>Apa Anda yakin ingin menghapus data kelamin <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data Jenis kelamin <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormkelamin').on('submit', function(e) {
@@ -366,7 +366,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                        text: 'Terjadi kesalahan saat menghapus Jenis Kelamin!',
                     });
                 }
             });

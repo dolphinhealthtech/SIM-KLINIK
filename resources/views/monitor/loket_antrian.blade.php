@@ -266,7 +266,7 @@
         <!-- Toggle untuk auto-announce -->
         <div class="custom-control custom-switch mt-3">
             <input type="checkbox" class="custom-control-input" id="autoAnnounceToggle">
-            <label class="custom-control-label auto-announce-label" for="autoAnnounceToggle">Pengumuman Otomatis</label>
+            <label class="custom-control-label auto-announce-label" for="autoAnnounceToggle"></label>
         </div>
         
         <script>
