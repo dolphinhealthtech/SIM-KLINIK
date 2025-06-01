@@ -26,6 +26,3 @@ return new class extends Migration
         Schema::dropIfExists('nama_makanans');
     }
 };
-
-
-
