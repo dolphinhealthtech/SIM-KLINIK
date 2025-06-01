@@ -30,7 +30,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Sub pemeriksaan</h3>
                                 <div class="card-tools">
-                                    <a href="{{ route('spesialis.get') }}" class="btn btn-info">
+                                    <a href="{{ route('htt_pemeriksaan.get') }}" class="btn btn-info">
                                         <i class="fa-solid fa-arrow-left"></i> Kembali
                                     </a>
                                     <button type="button" class="btn btn-primary" data-toggle="modal"

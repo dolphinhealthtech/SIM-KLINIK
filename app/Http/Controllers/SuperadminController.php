@@ -439,8 +439,9 @@ class SuperadminController extends Controller
         $goldar = goldar::all();
         $kelamin = kelamin::all();
         $poli = poli::all();
+        $pernikaha = pernikahan::all();
 
-        return view('monitor.index', compact('title','poli','goldar','kelamin'));
+        return view('monitor.index', compact('title','poli','goldar','kelamin','pernikaha'));
     }
 
     public function monitor_bpjs(Request $request)
@@ -700,30 +701,30 @@ class SuperadminController extends Controller
 {
     // Prefix untuk nomor antrian
     $prefix = 'A-';
-    
+
     // Ambil tanggal hari ini
     $today = Carbon::today();
-    
+
     // Cari nomor antrian terbesar untuk hari ini
     $lastAntrian = pasien_antrian::whereDate('created_at', $today)
                     ->orderBy('nomor_antrian', 'desc')
                     ->first();
-    
+
     if ($lastAntrian) {
         // Jika sudah ada antrian hari ini
         // Ekstrak angka dari nomor antrian terakhir (format: A-xx)
         $lastNumber = (int) str_replace($prefix, '', $lastAntrian->nomor_antrian);
-        
+
         // Tambahkan 1 untuk nomor berikutnya
         $nextNumber = $lastNumber + 1;
     } else {
         // Jika belum ada antrian hari ini, mulai dari 1
         $nextNumber = 1;
     }
-    
+
     // Format nomor antrian: A-xx
     $nomorAntrian = $prefix . $nextNumber;
-    
+
     return $nomorAntrian;
 }
 
@@ -798,6 +799,7 @@ class SuperadminController extends Controller
             ]);
 
             return response()->json([
+                'success' => true,
                 'message' => 'Data pasien berhasil disimpan.',
                 'data'    => $pasiens
             ]);
@@ -819,15 +821,15 @@ public function panggilPasien($id)
                     ->where('status_panggil', '0')
                     ->orderBy('created_at', 'desc')
                     ->first();
-        
+
         if ($antrian) {
             // Update status panggil menjadi 1
             $antrian->status_panggil = '1';
             $antrian->save();
-            
+
             // Ambil data pasien
             $pasien = pasien::find($id);
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Pasien ' . $pasien->nama . ' berhasil dipanggil.',
@@ -966,11 +968,11 @@ public function panggilPasien($id)
             $antrian = pasien_antrian::where('pasien_id', $pasien->id)
                 ->whereDate('created_at', now()->toDateString())
                 ->first();
-                
+
             if ($antrian) {
                 $antrian->status_panggil = '2'; // 2 = selesai
                 $antrian->save();
-                
+
                 Log::info('Status panggil pasien diubah menjadi selesai', [
                     'pasien_id' => $pasien->id,
                     'no_rm' => $pasien->no_rm,
@@ -3086,7 +3088,10 @@ public function panggilPasien($id)
 
         $stok = gudang_barang_stok::whereIn('id', $stok_raw)->get();
 
-        return view('dashboard.apotek', compact('title','data_soap','dokter','poli','penjamin','embalase','stok'));
+        $obat = gudang_barang::all();
+        $satuan = gudang_satuan::all();
+
+        return view('dashboard.apotek', compact('title','data_soap','dokter','poli','penjamin','embalase','stok','obat','satuan'));
     }
 
     public function apotekadd(Request $request)
@@ -3316,6 +3321,36 @@ public function panggilPasien($id)
         $kodeFaktur = "BBS-$datePart-$numberPart";
 
         return response()->json(['kode_faktur' => $kodeFaktur]);
+    }
+
+        //Print PDF
+
+    public function resep_dokter (Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $note = $request->input('note');
+
+        $pdf = Pdf::loadView('pdf.resepApotek_dokter', compact('data','note'))
+                ->setPaper('a6', 'potrait');
+
+        $filename = 'kasir_detail_lunas_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    public function resep_revisi (Request $request)
+    {
+        $resepList = json_decode($request->input('resep_data'), true);
+        $note = $request->input('note');
+
+        $pdf = Pdf::loadView('pdf.resepApotek_revisi', [
+                    'resepList' => $resepList,
+                    'note' => $note
+                ])->setPaper('a6', 'portrait');
+
+        $filename = 'resep_obat_revisi_' . now()->format('Ymd_His') . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
 
     // Apotek End

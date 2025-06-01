@@ -312,6 +312,7 @@
                                 <h3 class="card-title">Informasi Resep</h3>
                             </div>
                             <div class="card-body p-3">
+                                <input type="hidden" id="hidden_resep_input" name="hidden_resep_input">
                                 {{-- <div class="border border-dark" style="height: 242px; background-color: #fff;"></div> --}}
                                 <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 300px;">
                                     <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
@@ -363,8 +364,15 @@
                                             </button>
                                         </div>
                                         <div class="col-md-4">
-                                            <button class="btn btn-danger btn-block btn-sm">
+                                            <button id="printResepDokter" class="btn btn-danger btn-block btn-sm">
                                                 <i class="fas fa-download"></i> Download
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-12">
+                                            <button class="btn btn-secondary btn-block btn-sm" data-toggle="modal" data-target="#modalResep">
+                                                <i class="fas fa-download"></i> Revisi resep obat
                                             </button>
                                         </div>
                                     </div>
@@ -447,6 +455,141 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalResep" tabindex="-1" role="dialog" aria-labelledby="modalResepLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalResepLabel">Input Resep</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span> <!-- Ganti ke btn-close jika pakai Bootstrap 5 -->
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Input R:/ -->
+                <div class="form-row align-items-center mb-3">
+                    <div class="col-12">
+                        <label for="r-text">R:/</label>
+                        <div class="input-group">
+                        <div class="input-group-prepend">
+                            <button type="button" id="btn-r-action" class="btn btn-info">R:/</button>
+                        </div>
+                        <input type="text" id="r-text" class="form-control" placeholder="Kosong = R:/, isi = R:/ + teks">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Obat & Dosis -->
+                <div class="form-row align-items-end mb-3">
+                    <div class="col-md-4">
+                        <label for="nama-obat">Nama Obat</label>
+                        <select class="form-control" id="nama-obat">
+                            <option value="" disabled selected>-- Pilih Obat --</option>
+                            @foreach ($obat as $obatdata)
+                                <option value="{{ $obatdata->nama_barang }}" data-satuan="{{ $obatdata->satuan_kecil }}">{{ $obatdata->nama_barang }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label>Dosis</label>
+                        <div class="form-row">
+                            <div class="col">
+                                <input type="text" id="dosis1" class="form-control" placeholder="Contoh: 500">
+                            </div>
+                            <div class="col">
+                                <input type="text" id="dosis2" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="instruksi">Instruksi</label>
+                        <select class="form-control" id="instruksi">
+                            <option value="" selected disabled>-- Pilih Instruksi --</option>
+                            <option value="CITO">CITO</option>
+                            <option value="ITER">ITER</option>
+                            <option value="Equal qs">Equal qs</option>
+                            <option value="m.f pulv da in caps">m.f pulv da in caps</option>
+                            <option value="s.u.e">s.u.e</option>
+                            <option value="m.f pulv dtd no X">m.f pulv dtd no X</option>
+                            <option value="m.f pulv dtd no XV">m.f pulv dtd no XV</option>
+                            <option value="s.q.d.d.c">s.q.d.d.c</option>
+                            <option value="haust">haust</option>
+                            <option value="s.i.m.m">s.i.m.m</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Input Signa -->
+                <div class="form-row align-items-end mb-3">
+                    <div class="col-md-4">
+                        <label>Signa</label>
+                        <div class="form-row align-items-center">
+                            <div class="col">
+                                <input type="text" id="signa-jumlah1" class="form-control" placeholder="Contoh: 1">
+                            </div>
+                            <div class="col-auto">
+                                <strong>x</strong>
+                            </div>
+                            <div class="col">
+                                <input type="text" id="signa-jumlah2" class="form-control" placeholder="Contoh: 3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div style="visibility: hidden;"><label for="signa-satuan1">Signa Satuan 1</label></div>
+                        <select class="form-control" id="dosis3">
+                            <option value="" disabled selected>-- Pilih Satuan --</option>
+                            @foreach ($satuan as $satuandata)
+                                <option value="{{ $satuandata->nama }}">{{ $satuandata->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div style="visibility: hidden;"><label for="signa-satuan2">Signa Satuan 2</label></div>
+                        <select class="form-control" id="signa-satuan2">
+                            <option value="" disabled selected>-- Pilih Satuan --</option>
+                            <option value="SEBELUM MAKAN">SEBELUM MAKAN</option>
+                            <option value="SESUDAH MAKAN">SESUDAH MAKAN</option>
+                            <option value="SEBELUM/SESUDAH MAKAN">SEBELUM/SESUDAH MAKAN</option>
+                            <option value="JIKA MUAL-MUAL">JIKA MUAL-MUAL</option>
+                            <option value="JIKA BUANG AIR BESAR">JIKA BUANG AIR BESAR</option>
+                            <option value="JIKA MERASA NYERI">JIKA MERASA NYERI</option>
+                            <option value="DIMINUM SETELAH SUAPAN PERTAMA">DIMINUM SETELAH SUAPAN PERTAMA</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tombol Tambah -->
+                <div class="form-group mb-3">
+                    <div class="col-md-12 mb-2">
+                        <label for="">Note</label>
+                        <input type="text" class="form-control" id="note_revisi" name="note_revisi">
+                    </div>
+                    <div class="col-md-12">
+                        <button type="button" id="btn-add-obat" class="btn btn-primary">Tambah Obat ke Resep</button>
+                    </div>
+                </div>
+
+                <!-- Tampilan Resep -->
+                <div class="form-group">
+                    <label for="summernote-resep">Resep:</label>
+                    <div id="summernote-resep" name="summernote-resep" style="border:1px solid #ccc; min-height:200px; padding:10px; background:#f9f9f9; overflow-y:auto;"></div>
+                    <input type="hidden" name="resep_data" id="resep-data">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="button" id="btn-print-resep-ajax" class="btn btn-primary">🖨️ Print Resep Revisi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {{-- SCRIPT GLOBAL --}}
     <style>
@@ -885,6 +1028,9 @@
 
                 idCounter++;
             });
+
+            let hiddenInput = document.getElementById('hidden_resep_input');
+            hiddenInput.value = JSON.stringify(dataArr);
         }
     </script>
 
@@ -1124,6 +1270,324 @@
                 }
             });
         }
+    </script>
+
+{{-- SCRIPT PDF --}}
+    <script>
+        $('#printResepDokter').on('click', function () {
+            let data = $('#hidden_resep_input').val();
+            let note = $('#note_apotek').val();
+
+            Swal.fire({
+                title: 'Cetak Data',
+                text: "Apakah Anda yakin ingin mencetak resep dokter?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, cetak!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Buat form dinamis
+                    console.log(data);
+                    var form = $('<form>', {
+                        method: 'POST',
+                        action: "{{ route('apotek.resep_dokter') }}",
+                        target: '_blank'
+                    });
+
+                    // CSRF token
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: '_token',
+                        value: '{{ csrf_token() }}'
+                    }));
+
+                    // Data tambahan
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'note',
+                        value: note
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'data',
+                        value: data
+                    }));
+
+                    // Submit form
+                    $('body').append(form);
+                    form.submit();
+                    form.remove();
+                }
+            });
+        });
+    </script>
+
+    {{-- Script resep --}}
+    <script>
+        $(function () {
+            let resepList = [];
+            let selectedIndex = -1;
+
+            function renderResep() {
+                let html = "";
+                resepList.forEach((line, i) => {
+                html += `<div class="resep-line d-flex justify-content-between align-items-center"
+                        data-index="${i}" style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #ddd; ${i === selectedIndex ? 'background:#d1ecf1;' : ''}">
+                    <span class="resep-text">${$('<div>').html(line.replace(/\n/g, "<br>")).html()}</span>`;
+                if (i === selectedIndex) {
+                    html += `<div class="btn-group btn-group-sm ml-2">
+                            <button type="button" class="btn btn-warning btn-up">▲</button>
+                            <button type="button" class="btn btn-warning btn-down">▼</button>
+                            <button type="button" class="btn btn-success btn-edit">✎</button>
+                            <button type="button" class="btn btn-danger btn-delete">✖</button>
+                            </div>`;
+                }
+                html += `</div>`;
+                });
+                $("#summernote-resep").html(html);
+                $("#resep-data").val(JSON.stringify(resepList));
+            }
+
+            $("#btn-r-action").click(function () {
+                const text = $("#r-text").val().trim();
+                resepList.push(text ? `R:/ ${text}` : "R:/");
+                $("#r-text").val("");
+                renderResep();
+            });
+
+            $("#btn-add-obat").click(function () {
+                const nama = $("#nama-obat").val();
+                const dosis1 = $("#dosis1").val().trim();
+                const dosis2 = $("#dosis2").val().trim();
+                const signaJumlah1 = $("#signa-jumlah1").val().trim();
+                const signaJumlah2 = $("#signa-jumlah2").val().trim();
+                const dosis3 = $("#dosis3").val().trim();
+                const signaSatuan2 = $("#signa-satuan2").val();
+                const instruksi = $("#instruksi").val().trim();
+
+                if (!nama) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Pilih nama obat!',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                let line = `${nama}`;
+                if (dosis1) line += ` ${dosis1}`;
+                if (dosis2) line += ` ${dosis2}`;
+
+                line += "\n";
+
+                if (instruksi) {
+                    line += `${instruksi}\n`;
+                }
+
+                // Susun signa walau tidak lengkap
+                if (signaJumlah1 && signaJumlah2) {
+                    line += `${signaJumlah1} x ${signaJumlah2}`;
+                    if (dosis3) line += ` ${dosis3}`;
+                    if (signaSatuan2) line += ` ${signaSatuan2}`;
+                }
+
+                resepList.push(line);
+                renderResep();
+
+                // Reset input
+                $("#nama-obat").val("");
+                $("#dosis1").val("");
+                $("#dosis2").val("");
+                $("#instruksi").val("");
+                $("#signa-jumlah1").val("");
+                $("#signa-jumlah2").val("");
+                $("#dosis3").val("");
+                $("#signa-satuan2").val("");
+            });
+
+            // Auto isi dosis2
+            $("#nama-obat").on("change", function () {
+                const satuan = $(this).find(":selected").data("satuan");
+                $("#dosis2").val(satuan ?? "");
+            });
+
+            $("#summernote-resep").on("click", ".resep-line", function () {
+                const idx = $(this).data("index");
+                selectedIndex = selectedIndex === idx ? -1 : idx;
+                renderResep();
+            });
+
+            $("#summernote-resep").on("click", ".btn-delete", function (e) {
+                e.stopPropagation();
+                const idx = $(this).closest(".resep-line").data("index");
+                resepList.splice(idx, 1);
+                selectedIndex = -1;
+                renderResep();
+            });
+
+            $("#summernote-resep").on("click", ".btn-up", function (e) {
+                e.stopPropagation();
+                const idx = $(this).closest(".resep-line").data("index");
+                if (idx > 0) {
+                [resepList[idx - 1], resepList[idx]] = [resepList[idx], resepList[idx - 1]];
+                selectedIndex = idx - 1;
+                renderResep();
+                }
+            });
+
+            $("#summernote-resep").on("click", ".btn-down", function (e) {
+                e.stopPropagation();
+                const idx = $(this).closest(".resep-line").data("index");
+                if (idx < resepList.length - 1) {
+                [resepList[idx + 1], resepList[idx]] = [resepList[idx], resepList[idx + 1]];
+                selectedIndex = idx + 1;
+                renderResep();
+                }
+            });
+
+            $("#summernote-resep").on("click", ".btn-edit", function (e) {
+                e.stopPropagation();
+                const idx = $(this).closest(".resep-line").data("index");
+                const line = resepList[idx];
+
+                // Reset form yang pasti diisi (nama & dosis)
+                $("#nama-obat").val("");
+                $("#dosis1").val("");
+                $("#dosis2").val("");
+                $("#instruksi").val("");
+                $("#signa-jumlah1").val("");
+                $("#signa-jumlah2").val("");
+                $("#dosis3").val("");
+                $("#signa-satuan2").val("");
+                $("#r-text").val("");
+
+                if (line.startsWith("R:/")) {
+                    // Jika ini resep bebas
+                    const content = line.replace(/^R:\/*\s*/, "");
+                    $("#r-text").val(content);
+                } else {
+                    // Pisah berdasarkan newline, hilangkan baris kosong
+                    const parts = line.split("\n").map(p => p.trim()).filter(p => p.length > 0);
+
+                    // === PARSING BARIS 1: nama obat + dosis1 + dosis2 ===
+                    if (parts.length > 0) {
+                        const tokens = parts[0].split(" ");
+                        if (tokens.length >= 3) {
+                            // Ambil 2 terakhir sebagai dosis
+                            $("#dosis2").val(tokens.pop());
+                            $("#dosis1").val(tokens.pop());
+                            $("#nama-obat").val(tokens.join(" "));
+                        } else if (tokens.length === 2) {
+                            $("#dosis1").val(tokens.pop());
+                            $("#nama-obat").val(tokens.join(" "));
+                        } else if (tokens.length === 1) {
+                            $("#nama-obat").val(tokens[0]);
+                        }
+                    }
+
+                    // === PARSING BARIS 2: instruksi (opsional) ===
+                    if (parts.length > 1 && !/^\d+\s*x\s*\d+/.test(parts[1])) {
+                        // Pastikan ini bukan signa
+                        $("#instruksi").val(parts[1]);
+                    }
+
+                    // === PARSING BARIS 3 atau BARIS 2 (jika tidak ada instruksi): signa ===
+                    const signaLine = parts.find(p => /^\d+\s*x\s*\d+/.test(p));
+                    if (signaLine) {
+                        const signaRegex = /^(\d+)\s*x\s*(\d+)(?:\s+(\S+))?(?:\s+(.*))?$/;
+                        const match = signaLine.match(signaRegex);
+                        if (match) {
+                            if (match[1]) $("#signa-jumlah1").val(match[1]);
+                            if (match[2]) $("#signa-jumlah2").val(match[2]);
+                            if (match[3]) $("#dosis3").val(match[3]);
+                            if (match[4]) $("#signa-satuan2").val(match[4]);
+                        }
+                    }
+                }
+
+                // Hapus item yang sedang diedit dan render ulang
+                resepList.splice(idx, 1);
+                selectedIndex = -1;
+                renderResep();
+            });
+
+            $("#btn-print-resep-ajax").click(function () {
+                const resepData = JSON.stringify(resepList);
+                let note = $('#note_revisi').val();
+
+                Swal.fire({
+                    title: 'Cetak Data',
+                    text: "Apakah Anda yakin ingin mencetak resep dokter?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, cetak!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Buat form dinamis
+                        console.log(JSON.stringify(resepList));
+                        var form = $('<form>', {
+                            method: 'POST',
+                            action: "{{ route('apotek.resep_revisi') }}",
+                            target: '_blank'
+                        });
+
+                        // CSRF token
+                        form.append($('<input>', {
+                            type: 'hidden',
+                            name: '_token',
+                            value: '{{ csrf_token() }}'
+                        }));
+
+                        // Data tambahan
+                        form.append($('<input>', {
+                            type: 'hidden',
+                            name: 'resep_data',
+                            value: resepData
+                        }));
+                        form.append($('<input>', {
+                            type: 'hidden',
+                            name: 'note',
+                            value: note
+                        }));
+
+                        // Submit form
+                        $('body').append(form);
+                        form.submit();
+                        form.remove();
+
+                        $('#modalResep').modal('hide');
+                    }
+                });
+                // const resepData = JSON.stringify(resepList);
+
+                // $.ajax({
+                //     url: '{{ route('apotek.resep_revisi') }}',
+                //     type: 'POST',
+                //     data: {
+                //         resep_data: resepData,
+                //         _token: '{{ csrf_token() }}'
+                //     },
+                //     xhrFields: {
+                //         responseType: 'blob' // penting agar bisa buka PDF dari binary
+                //     },
+                //     success: function (response, status, xhr) {
+                //         const blob = new Blob([response], { type: 'application/pdf' });
+                //         const url = window.URL.createObjectURL(blob);
+                //         window.open(url, '_blank');
+                //     },
+                //     error: function (xhr) {
+                //         Swal.fire({
+                //             icon: 'error',
+                //             title: 'Gagal',
+                //             text: 'Gagal mencetak resep.'
+                //         });
+                //     }
+                // });
+            });
+        });
     </script>
 
 

@@ -54,6 +54,9 @@ Route::get('/monitor/loket-antrian', [SuperadminController::class, 'loketAntrian
 Route::get('/apotek', [SuperadminController::class, 'apotek'])->middleware(['auth'])->name('apotek.index');
 Route::post('/apotek/add', [SuperadminController::class, 'apotekadd'])->name('apotek.store');
 
+Route::post('/apotek/print-resep/dokter', [SuperadminController::class, 'resep_dokter'])->name('apotek.resep_dokter');
+Route::post('/apotek/print-resep/revisi', [SuperadminController::class, 'resep_revisi'])->name('apotek.resep_revisi');
+
 //Menu Keuangan
 Route::get('/datakasir', [SuperadminController::class, 'datakasir_lunas'])->name('datakasir_lunas.index');
 Route::post('/datakasir/print', [SuperadminController::class, 'datakasir_lunas_print'])->name('datakasir_lunas.print');
@@ -299,6 +302,22 @@ Route::prefix('pemeriksaan')->group(function () {
             Route::post('/nama-makanan/delete', [DataMasterMedisController::class,'nama_makanandelete'])->name('nama_makanan.destroy');
             Route::get('/nama-makanan/export', [DataMasterMedisController::class,'nama_makananexport'])->name('nama_makanan.export');
             Route::post('/nama-makanan/import', [DataMasterMedisController::class,'nama_makananimport'])->name('nama_makanan.import');
+
+            Route::get('/icd10', [DataMasterMedisController::class,'icd10'])->name('icd10.get');
+            Route::get('/icd10/sync', [DataMasterMedisController::class,'icd10singkron'])->name('icd10.store');
+            Route::get('/icd10/add', [DataMasterMedisController::class,'icd10add'])->name('icd10.singkron');
+            Route::post('/icd10/update', [DataMasterMedisController::class,'icd10edit'])->name('icd10.update');
+            Route::post('/icd10/delete', [DataMasterMedisController::class,'icd10delete'])->name('icd10.destroy');
+            Route::get('/icd10/export', [DataMasterMedisController::class, 'icd10export'])->name('icd10.export');
+            Route::post('/icd10/import', [DataMasterMedisController::class, 'icd10import'])->name('icd10.import');
+
+            Route::get('/icd9', [DataMasterMedisController::class, 'icd9'])->name('icd9.get');
+            Route::post('/icd9/add', [DataMasterMedisController::class,'icd9add'])->name('icd9.store');
+            Route::post('/icd9/update', [DataMasterMedisController::class,'icd9edit'])->name('icd9.update');
+            Route::post('/icd9/delete', [DataMasterMedisController::class,'icd9delete'])->name('icd9.destroy');
+            Route::get('/icd9/export', [DataMasterMedisController::class,'icd9export'])->name('icd9.export');
+            Route::post('/icd9/import', [DataMasterMedisController::class,'icd9import'])->name('icd9.import');
+
 
 
         });

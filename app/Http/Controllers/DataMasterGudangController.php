@@ -854,13 +854,23 @@ class DataMasterGudangController extends Controller
                     'updated_at' => now(),
                 ]);
 
+                // Ambil margin setting
+                $setting = gudang_setting_harga::first(); // atau where('active', 1)->first()
+
+                // Hitung harga jual
+                $harga_dasar = $data->harga_dasar;
+
+                $harga_jual_1 = $harga_dasar + ($harga_dasar * ($setting->harga_jual_1 / 100));
+                $harga_jual_2 = $harga_dasar + ($harga_dasar * ($setting->harga_jual_2 / 100));
+                $harga_jual_3 = $harga_dasar + ($harga_dasar * ($setting->harga_jual_3 / 100));
+
                 gudang_barang_harga::create([
                     'kode_obat_alkes' => $data->kode_obat_alkes,
                     'nama_obat_alkes' => $data->nama_obat_alkes,
                     'harga_dasar' => $data->harga_dasar,
-                    'harga_jual_1' => null,
-                    'harga_jual_2' => null,
-                    'harga_jual_3' => null,
+                    'harga_jual_1' => $harga_jual_1,
+                    'harga_jual_2' => $harga_jual_2,
+                    'harga_jual_3' => $harga_jual_3,
                     'diskon' => 0,
                     'ppn' => 0,
                     'tanggal_obat_masuk' => Carbon::now()->toDateString(),

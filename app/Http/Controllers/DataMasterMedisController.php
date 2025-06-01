@@ -969,7 +969,7 @@ class DataMasterMedisController extends Controller
     {
         try {
             $request->validate([
-                "nama" => 'required|string|unique:nama_makanan,nama', // perhatikan nama tabel
+                "nama" => 'required|string|unique:nama_makanans,nama', // perhatikan nama tabel
             ]);
 
             $nama_makanan = nama_makanan::create([
