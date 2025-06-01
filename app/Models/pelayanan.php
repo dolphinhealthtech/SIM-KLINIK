@@ -20,12 +20,12 @@ class pelayanan extends Model
 
     public function poli()
     {
-        return $this->belongsTo(Poli::class, 'poli_id');
+        return $this->belongsTo(poli::class, 'poli_id');
     }
 
     public function dokter()
     {
-        return $this->belongsTo(Dokter::class, 'dokter_id');
+        return $this->belongsTo(dokter::class, 'dokter_id');
     }
     public function pasien()
     {
