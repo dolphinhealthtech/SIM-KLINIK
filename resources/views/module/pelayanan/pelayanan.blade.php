@@ -108,7 +108,7 @@
             }).buttons().container().appendTo('#banktabel_wrapper .col-md-6:eq(0)');
         });
 
-         $('#pasien-hadir').on('submit', function(e) {
+         $('.pasien-hadir').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);

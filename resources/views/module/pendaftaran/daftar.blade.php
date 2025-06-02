@@ -78,10 +78,10 @@
                                         <td class="text-center">
                                             @switch($pendaftarandata->status->Status_aplikasi)
                                                 @case(1)
-                                                    Applikasi Offline
+                                                    Aplikasi Offline
                                                     @break
                                                 @case(2)
-                                                    Applikasi Onlaine
+                                                    Aplikasi Online
                                                     @break
                                                 @case(3)
                                                     Sistem BPJS / MJKN
