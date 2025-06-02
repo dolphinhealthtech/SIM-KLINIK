@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">bank</h3>
+                                <h3 class="card-title">Pelayanan</h3>
                             </div>
                             <div class="card-body">
                                 <table id="banktabel" class="table table-bordered table-striped">

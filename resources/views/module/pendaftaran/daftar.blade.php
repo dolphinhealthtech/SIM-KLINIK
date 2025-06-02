@@ -213,7 +213,7 @@
 {{-- modal Panggil Role --}}
 <div class="modal fade" id="panggilModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormbatal" action="{{ route('pendaftaran.hadir') }}" method="POST">
+        <form id="deleteFormhadir" action="{{ route('pendaftaran.hadir') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteModalLabel">Confirmasi Pendaftaran Pasien Hadir</h5>
@@ -344,6 +344,46 @@
 
 
 <script>
+        $('#deleteFormhadir').on('submit', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+            let url = form.attr('action');
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        $('#panggilModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                    });
+                }
+            });
+        });
+
     $(document).on('click', '.dokter-data-pasien', function() {
             let id = $(this).data('id');
             let tanggal = $(this).data('tgl-kunjung');
