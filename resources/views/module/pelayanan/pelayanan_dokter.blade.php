@@ -59,7 +59,7 @@
                                                         </button>
                                                         <div class="dropdown-menu dropdown-menu-right" role="menu">
                                                             @if ($pelayanandata->tindakan_button == 'panggil')
-                                                                <a class="dropdown-item" href="{{ route('pelayana_dokter.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                                <a class="dropdown-item pasien-hadir" href="{{ route('pelayana_dokter.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-bell"></i> Panggil
                                                                 </a>
                                                             @elseif ($pelayanandata->tindakan_button == 'soap')
@@ -67,9 +67,6 @@
                                                                     <i class="fas fa-file-medical-alt"></i> SOAP & Pemeriksaan
                                                                 </a>
                                                             @elseif ($pelayanandata->tindakan_button == 'edit')
-                                                                <a class="dropdown-item" href="{{ route('pelayana_dokter.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
-                                                                    <i class="fas fa-edit"></i> Edit SOAP
-                                                                </a>
                                                                 <a class="dropdown-item" href="{{ route('pelayana_rujuk.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-edit"></i> Rujukan
                                                                 </a>
@@ -108,6 +105,44 @@
                     "print",
                 ]
             }).buttons().container().appendTo('#banktabel_wrapper .col-md-6:eq(0)');
+        });
+$('.pasien-hadir').on('click', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+            let url = form.attr('action');
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat Pemanggilan Pasien!',
+                    });
+                }
+            });
         });
 
         $(document).on('click', '.delete-data-bank', function() {
