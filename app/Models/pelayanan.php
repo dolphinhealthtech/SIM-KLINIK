@@ -42,6 +42,6 @@ class pelayanan extends Model
     }
     public function pelayanan_soap()
     {
-        return $this->hasMany(pelayanan_soap_dokter::class,'nomor_register','no_rawat');
+        return $this->hasMany(pelayanan_soap_dokter::class,'no_rawat','nomor_register');
     }
 }
