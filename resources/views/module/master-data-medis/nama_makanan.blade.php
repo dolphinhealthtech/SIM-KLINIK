@@ -300,7 +300,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate nama_makanan!',
+                        text: 'Terjadi kesalahan saat mengupdate nama makanan!',
                     });
                 }
             });
@@ -312,7 +312,7 @@
 
             $('#nama_makananid_delete').val(id);
             $('#deleteTextnama_makanan').html(
-            `<span>Apa Anda yakin ingin menghapus data nama_makanan <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data nama makanan <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormnama_makanan').on('submit', function(e) {
@@ -349,7 +349,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                        text: 'Terjadi kesalahan saat menghapus Nama Makanan!',
                     });
                 }
             });

@@ -399,6 +399,47 @@ class MenuSeeder extends Seeder
             }
         }
 
+        //baru
+        // 3. Buat submenu Data Master Gudang di bawah Data Master
+        $dataMasterGudang = menu::create([
+            'name' => 'Data Master Manajemen',
+            'url' => '#',
+            'icon' => 'briefcase',
+            'parent_id' => $dataMaster->id,
+            'order' => 5,
+        ]);
+
+        if ($superAdminRole) {
+            $dataMasterGudang->roles()->attach($superAdminRole->id);
+        }
+
+        if ($sdmRole) {
+            $dataMasterGudang->roles()->attach($sdmRole->id);
+        }
+
+        // Submenu untuk Data Master Manajemen
+        $subMenusDataMasterGudang = [
+            ['name' => 'Posker', 'url' => '/data-master-manajemen/posker', 'icon' => 'chart-line', 'order' => 1],
+        ];
+
+        foreach ($subMenusDataMasterGudang as $subMenu) {
+            $menu = menu::create([
+                'name' => $subMenu['name'],
+                'url' => $subMenu['url'],
+                'icon' => $subMenu['icon'],
+                'parent_id' => $dataMasterGudang->id,
+                'order' => $subMenu['order'],
+            ]);
+
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
+
+            if ($sdmRole) {
+                $menu->roles()->attach($sdmRole->id);
+            }
+        }
+
         // Submenu Setting
         $subMenusSetting = [
             ['name' => 'Role', 'url' => '/setting/role', 'icon' => 'user-tag', 'order' => 1],

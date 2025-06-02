@@ -284,7 +284,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate pemeriksaan_htt!',
+                        text: 'Terjadi kesalahan saat mengupdate pemeriksaan htt!',
                     });
                 }
             });
@@ -296,7 +296,7 @@
 
             $('#htt_sub_pemeriksaanid_delete').val(id);
             $('#deleteTexthtt_sub_pemeriksaan').html(
-            `<span>Apa Anda yakin ingin menghapus data pemeriksaan_htt <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data pemeriksaan htt <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormhtt_sub_pemeriksaan').on('submit', function(e) {
@@ -333,7 +333,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                        text: 'Terjadi kesalahan saat menghapus pemeriksaan htt!',
                     });
                 }
             });
