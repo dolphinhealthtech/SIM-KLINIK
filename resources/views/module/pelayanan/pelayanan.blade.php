@@ -59,9 +59,12 @@
                                                         </button>
                                                         <div class="dropdown-menu dropdown-menu-right" role="menu">
                                                             @if ($pelayanandata->tindakan_button == 'panggil')
-                                                                <a class="dropdown-item pasien-hadir" href="{{ route('sopelayana.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                                <a href="javascript:void(0);"
+                                                                class="dropdown-item pasien-hadir"
+                                                                data-url="{{ route('sopelayana.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-bell"></i> Panggil
                                                                 </a>
+
                                                             @elseif ($pelayanandata->tindakan_button == 'soap')
                                                                 <a class="dropdown-item" href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-file-medical-alt"></i> SOAP & Pemeriksaan
@@ -108,16 +111,17 @@
             }).buttons().container().appendTo('#banktabel_wrapper .col-md-6:eq(0)');
         });
 
-         $('.pasien-hadir').on('click', function(e) {
+        $('.pasien-hadir').on('click', function(e) {
             e.preventDefault();
 
-            let form = $(this);
-            let url = form.attr('action');
+            let url = $(this).data('url');
 
             $.ajax({
                 url: url,
                 type: "POST",
-                data: form.serialize(),
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
                 success: function(response) {
                     if (response.success) {
                         Swal.fire({
@@ -126,8 +130,8 @@
                             text: response.message,
                             showConfirmButton: true
                         }).then(() => {
-                            $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
-                            location.reload(); // Reload halaman untuk update data
+                            $('.modal-backdrop').remove();
+                            location.reload();
                         });
                     } else {
                         Swal.fire({
@@ -146,6 +150,7 @@
                 }
             });
         });
+
 
         $(document).on('click', '.delete-data-bank', function() {
             let id = $(this).data('id');

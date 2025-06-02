@@ -59,7 +59,9 @@
                                                         </button>
                                                         <div class="dropdown-menu dropdown-menu-right" role="menu">
                                                             @if ($pelayanandata->tindakan_button == 'panggil')
-                                                                <a class="dropdown-item pasien-hadir" href="{{ route('pelayana_dokter.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                             <a href="javascript:void(0);"
+                                                                class="dropdown-item pasien-hadir"
+                                                                data-url="{{ route('pelayana_dokter.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-bell"></i> Panggil
                                                                 </a>
                                                             @elseif ($pelayanandata->tindakan_button == 'soap')
@@ -109,12 +111,14 @@
 $('.pasien-hadir').on('click', function(e) {
             e.preventDefault();
 
-            let form = $(this);
-            let url = form.attr('action');
+            let url = $(this).data('url');
 
             $.ajax({
                 url: url,
-                data: form.serialize(),
+                type: "POST",
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
                 success: function(response) {
                     if (response.success) {
                         Swal.fire({
@@ -123,8 +127,8 @@ $('.pasien-hadir').on('click', function(e) {
                             text: response.message,
                             showConfirmButton: true
                         }).then(() => {
-                            $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
-                            location.reload(); // Reload halaman untuk update data
+                            $('.modal-backdrop').remove();
+                            location.reload();
                         });
                     } else {
                         Swal.fire({
@@ -143,6 +147,7 @@ $('.pasien-hadir').on('click', function(e) {
                 }
             });
         });
+
 
         $(document).on('click', '.delete-data-bank', function() {
             let id = $(this).data('id');
