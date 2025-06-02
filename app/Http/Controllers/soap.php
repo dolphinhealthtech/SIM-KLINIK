@@ -39,7 +39,6 @@ class soap extends Controller
     public function pelayana()
     {
         $title = "Pelayanan";
-        $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien','pendaftaran.status')->get();
         $pelayanan = Pelayanan::with([
         'poli',
         'dokter.namauser',
