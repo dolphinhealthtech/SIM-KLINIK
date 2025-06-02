@@ -31,6 +31,7 @@ use App\Models\htt_pemeriksaan;
 use App\Models\htt_sub_pemeriksaan;
 use App\Models\icd10;
 use App\Models\icd9;
+use App\Models\laboratorium_bidang;
 use App\Models\poli;
 use App\Models\spesialis;
 use App\Models\subspesialis;
@@ -1363,4 +1364,11 @@ class DataMasterMedisController extends Controller
     }
 
 
+    // pemeriksaan laboratorium_bidang
+    public function laboratorium_bidang()
+    {
+        $title = "Master Bidang Laboratorium ";
+        $laboratorium_bidang = laboratorium_bidang::all();
+        return view('module.master-data-medis.laboratorium_bidang', compact('title','laboratorium_bidang'));
+    }
 }

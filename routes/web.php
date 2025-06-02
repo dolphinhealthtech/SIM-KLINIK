@@ -318,6 +318,7 @@ Route::prefix('pemeriksaan')->group(function () {
             Route::get('/icd9/export', [DataMasterMedisController::class,'icd9export'])->name('icd9.export');
             Route::post('/icd9/import', [DataMasterMedisController::class,'icd9import'])->name('icd9.import');
 
+            Route::get('/bidang-lab', [DataMasterMedisController::class, 'laboratorium_bidang'])->name('laboratorium_bidang.get');
 
 
         });
