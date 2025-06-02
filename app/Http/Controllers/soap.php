@@ -39,7 +39,21 @@ class soap extends Controller
     public function pelayana()
     {
         $title = "Pelayanan";
-        $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien','pendaftaran.status')->get();
+        $pelayanan = Pelayanan::with([
+            'poli',
+            'dokter.namauser',
+            'pasien',
+            'pendaftaran.status',
+            'pelayanan_soap_dokters'
+        ])
+        ->get()
+        ->filter(function ($item) {
+            $statusPanggil = $item->pendaftaran->status->status_panggil ?? null;
+            $soapExists = $item->pelayanan_soap_dokters && $item->pelayanan_soap_dokters->isNotEmpty();
+
+            return !($statusPanggil == 2 && $soapExists); // sembunyikan jika memenuhi syarat
+        });
+
 
         foreach ($pelayanan as $item) {
             $status = $item->pendaftaran->status->status_panggil ?? 0;
