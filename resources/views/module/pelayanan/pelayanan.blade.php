@@ -118,10 +118,7 @@
 
             $.ajax({
                 url: url,
-                type: "POST",
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
+                type: "GET",
                 success: function(response) {
                     if (response.success) {
                         Swal.fire({
