@@ -114,7 +114,6 @@ $('.pasien-hadir').on('click', function(e) {
 
             $.ajax({
                 url: url,
-                type: "POST",
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
