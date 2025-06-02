@@ -319,6 +319,16 @@ Route::prefix('pemeriksaan')->group(function () {
             Route::post('/icd9/import', [DataMasterMedisController::class,'icd9import'])->name('icd9.import');
 
             Route::get('/bidang-lab', [DataMasterMedisController::class, 'laboratorium_bidang'])->name('laboratorium_bidang.get');
+            Route::post('/bidang-lab/add', [DataMasterMedisController::class,'laboratorium_bidangadd'])->name('laboratorium_bidang.store');
+            Route::post('/bidang-lab/update', [DataMasterMedisController::class,'laboratorium_bidangedit'])->name('laboratorium_bidang.update');
+            Route::post('/bidang-lab/delete', [DataMasterMedisController::class,'laboratorium_bidangdelete'])->name('laboratorium_bidang.destroy');
+            Route::get('/bidang-lab/export', [DataMasterMedisController::class,'laboratorium_bidangexport'])->name('laboratorium_bidang.export');
+            Route::post('/bidang-lab/import', [DataMasterMedisController::class,'laboratorium_bidangeimport'])->name('laboratorium_bidang.import');
+
+            Route::get('/bidang-lab-sub/{kode}', [DataMasterMedisController::class,'laboratorium_bidang_sub'])->name('laboratorium_bidang_sub.get');
+            Route::post('/bidang-lab-sub/add', [DataMasterMedisController::class,'laboratorium_bidang_subadd'])->name('laboratorium_bidang_sub.store');
+            Route::post('/bidang-lab-sub/update', [DataMasterMedisController::class,'laboratorium_bidang_subedit'])->name('laboratorium_bidang_sub.update');
+            Route::post('/bidang-lab-sub/delete', [DataMasterMedisController::class,'laboratorium_bidang_subdelete'])->name('laboratorium_bidang_sub.destroy');
 
 
         });
