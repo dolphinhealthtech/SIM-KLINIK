@@ -13,4 +13,9 @@ class laboratorium_bidang_sub extends Model
         'nama_laboratorium_bidang',
         'nama_sublaboratorium_bidang',
     ];
+
+    public function induk()
+    {
+        return $this->belongsTo(laboratorium_bidang::class, 'laboratorium_bidang_id');
+    }
 }

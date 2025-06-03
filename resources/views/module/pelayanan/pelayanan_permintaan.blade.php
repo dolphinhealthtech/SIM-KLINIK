@@ -44,20 +44,20 @@
 
                             <div class="form-group">
                                 <label for="nama">Nama Pasien</label>
-                                <input type="text" class="form-control bg-light" id="nama" value="{{ $pelayanan->pasien->nama }}" readonly>
+                                <input type="text" class="form-control bg-light" id="nama" name="nama" value="{{ $pelayanan->pasien->nama }}" readonly>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="jenis_kelamin">Jenis Kelamin</label>
-                                        <input type="text" class="form-control bg-light" id="jenis_kelamin" value="{{ $pelayanan->pasien->kelamin->nama }}" readonly>
+                                        <input type="text" class="form-control bg-light" id="jenis_kelamin" name="jenis_kelamin" value="{{ $pelayanan->pasien->kelamin->nama }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="penjamin">Penjamin</label>
-                                        <input type="text" class="form-control bg-light" id="penjamin" value="{{ $pelayanan->pendaftaran->penjamin->nama }}" readonly>
+                                        <input type="text" class="form-control bg-light" id="penjamin" name="penjamin" value="{{ $pelayanan->pendaftaran->penjamin->nama }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -66,7 +66,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="tanggal_lahir">Tanggal Lahir</label>
-                                        <input type="text" class="form-control bg-light" id="tanggal_lahir" value="{{ $pelayanan->pasien->tanggal_lahir }}" readonly>
+                                        <input type="text" class="form-control bg-light" id="tanggal_lahir" name="tanggal_lahir" value="{{ $pelayanan->pasien->tanggal_lahir }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -87,6 +87,7 @@
                                 <input type="text" class="form-control bg-light" id="poli" name="poli" value="{{ $pelayanan->poli->nama }}" readonly>
                             </div>
 
+                            <input type="hidden" id="alamat" name="alamat" value="{{ $pelayanan->pasien->alamat }}">
                         </div>
                     </div>
                 </div>
@@ -109,7 +110,7 @@
                                     <div class="col-md-12">
                                         <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 285px;">
                                             <div class="table-responsive" style="max-height: 285px; overflow-y: auto;">
-                                                <table class="table" id="dataTable" style="border: none;">
+                                                <table class="table" id="radiologi_table" style="border: none;">
                                                     <thead>
                                                         <tr>
                                                             <th style="width: 10%">No</th>
@@ -208,10 +209,11 @@
 
                             <div class="tab-pane fade" id="custom-tabs-four-laboratorium" role="tabpanel" aria-labelledby="custom-tabs-four-laboratorium-tab">
                                 <div class="row">
+                                    <input type="hidden" id="lab_table_hidden" name="lab_table_hidden">
                                     <div class="col-md-12">
                                         <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 285px;">
                                             <div class="table-responsive" style="max-height: 285px; overflow-y: auto;">
-                                                <table class="table" id="dataTable" style="border: none;">
+                                                <table class="table" id="lab_table" style="border: none;">
                                                     <thead>
                                                         <tr>
                                                             <th style="width: 10%">No</th>
@@ -233,14 +235,17 @@
                                             <div class="col-md-6">
                                                 <select class="form-control select2bs4" style="width: 100%;" id="bidang_laboratorium" name="bidang_laboratorium">
                                                     <option value="" disabled selected>-- Pilih --</option>
-                                                    <option value="testing">testing</option>
+                                                    <option value="Seluruh Data" data-id="all">Seluruh Data</option>
+                                                    @foreach ($data_lab as $data_lab_item)
+                                                        <option value="{{ $data_lab_item->nama }}" data-id="{{ $data_lab_item->id }}">{{ $data_lab_item->nama }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-2">
-                                                <button type="button" class="btn btn-primary w-100">Tambah</button>
+                                                <button type="button" class="btn btn-primary w-100" id="btn-tambah-lab">Tambah</button>
                                             </div>
                                             <div class="col-md-2">
-                                                <button type="button" class="btn btn-danger w-100">Hapus</button>
+                                                <button type="button" class="btn btn-danger w-100" id="btn-hapus-lab">Hapus</button>
                                             </div>
                                         </div>
                                         <div class="form-group row align-items-center mt-3">
@@ -250,7 +255,6 @@
                                             <div class="col-md-6">
                                                 <select class="form-control select2bs4" style="width: 100%;" id="pemeriksaan_laboratorium" name="pemeriksaan_laboratorium">
                                                     <option value="" disabled selected>-- Pilih --</option>
-                                                    <option value="testing">testing</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -261,7 +265,9 @@
                                             <div class="col-md-10">
                                                 <select class="form-control select2bs4" style="width: 100%;" id="diagnosa_laboratorium" name="diagnosa_laboratorium">
                                                     <option value="" disabled selected>-- Pilih --</option>
-                                                    <option value="testing">testing</option>
+                                                    @foreach ($data_icd9 as $lab)
+                                                        <option value="({{$lab->kode_icd9}}) {{$lab->nama_icd9}}">({{$lab->kode_icd9}}) {{$lab->nama_icd9}}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-2">
@@ -291,7 +297,7 @@
                                         </div>
                                         <div class="form-group row mt-3">
                                             <div class="col-md-12 text-right">
-                                                <button type="button" class="btn btn-success">
+                                                <button type="button" class="btn btn-success" id="btn-print-lab">
                                                     <i class="fas fa-print"></i> Print
                                                 </button>
                                             </div>
@@ -318,5 +324,167 @@
         this.showPicker && this.showPicker(); // untuk browser yang support
     });
 </script>
+
+<script>
+    $(document).ready(function () {
+        $('#bidang_laboratorium').on('change', function () {
+            // Ambil id dari atribut data-id, bukan dari value
+            let id = $(this).find(':selected').data('id');
+
+            $('#pemeriksaan_laboratorium').empty().append('<option disabled selected>Loading...</option>');
+
+            $.ajax({
+                url: `/api/get-pemeriksaan-laboratorium/${id}`,
+                type: 'GET',
+                success: function (data) {
+                    $('#pemeriksaan_laboratorium').empty().append('<option value="" disabled selected>-- Pilih --</option>');
+                    $.each(data, function (key, value) {
+                        $('#pemeriksaan_laboratorium').append(`<option value="${value.nama_sublaboratorium_bidang}">${value.nama_sublaboratorium_bidang}</option>`);
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    let selectedRow = null;
+    let labData = [];
+
+    function refreshTable() {
+        let tbody = $('#lab_table tbody');
+        tbody.empty();
+
+        labData.forEach((item, index) => {
+            tbody.append(`
+                <tr data-index="${index}" class="lab-row">
+                    <td>${index + 1}</td>
+                    <td>${item}</td>
+                </tr>
+            `);
+        });
+
+        // Update hidden input as JSON string
+        $('#lab_table_hidden').val(JSON.stringify(labData));
+
+        console.log('Data : ',JSON.stringify(labData));
+    }
+
+    // Tambah data (dengan cek duplikat)
+    $('#btn-tambah-lab').on('click', function () {
+        let selected = $('#pemeriksaan_laboratorium').val();
+
+        if (!selected) {
+            Swal.fire('Pilih Pemeriksaan terlebih dahulu.', '', 'warning');
+            return;
+        }
+
+        // Cek duplikat
+        if (labData.includes(selected)) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Duplikat',
+                text: `"${selected}" sudah ada dalam tabel.`,
+                showConfirmButton: true
+            });
+            return;
+        }
+
+        labData.push(selected);
+        refreshTable();
+        $('#pemeriksaan_laboratorium').val(null).trigger('change');
+    });
+
+    // Pilih baris
+    $(document).on('click', '.lab-row', function () {
+        $('.lab-row').removeClass('table-primary');
+        $(this).addClass('table-primary');
+        selectedRow = $(this).data('index');
+    });
+
+    // Hapus data
+    $('#btn-hapus-lab').on('click', function () {
+        if (selectedRow === null) {
+            Swal.fire('Pilih baris yang ingin dihapus.', '', 'info');
+            return;
+        }
+
+        labData.splice(selectedRow, 1);
+        selectedRow = null;
+        refreshTable();
+    });
+</script>
+
+<script>
+    $('#btn-print-lab').on('click', function () {
+        const labData = $('#lab_table_hidden').val();
+        const diagnosa = $('#diagnosa_laboratorium').val();
+        const tanggal = $('#tanggal_periksa_laboratorium').val();
+        const catatan = $('#catatan_dokter_laboratorium').val();
+        const nama_pasien = $('#nama').val();
+        const dokter_pengirim = $('#dokter_pengirim').val();
+        const poli = $('#poli').val();
+        const jenis_kelamin = $('#jenis_kelamin').val();
+        const tanggal_lahir = $('#tanggal_lahir').val();
+        const alamat = $('#alamat').val();
+        const penjamin = $('#penjamin').val();
+        const csrfToken = '{{ csrf_token() }}';
+
+        if (!labData || !tanggal) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Tidak Lengkap',
+                text: 'Pastikan data pemeriksaan dan tanggal periksa sudah diisi.'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Cetak Permintaan Laboratorium?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Cetak!',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Buat form dinamis
+                const form = $('<form>', {
+                    method: 'POST',
+                    action: '{{ route("laboratorium.print") }}',
+                    target: '_blank'
+                });
+
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: '_token',
+                    value: csrfToken
+                }));
+                form.append($('<input>', { type: 'hidden', name: 'lab_table_hidden', value: labData }));
+                form.append($('<input>', { type: 'hidden', name: 'diagnosa_laboratorium', value: diagnosa }));
+                form.append($('<input>', { type: 'hidden', name: 'tanggal_periksa_laboratorium', value: tanggal }));
+                form.append($('<input>', { type: 'hidden', name: 'catatan_dokter_laboratorium', value: catatan }));
+                form.append($('<input>', { type: 'hidden', name: 'nama_pasien', value: nama_pasien }));
+                form.append($('<input>', { type: 'hidden', name: 'dokter_pengirim', value: dokter_pengirim }));
+                form.append($('<input>', { type: 'hidden', name: 'poli', value: poli }));
+                form.append($('<input>', { type: 'hidden', name: 'jenis_kelamin', value: jenis_kelamin }));
+                form.append($('<input>', { type: 'hidden', name: 'tanggal_lahir', value: tanggal_lahir }));
+                form.append($('<input>', { type: 'hidden', name: 'alamat', value: alamat }));
+                form.append($('<input>', { type: 'hidden', name: 'penjamin', value: penjamin }));
+
+                $('body').append(form);
+                form.submit();
+                form.remove();
+
+                // Setelah submit, redirect ke route dokter
+                setTimeout(() => {
+                    window.location.href = '{{ route("pelayanad.get") }}';
+                }, 1000); // delay 1 detik agar PDF sempat terbuka
+            }
+        });
+    });
+</script>
+
+
+
 
 @endsection

@@ -29,6 +29,8 @@ use App\Models\perawatan_tindakan;
 use App\Models\sarana;
 use App\Models\spesialis;
 use App\Models\subspesialis;
+use App\Models\laboratorium_bidang;
+use App\Models\laboratorium_bidang_sub;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -816,7 +818,55 @@ class soap extends Controller
         }
         $umur .= $umurHari . ' Hari';
 
-        return view('module.pelayanan.pelayanan_permintaan', compact('title','pelayanan','umur'));
+        $data_icd9 = icd9::all();
+
+        $data_lab = laboratorium_bidang::all();
+
+        return view('module.pelayanan.pelayanan_permintaan', compact('title','pelayanan','umur','data_icd9','data_lab'));
+    }
+
+    public function getSubBidangLab($id)
+    {
+        if ($id === 'all') {
+            $data = laboratorium_bidang_sub::all();
+        } else {
+            $data = laboratorium_bidang_sub::where('laboratorium_bidang_id', $id)->get();
+        }
+
+        return response()->json($data);
+    }
+
+    public function laboratoriumPrint(Request $request)
+    {
+        $labData = json_decode($request->lab_table_hidden, true);
+        $diagnosa = $request->diagnosa_laboratorium;
+        $tanggal = $request->tanggal_periksa_laboratorium;
+        $catatan = $request->catatan_dokter_laboratorium;
+        $nama_pasien = $request->nama_pasien;
+        $dokter_pengirim = $request->dokter_pengirim;
+        $poli = $request->poli;
+        $jenis_kelamin = $request->jenis_kelamin;
+        $tanggal_lahir = $request->tanggal_lahir;
+        $alamat = $request->alamat;
+        $penjamin = $request->penjamin;
+
+        $pdf = PDF::loadView('pdf.permintaan_laboratorium', [
+            'labData' => $labData,
+            'diagnosa' => $diagnosa,
+            'tanggal' => $tanggal,
+            'catatan' => $catatan,
+            'nama_pasien' => $nama_pasien,
+            'dokter_pengirim' => $dokter_pengirim,
+            'poli' => $poli,
+            'jenis_kelamin' => $jenis_kelamin,
+            'tanggal_lahir' => $tanggal_lahir,
+            'alamat' => $alamat,
+            'penjamin' => $penjamin,
+        ])->setPaper('a6', 'portrait');
+
+        $filename = 'permintaan_laboratorium_' . $nama_pasien . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
 
 }

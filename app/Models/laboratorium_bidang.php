@@ -11,4 +11,9 @@ class laboratorium_bidang extends Model
     protected $fillable = [
         'nama',
     ];
+
+    public function sub()
+    {
+        return $this->hasMany(laboratorium_bidang_sub::class, 'laboratorium_bidang_id');
+    }
 }
