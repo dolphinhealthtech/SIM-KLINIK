@@ -118,6 +118,7 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::get('/dokter/so/{norawat}', [soap::class,'soappelayanan'])->name('pelayana_dokter.get');
     Route::post('/dokter/so/add', [soap::class,'soappelayananandd'])->name('pelayana_dokter.add');
     Route::get('/dokter/so/hadir/{norawat}', [soap::class,'soappelayananpanggil'])->name('pelayana_dokter.hadir');
+    Route::get('/dokter/so/selesai/{norawat}', [soap::class,'soappelayananselesai'])->name('pelayana_dokter.selesai');
     Route::get('/rujuk/{norawat}', [soap::class,'pelayana_rujukan'])->name('pelayana_rujuk.get');
     Route::get('/rme/{norawat}', [soap::class, 'pelayana_rme'])->name('pelayana_rme.get');
     Route::get('/permintaan/{norawat}', [soap::class, 'pelayana_permintaan'])->name('pelayana_permintaan.get');
@@ -345,6 +346,12 @@ Route::get('/list_pasien', [Soap::class, 'list_pasien'])
             Route::post('/bidang-lab-sub/update', [DataMasterMedisController::class,'laboratorium_bidang_subedit'])->name('laboratorium_bidang_sub.update');
             Route::post('/bidang-lab-sub/delete', [DataMasterMedisController::class,'laboratorium_bidang_subdelete'])->name('laboratorium_bidang_sub.destroy');
 
+            Route::get('/radiologi_pemeriksaan', [DataMasterMedisController::class, 'radiologi_pemeriksaan'])->name('radiologi_pemeriksaan.get');
+            Route::post('/radiologi_pemeriksaan/add', [DataMasterMedisController::class,'radiologi_pemeriksaanadd'])->name('radiologi_pemeriksaan.store');
+            Route::post('/radiologi_pemeriksaan/update', [DataMasterMedisController::class,'radiologi_pemeriksaanedit'])->name('radiologi_pemeriksaan.update');
+            Route::post('/radiologi_pemeriksaan/delete', [DataMasterMedisController::class,'radiologi_pemeriksaandelete'])->name('radiologi_pemeriksaan.destroy');
+            Route::get('/radiologi_pemeriksaan/export', [DataMasterMedisController::class,'radiologi_pemeriksaanexport'])->name('radiologi_pemeriksaan.export');
+            Route::post('/radiologi_pemeriksaan/import', [DataMasterMedisController::class,'radiologi_pemeriksaaneimport'])->name('radiologi_pemeriksaan.import');
 
         });
     // Menu data master Gudang
