@@ -321,6 +321,14 @@ Route::prefix('pemeriksaan')->group(function () {
             Route::get('/icd9/export', [DataMasterMedisController::class,'icd9export'])->name('icd9.export');
             Route::post('/icd9/import', [DataMasterMedisController::class,'icd9import'])->name('icd9.import');
 
+            //radiologi jenis
+            Route::get('/radiologi_jenis', [DataMasterMedisController::class, 'radiologi_jenis'])->name('radiologi_jenis.get');
+            Route::post('/radiologi_jenis/add', [DataMasterMedisController::class,'radiologi_jenisadd'])->name('radiologi_jenis.store');
+            Route::post('/radiologi_jenis/update', [DataMasterMedisController::class,'radiologi_jenisedit'])->name('radiologi_jenis.update');
+            Route::post('/radiologi_jenis/delete', [DataMasterMedisController::class,'radiologi_jenisdelete'])->name('radiologi_jenis.destroy');
+            Route::get('/radiologi_jenis/export', [DataMasterMedisController::class,'radiologi_jenisexport'])->name('radiologi_jenis.export');
+            Route::post('/radiologi_jenis/import', [DataMasterMedisController::class,'radiologi_jenisimport'])->name('radiologi_jenis.import');
+            
             Route::get('/bidang-lab', [DataMasterMedisController::class, 'laboratorium_bidang'])->name('laboratorium_bidang.get');
             Route::post('/bidang-lab/add', [DataMasterMedisController::class,'laboratorium_bidangadd'])->name('laboratorium_bidang.store');
             Route::post('/bidang-lab/update', [DataMasterMedisController::class,'laboratorium_bidangedit'])->name('laboratorium_bidang.update');
