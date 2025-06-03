@@ -2642,8 +2642,7 @@
                             text: response.message,
                             showConfirmButton: true
                         }).then(() => {
-
-                            location.reload(); // Reload halaman untuk update data
+                            window.location.href = "{{ route('pelayanad.get') }}";
                         });
                     } else {
                         Swal.fire({

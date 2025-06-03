@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Kategori Perawatan</h1>
+                        <h1 class="m-0">Sub pemeriksaan</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -28,51 +28,44 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Head To Toe</h3>
+                                <h3 class="card-title">Sub pemeriksaan</h3>
                                 <div class="card-tools">
+                                    <a href="{{ route('laboratorium_bidang.get') }}" class="btn btn-info">
+                                        <i class="fa-solid fa-arrow-left"></i> Kembali
+                                    </a>
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#addpemeriksaan_httModal">
+                                        data-target="#addhtt_sub_pemeriksaanModal">
                                         <i class="fas fa-plus"></i> Tambah
                                     </button>
-                                    <!-- Tombol Export -->
-                                    <a href="{{ route('htt_pemeriksaan.export') }}" class="btn btn-success">
-                                        <i class="fas fa-file-download"></i> Export
-                                    </a>
-
-                                    <!-- Tombol Import (Memunculkan Modal) -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importpemeriksaan_httModal">
-                                        <i class="fas fa-file-upload"></i> Import
-                                    </button>
-
                                 </div>
                             </div>
                             <div class="card-body">
-                                <table id="pemeriksaan_htttabel" class="table table-bordered table-striped">
+                                <table id="htt_sub_pemeriksaantabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nama Kategori</th>
+                                            <th class="text-center">Nama Pemeriksaan</th>
+                                            <th class="text-center">Nama Sub Pemeriksaan</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($pemeriksaan_htt as $pemeriksaan_httdata)
+                                        @foreach ($laboratorium_bidang_sub as $laboratorium_bidang_subdata)
                                             <tr>
-                                                <td class="text-center">{{ $pemeriksaan_httdata->nama_pemeriksaan }}</td>
+                                                <td class="text-center">{{ $laboratorium_bidang_subdata->nama_laboratorium_bidang }}</td>
+                                                <td class="text-center">{{ $laboratorium_bidang_subdata->nama_sublaboratorium_bidang }}</td>
                                                 <td class="text-center">
-                                                    <a href="#" class="btn btn-warning btn-sm edit-data-pemeriksaan_htt"
-                                                        data-toggle="modal" data-id="{{ $pemeriksaan_httdata->id }}"
-                                                        data-nama-pemeriksaan_htt="{{ $pemeriksaan_httdata->nama_pemeriksaan }}"
-                                                        data-target="#editpemeriksaan_httModa">
-                                                        <i class="fas fa-edit"></i> Edit
-                                                    </a>
                                                     <a href="#" class="btn btn-danger btn-sm delete-data-pemeriksaan_htt"
-                                                        data-toggle="modal"data-id="{{ $pemeriksaan_httdata->id }}"
-                                                        data-nama-pemeriksaan_htt="{{ $pemeriksaan_httdata->nama_pemeriksaan }}"
-                                                        data-target="#deletepemeriksaan_httModal">
+                                                        data-toggle="modal"data-id="{{ $laboratorium_bidang_subdata->id }}"
+                                                        data-nama-htt_sub_pemeriksaan="{{ $laboratorium_bidang_subdata->nama_sublaboratorium_bidang }}"
+                                                        data-target="#deletehtt_sub_pemeriksaanModal">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </a>
-
-                                                    <a href="{{ route('htt_sub_pemeriksaan.get', ['kode' => $pemeriksaan_httdata->id]) }}" class="btn btn-info btn-sm"><i class="fa-solid fa-briefcase-medical"></i> Sub Pemeriksaan</a>
+                                                    <a href="#" class="btn btn-warning btn-sm edit-data-goldar"
+                                                        data-toggle="modal"data-id="{{ $laboratorium_bidang_subdata->id }}"
+                                                        data-nama-htt_sub_pemeriksaan="{{ $laboratorium_bidang_subdata->nama_sublaboratorium_bidang }}"
+                                                        data-target="#edithtt_sub_pemeriksaanModal">
+                                                        <i class="fas fa-trash"></i> edit
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -89,20 +82,27 @@
 </div>
 
 {{-- modal Add Role --}}
-<div class="modal fade" id="addpemeriksaan_httModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+<div class="modal fade" id="addhtt_sub_pemeriksaanModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Pemerikan HTT</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Medis htt_sub_pemeriksaan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addFormpemeriksaan_htt" action="{{ route('htt_pemeriksaan.store') }}" method="POST">
+                <form id="addFormhtt_sub_pemeriksaan" action="{{ route('laboratorium_bidang_sub.store') }}" method="POST">
                     @csrf
                     <div class="row">
-                        <div class="col-sm-12">
+                        <input type="hidden" id="laboratorium_bidang_sub_id" name="laboratorium_bidang_sub_id" value="{{ $laboratorium_bidang->id }}" >
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Bagian Pemeriksaan</label>
+                                <input type="text" class="form-control" id="nama_sub_pemeriksaan" name="nama_sub_pemeriksaan" value="{{ $laboratorium_bidang->nama }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Bagian Pemeriksaan</label>
                                 <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Pemeriksaan" required>
@@ -119,53 +119,59 @@
     </div>
 </div>
 
-{{-- modal Edit Role --}}
-<div class="modal fade" id="editpemeriksaan_httModa" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+<div class="modal fade" id="edithtt_sub_pemeriksaanModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Master Data Kategori Perawatan</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Medis htt_sub_pemeriksaan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="editFormpemeriksaan_htt" action="{{ route('htt_pemeriksaan.update') }}" method="POST">
+                <form id="editFormhtt_sub_pemeriksaan" action="{{ route('laboratorium_bidang_sub.update') }}" method="POST">
                     @csrf
-                    <input type="hidden" id="htt_pemeriksaanid_edit" name="htt_pemeriksaanid_edit">
                     <div class="row">
-                        <div class="col-sm-12">
+                        <input type="hidden" id="laboratorium_bidang_subid_edit" name="laboratorium_bidang_subid_edit">
+                        <input type="hidden" id="laboratorium_bidang_sub_id_edit" name="laboratorium_bidang_sub_id_edit" value="{{ $laboratorium_bidang->id }}" >
+                        <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Nama Kategori Perawatan</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Kategori Perawatan" required>
+                                <label>Bagian Pemeriksaan</label>
+                                <input type="text" class="form-control" id="nama_pemeriksaan_edit" name="nama_pemeriksaan_edit" value="{{ $laboratorium_bidang->nama }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Bagian Pemeriksaan</label>
+                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Pemeriksaan" required>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Perbarui</button> <!-- Submit button -->
-                    </div>
-                </form>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary">Tambah</button> <!-- Submit button -->
+            </div>
+            </form>
         </div>
     </div>
 </div>
 
 {{-- modal Delete Role --}}
-<div class="modal fade" id="deletepemeriksaan_httModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+<div class="modal fade" id="deletehtt_sub_pemeriksaanModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormpemeriksaan_htt" action="{{ route('htt_pemeriksaan.destroy') }}" method="POST">
+        <form id="deleteFormhtt_sub_pemeriksaan" action="{{ route('laboratorium_bidang_sub.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data Kategori Perawatan</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data htt_sub_pemeriksaan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     @csrf
-                    <input type="hidden" id="pemeriksaan_httid_delete" name="pemeriksaan_httid_delete">
-                    <div id="deleteTextpemeriksaan_htt"></div>
+                    <input type="hidden" id="laboratorium_bidang_subid_delete" name="laboratorium_bidang_subid_delete">
+                    <div id="deleteTexthtt_sub_pemeriksaan"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -176,35 +182,11 @@
     </div>
 </div>
 
-<!-- Modal Import -->
-<div class="modal fade" id="importpemeriksaan_httModal" tabindex="-1" role="dialog" aria-labelledby="importpemeriksaan_httModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="importpemeriksaan_httModalLabel">Import Data Kategori Perawatan</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="{{ route('htt_pemeriksaan.import') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group">
-                        <label for="file">Pilih File Excel</label>
-                        <input type="file" name="file" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-file-import"></i> Import
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <script>
         $(document).ready(function() {
-            $("#pemeriksaan_htttabel").DataTable({
+            $("#htt_sub_pemeriksaantabel").DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -214,10 +196,10 @@
                     "pdf",
                     "print",
                 ]
-            }).buttons().container().appendTo('#pemeriksaan_htttabel_wrapper .col-md-6:eq(0)');
+            }).buttons().container().appendTo('#htt_sub_pemeriksaantabel_wrapper .col-md-6:eq(0)');
         });
 
-        $('#addFormpemeriksaan_htt').on('submit', function(e) {
+        $('#addFormhtt_sub_pemeriksaan').on('submit', function(e) {
             e.preventDefault();
 
             $.ajax({
@@ -226,7 +208,7 @@
                 data: $(this).serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#addpemeriksaan_httModal').modal('hide');
+                        $('#addhtt_sub_pemeriksaanModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
@@ -259,16 +241,16 @@
             });
         });
 
-        $(document).on('click', '.edit-data-pemeriksaan_htt', function() {
+        $(document).on('click', '.edit-data-goldar', function() {
             var id = $(this).data('id');
-            var nama = $(this).data('nama-pemeriksaan_htt');
+            var nama = $(this).data('nama-htt_sub_pemeriksaan');
 
-            $('#htt_pemeriksaanid_edit').val(id);
+            $('#laboratorium_bidang_subid_edit').val(id);
             $('#nama_edit').val(nama);
              // Pastikan rhesus terpilih dengan benar
         });
 
-        $('#editFormpemeriksaan_htt').on('submit', function(e) {
+        $('#editFormhtt_sub_pemeriksaan').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);
@@ -310,14 +292,14 @@
 
         $(document).on('click', '.delete-data-pemeriksaan_htt', function() {
             let id = $(this).data('id');
-            let name = $(this).data('nama-pemeriksaan_htt');
+            let name = $(this).data('nama-htt_sub_pemeriksaan');
 
-            $('#pemeriksaan_httid_delete').val(id);
-            $('#deleteTextpemeriksaan_htt').html(
+            $('#laboratorium_bidang_subid_delete').val(id);
+            $('#deleteTexthtt_sub_pemeriksaan').html(
             `<span>Apa Anda yakin ingin menghapus data pemeriksaan htt <b>${name}</b> ?</span>`);
         });
 
-        $('#deleteFormpemeriksaan_htt').on('submit', function(e) {
+        $('#deleteFormhtt_sub_pemeriksaan').on('submit', function(e) {
             e.preventDefault();
 
             let form = $(this);
@@ -329,7 +311,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-                        $('#deletepemeriksaan_httModal').modal('hide');
+                        $('#deletehtt_sub_pemeriksaanModal').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
@@ -351,7 +333,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Kategori Perawatan!',
+                        text: 'Terjadi kesalahan saat menghapus pemeriksaan htt!',
                     });
                 }
             });

@@ -32,6 +32,8 @@ Route::get('/dokter/data/so/{norawat}', [soap::class,'soappelayanandata'])->name
 
 Route::get('/get-subspesialis/{kode}', [soap::class, 'getSubSpesialis']);
 
+Route::get('/get-pemeriksaan-laboratorium/{id}', [soap::class, 'getSubBidangLab']);
+
 
 Route::prefix('lokasi')->group(function(){
     Route::get('/kabupaten', [LokasiController::class, 'getKabupaten'])->name('get.kabupaten');

@@ -78,10 +78,10 @@
                                         <td class="text-center">
                                             @switch($pendaftarandata->status->Status_aplikasi)
                                                 @case(1)
-                                                    Applikasi Offline
+                                                    Aplikasi Offline
                                                     @break
                                                 @case(2)
-                                                    Applikasi Onlaine
+                                                    Aplikasi Online
                                                     @break
                                                 @case(3)
                                                     Sistem BPJS / MJKN
@@ -202,9 +202,101 @@
     </div>
 </div>
 
-<!-- SweetAlert2 CSS dan JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- modal Panggil Role --}}
+<div class="modal fade" id="panggilModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+    <div class="modal-dialog">
+        <form id="deleteFormbatal" action="{{ route('pendaftaran.hadir') }}" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmasi Pendaftaran Pasien Hadir</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" id="hadirid_delete" name="hadirid_delete">
+                    <div id="deleteTexthadir"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-info">Hadir</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- modal Delete Role --}}
+<div class="modal fade" id="deletebatalModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+    <div class="modal-dialog">
+        <form id="deleteFormbatal" action="{{ route('pendaftaran.batal') }}" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Batal Pendaftaran Pasien</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" id="batalid_delete" name="batalid_delete">
+                    <div id="deleteTextbatal"></div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="alasanpembatalan">Alasan Pembatalan</label>
+                            <input type="text" class="form-control" id="alasanpembatalan" name="alasanpembatalan" placeholder="Masukkan lasan pembatalan" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- modal Delete Role --}}
+<div class="modal fade" id="deleterubahModal" tabindex="-1" role="dialog" aria-labelledby="deleterubahModalLabel">
+    <div class="modal-dialog">
+        <form id="deleteFormrubah" action="{{ route('pendaftaran.dokter.update') }}" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleterubahModalLabel">Peruabahan Dokter</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" id="rubahdokter_id" name="rubahdokter_id">
+                    <input type="hidden" id="poli_id_update" name="poli_id_update">
+                    <input type="hidden" id="tanggal_kunjungan_update" name="tanggal_kunjungan_update">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label id="namapasien"></label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Dokter</label>
+                            <select class="form-control select2bs4" style="width: 100%;" id="dokter_id_update" name="dokter_id_update">
+                                <option value="" disabled selected>Pilih Dokter</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-info">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 <script>
     $(document).ready(function () {
@@ -246,41 +338,41 @@
         // Form submit untuk tambah pasien dengan SweetAlert
         $('#addFormsuku').on('submit', function(e) {
             e.preventDefault();
-            
+
             // Validasi form sebelum submit
             let isValid = true;
             let errorMessages = [];
-            
+
             // Validasi Pasien
             if (!$('#pasien').val()) {
                 isValid = false;
                 errorMessages.push('Pasien harus dipilih');
             }
-            
+
             // Validasi Poli
             if (!$('#poli_id').val()) {
                 isValid = false;
                 errorMessages.push('Poli harus dipilih');
             }
-            
+
             // Validasi Tanggal Kunjungan
             if (!$('#tanggal_kunjungan').val()) {
                 isValid = false;
                 errorMessages.push('Tanggal kunjungan harus diisi');
             }
-            
+
             // Validasi Dokter
             if (!$('#dokter_id').val()) {
                 isValid = false;
                 errorMessages.push('Dokter harus dipilih');
             }
-            
+
             // Validasi Penjamin
             if (!$('#penjamin_id').val()) {
                 isValid = false;
                 errorMessages.push('Penjamin pasien harus dipilih');
             }
-            
+
             // Jika tidak valid, tampilkan error
             if (!isValid) {
                 Swal.fire({
@@ -291,7 +383,7 @@
                 });
                 return;
             }
-            
+
             Swal.fire({
                 title: 'Konfirmasi',
                 text: 'Apakah Anda yakin ingin menambah data pasien ini?',
@@ -331,21 +423,21 @@
                         },
                         error: function(xhr, status, error) {
                             let errorMessage = 'Terjadi kesalahan saat menyimpan data';
-                            
+
                             // Handle validation errors (422)
                             if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
                                 let errors = xhr.responseJSON.errors;
                                 let errorList = [];
-                                
+
                                 // Loop through each error field
                                 Object.keys(errors).forEach(function(field) {
                                     errors[field].forEach(function(message) {
                                         errorList.push(message);
                                     });
                                 });
-                                
+
                                 errorMessage = errorList.join('<br>');
-                            } 
+                            }
                             // Handle other types of errors
                             else if (xhr.responseJSON && xhr.responseJSON.message) {
                                 errorMessage = xhr.responseJSON.message;
@@ -374,6 +466,46 @@
 </script>
 
 <script>
+        $('#deleteFormhadir').on('submit', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+            let url = form.attr('action');
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        $('#panggilModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                    });
+                }
+            });
+        });
+
     $(document).on('click', '.dokter-data-pasien', function() {
         let id = $(this).data('id');
         let tanggal = $(this).data('tgl-kunjung');
@@ -465,7 +597,7 @@
                     },
                     error: function(xhr, status, error) {
                         let errorMessage = 'Terjadi kesalahan saat mengupdate dokter';
-                        
+
                         if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
                             let errors = xhr.responseJSON.errors;
                             let errorList = [];
@@ -571,7 +703,7 @@
                     },
                     error: function(xhr, status, error) {
                         let errorMessage = 'Terjadi kesalahan saat membatalkan pendaftaran';
-                        
+
                         if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
                             let errors = xhr.responseJSON.errors;
                             let errorList = [];
@@ -644,7 +776,7 @@
                     },
                     error: function(xhr, status, error) {
                         let errorMessage = 'Terjadi kesalahan saat mengupdate status kehadiran';
-                        
+
                         if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
                             let errors = xhr.responseJSON.errors;
                             let errorList = [];

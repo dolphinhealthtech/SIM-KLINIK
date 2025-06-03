@@ -120,7 +120,9 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::get('/dokter/so/hadir/{norawat}', [soap::class,'soappelayananpanggil'])->name('pelayana_dokter.hadir');
     Route::get('/rujuk/{norawat}', [soap::class,'pelayana_rujukan'])->name('pelayana_rujuk.get');
     Route::get('/rme/{norawat}', [soap::class, 'pelayana_rme'])->name('pelayana_rme.get');
+    Route::get('/permintaan/{norawat}', [soap::class, 'pelayana_permintaan'])->name('pelayana_permintaan.get');
     Route::post('/resep/print', [soap::class, 'print'])->name('resep.print');
+    Route::post('/laboratorium/print', [soap::class, 'laboratoriumPrint'])->name('laboratorium.print');
     // Menu Pasien
     Route::get('/perawat', [soap::class,'pelayana'])->name('pelayana.get');
     Route::get('/perawat/so/{norawat}', [soap::class,'sopelayanan'])->name('sopelayana.get');
@@ -325,6 +327,18 @@ Route::prefix('pemeriksaan')->group(function () {
             Route::post('/radiologi_jenis/delete', [DataMasterMedisController::class,'radiologi_jenisdelete'])->name('radiologi_jenis.destroy');
             Route::get('/radiologi_jenis/export', [DataMasterMedisController::class,'radiologi_jenisexport'])->name('radiologi_jenis.export');
             Route::post('/radiologi_jenis/import', [DataMasterMedisController::class,'radiologi_jenisimport'])->name('radiologi_jenis.import');
+            
+            Route::get('/bidang-lab', [DataMasterMedisController::class, 'laboratorium_bidang'])->name('laboratorium_bidang.get');
+            Route::post('/bidang-lab/add', [DataMasterMedisController::class,'laboratorium_bidangadd'])->name('laboratorium_bidang.store');
+            Route::post('/bidang-lab/update', [DataMasterMedisController::class,'laboratorium_bidangedit'])->name('laboratorium_bidang.update');
+            Route::post('/bidang-lab/delete', [DataMasterMedisController::class,'laboratorium_bidangdelete'])->name('laboratorium_bidang.destroy');
+            Route::get('/bidang-lab/export', [DataMasterMedisController::class,'laboratorium_bidangexport'])->name('laboratorium_bidang.export');
+            Route::post('/bidang-lab/import', [DataMasterMedisController::class,'laboratorium_bidangeimport'])->name('laboratorium_bidang.import');
+
+            Route::get('/bidang-lab-sub/{kode}', [DataMasterMedisController::class,'laboratorium_bidang_sub'])->name('laboratorium_bidang_sub.get');
+            Route::post('/bidang-lab-sub/add', [DataMasterMedisController::class,'laboratorium_bidang_subadd'])->name('laboratorium_bidang_sub.store');
+            Route::post('/bidang-lab-sub/update', [DataMasterMedisController::class,'laboratorium_bidang_subedit'])->name('laboratorium_bidang_sub.update');
+            Route::post('/bidang-lab-sub/delete', [DataMasterMedisController::class,'laboratorium_bidang_subdelete'])->name('laboratorium_bidang_sub.destroy');
 
 
         });

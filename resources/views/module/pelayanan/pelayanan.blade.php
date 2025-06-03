@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">bank</h3>
+                                <h3 class="card-title">Pelayanan</h3>
                             </div>
                             <div class="card-body">
                                 <table id="banktabel" class="table table-bordered table-striped">
@@ -59,9 +59,12 @@
                                                         </button>
                                                         <div class="dropdown-menu dropdown-menu-right" role="menu">
                                                             @if ($pelayanandata->tindakan_button == 'panggil')
-                                                                <a class="dropdown-item" href="{{ route('sopelayana.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                                <a href="javascript:void(0);"
+                                                                class="dropdown-item pasien-hadir"
+                                                                data-url="{{ route('sopelayana.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-bell"></i> Panggil
                                                                 </a>
+
                                                             @elseif ($pelayanandata->tindakan_button == 'soap')
                                                                 <a class="dropdown-item" href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-file-medical-alt"></i> SOAP & Pemeriksaan
@@ -107,6 +110,44 @@
                 ]
             }).buttons().container().appendTo('#banktabel_wrapper .col-md-6:eq(0)');
         });
+
+        $('.pasien-hadir').on('click', function(e) {
+            e.preventDefault();
+
+            let url = $(this).data('url');
+
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            $('.modal-backdrop').remove();
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat Pemanggilan Pasien!',
+                    });
+                }
+            });
+        });
+
 
         $(document).on('click', '.delete-data-bank', function() {
             let id = $(this).data('id');
