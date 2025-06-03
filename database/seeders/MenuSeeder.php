@@ -88,12 +88,20 @@ class MenuSeeder extends Seeder
             'order' => 7,
         ]);
 
+        $keuangan = menu::create([
+            'name' => 'Keuangan',
+            'url' => '#',
+            'icon' => 'hand-holding-usd',
+            'parent_id' => null,
+            'order' => 8,
+        ]);
+
         $sdm = menu::create([
             'name' => 'SDM',
             'url' => '#',
             'icon' => 'users',
             'parent_id' => null,
-            'order' => 8,
+            'order' => 9,
         ]);
 
         $pembelian = menu::create([
@@ -101,7 +109,7 @@ class MenuSeeder extends Seeder
             'url' => '/pembelian',
             'icon' => 'shopping-cart',
             'parent_id' => null,
-            'order' => 9,
+            'order' => 10,
         ]);
 
         $dataBarang = menu::create([
@@ -109,7 +117,7 @@ class MenuSeeder extends Seeder
             'url' => '/data-barang',
             'icon' => 'pills',
             'parent_id' => null,
-            'order' => 10,
+            'order' => 11,
         ]);
 
         $dataMaster = menu::create([
@@ -117,7 +125,7 @@ class MenuSeeder extends Seeder
             'url' => '#',
             'icon' => 'database',
             'parent_id' => null,
-            'order' => 11,
+            'order' => 12,
         ]);
 
         $pengaturan = menu::create([
@@ -125,7 +133,7 @@ class MenuSeeder extends Seeder
             'url' => '#', // Use # for dropdown menu
             'icon' => 'cog',
             'parent_id' => null,
-            'order' => 12,
+            'order' => 13,
         ]);
 
         // Tambahkan role ke menu utama untuk Super-admin
@@ -137,6 +145,7 @@ class MenuSeeder extends Seeder
             $pemeriksaan->roles()->attach($superAdminRole->id);
             $apotek->roles()->attach($superAdminRole->id);
             $kasir->roles()->attach($superAdminRole->id);
+            $keuangan->roles()->attach($superAdminRole->id);
             $sdm->roles()->attach($superAdminRole->id);
             $pembelian->roles()->attach($superAdminRole->id);
             $dataBarang->roles()->attach($superAdminRole->id);
@@ -211,6 +220,32 @@ class MenuSeeder extends Seeder
             if ($subMenu['name'] === 'Perawat' && $perawatRole) {
                 $menu->roles()->attach($perawatRole->id);
             }
+        }
+
+        //
+
+        // Submenu Keuangan
+        $subMenuKeuangan = [
+            ['name' => 'Data Kasir', 'url' => '/datakasir', 'icon' => 'dollar-sign', 'order' => 1],
+            ['name' => 'Data Kasir Detail', 'url' => '/datakasir/detail', 'icon' => 'file-text', 'order' => 2],
+            ['name' => 'Data Kasir Apotek', 'url' => '/datakasir/apotek', 'icon' => 'capsules', 'order' => 3],
+            ['name' => 'Data Kasir Tindakan', 'url' => '/datakasir/tindakan', 'icon' => 'briefcase-medical', 'order' => 4], // jika menggunakan Font Awesome
+            ['name' => 'Data Kasir Diskon', 'url' => '/datakasir/diskon', 'icon' => 'percent', 'order' => 5],
+        ];
+
+        foreach ($subMenuKeuangan as $subMenu) {
+            $menu = menu::create([
+                'name' => $subMenu['name'],
+                'url' => $subMenu['url'],
+                'icon' => $subMenu['icon'],
+                'parent_id' => $keuangan->id,
+                'order' => $subMenu['order'],
+            ]);
+
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
+
         }
 
         // Submenu SDM
@@ -400,7 +435,7 @@ class MenuSeeder extends Seeder
         }
 
         //baru
-        // 3. Buat submenu Data Master Gudang di bawah Data Master
+        // 5. Buat submenu Data Master Gudang di bawah Data Master
         $dataMasterGudang = menu::create([
             'name' => 'Data Master Manajemen',
             'url' => '#',
