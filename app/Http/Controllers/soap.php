@@ -237,7 +237,14 @@ class soap extends Controller
     public function pelayana_dokter()
     {
         $title = "Pelayanan";
-        $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien','pendaftaran.status')->whereHas('pelayanan_so')->get();
+        // $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien','pendaftaran.status')->whereHas('pelayanan_so')->get();
+        $pelayanan = Pelayanan::with('poli', 'dokter.namauser', 'pasien', 'pendaftaran.status')
+        ->whereHas('pelayanan_so')
+        ->whereHas('pendaftaran.status', function ($query) {
+            $query->where('status_panggil', '!=', 3);
+        })
+        ->get();
+
 
         foreach ($pelayanan as $item) {
             $status = $item->pendaftaran->status->status_panggil ?? 0;
@@ -263,6 +270,34 @@ class soap extends Controller
 
         if ($pelayanan && $pelayanan->pendaftaran && $pelayanan->pendaftaran->status) {
             $pelayanan->pendaftaran->status->status_panggil = 2;
+            $pelayanan->pendaftaran->status->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status panggil berhasil diperbarui.'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data status tidak ditemukan.'
+            ], 404);
+        }
+
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Data tidak ditemukan atau belum memiliki status.'
+        ], 404);
+    }
+
+    public function soappelayananselesai($norawat)
+    {
+        $nomor_rawat = base64_decode($norawat);
+
+        $pelayanan = Pelayanan::with('pendaftaran.status')->where('nomor_register', $nomor_rawat)->first();
+
+        if ($pelayanan && $pelayanan->pendaftaran && $pelayanan->pendaftaran->status) {
+            $pelayanan->pendaftaran->status->status_panggil = 3;
             $pelayanan->pendaftaran->status->save();
 
             return response()->json([
@@ -478,10 +513,6 @@ class soap extends Controller
                 'tanggal_lahir' => $request->tanggal_lahir,
                 'Resep_obat' => $request->resep_data,
             ]);
-
-            $pelayanan = Pelayanan::with('pendaftaran.status')->where('nomor_register', $request->no_rawat)->first();
-            $pelayanan->pendaftaran->status->status_panggil = 3;
-            $pelayanan->pendaftaran->status->save();
 
             // Return response JSON untuk AJAX
             return response()->json([

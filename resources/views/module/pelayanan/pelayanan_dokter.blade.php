@@ -78,6 +78,11 @@
                                                                 <a class="dropdown-item" href="{{ route('pelayana_permintaan.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
                                                                     <i class="fas fa-edit"></i> Permintaan
                                                                 </a>
+                                                                 <a href="javascript:void(0);"
+                                                                class="dropdown-item pasien-selesai"
+                                                                data-url="{{ route('pelayana_dokter.selesai', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                                    <i class="fas fa-bell"></i> Selesai
+                                                                </a>
                                                             @endif
                                                         </div>
                                                     </div>
@@ -111,7 +116,44 @@
                 ]
             }).buttons().container().appendTo('#banktabel_wrapper .col-md-6:eq(0)');
         });
-$('.pasien-hadir').on('click', function(e) {
+        $('.pasien-selesai').on('click', function(e) {
+            e.preventDefault();
+
+            let url = $(this).data('url');
+
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            $('.modal-backdrop').remove();
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat Pemanggilan Pasien!',
+                    });
+                }
+            });
+        });
+
+        $('.pasien-hadir').on('click', function(e) {
             e.preventDefault();
 
             let url = $(this).data('url');
