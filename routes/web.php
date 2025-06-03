@@ -131,6 +131,11 @@ Route::prefix('pemeriksaan')->group(function () {
 
 });
 
+//untuk list pasien
+Route::get('/list_pasien', [Soap::class, 'list_pasien'])
+     ->name('list_pasien.get');
+     Route::get('/rme/{norawat}', [soap::class, 'pelayana_rme_selesai'])->name('list_pasien_rme.get');
+
 // Menu data master
     // Menu data master umum
         Route::middleware('auth')->prefix('data-master')->group(function () {
@@ -327,7 +332,7 @@ Route::prefix('pemeriksaan')->group(function () {
             Route::post('/radiologi_jenis/delete', [DataMasterMedisController::class,'radiologi_jenisdelete'])->name('radiologi_jenis.destroy');
             Route::get('/radiologi_jenis/export', [DataMasterMedisController::class,'radiologi_jenisexport'])->name('radiologi_jenis.export');
             Route::post('/radiologi_jenis/import', [DataMasterMedisController::class,'radiologi_jenisimport'])->name('radiologi_jenis.import');
-            
+
             Route::get('/bidang-lab', [DataMasterMedisController::class, 'laboratorium_bidang'])->name('laboratorium_bidang.get');
             Route::post('/bidang-lab/add', [DataMasterMedisController::class,'laboratorium_bidangadd'])->name('laboratorium_bidang.store');
             Route::post('/bidang-lab/update', [DataMasterMedisController::class,'laboratorium_bidangedit'])->name('laboratorium_bidang.update');
