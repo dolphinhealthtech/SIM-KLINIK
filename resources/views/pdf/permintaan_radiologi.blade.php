@@ -141,7 +141,7 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">PERMINTAAN PEMERIKSAAN LABORATORIUM</div>
+    <div class="document-title">PERMINTAAN PEMERIKSAAN RADIOLOGI</div>
 
     <table class="info-table" style="width: 100%;">
         <tr>
@@ -180,14 +180,18 @@
             <thead>
                 <tr>
                     <th style="width: 10%;">No</th>
-                    <th style="width: 90%;">Nama Pemeriksaan</th>
+                    <th style="width: 40%;">Nama Pemeriksaan</th>
+                    <th style="width: 25%;">Posisi</th>
+                    <th style="width: 25%;">Metode</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($labData as $index => $pemeriksaan)
+                @foreach ($radData as $index => $pemeriksaan)
                     <tr>
                         <td>{{ $index + 1 }}</td>
-                        <td>{{ $pemeriksaan }}</td>
+                        <td>{{ $pemeriksaan['pemeriksaan'] }}</td>
+                        <td>{{ $pemeriksaan['jenis_posisi'] }} - {{ $pemeriksaan['posisi'] }}</td>
+                        <td>{{ $pemeriksaan['metode'] }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -210,7 +214,7 @@
         <tr>
             <td class="info-label">Catatan Dokter</td>
             <td class="info-separator">:</td>
-            <td>{!! nl2br(e($catatan)) !!}</td>
+            <td>{!! nl2br(e($catatan ?? '-')) !!}</td>
         </tr>
     </table>
 

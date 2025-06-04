@@ -62,9 +62,9 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">Nama Pasien</th>
-                                        <th class="text-center">Pedaftaran</th>
-                                        <th class="text-center">No Registarsi</th>
-                                        <th class="text-center">Tanggal Registarsi</th>
+                                        <th class="text-center">Pendaftaran</th>
+                                        <th class="text-center">No Registrasi</th>
+                                        <th class="text-center">Tanggal Registrasi</th>
                                         <th class="text-center">No RM</th>
                                         <th class="text-center">No. Antrian</th>
                                         <th class="text-center">Poli Tujuan</th>

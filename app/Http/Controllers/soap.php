@@ -31,6 +31,8 @@ use App\Models\spesialis;
 use App\Models\subspesialis;
 use App\Models\laboratorium_bidang;
 use App\Models\laboratorium_bidang_sub;
+use App\Models\radiologi_pemeriksaan;
+use App\Models\radiologi_jenis;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -853,7 +855,11 @@ class soap extends Controller
 
         $data_lab = laboratorium_bidang::all();
 
-        return view('module.pelayanan.pelayanan_permintaan', compact('title','pelayanan','umur','data_icd9','data_lab'));
+        $radiologi_pemeriksaan = radiologi_pemeriksaan::all();
+
+        $radiologi_jenis = radiologi_jenis::all();
+
+        return view('module.pelayanan.pelayanan_permintaan', compact('title','pelayanan','umur','data_icd9','data_lab','radiologi_pemeriksaan','radiologi_jenis'));
     }
 
     public function getSubBidangLab($id)
@@ -896,6 +902,39 @@ class soap extends Controller
         ])->setPaper('a6', 'portrait');
 
         $filename = 'permintaan_laboratorium_' . $nama_pasien . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    public function radiologiPrint(Request $request)
+    {
+        $radData = json_decode($request->rad_table_hidden, true);
+        $diagnosa = $request->diagnosa_radiologi;
+        $tanggal = $request->tanggal_periksa_radiologi;
+        $catatan = $request->catatan_dokter_radiologi;
+        $nama_pasien = $request->nama_pasien;
+        $dokter_pengirim = $request->dokter_pengirim;
+        $poli = $request->poli;
+        $jenis_kelamin = $request->jenis_kelamin;
+        $tanggal_lahir = $request->tanggal_lahir;
+        $alamat = $request->alamat;
+        $penjamin = $request->penjamin;
+
+        $pdf = PDF::loadView('pdf.permintaan_radiologi', [
+            'radData' => $radData,
+            'diagnosa' => $diagnosa,
+            'tanggal' => $tanggal,
+            'catatan' => $catatan,
+            'nama_pasien' => $nama_pasien,
+            'dokter_pengirim' => $dokter_pengirim,
+            'poli' => $poli,
+            'jenis_kelamin' => $jenis_kelamin,
+            'tanggal_lahir' => $tanggal_lahir,
+            'alamat' => $alamat,
+            'penjamin' => $penjamin,
+        ])->setPaper('a6', 'portrait');
+
+        $filename = 'permintaan_radiologi_' . $nama_pasien . '.pdf';
 
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }

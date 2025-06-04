@@ -7,13 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class pasien_antrian extends Model
 {
-        use HasFactory;
-    
+    use HasFactory;
+
     protected $fillable = [
         'pasien_id',
         'nomor_antrian',
         'status_panggil',
     ];
 
-    
+    public function pasien()
+    {
+        return $this->belongsTo(pasien::class, 'pasien_id', 'id');
+}
+
 }

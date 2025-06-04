@@ -3677,17 +3677,73 @@ public function panggilPasien($id)
     }
 
     public function loketAntrian()
-{
-    $title = "Loket Antrian";
-    // You can fetch active queue data here
-    // For example:
-    // $activeQueues = Pendaftaran_rawat_jalan::whereDate('created_at', Carbon::today())
-    //     ->whereNotNull('antrian')
-    //     ->orderBy('created_at', 'desc')
-    //     ->get();
+    {
+        $title = "Loket Antrian";
+        // You can fetch active queue data here
+        // For example:
+        // $activeQueues = Pendaftaran_rawat_jalan::whereDate('created_at', Carbon::today())
+        //     ->whereNotNull('antrian')
+        //     ->orderBy('created_at', 'desc')
+        //     ->get();
 
-    return view('monitor.loket_antrian', compact('title'));
-}
+        return view('monitor.loket_antrian', compact('title'));
+    }
+
+    // PENDATAAN
+
+    public function pendataan_antrian()
+    {
+        $title = "Data Antrian";
+
+        $data = pasien_antrian::with('pasien')->get();
+
+        return view('module.pendataan.antrian', compact('title','data'));
+    }
+
+    public function print_antrian(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+
+        $total_invoice = count($data);
+
+        $pdf = Pdf::loadView('pdf.data_antrian', compact('data', 'tanggal_awal', 'tanggal_akhir', 'total_invoice'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'pendataan_antrian_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    public function pendataan_pendaftaran()
+    {
+        $title = "Data Pendaftaran";
+
+        $data = Pendaftaran_rawat_jalan::with('poli','dokter.namauser','pasien','penjamin')->get();
+
+        return view('module.pendataan.pendaftaran', compact('title','data'));
+    }
+
+    public function print_pendaftaran(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+        $dokter = $request->input('dokter');
+
+        $total_invoice = count($data);
+
+        $pdf = Pdf::loadView('pdf.data_pendaftaran', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'pendataan_pendaftaran_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    // END PENDATAAN
 }
 
 

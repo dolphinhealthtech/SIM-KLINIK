@@ -56,4 +56,9 @@ class pasien extends Model
     {
         return $this->hasOne(pelayanan_soap_dokter::class, 'nomor_rm', 'no_rm');
     }
+
+    public function antrian()
+    {
+        return $this->hasOne(pasien_antrian::class, 'pasien_id', 'id');
+    }
 }
