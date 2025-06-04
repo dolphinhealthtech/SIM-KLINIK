@@ -133,9 +133,11 @@ Route::prefix('pemeriksaan')->group(function () {
 });
 
 //untuk list pasien
-Route::get('/list_pasien', [Soap::class, 'list_pasien'])
-     ->name('list_pasien.get');
+ Route::middleware('auth')->prefix('pasien-selesai')->group(function () {
+     Route::get('/', [soap::class, 'pelayana_selesai'])->name('list_pasien.get');
      Route::get('/rme/{norawat}', [soap::class, 'pelayana_rme_selesai'])->name('list_pasien_rme.get');
+ });
+
 
 // Menu data master
     // Menu data master umum

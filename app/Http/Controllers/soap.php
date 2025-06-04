@@ -901,12 +901,12 @@ class soap extends Controller
     }
 
     //list pasien selesai
-    public function list_pasien()
+    public function pelayana_selesai()
     {
         $title = "list_pasien";
         $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien','pendaftaran.status')->whereHas('pelayanan_so')->get();
 
-        
+
         return view('module.pelayanan.list_pasien_selesai', compact('title','pelayanan'));
     }
 

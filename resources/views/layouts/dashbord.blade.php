@@ -8,7 +8,7 @@
     @include('components.dashboard.css')
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class=" layout-fixed">
     @php
         use App\Models\WebSetting;
         $settings = WebSetting::first();
