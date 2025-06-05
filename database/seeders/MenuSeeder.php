@@ -120,12 +120,21 @@ class MenuSeeder extends Seeder
             'order' => 11,
         ]);
 
+        $pendataan = menu::create([
+            'name' => 'pendataan',
+            'url' => '#',
+            'icon' => 'fa-pen atau fa-edit',
+            'parent_id' => null,
+            'order' => 12,
+        ]);
+
+
         $dataMaster = menu::create([
             'name' => 'Data Master',
             'url' => '#',
             'icon' => 'database',
             'parent_id' => null,
-            'order' => 12,
+            'order' => 13,
         ]);
 
         $pengaturan = menu::create([
@@ -133,7 +142,7 @@ class MenuSeeder extends Seeder
             'url' => '#', // Use # for dropdown menu
             'icon' => 'cog',
             'parent_id' => null,
-            'order' => 13,
+            'order' => 14,
         ]);
 
         // Tambahkan role ke menu utama untuk Super-admin
@@ -147,6 +156,7 @@ class MenuSeeder extends Seeder
             $kasir->roles()->attach($superAdminRole->id);
             $keuangan->roles()->attach($superAdminRole->id);
             $sdm->roles()->attach($superAdminRole->id);
+            $pendataan->roles()->attach($superAdminRole->id);
             $pembelian->roles()->attach($superAdminRole->id);
             $dataBarang->roles()->attach($superAdminRole->id);
             $dataMaster->roles()->attach($superAdminRole->id);
@@ -270,6 +280,30 @@ class MenuSeeder extends Seeder
             if ($sdmRole) {
                 $menu->roles()->attach($sdmRole->id);
             }
+        }
+
+        //sub menu pendataan
+        $subMenuPendataan = [
+            ['name' => 'Antrian', 'url' => '/pendataan/antrian', 'icon' => 'fas fa-people-arrows', 'order' => 1],
+            ['name' => 'Pendaftaran', 'url' => '/pendataan/pendaftaran', 'icon' => 'fas fa-user-plus', 'order' => 2],
+            ['name' => 'Dokter', 'url' => '/pendataan/soap-dokter', 'icon' => 'fas fa-user-md', 'order' => 3],
+            ['name' => 'Perawat', 'url' => '/pendataan/so-perawat', 'icon' => 'fas fa-user-nurse', 'order' => 4], 
+        ];
+
+
+        foreach ($subMenuPendataan as $subMenu) {
+            $menu = menu::create([
+                'name' => $subMenu['name'],
+                'url' => $subMenu['url'],
+                'icon' => $subMenu['icon'],
+                'parent_id' => $pendataan->id,
+                'order' => $subMenu['order'],
+            ]);
+
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
+
         }
 
         // Submenu Data Master - Loket
@@ -435,7 +469,6 @@ class MenuSeeder extends Seeder
         }
 
         //baru
-        // 5. Buat submenu Data Master Gudang di bawah Data Master
         $dataMasterGudang = menu::create([
             'name' => 'Data Master Manajemen',
             'url' => '#',

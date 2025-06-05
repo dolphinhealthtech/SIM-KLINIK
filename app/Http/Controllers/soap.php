@@ -191,18 +191,18 @@ class soap extends Controller
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Alergi berhasil ditambahkan!'
+                'message' => 'pelayanan soap perawat berhasil ditambahkan!'
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Alergi Sudah ada!',
+                'message' => 'pelayanan soap perawat Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Alergi!',
+                'message' => 'Terjadi kesalahan saat menyimpan pelayanan soap perawat!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -519,18 +519,18 @@ class soap extends Controller
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Alergi berhasil ditambahkan!'
+                'message' => 'pelayanan soap dokter icd berhasil ditambahkan!'
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Alergi Sudah ada!',
+                'message' => 'pelayanan soap dokter icd Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Alergi!',
+                'message' => 'Terjadi kesalahan saat menyimpan pelayanan soap dokter icd!',
                 'error' => $e->getMessage()
             ], 500);
         }
