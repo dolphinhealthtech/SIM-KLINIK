@@ -1,9 +1,9 @@
  <!-- Main Sidebar Container -->
- <aside class="main-sidebar sidebar-dark-primary elevation-4">
+ <aside class="main-sidebar sidebar-light-teal elevation-4">
     <!-- Brand Logo -->
     <a  class="brand-link">
         <img src="{{ asset('setting/' . ($settings->profile_image ?? 'default.jpg')) }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">{{ $settings->nama ?? '' }}</span>
+        <strong class="brand-text font-weight-light" style="color: #6c757d;">{{ $settings->nama ?? '' }}</strong>
     </a>
 
     <!-- Sidebar -->
@@ -22,8 +22,8 @@
         </div>
 
         <!-- Sidebar Menu -->
-        <nav class="mt-3">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <nav class="mt-3 ">
+            <ul class="nav nav-pills nav-compact nav-child-indent nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 @foreach ($menus as $menu)
                     @php
                         // Cek apakah menu aktif berdasarkan URL
@@ -35,11 +35,10 @@
                                         )->isNotEmpty()
                                     )->isNotEmpty();
                     @endphp
-
                     <li class="nav-item {{ $isActive ? 'menu-open' : '' }}">
-                        <a href="{{ $menu->url ? url($menu->url) : '#' }}" class="nav-link {{ request()->is(trim($menu->url, '/')) ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-{{ $menu->icon }}"></i>
-                            <p>
+                        <a href="{{ $menu->url ? url($menu->url) : '#' }}" class="nav-link {{ $isActive ? 'active' : '' }}">
+                            <i class="nav-icon fa fa-{{ $menu->icon }}" {{ $isActive ? 'style=" color: #ffff;"' : 'style=" color: #6c757d;"' }}></i>
+                            <p {{ $isActive ? 'style=" color: #ffff;"' : 'style=" color: #6c757d;"' }} >
                                 {{ $menu->name }}
                                 @if ($menu->children->isNotEmpty())
                                     <i class="right fa fa-angle-left"></i>
@@ -60,8 +59,8 @@
 
                                     <li class="nav-item {{ $isChildActive ? 'menu-open' : '' }}">
                                         <a href="{{ $child->url ? url($child->url) : '#' }}" class="nav-link {{ request()->is(trim($child->url, '/')) ? 'active' : '' }}">
-                                            <i class="fa fa-{{ $child->icon }} nav-icon"></i>
-                                            <p>
+                                            <i class="fa fa-{{ $child->icon }} nav-icon" {{ $isChildActive ? 'style=" color: #ffff;"' : 'style=" color: #6c757d;"' }}></i>
+                                            <p {{ $isChildActive ? 'style=" color: #ffff;"' : 'style=" color: #6c757d;"' }}>
                                                 {{ $child->name }}
                                                 @if ($child->children->isNotEmpty())
                                                     <i class="right fa fa-angle-left"></i>
@@ -74,8 +73,8 @@
                                                 @foreach ($child->children as $grandchild)
                                                     <li class="nav-item">
                                                         <a href="{{ url($grandchild->url) }}" class="nav-link {{ request()->is(trim($grandchild->url, '/')) ? 'active' : '' }}">
-                                                            <i class="fa fa-{{ $grandchild->icon }} nav-icon"></i>
-                                                            <p>{{ $grandchild->name }}</p>
+                                                            <i class="fa fa-{{ $grandchild->icon }} nav-icon" {{ $grandchild ? 'style=" color: #ffffff;"' : 'style=" color: #6c757d;"' }}></i>
+                                                            <p {{ $grandchild ? 'style="color: #ffffff;"' : 'style="color: #6c757d;"' }}>{{ $grandchild->name }}</p>
                                                         </a>
                                                     </li>
                                                 @endforeach
@@ -87,6 +86,11 @@
                         @endif
                     </li>
                 @endforeach
+                <li>
+                                    <br>
+                                    <br>
+                                    <br>
+                                </li>
             </ul>
         </nav>
     <!-- /.sidebar-menu -->

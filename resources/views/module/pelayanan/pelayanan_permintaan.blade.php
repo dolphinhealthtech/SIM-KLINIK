@@ -108,9 +108,10 @@
                             <div class="tab-pane fade show active" id="custom-tabs-four-radiologi" role="tabpanel" aria-labelledby="custom-tabs-four-radiologi-tab">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 285px;">
-                                            <div class="table-responsive" style="max-height: 285px; overflow-y: auto;">
-                                                <table class="table" id="radiologi_table" style="border: none;">
+                                        <input type="hidden" id="rad_table_hidden" name="rad_table_hidden">
+                                        <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 255px;">
+                                            <div class="table-responsive" style="max-height: 255px; overflow-y: auto;">
+                                                <table class="table" id="rad_table" style="border: none;">
                                                     <thead>
                                                         <tr>
                                                             <th style="width: 10%">No</th>
@@ -134,11 +135,13 @@
                                             <div class="col-md-8">
                                                 <select class="form-control select2bs4" style="width: 100%;" id="pemeriksaan_radiologi" name="pemeriksaan_radiologi">
                                                     <option value="" disabled selected>-- Pilih --</option>
-                                                    <option value="testing">testing</option>
+                                                    @foreach ($radiologi_pemeriksaan as $radiologi_pemeriksaan_item)
+                                                        <option value="{{ $radiologi_pemeriksaan_item->nama }}">{{ $radiologi_pemeriksaan_item->nama }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-2">
-                                                <button type="button" class="btn btn-primary w-100">Tambah</button>
+                                                <button type="button" class="btn btn-primary w-100" id="btn-tambah-rad">Tambah</button>
                                             </div>
                                         </div>
                                         <div class="form-group row align-items-center mt-3">
@@ -148,17 +151,34 @@
                                             <div class="col-md-5">
                                                 <select class="form-control select2bs4" style="width: 100%;" id="jenis_posisi_radiologi" name="jenis_posisi_radiologi">
                                                     <option value="" disabled selected>-- Pilih --</option>
-                                                    <option value="testing">testing</option>
+                                                    @foreach ($radiologi_jenis as $radiologi_jenis_item)
+                                                        <option value="{{ $radiologi_jenis_item->nama }}">{{ $radiologi_jenis_item->nama }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
                                                 <select class="form-control select2bs4" style="width: 100%;" id="posisi_radiologi" name="posisi_radiologi">
                                                     <option value="" disabled selected>-- Pilih --</option>
-                                                    <option value="testing">testing</option>
+                                                    <option value="R">R</option>
+                                                    <option value="L">L</option>
+                                                    <option value="Both">Both</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-2">
-                                                <button type="button" class="btn btn-danger w-100">Hapus</button>
+                                                <button type="button" class="btn btn-danger w-100" id="btn-hapus-rad">Hapus</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row align-items-center mt-3">
+                                            <div class="col-md-2">
+                                                <label class="col-form-label">Metode</label>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <select class="form-control select2bs4" style="width: 100%;" id="metode_radiologi" name="metode_radiologi">
+                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                    <option value="Rutin">Rutin</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-5">
                                             </div>
                                         </div>
                                         <div class="form-group row mt-3">
@@ -168,7 +188,9 @@
                                             <div class="col-md-10">
                                                 <select class="form-control select2bs4" style="width: 100%;" id="diagnosa_radiologi" name="diagnosa_radiologi">
                                                     <option value="" disabled selected>-- Pilih --</option>
-                                                    <option value="testing">testing</option>
+                                                    @foreach ($data_icd9 as $radiologi)
+                                                        <option value="({{$radiologi->kode_icd9}}) {{$radiologi->nama_icd9}}">({{$radiologi->kode_icd9}}) {{$radiologi->nama_icd9}}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-2">
@@ -193,12 +215,12 @@
                                                 <label class="col-form-label">Catatan Dokter</label>
                                             </div>
                                             <div class="col-md-10">
-                                                <textarea class="form-control" id="catatan_dokter_radiologi" name="catatan_dokter_radiologi" rows="3" placeholder="Masukkan catatan dokter..."></textarea>
+                                                <textarea class="form-control" id="catatan_dokter_radiologi" name="catatan_dokter_radiologi" rows="2" placeholder="Masukkan catatan dokter..."></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group row mt-3">
                                             <div class="col-md-12 text-right">
-                                                <button type="button" class="btn btn-success">
+                                                <button type="button" class="btn btn-success" id="btn-print-rad">
                                                     <i class="fas fa-print"></i> Print
                                                 </button>
                                             </div>
@@ -430,7 +452,7 @@
         const penjamin = $('#penjamin').val();
         const csrfToken = '{{ csrf_token() }}';
 
-        if (!labData || !tanggal) {
+        if (!labData || !diagnosa || !tanggal) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Data Tidak Lengkap',
@@ -484,7 +506,155 @@
     });
 </script>
 
+<script>
+    let selectedRadRow = null;
+    let radData = [];
 
+    function refreshRadTable() {
+        let tbody = $('#rad_table tbody');
+        tbody.empty();
 
+        radData.forEach((item, index) => {
+            tbody.append(`
+                <tr data-index="${index}" class="rad-row">
+                    <td>${index + 1}</td>
+                    <td>${item.pemeriksaan}</td>
+                    <td>${item.jenis_posisi} - ${item.posisi}</td>
+                    <td>${item.metode}</td>
+                </tr>
+            `);
+        });
+
+        $('#rad_table_hidden').val(JSON.stringify(radData));
+        console.log('Data : ', JSON.stringify(radData));
+    }
+
+    $('#btn-tambah-rad').on('click', function () {
+        const pemeriksaan = $('#pemeriksaan_radiologi').val();
+        const jenisPosisi = $('#jenis_posisi_radiologi').val();
+        const posisi = $('#posisi_radiologi').val();
+        const metode = $('#metode_radiologi').val();
+
+        if (!pemeriksaan || !jenisPosisi || !posisi || !metode) {
+            Swal.fire('Lengkapi semua field hingga metode sebelum menambah data.', '', 'warning');
+            return;
+        }
+
+        const newItem = {
+            pemeriksaan,
+            jenis_posisi: jenisPosisi,
+            posisi,
+            metode
+        };
+
+        const isDuplicate = radData.some(item =>
+            item.pemeriksaan === newItem.pemeriksaan
+        );
+
+        if (isDuplicate) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Duplikat',
+                text: `Data "${pemeriksaan}" sudah ditambahkan ke dalam tabel.`,
+            });
+            return;
+        }
+
+        radData.push(newItem);
+        refreshRadTable();
+
+        // Reset input
+        $('#pemeriksaan_radiologi').val(null).trigger('change');
+        $('#jenis_posisi_radiologi').val(null).trigger('change');
+        $('#posisi_radiologi').val(null).trigger('change');
+        $('#metode_radiologi').val(null).trigger('change');
+    });
+
+    $(document).on('click', '.rad-row', function () {
+        $('.rad-row').removeClass('table-primary');
+        $(this).addClass('table-primary');
+        selectedRadRow = $(this).data('index');
+    });
+
+    $('#btn-hapus-rad').on('click', function () {
+        if (selectedRadRow === null) {
+            Swal.fire('Pilih baris yang ingin dihapus.', '', 'info');
+            return;
+        }
+
+        radData.splice(selectedRadRow, 1);
+        selectedRadRow = null;
+        refreshRadTable();
+    });
+</script>
+
+<script>
+    $('#btn-print-rad').on('click', function () {
+        const radData = $('#rad_table_hidden').val();
+        const diagnosa = $('#diagnosa_radiologi').val();
+        const tanggal = $('#tanggal_periksa_radiologi').val();
+        const catatan = $('#catatan_dokter_radiologi').val();
+        const nama_pasien = $('#nama').val();
+        const dokter_pengirim = $('#dokter_pengirim').val();
+        const poli = $('#poli').val();
+        const jenis_kelamin = $('#jenis_kelamin').val();
+        const tanggal_lahir = $('#tanggal_lahir').val();
+        const alamat = $('#alamat').val();
+        const penjamin = $('#penjamin').val();
+        const csrfToken = '{{ csrf_token() }}';
+
+        if (!radData || !diagnosa || !tanggal) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Tidak Lengkap',
+                text: 'Pastikan data pemeriksaan dan tanggal periksa sudah diisi.'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Cetak Permintaan Laboratorium?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Cetak!',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Buat form dinamis
+                const form = $('<form>', {
+                    method: 'POST',
+                    action: '{{ route("radiologi.print") }}',
+                    target: '_blank'
+                });
+
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: '_token',
+                    value: csrfToken
+                }));
+                form.append($('<input>', { type: 'hidden', name: 'rad_table_hidden', value: radData }));
+                form.append($('<input>', { type: 'hidden', name: 'diagnosa_radiologi', value: diagnosa }));
+                form.append($('<input>', { type: 'hidden', name: 'tanggal_periksa_radiologi', value: tanggal }));
+                form.append($('<input>', { type: 'hidden', name: 'catatan_dokter_radiologi', value: catatan }));
+                form.append($('<input>', { type: 'hidden', name: 'nama_pasien', value: nama_pasien }));
+                form.append($('<input>', { type: 'hidden', name: 'dokter_pengirim', value: dokter_pengirim }));
+                form.append($('<input>', { type: 'hidden', name: 'poli', value: poli }));
+                form.append($('<input>', { type: 'hidden', name: 'jenis_kelamin', value: jenis_kelamin }));
+                form.append($('<input>', { type: 'hidden', name: 'tanggal_lahir', value: tanggal_lahir }));
+                form.append($('<input>', { type: 'hidden', name: 'alamat', value: alamat }));
+                form.append($('<input>', { type: 'hidden', name: 'penjamin', value: penjamin }));
+
+                $('body').append(form);
+                form.submit();
+                form.remove();
+
+                // Setelah submit, redirect ke route dokter
+                setTimeout(() => {
+                    window.location.href = '{{ route("pelayanad.get") }}';
+                }, 1000); // delay 1 detik agar PDF sempat terbuka
+            }
+        });
+    });
+</script>
 
 @endsection
