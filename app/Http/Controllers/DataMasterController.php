@@ -280,19 +280,19 @@ class DataMasterController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Suku berhasil ditambahkan!',
+                'message' => 'bangsa berhasil ditambahkan!',
                 'data' => $bangsa
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Suku Sudah ada!',
+                'message' => 'Bangsa Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Suku!',
+                'message' => 'Terjadi kesalahan saat menyimpan Bangsa!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -626,7 +626,7 @@ class DataMasterController extends Controller
         if (!$pendidikan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Bahasa tidak ditemukan!'
+                'message' => 'pendidikan tidak ditemukan!'
             ], 404);
         }
 
@@ -919,7 +919,7 @@ class DataMasterController extends Controller
          } catch (ValidationException $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'pernikahan Sudah ada!',
+                 'message' => 'pekerjaan Sudah ada!',
                  'errors' => $e->errors()
              ], 422);
          } catch (\Exception $e) {
@@ -1024,13 +1024,13 @@ class DataMasterController extends Controller
          } catch (ValidationException $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'pernikahan Sudah ada!',
+                 'message' => 'bank Sudah ada!',
                  'errors' => $e->errors()
              ], 422);
          } catch (\Exception $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Terjadi kesalahan saat menyimpan pekerjaan!',
+                 'message' => 'Terjadi kesalahan saat menyimpan bank!',
                  'error' => $e->getMessage()
              ], 500);
          }
@@ -1058,7 +1058,7 @@ class DataMasterController extends Controller
 
          return response()->json([
              'success' => true,
-             'message' => 'pekerjaan berhasil diperbarui!'
+             'message' => 'bank berhasil diperbarui!'
          ]);
     }
 
@@ -1237,13 +1237,13 @@ class DataMasterController extends Controller
          } catch (ValidationException $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Penjamin Sudah ada!',
+                 'message' => 'Loket Sudah ada!',
                  'errors' => $e->errors()
              ], 422);
          } catch (\Exception $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Terjadi kesalahan saat menyimpan Penjamin!',
+                 'message' => 'Terjadi kesalahan saat menyimpan Loket!',
                  'error' => $e->getMessage()
              ], 500);
          }
@@ -1293,7 +1293,7 @@ class DataMasterController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Penjamin berhasil dihapus!'
+            'message' => 'Loket berhasil dihapus!'
         ]);
     }
 

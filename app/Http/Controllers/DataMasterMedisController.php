@@ -269,18 +269,18 @@ class DataMasterMedisController extends Controller
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Spesialis berhasil ditambahkan!'
+                'message' => 'subspesialis berhasil ditambahkan!'
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Spesialis Sudah ada!',
+                'message' => 'subspesialis Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Spesialis!',
+                'message' => 'Terjadi kesalahan saat menyimpan subspesialis!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -574,19 +574,19 @@ class DataMasterMedisController extends Controller
 
              return response()->json([
                  'success' => true,
-                 'message' => 'Kategori Perawatan berhasil ditambahkan!',
+                 'message' => 'Pemeriksaan HTT berhasil ditambahkan!',
                  'data' => $htt_pemeriksaan
              ], 201);
          } catch (ValidationException $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Kategori Perawatan Sudah ada!',
+                 'message' => 'Pemeriksaan HTT Sudah ada!',
                  'errors' => $e->errors()
              ], 422);
          } catch (\Exception $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Terjadi kesalahan saat menyimpan Kategori Perawatan!',
+                 'message' => 'Terjadi kesalahan saat menyimpan Pemeriksaan HTT!',
                  'error' => $e->getMessage()
              ], 500);
          }
@@ -603,7 +603,7 @@ class DataMasterMedisController extends Controller
          if (!$htt_pemeriksaan) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Kategori Perawatan tidak ditemukan!'
+                 'message' => 'Pemeriksaan HTT tidak ditemukan!'
              ], 404);
          }
 
@@ -612,7 +612,7 @@ class DataMasterMedisController extends Controller
 
          return response()->json([
              'success' => true,
-             'message' => 'Kategori Perawatan berhasil diperbarui!'
+             'message' => 'Pemeriksaan HTT berhasil diperbarui!'
          ]);
     }
 
@@ -627,14 +627,14 @@ class DataMasterMedisController extends Controller
         if (!$htt_pemeriksaan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Kategori Perawatan tidak ditemukan!'
+                'message' => 'Pemeriksaan HTT tidak ditemukan!'
             ], 404);
         }
         $htt_pemeriksaan->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Kategori Perawatan berhasil dihapus!'
+            'message' => 'Pemeriksaan HTT berhasil dihapus!'
         ]);
     }
 
@@ -682,19 +682,19 @@ class DataMasterMedisController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Perawatan tindakan berhasil ditambahkan!',
+                'message' => 'sub pemeriksaan berhasil ditambahkan!',
                 'data' => $htt_sub_pemeriksaan
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Perawatan tindakan Sudah ada!',
+                'message' => 'sub pemeriksaan Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan perawatan tindakan!',
+                'message' => 'Terjadi kesalahan saat menyimpan sub pemeriksaan!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -714,7 +714,7 @@ class DataMasterMedisController extends Controller
          if (!$htt_sub_pemeriksaan) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Perawatan tindakan tidak ditemukan!'
+                 'message' => 'sub pemeriksaan tidak ditemukan!'
              ], 404);
          }
 
@@ -725,7 +725,7 @@ class DataMasterMedisController extends Controller
 
          return response()->json([
              'success' => true,
-             'message' => 'Perawatan tindakan berhasil diperbarui!'
+             'message' => 'sub pemeriksaan berhasil diperbarui!'
          ]);
     }
 
@@ -740,14 +740,14 @@ class DataMasterMedisController extends Controller
         if (!$htt_sub_pemeriksaan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Perawatan tindakan tidak ditemukan!'
+                'message' => 'sub pemeriksaan tidak ditemukan!'
             ], 404);
         }
         $htt_sub_pemeriksaan->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Perawatan tindakan berhasil dihapus!'
+            'message' => 'sub pemeriksaan berhasil dihapus!'
         ]);
     }
 
@@ -882,19 +882,19 @@ class DataMasterMedisController extends Controller
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Goldar berhasil ditambahkan!',
+                'message' => 'icd10 berhasil ditambahkan!',
                 'data' => $goldar
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'jenis_diet Sudah ada!',
+                'message' => 'icd10 Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan jenis_diet!',
+                'message' => 'Terjadi kesalahan saat menyimpan icd10!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -1018,7 +1018,7 @@ class DataMasterMedisController extends Controller
         if (!$icd10) {
             return response()->json([
                 'success' => false,
-                'message' => 'Goldar tidak ditemukan!'
+                'message' => 'icd10 tidak ditemukan!'
             ], 404);
         }
 
@@ -1028,7 +1028,7 @@ class DataMasterMedisController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Goldar berhasil diperbarui!'
+            'message' => 'icd10 berhasil diperbarui!'
         ]);
     }
     public function icd10delete(Request $request)
@@ -1043,7 +1043,7 @@ class DataMasterMedisController extends Controller
         if (!$icd10) {
             return response()->json([
                 'success' => false,
-                'message' => 'Goldar tidak ditemukan!'
+                'message' => 'icd10 tidak ditemukan!'
             ], 404);
         }
 
@@ -1051,7 +1051,7 @@ class DataMasterMedisController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Goldar berhasil dihapus!'
+            'message' => 'icd10 berhasil dihapus!'
         ]);
     }
 
@@ -1072,18 +1072,18 @@ class DataMasterMedisController extends Controller
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Alergi berhasil ditambahkan!'
+                'message' => 'icd10 berhasil ditambahkan!'
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Alergi Sudah ada!',
+                'message' => 'icd10 Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Alergi!',
+                'message' => 'Terjadi kesalahan saat menyimpan icd10!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -1191,19 +1191,19 @@ class DataMasterMedisController extends Controller
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Goldar berhasil ditambahkan!',
+                'message' => 'icd9 berhasil ditambahkan!',
                 'data' => $goldar
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Goldar Sudah ada!',
+                'message' => 'icd9 Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Goldar!',
+                'message' => 'Terjadi kesalahan saat menyimpan icd9!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -1222,7 +1222,7 @@ class DataMasterMedisController extends Controller
         if (!$icd9) {
             return response()->json([
                 'success' => false,
-                'message' => 'Goldar tidak ditemukan!'
+                'message' => 'icd9 tidak ditemukan!'
             ], 404);
         }
 
@@ -1232,7 +1232,7 @@ class DataMasterMedisController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Goldar berhasil diperbarui!'
+            'message' => 'icd9 berhasil diperbarui!'
         ]);
     }
 
@@ -1248,7 +1248,7 @@ class DataMasterMedisController extends Controller
         if (!$icd9) {
             return response()->json([
                 'success' => false,
-                'message' => 'Goldar tidak ditemukan!'
+                'message' => 'icd9 tidak ditemukan!'
             ], 404);
         }
 
@@ -1256,7 +1256,7 @@ class DataMasterMedisController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Goldar berhasil dihapus!'
+            'message' => 'icd9 berhasil dihapus!'
         ]);
     }
 
@@ -1310,7 +1310,7 @@ class DataMasterMedisController extends Controller
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Poli berhasil ditambahkan!'
+                'message' => 'sarana berhasil ditambahkan!'
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
@@ -1321,7 +1321,7 @@ class DataMasterMedisController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Poli!',
+                'message' => 'Terjadi kesalahan saat menyimpan sarana!',
                 'data' => $data,
                 'error' => $e->getMessage()
             ], 500);
@@ -1341,7 +1341,7 @@ class DataMasterMedisController extends Controller
         if (!$poli) {
             return response()->json([
                 'success' => false,
-                'message' => 'Poli tidak ditemukan!'
+                'message' => 'sarana tidak ditemukan!'
             ], 404);
         }
 
@@ -1349,7 +1349,7 @@ class DataMasterMedisController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Poli berhasil dihapus!'
+            'message' => 'sarana berhasil dihapus!'
         ]);
     }
 
@@ -1605,19 +1605,19 @@ class DataMasterMedisController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Perawatan tindakan berhasil ditambahkan!',
+                'message' => 'Bidang Laboratorium berhasil ditambahkan!',
                 'data' => $laboratorium_bidang_sub
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Perawatan tindakan Sudah ada!',
+                'message' => 'Bidang Laboratorium Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan perawatan tindakan!',
+                'message' => 'Terjadi kesalahan saat menyimpan Bidang Laboratorium!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -1638,7 +1638,7 @@ class DataMasterMedisController extends Controller
          if (!$laboratorium_bidang_sub) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Perawatan tindakan tidak ditemukan!'
+                 'message' => 'Bidang Laboratorium tidak ditemukan!'
              ], 404);
          }
 
@@ -1649,7 +1649,7 @@ class DataMasterMedisController extends Controller
 
          return response()->json([
              'success' => true,
-             'message' => 'Perawatan tindakan berhasil diperbarui!'
+             'message' => 'Bidang Laboratorium berhasil diperbarui!'
          ]);
     }
 
@@ -1664,14 +1664,14 @@ class DataMasterMedisController extends Controller
         if (!$laboratorium_bidang_sub) {
             return response()->json([
                 'success' => false,
-                'message' => 'Perawatan tindakan tidak ditemukan!'
+                'message' => 'Bidang Laboratorium tidak ditemukan!'
             ], 404);
         }
         $laboratorium_bidang_sub->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Perawatan tindakan berhasil dihapus!'
+            'message' => 'Bidang Laboratorium berhasil dihapus!'
         ]);
     }
 
@@ -1696,19 +1696,19 @@ class DataMasterMedisController extends Controller
 
              return response()->json([
                  'success' => true,
-                 'message' => 'Bidang Labotorium berhasil ditambahkan!',
+                 'message' => 'radiologi_pemeriksaan berhasil ditambahkan!',
                  'data' => $radiologi_pemeriksaan
              ], 201);
          } catch (ValidationException $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Bidang Labotorium Sudah ada!',
+                 'message' => 'radiologi_pemeriksaan Sudah ada!',
                  'errors' => $e->errors()
              ], 422);
          } catch (\Exception $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Terjadi kesalahan saat menyimpan Bidang Labotorium!',
+                 'message' => 'Terjadi kesalahan saat menyimpan radiologi_pemeriksaan!',
                  'error' => $e->getMessage()
              ], 500);
          }
@@ -1725,7 +1725,7 @@ class DataMasterMedisController extends Controller
          if (!$radiologi_pemeriksaan) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Bidang Labotorium tidak ditemukan!'
+                 'message' => 'radiologi_pemeriksaan tidak ditemukan!'
              ], 404);
          }
 
@@ -1734,7 +1734,7 @@ class DataMasterMedisController extends Controller
 
          return response()->json([
              'success' => true,
-             'message' => 'Bidang Labotorium berhasil diperbarui!'
+             'message' => 'radiologi_pemeriksaan berhasil diperbarui!'
          ]);
     }
 
@@ -1749,14 +1749,14 @@ class DataMasterMedisController extends Controller
         if (!$radiologi_pemeriksaan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Bidang Labotorium tidak ditemukan!'
+                'message' => 'radiologi_pemeriksaan tidak ditemukan!'
             ], 404);
         }
         $radiologi_pemeriksaan->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Bidang Labotorium berhasil dihapus!'
+            'message' => 'radiologi_pemeriksaan berhasil dihapus!'
         ]);
     }
 

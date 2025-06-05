@@ -1919,19 +1919,19 @@ public function panggilPasien($id)
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Jenis satuan berhasil ditambahkan!',
+                'message' => 'Data Barang berhasil ditambahkan!',
                 'data' => $satuan
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Jenis satuan Sudah ada!',
+                'message' => 'Data Barang Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Jenis satuan!',
+                'message' => 'Terjadi kesalahan saat menyimpan Data Barang!',
                 'error' => $e->getMessage()
             ], 500);
         }
