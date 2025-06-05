@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Pendataan Pendaftaran</title>
+    <title>Pendataan Pelayanan Dokter</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -164,7 +164,7 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">PENDATAAN PENDAFTARAN PER PERIODE</div>
+    <div class="document-title">PENDATAAN PELAYANAN DOKTER PER PERIODE</div>
 
     <table class="info-table" style="width: 100%;">
         <tr>
@@ -206,7 +206,6 @@
                     <th>Poli</th>
                     <th>Dokter</th>
                     <th>Penjamin</th>
-                    <th>Nomor Antrian</th>
                 </tr>
             </thead>
             <tbody>
@@ -227,7 +226,6 @@
                         <td>{{ $item['poli']['nama'] ?? '-' }}</td>
                         <td>{{ $item['dokter']['namauser']['name'] ?? '-' }}</td>
                         <td>{{ $item['penjamin']['nama'] ?? '-' }}</td>
-                        <td>{{ $item['antrian'] ?? '-' }}</td>
                     </tr>
                 @endforeach
             </tbody>

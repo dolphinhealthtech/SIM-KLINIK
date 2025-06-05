@@ -51,6 +51,11 @@ class Pendaftaran_rawat_jalan extends Model
         return $this->hasOne(pelayanan_soap_dokter::class, 'no_rawat', 'nomor_register');
     }
 
+    public function soap_perawat()
+    {
+        return $this->hasOne(pelayanan_soap_perawat::class, 'no_rawat', 'nomor_register');
+    }
+
     public function apotek()
     {
         return $this->hasOne(apotek::class, 'no_rawat', 'nomor_register');

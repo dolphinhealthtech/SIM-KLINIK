@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Tanda Terima Apotek</title>
+    <title>Pendataan Antrian Pasien Baru</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -164,7 +164,7 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">PENDATAAN ANTRIAN PER PERIODE</div>
+    <div class="document-title">PENDATAAN ANTRIAN PASIEN BARU PER PERIODE</div>
 
     <table class="info-table" style="width: 100%;">
         <tr>

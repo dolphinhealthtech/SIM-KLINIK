@@ -69,5 +69,8 @@ class pelayanan_soap_perawat extends Model
         return $this->belongsTo(gcs_kesadaran::class, 'gcs_total', 'skor');
     }
 
-
+    public function pendaftaran()
+    {
+        return $this->belongsTo(Pendaftaran_rawat_jalan::class, 'no_rawat', 'nomor_register');
+    }
 }

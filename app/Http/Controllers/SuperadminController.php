@@ -3743,6 +3743,64 @@ public function panggilPasien($id)
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
 
+    public function pendataan_dokter()
+    {
+        $title = "Pendataan Pemeriksaan Dokter";
+
+        $data = Pendaftaran_rawat_jalan::with('poli', 'dokter.namauser', 'pasien', 'penjamin', 'soap_dokter')
+                ->whereHas('soap_dokter')
+                ->get();
+
+        return view('module.pendataan.dokter', compact('title','data'));
+    }
+
+    public function print_dokter(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+        $dokter = $request->input('dokter');
+
+        $total_invoice = count($data);
+
+        $pdf = Pdf::loadView('pdf.data_pelayanan_dokter', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'pendataan_pelayanan_dokter_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    public function pendataan_perawat()
+    {
+        $title = "Pendataan Pemeriksaan Perawat";
+
+        $data = Pendaftaran_rawat_jalan::with('poli', 'dokter.namauser', 'pasien', 'penjamin', 'soap_perawat')
+                ->whereHas('soap_perawat')
+                ->get();
+
+        return view('module.pendataan.perawat', compact('title','data'));
+    }
+
+    public function print_perawat(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $poli = $request->input('poli');
+        $dokter = $request->input('dokter');
+
+        $total_invoice = count($data);
+
+        $pdf = Pdf::loadView('pdf.data_pelayanan_perawat', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'pendataan_pelayanan_perawat_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
     // END PENDATAAN
 }
 
