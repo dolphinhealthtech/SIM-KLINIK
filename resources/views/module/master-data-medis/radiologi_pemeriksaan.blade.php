@@ -300,7 +300,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate Bidang Labotorium!',
+                        text: 'Terjadi kesalahan saat mengupdate Radiologi Pemeriksaan!',
                     });
                 }
             });
@@ -312,7 +312,7 @@
 
             $('#pemeriksaan_httid_delete').val(id);
             $('#deleteTextpemeriksaan_htt').html(
-            `<span>Apa Anda yakin ingin menghapus data Bidang Labotorium <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data Radiologi Pemeriksaan <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormpemeriksaan_htt').on('submit', function(e) {
@@ -349,7 +349,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Bidang Labotorium!',
+                        text: 'Terjadi kesalahan saat menghapus Radiologi Pemeriksaan!',
                     });
                 }
             });

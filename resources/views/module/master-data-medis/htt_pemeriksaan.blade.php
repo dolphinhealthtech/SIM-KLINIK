@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Kategori Perawatan</h1>
+                        <h1 class="m-0">Head To Toe</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -351,7 +351,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Kategori Perawatan!',
+                        text: 'Terjadi kesalahan saat menghapus data pemeriksaan htt!',
                     });
                 }
             });

@@ -284,7 +284,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate pemeriksaan htt!',
+                        text: 'Terjadi kesalahan saat mengupdate sub pemeriksaan htt!',
                     });
                 }
             });
@@ -333,7 +333,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus pemeriksaan htt!',
+                        text: 'Terjadi kesalahan saat menghapus sub pemeriksaan htt!',
                     });
                 }
             });

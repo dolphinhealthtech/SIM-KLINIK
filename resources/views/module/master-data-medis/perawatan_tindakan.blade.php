@@ -414,7 +414,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate perawatan_tindakan!',
+                        text: 'Terjadi kesalahan saat mengupdate perawatan tindakan!',
                     });
                 }
             });
@@ -426,7 +426,7 @@
 
             $('#perawatan_tindakanid_delete').val(id);
             $('#deleteTextperawatan_tindakan').html(
-            `<span>Apa Anda yakin ingin menghapus data perawatan_tindakan <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data perawatan tindakan <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormperawatan_tindakan').on('submit', function(e) {
@@ -463,7 +463,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                        text: 'Terjadi kesalahan saat menghapus Perawatan tindakan!',
                     });
                 }
             });

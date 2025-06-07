@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Sub pemeriksaan</h1>
+                        <h1 class="m-0">Sub pemeriksaan Laboratorium</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -284,7 +284,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate pemeriksaan htt!',
+                        text: 'Terjadi kesalahan saat mengupdate Bidang Labotorium!',
                     });
                 }
             });
@@ -296,7 +296,7 @@
 
             $('#laboratorium_bidang_subid_delete').val(id);
             $('#deleteTexthtt_sub_pemeriksaan').html(
-            `<span>Apa Anda yakin ingin menghapus data pemeriksaan htt <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data Bidang Labotorium <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormhtt_sub_pemeriksaan').on('submit', function(e) {
@@ -333,7 +333,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus pemeriksaan htt!',
+                        text: 'Terjadi kesalahan saat menghapus Bidang Labotorium!',
                     });
                 }
             });

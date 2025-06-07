@@ -300,7 +300,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate kategori_perawatan!',
+                        text: 'Terjadi kesalahan saat mengupdate kategori perawatan!',
                     });
                 }
             });
@@ -312,7 +312,7 @@
 
             $('#kategori_perawatanid_delete').val(id);
             $('#deleteTextkategori_perawatan').html(
-            `<span>Apa Anda yakin ingin menghapus data kategori_perawatan <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data kategori perawatan <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormkategori_perawatan').on('submit', function(e) {

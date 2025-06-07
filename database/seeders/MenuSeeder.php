@@ -41,8 +41,8 @@ class MenuSeeder extends Seeder
         ]);
 
         $antrian = menu::create([
-            'name' => 'Antrian',
-            'url' => '/monitor',
+            'name' => 'Dashboard Antrian',
+            'url' => '#',
             'icon' => 'users-cog',
             'parent_id' => null,
             'order' => 2,
@@ -120,12 +120,23 @@ class MenuSeeder extends Seeder
             'order' => 11,
         ]);
 
+        //laporan
         $pendataan = menu::create([
-            'name' => 'pendataan',
+            'name' => 'Laporan',
             'url' => '#',
             'icon' => 'fa-pen atau fa-edit',
             'parent_id' => null,
             'order' => 12,
+        ]);
+
+        
+        //radiologi dan laboratorium
+        $layananpenunjang = menu::create([
+            'name' => 'Layanan Penunjang',
+            'url' => '#',
+            'icon' => 'flask',
+            'parent_id' => null,
+            'order' => 13,
         ]);
 
 
@@ -134,7 +145,7 @@ class MenuSeeder extends Seeder
             'url' => '#',
             'icon' => 'database',
             'parent_id' => null,
-            'order' => 13,
+            'order' => 14,
         ]);
 
         $pengaturan = menu::create([
@@ -142,7 +153,7 @@ class MenuSeeder extends Seeder
             'url' => '#', // Use # for dropdown menu
             'icon' => 'cog',
             'parent_id' => null,
-            'order' => 14,
+            'order' => 15,
         ]);
 
         // Tambahkan role ke menu utama untuk Super-admin
@@ -157,6 +168,7 @@ class MenuSeeder extends Seeder
             $keuangan->roles()->attach($superAdminRole->id);
             $sdm->roles()->attach($superAdminRole->id);
             $pendataan->roles()->attach($superAdminRole->id);
+            $layananpenunjang->roles()->attach($superAdminRole->id);
             $pembelian->roles()->attach($superAdminRole->id);
             $dataBarang->roles()->attach($superAdminRole->id);
             $dataMaster->roles()->attach($superAdminRole->id);
@@ -232,8 +244,49 @@ class MenuSeeder extends Seeder
             }
         }
 
-        //
+        //submenu dashboard antrian
+        $subMenusAntrian = [
+            ['name' => 'Antrian', 'url' => '/monitor', 'icon' => 'users', 'order' => 1], // 👥 Representasi orang dalam antrian
+            ['name' => 'Loket Antrian', 'url' => '/monitor/loket-antrian', 'icon' => 'desktop', 'order' => 2], // 🖥️ Representasi loket/operator
+        ];
 
+
+        foreach ($subMenusAntrian as $subMenu) {
+            $menu = menu::create([
+                'name' => $subMenu['name'],
+                'url' => $subMenu['url'],
+                'icon' => $subMenu['icon'],
+                'parent_id' => $antrian->id,
+                'order' => $subMenu['order'],
+            ]);
+
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
+
+        }
+
+
+        //sub menu layanan penunjunag
+        $subMenusLayananPenunjang = [
+            ['name' => 'Radiologi', 'url' => '/data-master-medis/radiologi_jenis', 'icon' => 'x-ray', 'order' => 1], 
+            ['name' => 'Laboratorium', 'url' => '/data-master-medis/bidang-lab', 'icon' => 'vials', 'order' => 2],
+        ];
+
+        foreach ($subMenusLayananPenunjang as $subMenu) {
+            $menu = menu::create([
+                'name' => $subMenu['name'],
+                'url' => $subMenu['url'],
+                'icon' => $subMenu['icon'],
+                'parent_id' => $layananpenunjang->id,
+                'order' => $subMenu['order'],
+            ]);
+
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
+            }
+
+        }
         // Submenu Keuangan
         $subMenuKeuangan = [
             ['name' => 'Data Kasir', 'url' => '/datakasir', 'icon' => 'dollar-sign', 'order' => 1],
@@ -282,7 +335,7 @@ class MenuSeeder extends Seeder
             }
         }
 
-        //sub menu pendataan
+        //sub menu Laporan
         $subMenuPendataan = [
             ['name' => 'Antrian', 'url' => '/pendataan/antrian', 'icon' => 'fas fa-people-arrows', 'order' => 1],
             ['name' => 'Pendaftaran', 'url' => '/pendataan/pendaftaran', 'icon' => 'fas fa-user-plus', 'order' => 2],

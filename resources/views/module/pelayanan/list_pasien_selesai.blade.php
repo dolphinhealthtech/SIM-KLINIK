@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">bank</h3>
+                                <h3 class="card-title">List pasien selesai</h3>
                             </div>
                             <div class="card-body">
                                 <table id="banktabel" class="table table-bordered table-striped">
@@ -139,7 +139,7 @@ $('.pasien-hadir').on('click', function(e) {
 
             $('#bankid_delete').val(id);
             $('#deleteTextbank').html(
-            `<span>Apa Anda yakin ingin menghapus data bank <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data pasien <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormbank').on('submit', function(e) {
@@ -176,7 +176,7 @@ $('.pasien-hadir').on('click', function(e) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Pelayanan Dokter!',
+                        text: 'Terjadi kesalahan saat menghapus pasien!',
                     });
                 }
             });

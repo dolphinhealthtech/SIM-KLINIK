@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">bank</h3>
+                                <h3 class="card-title">Pelayanan Dokter</h3>
                             </div>
                             <div class="card-body">
                                 <table id="banktabel" class="table table-bordered table-striped">
@@ -197,7 +197,7 @@
 
             $('#bankid_delete').val(id);
             $('#deleteTextbank').html(
-            `<span>Apa Anda yakin ingin menghapus data bank <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus pelayanan dokter <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormbank').on('submit', function(e) {

@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">poli</h3>
+                                <h3 class="card-title">sarana</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#addpoliModal">
@@ -310,7 +310,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate poli!',
+                        text: 'Terjadi kesalahan saat mengupdate Sarana!',
                     });
                 }
             });
@@ -322,7 +322,7 @@
 
             $('#poliid_delete').val(id);
             $('#deleteTextpoli').html(
-            `<span>Apa Anda yakin ingin menghapus data poli <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data sarana <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormpoli').on('submit', function(e) {

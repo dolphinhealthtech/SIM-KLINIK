@@ -440,7 +440,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate Goldar!',
+                        text: 'Terjadi kesalahan saat ICD10!',
                     });
                 }
             });
@@ -452,7 +452,7 @@
             let rhesus = $(this).data('rhesus'); // Ambil data rhesus dari tombol edit
             $('#icd10id_delete').val(id);
             $('#deleteTexticd10').html(
-            `<span>Apa Anda yakin ingin menghapus data Golongan darah <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data ICD10 <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormicd10').on('submit', function(e) {
@@ -489,7 +489,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                        text: 'Terjadi kesalahan saat menghapus ICD10!',
                     });
                 }
             });
