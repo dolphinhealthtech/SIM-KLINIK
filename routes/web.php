@@ -10,8 +10,11 @@ use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\WebSettingController;
 use Illuminate\Support\Facades\Route;
 
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {

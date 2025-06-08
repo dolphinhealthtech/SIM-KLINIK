@@ -2258,7 +2258,117 @@
             height: 100,
             tabsize: 2,
             toolbar: [
-                ['custom', ['dolphi']], // Tambahkan tombol AI
+                ['custom', ['speak']], // Tambahkan tombol AI
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']]
+            ],
+            buttons: {
+                speak: function (context) {
+                    var ui = $.summernote.ui;
+                    var isRecognizing = false;
+                    var recognition;
+                    var $button;
+
+                    function createButtonContent(isRecording) {
+                        return isRecording
+                            ? '<i class="fa fa-stop"></i> Stop Speech'
+                            : '<i class="fa fa-microphone"></i> Speech';
+                    }
+
+                    var button = ui.button({
+                        contents: createButtonContent(false),
+                        tooltip: 'Speech to Text',
+                        click: function () {
+                            if (!('webkitSpeechRecognition' in window)) {
+                                Swal.fire('Error', 'Speech Recognition tidak didukung di browser ini.', 'error');
+                                return;
+                            }
+
+                            if (isRecognizing && recognition) {
+                                recognition.stop();
+                                isRecognizing = false;
+                                $button.html(createButtonContent(false));
+                                return;
+                            }
+
+                            recognition = new webkitSpeechRecognition();
+                            recognition.lang = 'id-ID';
+                            recognition.interimResults = false;
+                            recognition.continuous = true; // Agar tidak stop otomatis
+
+                            recognition.onstart = function () {
+                                isRecognizing = true;
+                                $button.html(createButtonContent(true));
+                                console.log("🔊 Mulai mendengarkan...");
+                            };
+
+                            recognition.onresult = function (event) {
+                                let finalTranscript = '';
+                                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                                    if (event.results[i].isFinal) {
+                                        finalTranscript += event.results[i][0].transcript + ' ';
+                                    }
+                                }
+                                if (finalTranscript.trim()) {
+                                    // Tambahkan spasi jika teks sebelumnya tidak diakhiri spasi
+                                    const editorContent = context.invoke('code');
+                                    const needsSpace = editorContent && !editorContent.endsWith(' ');
+                                    const textToInsert = (needsSpace ? ' ' : '') + finalTranscript.trim() + ' ';
+                                    context.invoke('editor.insertText', textToInsert);
+                                    console.log("🎤 Hasil suara:", finalTranscript.trim());
+                                }
+                            };
+
+
+                            recognition.onerror = function (event) {
+                                console.warn("❗ Speech recognition error:", event.error);
+                                if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                                    Swal.fire('Error', 'Izin mikrofon ditolak.', 'error');
+                                    isRecognizing = false;
+                                    $button.html(createButtonContent(false));
+                                }
+                            };
+
+                            recognition.onend = function () {
+                                console.log("🛑 Sesi pengenalan suara selesai.");
+                                isRecognizing = false;
+                                $button.html(createButtonContent(false));
+                            };
+
+                            try {
+                                recognition.start();
+                            } catch (e) {
+                                console.error('Recognition start error:', e);
+                            }
+                        }
+                    });
+
+                    $button = button.render();
+                    return $button;
+                }
+            }
+        });
+
+        $('#summernote3').summernote({
+            height: 100, // Tentukan tinggi editor (dalam px)
+            tabsize: 2
+        });
+
+        $('#summernote4').summernote({
+            height: 100, // Tentukan tinggi editor (dalam px)
+            tabsize: 2
+        });
+
+        // sctipt speak to text
+        $('#summernote5').summernote({
+            height: 100,
+            tabsize: 2,
+            toolbar: [
+                ['custom', ['dolphi']],
                 ['style', ['bold', 'italic', 'underline', 'clear']],
                 ['font', ['strikethrough', 'superscript', 'subscript']],
                 ['fontsize', ['fontsize']],
@@ -2505,120 +2615,6 @@
                             });
 
                     return button.render();
-                }
-            }
-
-        });
-
-
-
-
-        $('#summernote3').summernote({
-            height: 100, // Tentukan tinggi editor (dalam px)
-            tabsize: 2
-        });
-
-        $('#summernote4').summernote({
-            height: 100, // Tentukan tinggi editor (dalam px)
-            tabsize: 2
-        });
-
-        // sctipt speak to text
-        $('#summernote5').summernote({
-            height: 100,
-            tabsize: 2,
-            toolbar: [
-                ['custom', ['speak']],
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']]
-            ],
-            buttons: {
-                speak: function (context) {
-                    var ui = $.summernote.ui;
-                    var isRecognizing = false;
-                    var recognition;
-                    var $button;
-
-                    function createButtonContent(isRecording) {
-                        return isRecording
-                            ? '<i class="fa fa-stop"></i> Stop Speech'
-                            : '<i class="fa fa-microphone"></i> Speech';
-                    }
-
-                    var button = ui.button({
-                        contents: createButtonContent(false),
-                        tooltip: 'Speech to Text',
-                        click: function () {
-                            if (!('webkitSpeechRecognition' in window)) {
-                                Swal.fire('Error', 'Speech Recognition tidak didukung di browser ini.', 'error');
-                                return;
-                            }
-
-                            if (isRecognizing && recognition) {
-                                recognition.stop();
-                                isRecognizing = false;
-                                $button.html(createButtonContent(false));
-                                return;
-                            }
-
-                            recognition = new webkitSpeechRecognition();
-                            recognition.lang = 'id-ID';
-                            recognition.interimResults = false;
-                            recognition.continuous = true; // Agar tidak stop otomatis
-
-                            recognition.onstart = function () {
-                                isRecognizing = true;
-                                $button.html(createButtonContent(true));
-                                console.log("🔊 Mulai mendengarkan...");
-                            };
-
-                            recognition.onresult = function (event) {
-                                let finalTranscript = '';
-                                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                                    if (event.results[i].isFinal) {
-                                        finalTranscript += event.results[i][0].transcript + ' ';
-                                    }
-                                }
-                                if (finalTranscript.trim()) {
-                                    // Tambahkan spasi jika teks sebelumnya tidak diakhiri spasi
-                                    const editorContent = context.invoke('code');
-                                    const needsSpace = editorContent && !editorContent.endsWith(' ');
-                                    const textToInsert = (needsSpace ? ' ' : '') + finalTranscript.trim() + ' ';
-                                    context.invoke('editor.insertText', textToInsert);
-                                    console.log("🎤 Hasil suara:", finalTranscript.trim());
-                                }
-                            };
-
-
-                            recognition.onerror = function (event) {
-                                console.warn("❗ Speech recognition error:", event.error);
-                                if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-                                    Swal.fire('Error', 'Izin mikrofon ditolak.', 'error');
-                                    isRecognizing = false;
-                                    $button.html(createButtonContent(false));
-                                }
-                            };
-
-                            recognition.onend = function () {
-                                console.log("🛑 Sesi pengenalan suara selesai.");
-                                isRecognizing = false;
-                                $button.html(createButtonContent(false));
-                            };
-
-                            try {
-                                recognition.start();
-                            } catch (e) {
-                                console.error('Recognition start error:', e);
-                            }
-                        }
-                    });
-
-                    $button = button.render();
-                    return $button;
                 }
             }
         });
