@@ -129,23 +129,13 @@ class MenuSeeder extends Seeder
             'order' => 12,
         ]);
 
-        
-        //radiologi dan laboratorium
-        $layananpenunjang = menu::create([
-            'name' => 'Layanan Penunjang',
-            'url' => '#',
-            'icon' => 'flask',
-            'parent_id' => null,
-            'order' => 13,
-        ]);
-
 
         $dataMaster = menu::create([
             'name' => 'Data Master',
             'url' => '#',
             'icon' => 'database',
             'parent_id' => null,
-            'order' => 14,
+            'order' => 13,
         ]);
 
         $pengaturan = menu::create([
@@ -153,7 +143,7 @@ class MenuSeeder extends Seeder
             'url' => '#', // Use # for dropdown menu
             'icon' => 'cog',
             'parent_id' => null,
-            'order' => 15,
+            'order' => 14,
         ]);
 
         // Tambahkan role ke menu utama untuk Super-admin
@@ -168,7 +158,6 @@ class MenuSeeder extends Seeder
             $keuangan->roles()->attach($superAdminRole->id);
             $sdm->roles()->attach($superAdminRole->id);
             $pendataan->roles()->attach($superAdminRole->id);
-            $layananpenunjang->roles()->attach($superAdminRole->id);
             $pembelian->roles()->attach($superAdminRole->id);
             $dataBarang->roles()->attach($superAdminRole->id);
             $dataMaster->roles()->attach($superAdminRole->id);
@@ -266,34 +255,11 @@ class MenuSeeder extends Seeder
 
         }
 
-
-        //sub menu layanan penunjunag
-        $subMenusLayananPenunjang = [
-            ['name' => 'Radiologi', 'url' => '/data-master-medis/radiologi_jenis', 'icon' => 'x-ray', 'order' => 1], 
-            ['name' => 'Laboratorium', 'url' => '/data-master-medis/bidang-lab', 'icon' => 'vials', 'order' => 2],
-        ];
-
-        foreach ($subMenusLayananPenunjang as $subMenu) {
-            $menu = menu::create([
-                'name' => $subMenu['name'],
-                'url' => $subMenu['url'],
-                'icon' => $subMenu['icon'],
-                'parent_id' => $layananpenunjang->id,
-                'order' => $subMenu['order'],
-            ]);
-
-            if ($superAdminRole) {
-                $menu->roles()->attach($superAdminRole->id);
-            }
-
-        }
         // Submenu Keuangan
         $subMenuKeuangan = [
             ['name' => 'Data Kasir', 'url' => '/datakasir', 'icon' => 'dollar-sign', 'order' => 1],
             ['name' => 'Data Kasir Detail', 'url' => '/datakasir/detail', 'icon' => 'file-text', 'order' => 2],
-            ['name' => 'Data Kasir Apotek', 'url' => '/datakasir/apotek', 'icon' => 'capsules', 'order' => 3],
-            ['name' => 'Data Kasir Tindakan', 'url' => '/datakasir/tindakan', 'icon' => 'briefcase-medical', 'order' => 4], // jika menggunakan Font Awesome
-            ['name' => 'Data Kasir Diskon', 'url' => '/datakasir/diskon', 'icon' => 'percent', 'order' => 5],
+            ['name' => 'Data Kasir Diskon', 'url' => '/datakasir/diskon', 'icon' => 'percent', 'order' => 3],
         ];
 
         foreach ($subMenuKeuangan as $subMenu) {
@@ -341,6 +307,8 @@ class MenuSeeder extends Seeder
             ['name' => 'Pendaftaran', 'url' => '/pendataan/pendaftaran', 'icon' => 'fas fa-user-plus', 'order' => 2],
             ['name' => 'Dokter', 'url' => '/pendataan/soap-dokter', 'icon' => 'fas fa-user-md', 'order' => 3],
             ['name' => 'Perawat', 'url' => '/pendataan/so-perawat', 'icon' => 'fas fa-user-nurse', 'order' => 4], 
+            ['name' => 'Apotek', 'url' => '/datakasir/apotek', 'icon' => 'capsules', 'order' => 5],
+            ['name' => 'Tindakan', 'url' => '/datakasir/tindakan', 'icon' => 'briefcase-medical', 'order' => 6], // jika menggunakan Font Awesome
         ];
 
 
@@ -456,6 +424,11 @@ class MenuSeeder extends Seeder
             ['name' => 'Nama Makanan', 'url' => '/data-master-medis/nama-makanan', 'icon' => 'hamburger', 'order' => 9],
             ['name' => 'ICD 10', 'url' => '/data-master-medis/icd10', 'icon' => 'file', 'order' => 10],
             ['name' => 'ICD 9', 'url' => '/data-master-medis/icd9', 'icon' => 'file', 'order' => 11],
+            ['name' => 'Radiologi', 'url' => '/data-master-medis/radiologi_jenis', 'icon' => 'x-ray', 'order' => 12], 
+            ['name' => 'Radiologi Pemeriksaan', 'url' => '/data-master-medis/radiologi_pemeriksaan', 'icon' => 'microscope', 'order' => 13],
+            ['name' => 'Laboratorium', 'url' => '/data-master-medis/bidang-lab', 'icon' => 'vials', 'order' => 14],
+            
+
         ];
 
         foreach ($subMenusDataMasterMedis as $subMenu) {
