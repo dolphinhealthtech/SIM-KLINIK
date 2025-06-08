@@ -185,6 +185,8 @@ class soap extends Controller
                 'verbal' => $request->verbal,
                 'motorik' => $request->motorik,
                 'summernote' => $request->summernote,
+                'user_input_id' => Auth::user()->id,
+                'user_input_name' => Auth::user()->name,
             ]);
 
 
