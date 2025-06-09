@@ -123,6 +123,7 @@ return [
     'middleware' => [
         'web',
         Authorize::class,
+        'can:viewPulse',
     ],
 
     /*

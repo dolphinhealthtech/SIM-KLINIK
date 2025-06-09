@@ -36,6 +36,8 @@ class pelayanan_soap_perawat extends Model
         'motorik',
         'summernote',
         'files',
+        'user_input_id',
+        'user_input_name',
     ];
 
     protected $casts = [

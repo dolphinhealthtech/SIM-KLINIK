@@ -49,4 +49,10 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+    public function isAdmin()
+    {
+        return $this->is_active === 1; // atau sesuaikan dengan tipe data kolom is_admin
+    }
+
 }
