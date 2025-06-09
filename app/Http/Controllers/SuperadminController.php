@@ -551,7 +551,8 @@ class SuperadminController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data pasien berhasil disimpan.'
+                'message' => 'Data pasien berhasil disimpan.',
+                'noantrian' => $antrianBaru,
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -637,7 +638,8 @@ class SuperadminController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data pasien berhasil disimpan.'
+                'message' => 'Data pasien berhasil disimpan.',
+                'noantrian' => $antrianBaru,
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
