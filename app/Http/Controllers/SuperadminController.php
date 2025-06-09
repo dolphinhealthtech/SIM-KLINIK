@@ -1536,7 +1536,7 @@ public function panggilPasien($id)
         $pasiens = pasien::all();
         $poli = poli::all();
 
-        $pendaftaran = Pendaftaran_rawat_jalan::with('status', 'poli', 'dokter.namauser', 'pasien')
+        $pendaftaran = Pendaftaran_rawat_jalan::with('status', 'poli', 'dokter.namauser', 'pasien' ,'penjamin')
         ->whereHas('status', function ($query) {
             $query->whereIn('status_pendaftaran', ['1', '2']);
         })
