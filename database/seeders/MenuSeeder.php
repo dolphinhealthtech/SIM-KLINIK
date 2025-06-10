@@ -120,13 +120,29 @@ class MenuSeeder extends Seeder
             'order' => 11,
         ]);
 
+            $gudangutama = menu::create([
+            'name' => 'Gudang utama',
+            'url' => '/data-master-gudang/gudang-utama',
+            'icon' => 'fas fa-boxes',
+            'parent_id' => null,
+            'order' => 12,
+        ]);
+
+            $requestobat = menu::create([
+            'name' => 'Request obat',
+            'url' => '/data-master-gudang/gudang-request',
+            'icon' => 'fas fa-prescription-bottle',
+            'parent_id' => null,
+            'order' => 13,
+        ]);
+
         //laporan
         $pendataan = menu::create([
             'name' => 'Laporan',
             'url' => '#',
             'icon' => 'fa-pen atau fa-edit',
             'parent_id' => null,
-            'order' => 12,
+            'order' => 14,
         ]);
 
 
@@ -135,7 +151,7 @@ class MenuSeeder extends Seeder
             'url' => '#',
             'icon' => 'database',
             'parent_id' => null,
-            'order' => 13,
+            'order' => 15,
         ]);
 
         $pengaturan = menu::create([
@@ -143,7 +159,7 @@ class MenuSeeder extends Seeder
             'url' => '#', // Use # for dropdown menu
             'icon' => 'cog',
             'parent_id' => null,
-            'order' => 14,
+            'order' => 16,
         ]);
 
         // Tambahkan role ke menu utama untuk Super-admin
@@ -160,6 +176,8 @@ class MenuSeeder extends Seeder
             $pendataan->roles()->attach($superAdminRole->id);
             $pembelian->roles()->attach($superAdminRole->id);
             $dataBarang->roles()->attach($superAdminRole->id);
+            $gudangutama->roles()->attach($superAdminRole->id);
+            $requestobat->roles()->attach($superAdminRole->id);
             $dataMaster->roles()->attach($superAdminRole->id);
             $pengaturan->roles()->attach($superAdminRole->id);
         }
