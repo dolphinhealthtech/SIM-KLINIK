@@ -163,7 +163,7 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">Laporan Tindakan Setor</div>
+    <div class="document-title">LAPORAN TINDAKAN SETOR</div>
 
     <table class="info-table" style="width: 100%;">
         <tr>
@@ -233,12 +233,19 @@
         </div>
 
         <div class="clearfix">
-            <table class="summary-table">
+           <table class="summary-table">
                 <tr>
                     <td>Jumlah Invoice</td>
                     <td>:</td>
                     <td style="text-align: right;">{{ $total_invoice }} Lembar</td>
                 </tr>
+                @foreach ($tindakanQtySummary as $nama => $qty)
+                    <tr>
+                        <td>{{ $nama }}</td>
+                        <td>:</td>
+                        <td style="text-align: right;">{{ $qty }} Buah</td>
+                    </tr>
+                @endforeach
                 <tr>
                     <td>Pendapatan</td>
                     <td>:</td>
