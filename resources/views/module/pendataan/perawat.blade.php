@@ -41,10 +41,10 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="filterDokter">Dokter:</label>
+                                    <label for="filterDokter">Perawat:</label>
                                     <select id="filterDokter" class="form-control">
-                                        <option value="">-- Semua Dokter --</option>
-                                        @foreach ($data->pluck('dokter.namauser.name')->unique() as $dokter)
+                                        <option value="">-- Semua Perawat --</option>
+                                        @foreach ($data->pluck('soap_perawat.user_input_name')->unique() as $dokter)
                                             <option value="{{ $dokter }}">{{ $dokter }}</option>
                                         @endforeach
                                     </select>
@@ -65,7 +65,7 @@
                                             <th class="text-center">Tanggal Kunjungan</th>
                                             <th class="text-center">Jam Kunjungan</th>
                                             <th class="text-center">Poli</th>
-                                            <th class="text-center">Dokter</th>
+                                            <th class="text-center">Perawat</th>
                                             <th class="text-center">Penjamin</th>
                                         </tr>
                                     </thead>
@@ -124,7 +124,7 @@
                     }
                 },
                 { data: 'poli.nama', className: "text-center" },
-                { data: 'dokter.namauser.name', className: "text-center" },
+                { data: 'soap_perawat.user_input_name', className: "text-center" },
                 { data: 'penjamin.nama', className: "text-center" },
             ],
             paging: true,
@@ -178,7 +178,7 @@
                 if (filterPoli && item.poli?.nama !== filterPoli) return false;
 
                 // Dokter filter
-                if (filterDokter && item.dokter?.namauser?.name !== filterDokter) return false;
+                if (filterDokter && item.soap_perawat?.user_input_name !== filterDokter) return false;
 
                 return true;
             });

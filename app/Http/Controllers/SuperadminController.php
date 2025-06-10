@@ -74,7 +74,8 @@ use Illuminate\Validation\Rules;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use DateTime;
+use DateTimeZone;
 
 class SuperadminController extends Controller
 {
@@ -551,7 +552,8 @@ class SuperadminController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data pasien berhasil disimpan.'
+                'message' => 'Data pasien berhasil disimpan.',
+                'noantrian' => $antrianBaru,
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -637,7 +639,8 @@ class SuperadminController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data pasien berhasil disimpan.'
+                'message' => 'Data pasien berhasil disimpan.',
+                'noantrian' => $antrianBaru,
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -1483,11 +1486,21 @@ public function panggilPasien($id)
 
     public function dokterjadwal(Request $request)
     {
+        $date = new DateTime($request->start);
+        // Ubah ke timezone lokal (Asia/Jakarta)
+        $date->setTimezone(new DateTimeZone('Asia/Jakarta'));
+        $waktuLocal = $date->format('Y-m-d H:i:s');
+
+        $date1 = new DateTime($request->end);
+        // Ubah ke timezone lokal (Asia/Jakarta)
+        $date1->setTimezone(new DateTimeZone('Asia/Jakarta'));
+        $waktuLocal1 = $date1->format('Y-m-d H:i:s');
+
         $jadwal = dokter_jadwal::create([
             'dokter_id' => $request->dokter_id,
             'title'     => $request->title,
-            'start'     => $request->start,
-            'end'       => $request->end,
+            'start'     => $waktuLocal,
+            'end'       => $waktuLocal1,
         ]);
 
         return response()->json($jadwal);
@@ -1525,7 +1538,7 @@ public function panggilPasien($id)
         $pasiens = pasien::all();
         $poli = poli::all();
 
-        $pendaftaran = Pendaftaran_rawat_jalan::with('status', 'poli', 'dokter.namauser', 'pasien')
+        $pendaftaran = Pendaftaran_rawat_jalan::with('status', 'poli', 'dokter.namauser', 'pasien' ,'penjamin')
         ->whereHas('status', function ($query) {
             $query->whereIn('status_pendaftaran', ['1', '2']);
         })

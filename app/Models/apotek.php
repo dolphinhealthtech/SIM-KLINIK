@@ -42,6 +42,6 @@ class apotek extends Model
 
     public function data_soap()
     {
-        return $this->belongsTo(Pelayanan_soap_dokter::class, 'no_rawat','no_rawat');
+        return $this->belongsTo(pelayanan_soap_dokter::class, 'no_rawat','no_rawat');
     }
 }

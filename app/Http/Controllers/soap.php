@@ -36,6 +36,7 @@ use App\Models\radiologi_jenis;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class soap extends Controller
@@ -185,6 +186,8 @@ class soap extends Controller
                 'verbal' => $request->verbal,
                 'motorik' => $request->motorik,
                 'summernote' => $request->summernote,
+                'user_input_id' => Auth::user()->id,
+                'user_input_name' => Auth::user()->name,
             ]);
 
 

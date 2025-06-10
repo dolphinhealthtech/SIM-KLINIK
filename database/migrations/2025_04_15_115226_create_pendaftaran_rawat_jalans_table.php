@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('dokter_id');
             $table->string('Penjamin');
             $table->string('antrian')->nullable();
-            $table->string('nourut')->nullable();
+            $table->string('no_urut')->nullable();
             $table->timestamps();
         });
     }

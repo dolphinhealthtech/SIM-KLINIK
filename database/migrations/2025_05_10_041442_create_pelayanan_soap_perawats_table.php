@@ -40,6 +40,8 @@ return new class extends Migration
             $table->tinyInteger('motorik')->nullable();
             $table->longText('summernote')->nullable();
             $table->string('files')->nullable();
+            $table->string('user_input_id');
+            $table->string('user_input_name');
             $table->timestamps();
         });
     }

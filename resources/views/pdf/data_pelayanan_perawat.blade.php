@@ -180,9 +180,9 @@
             <td class="info-label">Laporan Antrian</td>
             <td class="info-separator">:</td>
             <td>[{{ auth()->user()->name ?? 'Petugas' }}]</td>
-            <td class="info-label">Dokter</td>
+            <td class="info-label">Perawat</td>
             <td class="info-separator">:</td>
-            <td>{{ $poli ?? 'Semua Dokter' }}</td>
+            <td>{{ $dokter ?? 'Semua Perawat' }}</td>
         </tr>
 
         <tr>
@@ -204,7 +204,7 @@
                     <th>Tanggal Kunjungan</th>
                     <th>Jam Kunjungan</th>
                     <th>Poli</th>
-                    <th>Dokter</th>
+                    <th>Perawat</th>
                     <th>Penjamin</th>
                 </tr>
             </thead>
@@ -224,7 +224,7 @@
                         <td>{{ isset($item['tanggal_kujungan']) ? explode('T', $item['tanggal_kujungan'])[0] : '-' }}</td>
                         <td>{{ isset($item['tanggal_kujungan']) ? explode('T', $item['tanggal_kujungan'])[1] : '-' }}</td>
                         <td>{{ $item['poli']['nama'] ?? '-' }}</td>
-                        <td>{{ $item['dokter']['namauser']['name'] ?? '-' }}</td>
+                        <td>{{ $item['soap_perawat']['user_input_name'] ?? '-' }}</td>
                         <td>{{ $item['penjamin']['nama'] ?? '-' }}</td>
                     </tr>
                 @endforeach

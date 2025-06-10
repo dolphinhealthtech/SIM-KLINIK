@@ -68,6 +68,7 @@
                                         <th class="text-center">No RM</th>
                                         <th class="text-center">No. Antrian</th>
                                         <th class="text-center">Poli Tujuan</th>
+                                        <th class="text-center">Penjamin</th>
                                         <th class="text-center">Nama Dokter</th>
                                         <th class="text-center" width="15%">Action</th>
                                     </tr>
@@ -95,6 +96,7 @@
                                         <td class="text-center">{{ $pendaftarandata->nomor_rm }}</td>
                                         <td class="text-center">{{ $pendaftarandata->antrian }}</td>
                                         <td class="text-center">{{ $pendaftarandata->poli->nama }}</td>
+                                        <td class="text-center">{{ $pendaftarandata->penjamin->nama }}</td>
                                         <td class="text-center">{{ $pendaftarandata->dokter->namauser->name }}</td>
                                         <td class="text-center">
                                             <div class="dropdown">
