@@ -46,7 +46,7 @@
                             <input type="text" class="form-control" id="no_rm" name="no_rm">
                         </div>
                         <div class="col-md-5">
-                            <button class="btn btn-info mr-2">Panggil</button>
+
                             <button class="btn btn-info mr-2" onclick="belibebas()">Auto</button>
 
                             <!-- Icon i dengan tooltip -->
@@ -157,7 +157,7 @@
                             </div>
                             <div class="card-body p-3">
                                 <input type="hidden" id="tabel_apotek_harga_hidden" name="tabel_apotek_harga_hidden">
-                                <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 300px;">
+                                <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: auto; min-height: 300px;">
                                     <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                                         <table class="table" id="tabel_apotek_harga" style="border: none;">
                                             <thead>
@@ -280,7 +280,7 @@
 
                                             <div class="form-group">
                                                 <div style="width: 95%; border-top: 2px solid black; position: relative; margin-top: 20px;">
-                                                    <span style="position: absolute; right: -10px; top: -15px; font-weight: bold;">-</span>
+                                                    <span style="position: absolute; right: -10px; top: -15px; font-weight: bold;">+</span>
                                                 </div>
                                             </div>
 
@@ -314,7 +314,7 @@
                             <div class="card-body p-3">
                                 <input type="hidden" id="hidden_resep_input" name="hidden_resep_input">
                                 {{-- <div class="border border-dark" style="height: 242px; background-color: #fff;"></div> --}}
-                                <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 300px;">
+                                <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: auto; min-height: 300px;">
                                     <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                                         <table class="table" id="tabel_resep_sementara" style="border: none;">
                                             <tbody>
@@ -660,7 +660,7 @@
         function updateTotal() {
             const subtotal = parseInt($('#sub_total_hidden').val()) || 0;
             const embalase = parseInt($('#embalase_total_hidden').val()) || 0;
-            const total = subtotal - embalase;
+            const total = subtotal + embalase;
 
             const formatted = 'Rp ' + total.toLocaleString('id-ID', {
                 minimumFractionDigits: 0,
