@@ -36,6 +36,7 @@ use App\Models\radiologi_jenis;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class soap extends Controller
@@ -71,6 +72,8 @@ class soap extends Controller
             } elseif ($status == 1 && $soap) {
                 $item->tindakan_button = 'edit';
             } elseif ($status == 2){
+                $item->tindakan_button = 'Complete';
+            } else {
                 $item->tindakan_button = 'Complete';
             }
         }
