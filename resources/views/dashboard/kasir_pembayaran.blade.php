@@ -410,7 +410,7 @@
                                             <!-- Tombol Aksi -->
                                             <div class="row mt-2">
                                                 <div class="col-12 d-flex justify-content-between">
-                                                    <button type="button" class="btn btn-sm btn-secondary ml-1">
+                                                    <button type="button" class="btn btn-sm btn-secondary ml-1" onclick="window.location='{{ route('kasir') }}'">
                                                         <i class="fas fa-arrow-left mr-1"></i>Kembali
                                                     </button>
                                                     <div>
