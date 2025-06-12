@@ -56,7 +56,7 @@ class soap extends Controller
         $statusPanggil = $item->pendaftaran->status->status_panggil ?? null;
         $soapExists = $item->pelayanan_soap && $item->pelayanan_soap->isNotEmpty();
 
-        // return !($statusPanggil == 2 && $soapExists); // sembunyikan jika memenuhi syarat
+        return !($statusPanggil == 2 && $soapExists); // sembunyikan jika memenuhi syarat
     });
 
 
