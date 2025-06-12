@@ -234,6 +234,18 @@
                 }
             });
         });
+        // Reset modal saat ditutup
+$('#detailModal').on('hidden.bs.modal', function () {
+    // Hapus DataTable jika ada
+    if ($.fn.DataTable.isDataTable('#detailTable')) {
+        $('#detailTable').DataTable().destroy();
+    }
+
+    // Kosongkan isi tabel
+    $('#detailTableBody').empty();
+    $('#totalStok').text('0');
+    $('#modalTitle').text('');
+});
     });
 </script>
 @endsection
