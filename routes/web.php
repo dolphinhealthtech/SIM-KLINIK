@@ -105,22 +105,6 @@ Route::post('/datakasir/diskon/print', [SuperadminController::class, 'datakasir_
             Route::post('/update', [SuperadminController::class,'staffedit'])->name('staff.update');
         });
 
-        //menu pendataan
-Route::prefix('pendataan')->group(function () {
-    Route::get('/antrian', [SuperadminController::class,'pendataan_antrian'])->name('pendataan_antrian.get');
-    Route::post('/print/antrian', [SuperadminController::class,'print_antrian'])->name('print_antrian');
-
-    Route::get('/pendaftaran', [SuperadminController::class,'pendataan_pendaftaran'])->name('pendataan_pendaftaran.get');
-    Route::post('/print/pendaftaran', [SuperadminController::class,'print_pendaftaran'])->name('print_pendaftaran');
-
-    Route::get('/soap-dokter', [SuperadminController::class,'pendataan_dokter'])->name('pendataan_dokter.get');
-    Route::post('/print/dokter', [SuperadminController::class,'print_dokter'])->name('print_dokter');
-
-    Route::get('/so-perawat', [SuperadminController::class,'pendataan_perawat'])->name('pendataan_perawat.get');
-    Route::post('/print/perawat', [SuperadminController::class,'print_perawat'])->name('print_perawat');
-});
-
-
 // Menu Pendaftaran
 Route::prefix('pendaftaran')->group(function () {
     Route::get('/', [SuperadminController::class,'pendaftaran'])->name('pendaftaran.get');
@@ -161,7 +145,7 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::get('/list_pasien', [soap::class, 'list_pasien'])->name('list_pasien.get');
     Route::get('/rme/{norawat}', [soap::class, 'pelayana_rme_selesai'])->name('list_pasien_rme.get');
 
-// Menu Pendaftaran
+// Menu Laporan
 Route::prefix('pendataan')->group(function () {
     Route::get('/antrian', [SuperadminController::class,'pendataan_antrian'])->name('pendataan_antrian.get');
     Route::post('/print/antrian', [SuperadminController::class,'print_antrian'])->name('print_antrian');
@@ -174,6 +158,10 @@ Route::prefix('pendataan')->group(function () {
 
     Route::get('/so-perawat', [SuperadminController::class,'pendataan_perawat'])->name('pendataan_perawat.get');
     Route::post('/print/perawat', [SuperadminController::class,'print_perawat'])->name('print_perawat');
+
+    //Gudang utama
+    Route::get('/gudang-utama', [DataMasterGudangController::class,'laporan_gudang_utama'])->name('laporan_gudang_utama.get');
+    Route::post('/print/gudang-utama', [DataMasterGudangController::class,'print_gudang_utama'])->name('print_gudang_utama');
 });
 
 // Menu data master

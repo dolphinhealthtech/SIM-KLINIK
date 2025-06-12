@@ -72,7 +72,7 @@
                                                         <a class="nav-link active" id="custom-tabs-four-subyektif-tab" data-toggle="pill" href="#custom-tabs-four-subyektif" role="tab" aria-controls="custom-tabs-four-subyektif" aria-selected="true">Subyektif</a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" id="custom-tabs-four-objectiv-tab" data-toggle="pill" href="#custom-tabs-four-objectiv" role="tab" aria-controls="custom-tabs-four-objectiv" aria-selected="false">Objectiv</a>
+                                                        <a class="nav-link" id="custom-tabs-four-objectiv-tab" data-toggle="pill" href="#custom-tabs-four-objectiv" role="tab" aria-controls="custom-tabs-four-objectiv" aria-selected="false">Objektif</a>
                                                     </li>
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-headtotoe-tab" data-toggle="pill" href="#custom-tabs-four-headtotoe" role="tab" aria-controls="custom-tabs-four-headtotoe" aria-selected="false">Head To Toe</a>
@@ -81,7 +81,7 @@
                                                         <a class="nav-link" id="custom-tabs-four-assesmen-tab" data-toggle="pill" href="#custom-tabs-four-assesmen" role="tab" aria-controls="custom-tabs-four-assesmen" aria-selected="false">Assesmen</a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" id="custom-tabs-four-diag-tab" data-toggle="pill" href="#custom-tabs-four-diag" role="tab" aria-controls="custom-tabs-four-diag" aria-selected="false">Diagnosisi ICD</a>
+                                                        <a class="nav-link" id="custom-tabs-four-diag-tab" data-toggle="pill" href="#custom-tabs-four-diag" role="tab" aria-controls="custom-tabs-four-diag" aria-selected="false">Diagnosis ICD</a>
                                                     </li>
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-plan-tab" data-toggle="pill" href="#custom-tabs-four-plan" role="tab" aria-controls="custom-tabs-four-plan" aria-selected="false">Plan</a>
@@ -555,6 +555,7 @@
                                                             <div class="col-md-4">
                                                                 <label for="nama-obat">Nama Obat</label>
                                                                 <select class="form-control" id="nama-obat">
+                                                                <option value="">-- Pilih Obat --</option>
                                                                 @foreach ($obat as $obatdata)
                                                                     <option value="{{ $obatdata->nama_barang }}" data-satuan="{{ $obatdata->satuan_kecil }}">{{ $obatdata->nama_barang }}</option>
                                                                 @endforeach
@@ -1282,47 +1283,91 @@
         let selectedICD10 = null, selectedPriorityICD10 = null;
         let selectedICD9 = null, selectedPriorityICD9 = null;
 
-        // ICD10 - dropdown
-        $('#icd10').on('change', function () {
-            const opt = $(this).find('option:selected');
-            selectedICD10 = { code: opt.val(), name: opt.data('nama') };
-            $('#kodeICD10').text(selectedICD10.code);
-        });
+        function hasPrimary(tbodySelector) {
+    let found = false;
+    $(`${tbodySelector} tr`).each(function () {
+        const prioritasText = $(this).find('td:eq(2)').text().trim();
+        if (prioritasText === 'Primary') {
+            found = true;
+            return false; // Break the loop
+        }
+    });
+    return found;
+}
 
-        $('#dropdownMenuButtonICD10').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
-            selectedPriorityICD10 = $(this).data('value');
-            $('#prioritas_icd_10').text(selectedPriorityICD10);
-        });
+function isDuplicate(tbodySelector, code) {
+    let found = false;
+    $(`${tbodySelector} tr`).each(function () {
+        const kodeText = $(this).find('td:eq(0)').text().trim();
+        if (kodeText === code) {
+            found = true;
+            return false; // Break the loop
+        }
+    });
+    return found;
+}
 
-        $('#acceptICD10').on('click', function () {
-            if (!selectedICD10 || !selectedPriorityICD10)
-            return
-            Swal.fire({
-                    icon: 'warning',
-                    title: 'Oops...',
-                    text: 'Pilih Diagnosa dan Prioritas!',
-                    confirmButtonText: 'OK'
-            });
-            if (isDuplicate('.icd_10 tbody', selectedICD10.code)) return
-            Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Data sudah ada!',
-                    confirmButtonText: 'OK'
-            });
-            if (selectedPriorityICD10 === 'Primary' && hasPrimary('.icd_10 tbody')) return
-            Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Primary hanya boleh satu.',
-                    confirmButtonText: 'OK'
-            });
+// ICD10 - dropdown
+$('#icd10').on('change', function () {
+    const opt = $(this).find('option:selected');
+    selectedICD10 = { code: opt.val(), name: opt.data('nama') };
+    $('#kodeICD10').text(selectedICD10.code);
+});
 
-            $('.icd_10 tbody').append(generateRow(selectedICD10, selectedPriorityICD10, 'ICD10'));
-            resetFields('#icd10', '#kodeICD10', '#prioritas_icd_10');
-            selectedICD10 = selectedPriorityICD10 = null;
-            updateTableState();
+$('#dropdownMenuButtonICD10').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
+    selectedPriorityICD10 = $(this).data('value');
+    $('#prioritas_icd_10').text(selectedPriorityICD10);
+});
+
+$('#acceptICD10').on('click', function () {
+    console.log('Accept clicked'); // Debug log
+    console.log('selectedICD10:', selectedICD10); // Debug log
+    console.log('selectedPriorityICD10:', selectedPriorityICD10); // Debug log
+    
+    // Validasi 1: Cek apakah diagnosa dan prioritas sudah dipilih
+    if (!selectedICD10 || !selectedPriorityICD10) {
+        console.log('Validation failed: Missing data'); // Debug log
+        Swal.fire({
+            icon: 'warning',
+            title: 'Oops...',
+            text: 'Pilih Diagnosa dan Prioritas!',
+            confirmButtonText: 'OK'
         });
+        return;
+    }
+    
+    // Validasi 2: Cek duplikasi data
+    if (isDuplicate('.icd_10 tbody', selectedICD10.code)) {
+        console.log('Validation failed: Duplicate data'); // Debug log
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Data sudah ada!',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+    
+    // Validasi 3: Cek primary hanya boleh satu
+    if (selectedPriorityICD10 === 'Primary' && hasPrimary('.icd_10 tbody')) {
+        console.log('Validation failed: Primary already exists'); // Debug log
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Primary hanya boleh satu.',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    console.log('All validations passed, adding data'); // Debug log
+    
+    // Jika semua validasi berhasil, tambahkan data
+    $('.icd_10 tbody').append(generateRow(selectedICD10, selectedPriorityICD10, 'ICD10'));
+    resetFields('#icd10', '#kodeICD10', '#prioritas_icd_10');
+    selectedICD10 = selectedPriorityICD10 = null;
+    updateTableState();
+});
 
         // ICD9 - dropdown
         $('#icd9').on('change', function () {
@@ -1393,23 +1438,9 @@
                 </tr>`;
         }
 
-        function isDuplicate(tbodySelector, code) {
-            let exists = false;
-            $(`${tbodySelector} tr`).each(function () {
-                const c = $(this).find('td:first').text().trim();
-                if (c === code) exists = true;
-            });
-            return exists;
-        }
 
-        function hasPrimary(tbodySelector) {
-            let found = false;
-            $(`${tbodySelector} tr`).each(function () {
-                const p = $(this).find('td:eq(2)').text().trim();
-                if (p === 'Primary') found = true;
-            });
-            return found;
-        }
+
+
 
         function resetFields(selectID, kodeID, prioritasID) {
             $(selectID).val('').trigger('change');

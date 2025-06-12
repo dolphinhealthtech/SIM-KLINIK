@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Pendataan Pendaftaran</title>
+    <title>Laporan Pendaftaran</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -164,7 +164,7 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">PENDATAAN PENDAFTARAN PER PERIODE</div>
+    <div class="document-title">LAPORAN PENDAFTARAN PER PERIODE</div>
 
     <table class="info-table" style="width: 100%;">
         <tr>

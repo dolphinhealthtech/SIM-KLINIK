@@ -552,7 +552,8 @@ class SuperadminController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data pasien berhasil disimpan.'
+                'message' => 'Data pasien berhasil disimpan.',
+                'noantrian' => $antrianBaru,
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -638,7 +639,8 @@ class SuperadminController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data pasien berhasil disimpan.'
+                'message' => 'Data pasien berhasil disimpan.',
+                'noantrian' => $antrianBaru,
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -2952,7 +2954,11 @@ public function panggilPasien($id)
 
         $header = kasir::has('apotek_lunas')->with('apotek_lunas')->get();
 
-        return view('dashboard.datakasir_apotek_lunas', compact('title','header'));
+        $obatList = collect($header)->flatMap(function ($item) {
+            return collect($item['apotek_lunas'])->pluck('nama_obat_alkes');
+        })->unique()->sort()->values();
+
+        return view('dashboard.datakasir_apotek_lunas', compact('title','header','obatList'));
     }
 
     public function datakasir_apotek_print(Request $request)
@@ -2978,7 +2984,20 @@ public function panggilPasien($id)
 
         $pendapatanFormatted = $this->formatRupiah($pendapatan);
 
-        $pdf = Pdf::loadView('pdf.data_lunas_kasir_apotek', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted'))
+        $obatQtySummary = []; // array penampung
+
+        foreach ($data as $item) {
+            $nama_obat = $item['nama_obat_tindakan'] ?? '-';
+            $qty = (int) $item['qty_pelaksana'] ?? 0;
+
+            if (!isset($obatQtySummary[$nama_obat])) {
+                $obatQtySummary[$nama_obat] = 0;
+            }
+
+            $obatQtySummary[$nama_obat] += $qty;
+        }
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_apotek', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted','obatQtySummary'))
                 ->setPaper('a4', 'landscape');
 
         $filename = 'kasir_apotek_lunas_' . now()->format('Ymd_His') . '.pdf';
@@ -2996,7 +3015,11 @@ public function panggilPasien($id)
 
         $header = kasir::has('tindakan_lunas')->with('tindakan_lunas')->get();
 
-        return view('dashboard.datakasir_tindakan_lunas', compact('title','header'));
+        $tindakanList = collect($header)->flatMap(function ($item) {
+            return collect($item['tindakan_lunas'])->pluck('nama_tindakan');
+        })->unique()->sort()->values();
+
+        return view('dashboard.datakasir_tindakan_lunas', compact('title','header','tindakanList'));
     }
 
     public function datakasir_tindakan_print(Request $request)
@@ -3022,7 +3045,22 @@ public function panggilPasien($id)
 
         $pendapatanFormatted = $this->formatRupiah($pendapatan);
 
-        $pdf = Pdf::loadView('pdf.data_lunas_kasir_tindakan', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted'))
+        $tindakanQtySummary = []; // array penampung
+
+        $tindakanQtySummary = [];
+
+        foreach ($data as $item) {
+            $namaTindakan = $item['nama_obat_tindakan'] ?? '-';
+
+            if (!isset($tindakanQtySummary[$namaTindakan])) {
+                $tindakanQtySummary[$namaTindakan] = 0;
+            }
+
+            $tindakanQtySummary[$namaTindakan] += 1; // Hitung jumlah kemunculan
+        }
+
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_tindakan', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli','total_invoice','pendapatanFormatted','tindakanQtySummary'))
                 ->setPaper('a4', 'landscape');
 
         $filename = 'kasir_tindakan_lunas_' . now()->format('Ymd_His') . '.pdf';
@@ -3722,7 +3760,7 @@ public function panggilPasien($id)
         $pdf = Pdf::loadView('pdf.data_antrian', compact('data', 'tanggal_awal', 'tanggal_akhir', 'total_invoice'))
                 ->setPaper('a4', 'landscape');
 
-        $filename = 'pendataan_antrian_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+        $filename = 'laporan_antrian_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
 
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
@@ -3749,7 +3787,7 @@ public function panggilPasien($id)
         $pdf = Pdf::loadView('pdf.data_pendaftaran', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice'))
                 ->setPaper('a4', 'landscape');
 
-        $filename = 'pendataan_pendaftaran_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+        $filename = 'laporan_pendaftaran_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
 
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
@@ -3778,7 +3816,7 @@ public function panggilPasien($id)
         $pdf = Pdf::loadView('pdf.data_pelayanan_dokter', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice'))
                 ->setPaper('a4', 'landscape');
 
-        $filename = 'pendataan_pelayanan_dokter_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+        $filename = 'laporan_pelayanan_dokter_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
 
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
@@ -3807,7 +3845,7 @@ public function panggilPasien($id)
         $pdf = Pdf::loadView('pdf.data_pelayanan_perawat', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice'))
                 ->setPaper('a4', 'landscape');
 
-        $filename = 'pendataan_pelayanan_perawat_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+        $filename = 'laporan_pelayanan_perawat_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
 
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }

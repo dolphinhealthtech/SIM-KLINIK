@@ -1122,6 +1122,53 @@ class DataMasterGudangController extends Controller
         return $pdf->stream('faktur_pengiriman_' . $kodeRequest . '.pdf');
     }
 
+    public function laporan_gudang_utama()
+    {
+        $title = "Kasir Apotek Lunas";
+
+        $data = gudang_klinik_request::with('details')
+                ->whereHas('details')
+                ->get();
+
+        return view('module.master-data-gudang.laporan_gudang_utama', compact('title','data'));
+    }
+
+    public function print_gudang_utama(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $klinik = $request->input('klinik');
+
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            if (isset($item['is_detail']) && $item['is_detail'] == false) {
+                $total_invoice++;
+            }
+        }
+
+        $obatQtySummary = []; // array penampung
+
+        foreach ($data as $item) {
+            $nama_obat = $item['nama_obat_alkes'] ?? '-';
+            $qty = (int) $item['qty'] ?? 0;
+
+            if (!isset($obatQtySummary[$nama_obat])) {
+                $obatQtySummary[$nama_obat] = 0;
+            }
+
+            $obatQtySummary[$nama_obat] += $qty;
+        }
+
+        $pdf = Pdf::loadView('pdf.data_laporan_gudang_utama', compact('data', 'tanggal_awal', 'tanggal_akhir', 'klinik','total_invoice','obatQtySummary'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'laporan_gudang_utama_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
 
     // END Gudang Utama (OMEGA)
 }

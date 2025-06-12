@@ -348,42 +348,42 @@
             </div>
     </div>
 
-<script>
-$(document).ready(function() {
-    let sudahRequest = false;
+    <script>
+        $(document).ready(function() {
+            let sudahRequest = false;
 
-    $('#noka').on('input', function() {
-        let noka = $(this).val();
+            $('#noka').on('input', function() {
+                let noka = $(this).val();
 
-        if (noka.length === 13 && !sudahRequest) {
-            sudahRequest = true;
+                if (noka.length === 13 && !sudahRequest) {
+                    sudahRequest = true;
 
-            // Jalankan AJAX
-            $.ajax({
-                url: '/api/pcare/noka/' + noka,
-                method: 'GET',
-                dataType: 'json',
-                success: function(response) {
-                    // Misal isi otomatis field lain:
-                    $('#patientName').val(response.data.nama);
-                    $('#nik').val(response.data.noKTP);
-                    $('#phoneNumber').val(response.data.noHP);
-                    let tgl = response.data.tglLahir;
-                    if (tgl.includes('-')) {
-                        let parts = tgl.split('-'); // DD-MM-YYYY
-                        let isoDate = parts[2] + '-' + parts[1] + '-' + parts[0];
-                        $('#tanggallahir').val(isoDate);
-                    }
+                    // Jalankan AJAX
+                    $.ajax({
+                        url: '/api/pcare/noka/' + noka,
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            // Misal isi otomatis field lain:
+                            $('#patientName').val(response.data.nama);
+                            $('#nik').val(response.data.noKTP);
+                            $('#phoneNumber').val(response.data.noHP);
+                            let tgl = response.data.tglLahir;
+                            if (tgl.includes('-')) {
+                                let parts = tgl.split('-'); // DD-MM-YYYY
+                                let isoDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+                                $('#tanggallahir').val(isoDate);
+                            }
+                        }
+                    });
+                }
+
+                if (noka.length < 13) {
+                    sudahRequest = false; // reset kalau panjang kurang
                 }
             });
-        }
-
-        if (noka.length < 13) {
-            sudahRequest = false; // reset kalau panjang kurang
-        }
-    });
-});
-</script>
+        });
+    </script>
 
 
         <!-- Modal Kamera -->
@@ -691,9 +691,36 @@ $(document).ready(function() {
                                     title: 'Berhasil!',
                                     text: response.message,
                                     showConfirmButton: true
-                                }).then(() => {
-                                    // Redirect or reload page if needed
-                                    location.reload();
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Cetak atau tampilkan nomor antrian
+                                        let noAntrian = response.noantrian || 'Tidak ada nomor antrian';
+                                        Swal.fire({
+                                            icon: 'info',
+                                            title: 'Nomor Antrian Anda',
+                                            html: `<div id="printArea"><h1 style="font-size: 3rem; text-align: center;">${noAntrian}</h1></div>`,
+                                            showConfirmButton: true
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                // Buat jendela print khusus
+                                                let printContents = document.getElementById('printArea').innerHTML;
+                                                let originalTitle = document.title;
+                                                let printWindow = window.open('', '', 'height=500,width=400');
+
+                                                printWindow.document.write('<html><head><title>Cetak Nomor Antrian</title>');
+                                                printWindow.document.write('</head><body style="text-align:center; font-family:sans-serif;">');
+                                                printWindow.document.write(printContents);
+                                                printWindow.document.write('</body></html>');
+
+                                                printWindow.document.close();
+                                                printWindow.focus();
+                                                printWindow.print();
+                                                printWindow.close();
+                                            }
+                                        }).then(() => {
+                                            location.reload(); // Reload halaman untuk update data
+                                        });
+                                    }
                                 });
                             } else {
                                 Swal.fire({
