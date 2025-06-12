@@ -115,10 +115,10 @@
                         </div>
                         <div class="col-md-1 text-center">:</div>
                         <div class="col-md-2">
-                            <button class="btn btn-secondary btn-block">RAWAT JALAN</button>
+                            <button class="btn btn-secondary w-100">RAWAT JALAN</button>
                         </div>
                         <div class="col-md-2">
-                            <select class="form-control select2bs4" id="poli" name="poli">
+                            <select class="form-control select2bs4" id="poli" name="poli" style="width: 100%;">
                                 <option value="" disabled selected>Pilih Poli</option>
                                 <option value="APS">APS</option>
                                 @foreach ($poli as $poliData)

@@ -73,6 +73,8 @@ class soap extends Controller
                 $item->tindakan_button = 'edit';
             } elseif ($status == 2){
                 $item->tindakan_button = 'Complete';
+            } else {
+                $item->tindakan_button = 'Complete';
             }
         }
         return view('module.pelayanan.pelayanan', compact('title','pelayanan'));

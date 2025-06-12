@@ -72,7 +72,7 @@
                                                         <a class="nav-link active" id="custom-tabs-four-subyektif-tab" data-toggle="pill" href="#custom-tabs-four-subyektif" role="tab" aria-controls="custom-tabs-four-subyektif" aria-selected="true">Subyektif</a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" id="custom-tabs-four-objectiv-tab" data-toggle="pill" href="#custom-tabs-four-objectiv" role="tab" aria-controls="custom-tabs-four-objectiv" aria-selected="false">Objectiv</a>
+                                                        <a class="nav-link" id="custom-tabs-four-objectiv-tab" data-toggle="pill" href="#custom-tabs-four-objectiv" role="tab" aria-controls="custom-tabs-four-objectiv" aria-selected="false">Objektif</a>
                                                     </li>
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-headtotoe-tab" data-toggle="pill" href="#custom-tabs-four-headtotoe" role="tab" aria-controls="custom-tabs-four-headtotoe" aria-selected="false">Head To Toe</a>
@@ -81,7 +81,7 @@
                                                         <a class="nav-link" id="custom-tabs-four-assesmen-tab" data-toggle="pill" href="#custom-tabs-four-assesmen" role="tab" aria-controls="custom-tabs-four-assesmen" aria-selected="false">Assesmen</a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" id="custom-tabs-four-diag-tab" data-toggle="pill" href="#custom-tabs-four-diag" role="tab" aria-controls="custom-tabs-four-diag" aria-selected="false">Diagnosisi ICD</a>
+                                                        <a class="nav-link" id="custom-tabs-four-diag-tab" data-toggle="pill" href="#custom-tabs-four-diag" role="tab" aria-controls="custom-tabs-four-diag" aria-selected="false">Diagnosis ICD</a>
                                                     </li>
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-plan-tab" data-toggle="pill" href="#custom-tabs-four-plan" role="tab" aria-controls="custom-tabs-four-plan" aria-selected="false">Plan</a>
@@ -555,6 +555,7 @@
                                                             <div class="col-md-4">
                                                                 <label for="nama-obat">Nama Obat</label>
                                                                 <select class="form-control" id="nama-obat">
+                                                                <option value="">-- Pilih Obat --</option>
                                                                 @foreach ($obat as $obatdata)
                                                                     <option value="{{ $obatdata->nama_barang }}" data-satuan="{{ $obatdata->satuan_kecil }}">{{ $obatdata->nama_barang }}</option>
                                                                 @endforeach

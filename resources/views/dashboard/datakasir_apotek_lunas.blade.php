@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Pendataan Faktur Apotek Lunas Kasir</h1>
+                    <h1 class="m-0">Laporan Faktur Apotek Lunas Kasir</h1>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -23,11 +23,11 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row mb-3">
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label for="tanggalAwal">Tanggal Awal:</label>
                                     <input type="date" id="tanggalAwal" class="form-control" onfocus="this.showPicker()">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label for="tanggalAkhir">Tanggal Akhir:</label>
                                     <input type="date" id="tanggalAkhir" class="form-control" onfocus="this.showPicker()">
                                 </div>
@@ -40,7 +40,16 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-3 d-flex flex-column justify-content-end align-items-end">
+                                <div class="col-md-3">
+                                    <label for="filterObat">Obat:</label>
+                                    <select id="filterObat" class="form-control">
+                                        <option value="">-- Semua Obat --</option>
+                                        @foreach ($obatList as $obat)
+                                            <option value="{{ $obat }}">{{ $obat }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex flex-column justify-content-end align-items-end">
                                     <button id="btnFilter" class="btn btn-outline-secondary w-100">Filter</button>
                                 </div>
                             </div>
@@ -86,7 +95,7 @@
 <script>
     const kasirData = @json($header);  // data dari Laravel
 
-    console.log(kasirData);
+    // console.log(kasirData);
 
     let tableData = [];
 
@@ -215,63 +224,96 @@
             const tanggalAwal = $('#tanggalAwal').val();
             const tanggalAkhir = $('#tanggalAkhir').val();
             const poli = $('#filterPoli').val();
+            const obatFilter = $('#filterObat').val();
 
-            // Filter hanya data header
+            // 1. Filter berdasarkan tanggal, poli, dan obat
             let filteredData = kasirData.filter(item => {
                 if (tanggalAwal && item.tanggal < tanggalAwal) return false;
                 if (tanggalAkhir && item.tanggal > tanggalAkhir) return false;
                 if (poli && item.poli !== poli) return false;
-                return true;
+
+                if (obatFilter) {
+                    // Hanya include item yang punya salah satu obat yang dicari
+                    return (item.apotek_lunas || []).some(detail => detail.nama_obat_alkes === obatFilter);
+                }
+
+                return true; // kalau semua obat, loloskan
             });
 
-            // Susun ulang data untuk tabel
+            // 2. Proses hasil filter menjadi baris table
             let filteredTableData = [];
+
             filteredData.forEach((item, index) => {
                 const detailList = item.apotek_lunas || [];
-                const firstDetail = detailList[0];
 
-                // Baris header dengan isi detail pertama (jika ada)
-                filteredTableData.push({
-                    no: index + 1,
-                    kode_faktur: item.kode_faktur,
-                    no_rm: item.no_rm,
-                    no_rawat: item.no_rawat,
-                    nama: item.nama,
-                    poli: item.poli,
-                    dokter: item.dokter,
-                    penjamin: item.penjamin,
-                    tanggal: item.tanggal,
-                    user_input_name: item.user_input_name,
-                    nama_obat_tindakan: firstDetail?.nama_obat_alkes || '-',
-                    harga_obat_tindakan: firstDetail?.harga_obat_alkes || '-',
-                    qty_pelaksana: firstDetail?.qty || '-',
-                    total_sementara: firstDetail?.total || '-',
-                    is_detail: false
-                });
+                // Jika filter obat dipilih, cari hanya 1 detail pertama yang cocok
+                if (obatFilter) {
+                    const matchingDetails = detailList.filter(d => d.nama_obat_alkes === obatFilter);
 
-                // Baris detail kedua dan seterusnya
-                detailList.slice(1).forEach(detail => {
-                    filteredTableData.push({
-                        no: "",
-                        kode_faktur: "",
-                        no_rm: "",
-                        no_rawat: "",
-                        nama: "",
-                        poli: "",
-                        dokter: "",
-                        penjamin: "",
-                        tanggal: "",
-                        user_input_name: "",
-                        nama_obat_tindakan: detail.nama_obat_alkes,
-                        harga_obat_tindakan: detail.harga_obat_alkes,
-                        qty_pelaksana: detail.qty,
-                        total_sementara: detail.total,
-                        is_detail: true
+                    matchingDetails.forEach((detail, i) => {
+                        filteredTableData.push({
+                            no: i === 0 ? index + 1 : "",
+                            kode_faktur: i === 0 ? item.kode_faktur : "",
+                            no_rm: i === 0 ? item.no_rm : "",
+                            no_rawat: i === 0 ? item.no_rawat : "",
+                            nama: i === 0 ? item.nama : "",
+                            poli: i === 0 ? item.poli : "",
+                            dokter: i === 0 ? item.dokter : "",
+                            penjamin: i === 0 ? item.penjamin : "",
+                            tanggal: i === 0 ? item.tanggal : "",
+                            user_input_name: i === 0 ? item.user_input_name : "",
+                            nama_obat_tindakan: detail.nama_obat_alkes,
+                            harga_obat_tindakan: detail.harga_obat_alkes,
+                            qty_pelaksana: detail.qty,
+                            total_sementara: detail.total,
+                            is_detail: i !== 0
+                        });
                     });
-                });
+                } else {
+                    // Default: tampilkan semua termasuk detail
+                    const firstDetail = detailList[0];
+
+                    filteredTableData.push({
+                        no: index + 1,
+                        kode_faktur: item.kode_faktur,
+                        no_rm: item.no_rm,
+                        no_rawat: item.no_rawat,
+                        nama: item.nama,
+                        poli: item.poli,
+                        dokter: item.dokter,
+                        penjamin: item.penjamin,
+                        tanggal: item.tanggal,
+                        user_input_name: item.user_input_name,
+                        nama_obat_tindakan: firstDetail?.nama_obat_alkes || '-',
+                        harga_obat_tindakan: firstDetail?.harga_obat_alkes || '-',
+                        qty_pelaksana: firstDetail?.qty || '-',
+                        total_sementara: firstDetail?.total || '-',
+                        is_detail: false
+                    });
+
+                    detailList.slice(1).forEach(detail => {
+                        filteredTableData.push({
+                            no: "",
+                            kode_faktur: "",
+                            no_rm: "",
+                            no_rawat: "",
+                            nama: "",
+                            poli: "",
+                            dokter: "",
+                            penjamin: "",
+                            tanggal: "",
+                            user_input_name: "",
+                            nama_obat_tindakan: detail.nama_obat_alkes,
+                            harga_obat_tindakan: detail.harga_obat_alkes,
+                            qty_pelaksana: detail.qty,
+                            total_sementara: detail.total,
+                            is_detail: true
+                        });
+                    });
+                }
             });
 
-            // Perbarui isi DataTable
+            // Update DataTable
             table.clear().rows.add(filteredTableData).draw();
         });
 
@@ -293,7 +335,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Buat form dinamis
-                    console.log(allData);
+                    // console.log(allData);
                     var form = $('<form>', {
                         method: 'POST',
                         action: "{{ route('datakasir_apotek.print') }}",

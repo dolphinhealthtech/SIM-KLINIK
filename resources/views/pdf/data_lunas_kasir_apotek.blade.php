@@ -91,6 +91,7 @@
             margin-left: 0;
             margin-right: auto;
             border-collapse: collapse;
+            margin-top: 10px;
         }
         .summary-table td {
             padding: 3px 0;
@@ -163,7 +164,7 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">Laporan Apotek Setor</div>
+    <div class="document-title">LAPORAN APOTEK SETOR</div>
 
     <table class="info-table" style="width: 100%;">
         <tr>
@@ -239,6 +240,13 @@
                     <td>:</td>
                     <td style="text-align: right;">{{ $total_invoice }} Lembar</td>
                 </tr>
+                @foreach ($obatQtySummary as $nama_obat => $qty)
+                    <tr>
+                        <td>{{ $nama_obat }}</td>
+                        <td>:</td>
+                        <td style="text-align: right;">{{ $qty }} Buah</td>
+                    </tr>
+                @endforeach
                 <tr>
                     <td>Pendapatan</td>
                     <td>:</td>
