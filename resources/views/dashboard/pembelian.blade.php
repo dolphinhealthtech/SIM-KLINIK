@@ -284,7 +284,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 300px;">
+                                                        <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: auto; min-height: 300px;">
                                                             <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                                                                 <table class="table" id="dataTable" style="border: none;">
                                                                     <thead>

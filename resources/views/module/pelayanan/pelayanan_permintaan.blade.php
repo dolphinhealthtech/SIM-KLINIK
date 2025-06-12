@@ -109,7 +109,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <input type="hidden" id="rad_table_hidden" name="rad_table_hidden">
-                                        <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 255px;">
+                                        <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: auto; min-height: 255px;">
                                             <div class="table-responsive" style="max-height: 255px; overflow-y: auto;">
                                                 <table class="table" id="rad_table" style="border: none;">
                                                     <thead>
@@ -233,7 +233,7 @@
                                 <div class="row">
                                     <input type="hidden" id="lab_table_hidden" name="lab_table_hidden">
                                     <div class="col-md-12">
-                                        <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: 1000px; min-height: 285px;">
+                                        <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: auto; min-height: 285px;">
                                             <div class="table-responsive" style="max-height: 285px; overflow-y: auto;">
                                                 <table class="table" id="lab_table" style="border: none;">
                                                     <thead>

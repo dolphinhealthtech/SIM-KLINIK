@@ -2,11 +2,11 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Laporan Pelayanan Dokter</title>
+    <title>Laporan Gudang Utama</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 12px; /* Lebih kecil */
+            font-size: 10px; /* Lebih kecil */
             line-height: 1.2; /* Lebih rapat */
             margin: 10px; /* Margin lebih kecil */
             padding: 0;
@@ -50,7 +50,7 @@
         }
         .info-table {
             width: 100%;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
         .info-table td {
             padding: 1px 0;
@@ -67,14 +67,13 @@
         table.items {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 10px;
-            margin-top: 10px;
+            margin-bottom: 5px;
         }
         table.items th {
             border: 1px solid #000;
             padding: 2px;
             text-align: center;
-            font-size: 12px;
+            font-size: 10px;
             height: 30px;
         }
         table.items td {
@@ -92,6 +91,7 @@
             margin-left: 0;
             margin-right: auto;
             border-collapse: collapse;
+            margin-top: 10px;
         }
         .summary-table td {
             padding: 3px 0;
@@ -133,7 +133,7 @@
             min-height: auto; /* Hapus fixed height */
         }
         .footnote {
-            font-size: 12px;
+            font-size: 10px;
             font-style: italic;
             margin-top: 3px;
             margin-bottom: 8px;
@@ -164,29 +164,29 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">LAPORAN PELAYANAN DOKTER PER PERIODE</div>
+    <div class="document-title">LAPORAN GUDANG UTAMA</div>
 
     <table class="info-table" style="width: 100%;">
         <tr>
             <td class="info-label">Dicetak pada</td>
             <td class="info-separator">:</td>
             <td>{{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</td>
-            <td class="info-label">Poli</td>
-            <td class="info-separator">:</td>
-            <td>{{ $poli ?? 'Semua Poli' }}</td>
         </tr>
 
         <tr>
-            <td class="info-label">Laporan Antrian</td>
+            <td class="info-label">Laporan Gudang Utama</td>
             <td class="info-separator">:</td>
             <td>[{{ auth()->user()->name ?? 'Petugas' }}]</td>
-            <td class="info-label">Dokter</td>
-            <td class="info-separator">:</td>
-            <td>{{ $poli ?? 'Semua Dokter' }}</td>
         </tr>
 
         <tr>
-            <td colspan="6">
+            <td class="info-label">Klinik</td>
+            <td class="info-separator">:</td>
+            <td>{{ $klinik ?? 'Semua Klinik' }}</td>
+        </tr>
+
+        <tr>
+            <td colspan="3">
                 Periode : {{ $tanggal_awal }} sampai {{ $tanggal_akhir }}
             </td>
         </tr>
@@ -197,47 +197,49 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>No RM</th>
-                    <th>Nama </th>
-                    <th>No Rawat</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Tanggal Kunjungan</th>
-                    <th>Jam Kunjungan</th>
-                    <th>Poli</th>
-                    <th>Dokter</th>
-                    <th>Penjamin</th>
+                    <th>Kode Request</th>
+                    <th>Nama Klinik</th>
+                    <th>Nama Obat / Alkes</th>
+                    <th>Qty</th>
+                    <th>Tanggal</th>
+                    <th>Petugas Entry</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($data as $i => $item)
                     <tr>
-                        <td>{{ $i + 1 }}</td>
-                        <td>{{ $item['nomor_rm'] ?? '-' }}</td>
-                        <td>{{ $item['pasien']['nama'] ?? '-' }}</td>
-                        <td>{{ $item['nomor_register'] ?? '-' }}</td>
-                        <td>
-                            @php
-                                $seks = $item['pasien']['seks'] ?? 'U';
-                                echo $seks === 'L' ? 'Laki-laki' : ($seks === 'P' ? 'Perempuan' : 'Tidak Diketahui');
-                                @endphp
-                        </td>
-                        <td>{{ isset($item['tanggal_kujungan']) ? explode('T', $item['tanggal_kujungan'])[0] : '-' }}</td>
-                        <td>{{ isset($item['tanggal_kujungan']) ? explode('T', $item['tanggal_kujungan'])[1] : '-' }}</td>
-                        <td>{{ $item['poli']['nama'] ?? '-' }}</td>
-                        <td>{{ $item['dokter']['namauser']['name'] ?? '-' }}</td>
-                        <td>{{ $item['penjamin']['nama'] ?? '-' }}</td>
+                        {{-- <td>{{ $i + 1 }}</td> --}}
+                        <td style="text-align: center;">{{ $item['no'] }}</td>
+                        <td>{{ $item['kode_request'] }}</td>
+                        <td>{{ $item['nama_klinik'] }}</td>
+                        <td>{{ $item['nama_obat_alkes'] ?? '-' }}</td>
+                        <td style="text-align: center;">{{ $item['qty'] }}</td>
+                        <td>{{ $item['tanggal'] }}</td>
+                        <td>{{ $item['petugas_entry'] }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+
+        <!-- Catatan kaki untuk menjelaskan subtotal - Diperbaiki dengan font yang lebih jelas -->
+        {{-- <div style="font-size: 8px; font-style: italic; margin-top: 3px; margin-bottom: 8px; text-align: right; font-weight: bold;">
+            * Subtotal sudah termasuk diskon per item
+        </div> --}}
 
         <div class="clearfix">
             <table class="summary-table">
                 <tr>
                     <td>Jumlah Invoice</td>
                     <td>:</td>
-                    <td style="text-align: right;">{{ $total_invoice }} Data</td>
+                    <td style="text-align: right;">{{ $total_invoice }} Lembar</td>
                 </tr>
+                @foreach ($obatQtySummary as $nama_obat => $qty)
+                    <tr>
+                        <td>{{ $nama_obat }}</td>
+                        <td>:</td>
+                        <td style="text-align: right;">{{ $qty }} Buah</td>
+                    </tr>
+                @endforeach
             </table>
         </div>
     </div>
