@@ -144,6 +144,9 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::post('/resep/print', [soap::class, 'print'])->name('resep.print');
     Route::post('/laboratorium/print', [soap::class, 'laboratoriumPrint'])->name('laboratorium.print');
     Route::post('/radiologi/print', [soap::class, 'radiologiPrint'])->name('radiologi.print');
+    Route::post('/dokter/so/odontogram/add', [soap::class, 'odontogramadd'])->name('odontogram.add');
+    Route::post('/dokter/so/odontogram/details/add', [soap::class, 'odontogramdetailsadd'])->name('odontogram.details.add');
+
     // Menu Pasien
     Route::get('/perawat', [soap::class,'pelayana'])->name('pelayana.get');
     Route::get('/perawat/so/{norawat}', [soap::class,'sopelayanan'])->name('sopelayana.get');

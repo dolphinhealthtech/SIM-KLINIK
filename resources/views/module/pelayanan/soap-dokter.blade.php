@@ -95,6 +95,10 @@
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-obat-tab" data-toggle="pill" href="#custom-tabs-four-obat" role="tab" aria-controls="custom-tabs-four-obat" aria-selected="false">Obat</a>
                                                     </li>
+
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-odo-tab" data-toggle="pill" href="#custom-tabs-four-odo" role="tab" aria-controls="custom-tabs-four-odo" aria-selected="false">Odontogram </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <div class="card-body">
@@ -648,6 +652,169 @@
                                                             </div>
                                                     </div>
 
+                                                    <div class="tab-pane fade" id="custom-tabs-four-odo" role="tabpanel" aria-labelledby="custom-tabs-four-odo-tab">
+                                                        <style>
+                                                            .svg-container {
+                                                                display: flex;
+                                                                justify-content: center;
+                                                                align-items: center;
+                                                                width: 100%;
+                                                            }
+                                                            .clickable-box {
+                                                                cursor: pointer;
+                                                            }
+                                                        </style>
+                                                        <div class="container svg-container">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 980 300" preserveAspectRatio="xMidYMin meet">
+                                                                @php
+                                                                    $leftNumbers = [18, 17, 16, 15, 14, 13, 12, 11, 55, 54, 53, 52, 51, 85, 84, 83, 82, 81, 48, 47, 46, 45, 44, 43, 42, 41];
+                                                                    $rightNumbers = [21, 22, 23, 24, 25, 26, 27, 28, 61, 62, 63, 64, 65, 71, 72, 73, 74, 75, 31, 32, 33, 34, 35, 36, 37, 38];
+                                                                @endphp
+                                                                <!-- Kotak Kiri -->
+                                                                @foreach ($leftNumbers as $index => $number)
+                                                                    @php
+                                                                        $row = $index < 8 ? 0 : ($index < 13 ? 1 : ($index < 18 ? 2 : 3));
+                                                                        $col = $index < 8 ? $index : ($index < 13 ? $index - 8 + 1.5 : ($index < 18 ? $index - 13 + 1.5 : $index - 18));
+                                                                        $x = $col * 60;
+                                                                        $y = $row * 60;
+                                                                        $isDiagonal = in_array($number, [14, 15, 16, 17, 18, 44, 45, 46, 47, 48, 54, 55, 84, 85]);
+                                                                        $isMiddleLine = in_array($number, [11, 12, 13, 51, 52, 53, 81, 82, 83, 41, 42, 43]);
+                                                                        $imagePath = $isDiagonal ? "/dist/img/odo/geraham.png" : ($isMiddleLine ? "/dist/img/odo/seri.png" : "/dist/img/odo/geraham.png");
+                                                                    @endphp
+
+                                                                    <g class="clickable-box" data-number="{{ $number }}">
+                                                                        <image
+                                                                            x="{{ $x + 10 }}"
+                                                                            y="{{ $y + 10 }}"
+                                                                            width="40"
+                                                                            height="40"
+                                                                            href="{{ $imagePath }}"
+                                                                            pointer-events="all"
+                                                                        />
+                                                                        <text
+                                                                            x="{{ $x + 30 }}"
+                                                                            y="{{ $y + 65 }}"
+                                                                            font-size="12"
+                                                                            text-anchor="middle"
+                                                                            pointer-events="none"
+                                                                        >
+                                                                            {{ $number }}
+                                                                        </text>
+                                                                    </g>
+                                                                @endforeach
+
+                                                                <!-- Divider -->
+                                                                <rect x="490" y="0" width="5" height="255" fill="red" />
+
+                                                                <!-- Kotak Kanan -->
+                                                                @foreach ($rightNumbers as $index => $number)
+                                                                @php
+                                                                    $row = $index < 8 ? 0 : ($index < 13 ? 1 : ($index < 18 ? 2 : 3));
+                                                                    $col = $index < 8 ? $index : ($index < 13 ? $index - 8 + 1.5 : ($index < 18 ? $index - 13 + 1.5 : $index - 18));
+                                                                    $x = $col * 60 + 500;
+                                                                    $y = $row * 60;
+                                                                    $isDiagonal = in_array($number, [24, 25, 26, 27, 28, 34, 35, 36, 37, 38, 64, 65, 74, 75]);
+                                                                    $isMiddleLine = in_array($number, [21, 22, 23, 61, 62, 63, 71, 72, 73, 31, 32, 33]);
+                                                                    $imagePath = $isDiagonal ? "/dist/img/odo/geraham.png" : ($isMiddleLine ? "/dist/img/odo/seri.png" : "/dist/img/odo/geraham.png");
+                                                                @endphp
+
+                                                                <g class="clickable-box" data-number="{{ $number }}">
+                                                                    <image
+                                                                        x="{{ $x + 10 }}"
+                                                                        y="{{ $y + 10 }}"
+                                                                        width="40"
+                                                                        height="40"
+                                                                        href="{{ $imagePath }}"
+                                                                        pointer-events="all"
+                                                                    />
+                                                                    <text
+                                                                        x="{{ $x + 30 }}"
+                                                                        y="{{ $y + 65 }}"
+                                                                        font-size="12"
+                                                                        text-anchor="middle"
+                                                                        pointer-events="none"
+                                                                    >
+                                                                        {{ $number }}
+                                                                    </text>
+                                                                </g>
+                                                                @endforeach
+                                                            </svg>
+                                                        </div>
+
+                                                        <div class="card collapsed-card">
+                                                            <div class="card-header">
+                                                                <p class="card-title">Pemeriksaan Gigi</p>
+
+                                                                <div class="card-tools">
+                                                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                                        <i class="fas fa-plus"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <!-- Bagian kiri: DMF -->
+                                                                    <div class="col-md-4">
+                                                                        <h5 class="mb-3 font-weight-bold text-primary">Status Gigi (DMF)</h5>
+
+                                                                        <div class="form-group">
+                                                                            <label for="Decayed">Decayed</label>
+                                                                            <input type="text" class="form-control" id="Decayed" name="Decayed" value="{{ old('Decayed', $gigiDetails->Decayed ?? '') }}">
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label for="Missing">Missing</label>
+                                                                            <input type="text" class="form-control" id="Missing" name="Missing" value="{{ old('Missing', $gigiDetails->Missing ?? '') }}">
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label for="Filled">Filled</label>
+                                                                            <input type="text" class="form-control" id="Filled" name="Filled" value="{{ old('Filled', $gigiDetails->Filled ?? '') }}">
+                                                                        </div>
+
+                                                                        <button type="button" class="btn btn-info mt-3 w-100" id="saveDentalForm">Simpan</button>
+
+                                                                    </div>
+
+                                                                    <!-- Spacer -->
+                                                                    <div class="col-md-1"></div>
+
+                                                                    <!-- Bagian kanan: Pemeriksaan Tambahan -->
+                                                                    <div class="col-md-7">
+                                                                        <h5 class="mb-3 font-weight-bold text-primary">Pemeriksaan Tambahan</h5>
+
+                                                                        @php
+                                                                            $selects = [
+                                                                                ['label' => 'Oclusi', 'id' => 'Oclusi', 'options' => ['Normal Bite', 'Cross Bite', 'deep Bite']],
+                                                                                ['label' => 'Torus Palatinus', 'id' => 'Palatinus', 'options' => ['Tidak Ada', 'Kecil', 'Sedang', 'Besar', 'Multiple']],
+                                                                                ['label' => 'Torus Mandibularis', 'id' => 'Mandibularis', 'options' => ['Sisi Kiri', 'Sisi Kanan', 'Kedua Sisi']],
+                                                                                ['label' => 'Platum', 'id' => 'Platum', 'options' => ['Dalam', 'Sedang', 'Rendah']],
+                                                                                ['label' => 'Diastema', 'id' => 'Diastema', 'options' => ['Ada', 'Tidak Ada']],
+                                                                                ['label' => 'Gigi Anomali', 'id' => 'Anomali', 'options' => ['Ada', 'Tidak Ada']]
+                                                                            ];
+                                                                        @endphp
+
+                                                                        @foreach ($selects as $select)
+                                                                            <div class="form-group row align-items-center">
+                                                                                <label for="{{ $select['id'] }}" class="col-sm-4 col-form-label">{{ $select['label'] }}</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <select class="form-control" id="{{ $select['id'] }}" name="{{ $select['id'] }}">
+                                                                                        <option value="">Pilih</option>
+                                                                                        @foreach ($select['options'] as $option)
+                                                                                            <option value="{{ $option }}" {{ (isset($gigiDetails) && $gigiDetails->{$select['id']} == $option) ? 'selected' : '' }}>
+                                                                                                {{ $option }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
                                                 </div>
                                             </div>
                                             <!-- /.card -->
@@ -665,6 +832,292 @@
         </section>
     <!-- /.content -->
 </div>
+
+
+
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="infoModalLabel">Pilih Kondisi Gigi</h5>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="kondisiGigi">Pilih Kondisi:</label>
+            <select class="form-control select2bs4" style="width: 100%;" id="kondisiGigi" name="kondisiGigi">
+                <option value="AMF" data-color="AMF">AMF</option>
+                <option value="COF" data-color="COF">COF</option>
+                <option value="FIS" data-color="FIS">FIS</option>
+                <option value="NVT" data-color="NVT">NVT</option>
+                <option value="RCT" data-color="RCT">RCT</option>
+                <option value="CAR" data-color="CAR">CAR</option>
+                <option value="AMF-CRT" data-color="AMF-CRT">AMF-CRT</option>
+                <option value="FMC" data-color="FMC">FMC</option>
+                <option value="FMC-RCT" data-color="FMC-RCT">FMC-RCT</option>
+                <option value="POC" data-color="POC">POC</option>
+                <option value="POC-RCT" data-color="POC-RCT">POC-RCT</option>
+                <option value="RRX" data-color="RRX">RRX</option>
+                <option value="MIS" data-color="MIS">MIS</option>
+                <option value="COF_" data-color="COF_">COF_</option>
+                <option value="CRF" data-color="CRF">CRF</option>
+                <option value="COF-RCT" data-color="COF-RCT">COF-RCT</option>
+
+              </select>
+          </div>
+          <!-- Input for Note -->
+            <div class="form-group">
+                <label for="noteGigi">Catatan:</label>
+                <textarea class="form-control" id="noteGigi" name="noteGigi" rows="3" placeholder="Masukkan catatan terkait kondisi gigi di sini..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary" id="saveButton">Simpan</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+    let selectedBox = null;
+
+    // Ambil info pasien dari form readonly
+    function getPatientInfo() {
+        return {
+            nomor_rm: document.getElementById('nomor_rm').value,
+            nama: document.getElementById('nama').value,
+            no_rawat: document.getElementById('no_rawat').value,
+            sex: document.getElementById('sex').value,
+            penjamin: document.getElementById('penjamin').value,
+            tanggal_lahir: document.getElementById('tanggal_lahir').value
+        };
+    }
+
+    // Klik gigi SVG
+    document.querySelectorAll('.clickable-box').forEach(box => {
+        box.addEventListener('click', function (event) {
+            selectedBox = event.target.closest('.clickable-box');
+            if (!selectedBox) return;
+
+            const number = selectedBox.getAttribute('data-number');
+            if (!number) {
+                console.error('Nomor gigi tidak ditemukan!');
+                return;
+            }
+
+            document.getElementById('infoModalLabel').textContent = `Pilih Kondisi Gigi (${number})`;
+
+            // Reset pilihan modal
+            document.getElementById('kondisiGigi').selectedIndex = 0;
+            document.getElementById('noteGigi').value = '';
+
+            $('#infoModal').modal('show');
+        });
+    });
+
+    // Klik tombol "Simpan" di modal
+    document.getElementById('saveButton').addEventListener('click', function () {
+        if (!selectedBox) return;
+
+        const selectedOption = document.getElementById('kondisiGigi').selectedOptions[0];
+        const condition = selectedOption?.getAttribute('data-color') || '';
+        const note = document.getElementById('noteGigi').value.trim();
+        const toothNumber = selectedBox.getAttribute('data-number');
+        const patientInfo = getPatientInfo();
+
+        const odontogramRoute = "{{ route('odontogram.add') }}";
+        const newData = {
+            ...patientInfo,
+            tooth_number: toothNumber,
+            condition: condition,
+            note: note
+        };
+
+        // Update visual gigi di SVG
+        updateToothBox(toothNumber, condition, note);
+
+        // Kirim langsung ke server via AJAX
+        $.ajax({
+            url: odontogramRoute,
+            method: 'POST',
+            data: JSON.stringify([newData]),
+            contentType: 'application/json',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function () {
+                $('#infoModal').modal('hide');
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: `Data gigi ${toothNumber} berhasil disimpan.`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            },
+            error: function (xhr) {
+                console.error(`Gagal menyimpan gigi ${toothNumber}:`, xhr.responseText);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal menyimpan!',
+                    text: 'Terjadi kesalahan saat menyimpan data.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
+    // Fungsi bantu update tampilan kotak gigi
+    function updateToothBox(toothNumber, condition, note) {
+        const box = document.querySelector(`.clickable-box[data-number="${toothNumber}"]`);
+        if (!box) return;
+
+        const image = box.querySelector('image');
+        const imagePath = `/dist/img/odo/${condition}.png`;
+        if (image) image.setAttribute('href', imagePath);
+
+        box.setAttribute('title', note);
+    }
+
+    // Load data dari server saat halaman pertama kali diload
+    function loadOdontogramData() {
+        const nomor_rm = document.getElementById('nomor_rm').value;
+        const no_rawat = document.getElementById('no_rawat').value;
+
+        $.ajax({
+            url: '/api/odontogram/load',
+            method: 'GET',
+            data: {
+                nomor_rm: nomor_rm,
+                no_rawat: no_rawat
+            },
+            success: function (data) {
+                data.forEach(item => {
+                    updateToothBox(item.tooth_number, item.condition, item.note);
+                });
+                console.log('Data odontogram berhasil dimuat.');
+            },
+            error: function (xhr) {
+                console.error('Gagal memuat data odontogram:', xhr.responseText);
+            }
+        });
+    }
+
+    // Jalankan saat halaman selesai dimuat
+    document.addEventListener('DOMContentLoaded', function () {
+        loadOdontogramData();
+    });
+</script>
+
+
+<script>
+    document.getElementById('saveDentalForm').addEventListener('click', function () {
+        // Ambil nilai input DMF
+        const Decayed = document.getElementById('Decayed').value;
+        const Missing = document.getElementById('Missing').value;
+        const Filled  = document.getElementById('Filled').value;
+
+        // Ambil nilai dari semua select (gunakan ID)
+        const Oclusi        = document.getElementById('Oclusi').value;
+        const Palatinus     = document.getElementById('Palatinus').value;
+        const Mandibularis  = document.getElementById('Mandibularis').value;
+        const Platum        = document.getElementById('Platum').value;
+        const Diastema      = document.getElementById('Diastema').value;
+        const Anomali       = document.getElementById('Anomali').value;
+
+        // Ambil info pasien dari form (readonly fields)
+        const nomor_rm       = document.getElementById('nomor_rm')?.value || '';
+        const nama           = document.getElementById('nama')?.value || '';
+        const no_rawat       = document.getElementById('no_rawat')?.value || '';
+        const sex            = document.getElementById('sex')?.value || '';
+        const penjamin       = document.getElementById('penjamin')?.value || '';
+        const tanggal_lahir  = document.getElementById('tanggal_lahir')?.value || '';
+
+        const odontogramDetailsAddRoute = "{{ route('odontogram.details.add') }}";
+
+        // Siapkan payload untuk dikirim
+        const formData = {
+            nomor_rm,
+            nama,
+            no_rawat,
+            sex,
+            penjamin,
+            tanggal_lahir,
+            Decayed,
+            Missing,
+            Filled,
+            Oclusi,
+            Palatinus,
+            Mandibularis,
+            Platum,
+            Diastema,
+            Anomali
+        };
+
+        // Kirim via AJAX ke server (Laravel endpoint)
+        $.ajax({
+            url: odontogramDetailsAddRoute, // Ganti sesuai rute Laravel Anda
+            method: 'POST',
+            data: formData,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Data pemeriksaan gigi berhasil disimpan.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal menyimpan!',
+                    text: 'Terjadi kesalahan saat menyimpan data.'
+                });
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        const nomor_rm = $('#nomor_rm').val();
+        const no_rawat = $('#no_rawat').val();
+
+        $.ajax({
+            url: '/api/odontogram/load-details',
+            method: 'POST',
+            data: {
+                nomor_rm: nomor_rm,
+                no_rawat: no_rawat,
+            },
+            success: function (data) {
+                if (data) {
+                    $('#Decayed').val(data.Decayed);
+                    $('#Missing').val(data.Missing);
+                    $('#Filled').val(data.Filled);
+                    $('#Oclusi').val(data.Oclusi);
+                    $('#Palatinus').val(data.Palatinus);
+                    $('#Mandibularis').val(data.Mandibularis);
+                    $('#Platum').val(data.Platum);
+                    $('#Diastema').val(data.Diastema);
+                    $('#Anomali').val(data.Anomali);
+                }
+            },
+            error: function (xhr) {
+                console.error('Gagal memuat data dental exam:', xhr.responseText);
+            }
+        });
+    });
+</script>
+
 
 
 {{-- Script load data --}}
@@ -772,223 +1225,223 @@
 {{-- Script resep --}}
 <script>
     $(function () {
-    let resepList = [];
-    let selectedIndex = -1;
+        let resepList = [];
+        let selectedIndex = -1;
 
-    function renderResep() {
-        let html = "";
-        resepList.forEach((line, i) => {
-        html += `<div class="resep-line d-flex justify-content-between align-items-center"
-                data-index="${i}" style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #ddd; ${i === selectedIndex ? 'background:#d1ecf1;' : ''}">
-            <span class="resep-text">${$('<div>').html(line.replace(/\n/g, "<br>")).html()}</span>`;
-        if (i === selectedIndex) {
-            html += `<div class="btn-group btn-group-sm ml-2">
-                    <button type="button" class="btn btn-warning btn-up">▲</button>
-                    <button type="button" class="btn btn-warning btn-down">▼</button>
-                    <button type="button" class="btn btn-success btn-edit">✎</button>
-                    <button type="button" class="btn btn-danger btn-delete">✖</button>
-                    </div>`;
-        }
-        html += `</div>`;
-        });
-        $("#summernote-resep").html(html);
-        $("#resep-data").val(JSON.stringify(resepList));
-    }
-
-    $("#btn-r-action").click(function () {
-        const text = $("#r-text").val().trim();
-        resepList.push(text ? `R:/ ${text}` : "R:/");
-        $("#r-text").val("");
-        renderResep();
-    });
-
-   $("#btn-add-obat").click(function () {
-    const nama = $("#nama-obat").val();
-    const dosis1 = $("#dosis1").val().trim();
-    const dosis2 = $("#dosis2").val().trim();
-    const signaJumlah1 = $("#signa-jumlah1").val().trim();
-    const signaJumlah2 = $("#signa-jumlah2").val().trim();
-    const dosis3 = $("#dosis3").val().trim();
-    const signaSatuan2 = $("#signa-satuan2").val();
-    const instruksi = $("#instruksi").val().trim();
-
-    if (!nama) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Oops...',
-            text: 'Pilih nama obat!',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
-
-    let line = `${nama}`;
-    if (dosis1) line += ` ${dosis1}`;
-    if (dosis2) line += ` ${dosis2}`;
-
-    line += "\n";
-
-    if (instruksi) {
-        line += `${instruksi}\n`;
-    }
-
-    // Susun signa walau tidak lengkap
-    if (signaJumlah1 && signaJumlah2) {
-        line += `${signaJumlah1} x ${signaJumlah2}`;
-        if (dosis3) line += ` ${dosis3}`;
-        if (signaSatuan2) line += ` ${signaSatuan2}`;
-    }
-
-    resepList.push(line);
-    renderResep();
-
-    // Reset input
-    $("#nama-obat").val("");
-    $("#dosis1").val("");
-    $("#dosis2").val("");
-    $("#instruksi").val("");
-    $("#signa-jumlah1").val("");
-    $("#signa-jumlah2").val("");
-    $("#dosis3").val("");
-    $("#signa-satuan2").val("");
-});
-
-
-    // Auto isi dosis2
-    $("#nama-obat").on("change", function () {
-        const satuan = $(this).find(":selected").data("satuan");
-        $("#dosis2").val(satuan ?? "");
-    });
-
-    $("#summernote-resep").on("click", ".resep-line", function () {
-        const idx = $(this).data("index");
-        selectedIndex = selectedIndex === idx ? -1 : idx;
-        renderResep();
-    });
-
-    $("#summernote-resep").on("click", ".btn-delete", function (e) {
-        e.stopPropagation();
-        const idx = $(this).closest(".resep-line").data("index");
-        resepList.splice(idx, 1);
-        selectedIndex = -1;
-        renderResep();
-    });
-
-    $("#summernote-resep").on("click", ".btn-up", function (e) {
-        e.stopPropagation();
-        const idx = $(this).closest(".resep-line").data("index");
-        if (idx > 0) {
-        [resepList[idx - 1], resepList[idx]] = [resepList[idx], resepList[idx - 1]];
-        selectedIndex = idx - 1;
-        renderResep();
-        }
-    });
-
-    $("#summernote-resep").on("click", ".btn-down", function (e) {
-        e.stopPropagation();
-        const idx = $(this).closest(".resep-line").data("index");
-        if (idx < resepList.length - 1) {
-        [resepList[idx + 1], resepList[idx]] = [resepList[idx], resepList[idx + 1]];
-        selectedIndex = idx + 1;
-        renderResep();
-        }
-    });
-
-    $("#summernote-resep").on("click", ".btn-edit", function (e) {
-    e.stopPropagation();
-    const idx = $(this).closest(".resep-line").data("index");
-    const line = resepList[idx];
-
-    // Reset form yang pasti diisi (nama & dosis)
-    $("#nama-obat").val("");
-    $("#dosis1").val("");
-    $("#dosis2").val("");
-    $("#instruksi").val("");
-    $("#signa-jumlah1").val("");
-    $("#signa-jumlah2").val("");
-    $("#dosis3").val("");
-    $("#signa-satuan2").val("");
-    $("#r-text").val("");
-
-    if (line.startsWith("R:/")) {
-        // Jika ini resep bebas
-        const content = line.replace(/^R:\/*\s*/, "");
-        $("#r-text").val(content);
-    } else {
-        // Pisah berdasarkan newline, hilangkan baris kosong
-        const parts = line.split("\n").map(p => p.trim()).filter(p => p.length > 0);
-
-        // === PARSING BARIS 1: nama obat + dosis1 + dosis2 ===
-        if (parts.length > 0) {
-            const tokens = parts[0].split(" ");
-            if (tokens.length >= 3) {
-                // Ambil 2 terakhir sebagai dosis
-                $("#dosis2").val(tokens.pop());
-                $("#dosis1").val(tokens.pop());
-                $("#nama-obat").val(tokens.join(" "));
-            } else if (tokens.length === 2) {
-                $("#dosis1").val(tokens.pop());
-                $("#nama-obat").val(tokens.join(" "));
-            } else if (tokens.length === 1) {
-                $("#nama-obat").val(tokens[0]);
+        function renderResep() {
+            let html = "";
+            resepList.forEach((line, i) => {
+            html += `<div class="resep-line d-flex justify-content-between align-items-center"
+                    data-index="${i}" style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #ddd; ${i === selectedIndex ? 'background:#d1ecf1;' : ''}">
+                <span class="resep-text">${$('<div>').html(line.replace(/\n/g, "<br>")).html()}</span>`;
+            if (i === selectedIndex) {
+                html += `<div class="btn-group btn-group-sm ml-2">
+                        <button type="button" class="btn btn-warning btn-up">▲</button>
+                        <button type="button" class="btn btn-warning btn-down">▼</button>
+                        <button type="button" class="btn btn-success btn-edit">✎</button>
+                        <button type="button" class="btn btn-danger btn-delete">✖</button>
+                        </div>`;
             }
+            html += `</div>`;
+            });
+            $("#summernote-resep").html(html);
+            $("#resep-data").val(JSON.stringify(resepList));
         }
 
-        // === PARSING BARIS 2: instruksi (opsional) ===
-        if (parts.length > 1 && !/^\d+\s*x\s*\d+/.test(parts[1])) {
-            // Pastikan ini bukan signa
-            $("#instruksi").val(parts[1]);
-        }
+        $("#btn-r-action").click(function () {
+            const text = $("#r-text").val().trim();
+            resepList.push(text ? `R:/ ${text}` : "R:/");
+            $("#r-text").val("");
+            renderResep();
+        });
 
-        // === PARSING BARIS 3 atau BARIS 2 (jika tidak ada instruksi): signa ===
-        const signaLine = parts.find(p => /^\d+\s*x\s*\d+/.test(p));
-        if (signaLine) {
-            const signaRegex = /^(\d+)\s*x\s*(\d+)(?:\s+(\S+))?(?:\s+(.*))?$/;
-            const match = signaLine.match(signaRegex);
-            if (match) {
-                if (match[1]) $("#signa-jumlah1").val(match[1]);
-                if (match[2]) $("#signa-jumlah2").val(match[2]);
-                if (match[3]) $("#dosis3").val(match[3]);
-                if (match[4]) $("#signa-satuan2").val(match[4]);
-            }
-        }
-    }
+    $("#btn-add-obat").click(function () {
+            const nama = $("#nama-obat").val();
+            const dosis1 = $("#dosis1").val().trim();
+            const dosis2 = $("#dosis2").val().trim();
+            const signaJumlah1 = $("#signa-jumlah1").val().trim();
+            const signaJumlah2 = $("#signa-jumlah2").val().trim();
+            const dosis3 = $("#dosis3").val().trim();
+            const signaSatuan2 = $("#signa-satuan2").val();
+            const instruksi = $("#instruksi").val().trim();
 
-    // Hapus item yang sedang diedit dan render ulang
-    resepList.splice(idx, 1);
-    selectedIndex = -1;
-    renderResep();
-});
-
-
-
-    $("#btn-print-resep-ajax").click(function () {
-        const resepData = JSON.stringify(resepList);
-
-        $.ajax({
-            url: '{{ route('resep.print') }}',
-            type: 'POST',
-            data: {
-                resep_data: resepData,
-                _token: '{{ csrf_token() }}'
-            },
-            xhrFields: {
-                responseType: 'blob' // penting agar bisa buka PDF dari binary
-            },
-            success: function (response, status, xhr) {
-                const blob = new Blob([response], { type: 'application/pdf' });
-                const url = window.URL.createObjectURL(blob);
-                window.open(url, '_blank');
-            },
-            error: function (xhr) {
+            if (!nama) {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal',
-                    text: 'Gagal mencetak resep.'
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Pilih nama obat!',
+                    confirmButtonText: 'OK'
                 });
+                return;
+            }
+
+            let line = `${nama}`;
+            if (dosis1) line += ` ${dosis1}`;
+            if (dosis2) line += ` ${dosis2}`;
+
+            line += "\n";
+
+            if (instruksi) {
+                line += `${instruksi}\n`;
+            }
+
+            // Susun signa walau tidak lengkap
+            if (signaJumlah1 && signaJumlah2) {
+                line += `${signaJumlah1} x ${signaJumlah2}`;
+                if (dosis3) line += ` ${dosis3}`;
+                if (signaSatuan2) line += ` ${signaSatuan2}`;
+            }
+
+            resepList.push(line);
+            renderResep();
+
+            // Reset input
+            $("#nama-obat").val("");
+            $("#dosis1").val("");
+            $("#dosis2").val("");
+            $("#instruksi").val("");
+            $("#signa-jumlah1").val("");
+            $("#signa-jumlah2").val("");
+            $("#dosis3").val("");
+            $("#signa-satuan2").val("");
+        });
+
+
+        // Auto isi dosis2
+        $("#nama-obat").on("change", function () {
+            const satuan = $(this).find(":selected").data("satuan");
+            $("#dosis2").val(satuan ?? "");
+        });
+
+        $("#summernote-resep").on("click", ".resep-line", function () {
+            const idx = $(this).data("index");
+            selectedIndex = selectedIndex === idx ? -1 : idx;
+            renderResep();
+        });
+
+        $("#summernote-resep").on("click", ".btn-delete", function (e) {
+            e.stopPropagation();
+            const idx = $(this).closest(".resep-line").data("index");
+            resepList.splice(idx, 1);
+            selectedIndex = -1;
+            renderResep();
+        });
+
+        $("#summernote-resep").on("click", ".btn-up", function (e) {
+            e.stopPropagation();
+            const idx = $(this).closest(".resep-line").data("index");
+            if (idx > 0) {
+            [resepList[idx - 1], resepList[idx]] = [resepList[idx], resepList[idx - 1]];
+            selectedIndex = idx - 1;
+            renderResep();
             }
         });
-    });
+
+        $("#summernote-resep").on("click", ".btn-down", function (e) {
+            e.stopPropagation();
+            const idx = $(this).closest(".resep-line").data("index");
+            if (idx < resepList.length - 1) {
+            [resepList[idx + 1], resepList[idx]] = [resepList[idx], resepList[idx + 1]];
+            selectedIndex = idx + 1;
+            renderResep();
+            }
+        });
+
+        $("#summernote-resep").on("click", ".btn-edit", function (e) {
+            e.stopPropagation();
+            const idx = $(this).closest(".resep-line").data("index");
+            const line = resepList[idx];
+
+            // Reset form yang pasti diisi (nama & dosis)
+            $("#nama-obat").val("");
+            $("#dosis1").val("");
+            $("#dosis2").val("");
+            $("#instruksi").val("");
+            $("#signa-jumlah1").val("");
+            $("#signa-jumlah2").val("");
+            $("#dosis3").val("");
+            $("#signa-satuan2").val("");
+            $("#r-text").val("");
+
+            if (line.startsWith("R:/")) {
+                // Jika ini resep bebas
+                const content = line.replace(/^R:\/*\s*/, "");
+                $("#r-text").val(content);
+            } else {
+                // Pisah berdasarkan newline, hilangkan baris kosong
+                const parts = line.split("\n").map(p => p.trim()).filter(p => p.length > 0);
+
+                // === PARSING BARIS 1: nama obat + dosis1 + dosis2 ===
+                if (parts.length > 0) {
+                    const tokens = parts[0].split(" ");
+                    if (tokens.length >= 3) {
+                        // Ambil 2 terakhir sebagai dosis
+                        $("#dosis2").val(tokens.pop());
+                        $("#dosis1").val(tokens.pop());
+                        $("#nama-obat").val(tokens.join(" "));
+                    } else if (tokens.length === 2) {
+                        $("#dosis1").val(tokens.pop());
+                        $("#nama-obat").val(tokens.join(" "));
+                    } else if (tokens.length === 1) {
+                        $("#nama-obat").val(tokens[0]);
+                    }
+                }
+
+                // === PARSING BARIS 2: instruksi (opsional) ===
+                if (parts.length > 1 && !/^\d+\s*x\s*\d+/.test(parts[1])) {
+                    // Pastikan ini bukan signa
+                    $("#instruksi").val(parts[1]);
+                }
+
+                // === PARSING BARIS 3 atau BARIS 2 (jika tidak ada instruksi): signa ===
+                const signaLine = parts.find(p => /^\d+\s*x\s*\d+/.test(p));
+                if (signaLine) {
+                    const signaRegex = /^(\d+)\s*x\s*(\d+)(?:\s+(\S+))?(?:\s+(.*))?$/;
+                    const match = signaLine.match(signaRegex);
+                    if (match) {
+                        if (match[1]) $("#signa-jumlah1").val(match[1]);
+                        if (match[2]) $("#signa-jumlah2").val(match[2]);
+                        if (match[3]) $("#dosis3").val(match[3]);
+                        if (match[4]) $("#signa-satuan2").val(match[4]);
+                    }
+                }
+            }
+
+            // Hapus item yang sedang diedit dan render ulang
+            resepList.splice(idx, 1);
+            selectedIndex = -1;
+            renderResep();
+        });
+
+
+
+        $("#btn-print-resep-ajax").click(function () {
+            const resepData = JSON.stringify(resepList);
+
+            $.ajax({
+                url: '{{ route('resep.print') }}',
+                type: 'POST',
+                data: {
+                    resep_data: resepData,
+                    _token: '{{ csrf_token() }}'
+                },
+                xhrFields: {
+                    responseType: 'blob' // penting agar bisa buka PDF dari binary
+                },
+                success: function (response, status, xhr) {
+                    const blob = new Blob([response], { type: 'application/pdf' });
+                    const url = window.URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Gagal mencetak resep.'
+                    });
+                }
+            });
+        });
     });
 </script>
 
@@ -2663,7 +3116,6 @@
             });
         });
 </script>
-
 
 @endsection
 
