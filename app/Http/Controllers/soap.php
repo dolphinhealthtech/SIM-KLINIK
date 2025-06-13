@@ -1298,7 +1298,7 @@ class soap extends Controller
 
         $pelayanan = Pelayanan::with('poli', 'dokter.namauser', 'pasien', 'pendaftaran.status')
             ->where('nomor_rm', $validated['nomor_rm'])
-            ->where('no_rawat', $validated['no_rawat'])
+            ->where('nomor_register', $validated['no_rawat'])
             ->first();
 
 
