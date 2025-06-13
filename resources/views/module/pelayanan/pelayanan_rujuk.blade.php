@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <form action="{{ route('sopelayana.add') }}" method="POST">
+                            <form action="{{ route('pelayana_rujuk.post') }}" method="POST">
                                 @csrf
                             <div class="card-body">
                                 <div class="row">

@@ -1286,6 +1286,37 @@ class soap extends Controller
         return response()->json($data);
     }
 
+    public function pelayana_rujukan_add(Request $request)
+    {
+        $validated = $request->validate([
+            'nomor_rm' => 'required|string',
+            'no_rawat' => 'required|string',
+            'penjamin' => 'required|string',
+            'tujuan_rujukan' => 'required|string',
+            'opsi_rujukan' => 'required|string',
+        ]);
+
+        $pelayanan = Pelayanan::with('poli', 'dokter.namauser', 'pasien', 'pendaftaran.status')
+            ->where('nomor_rm', $validated['nomor_rm'])
+            ->where('no_rawat', $validated['no_rawat'])
+            ->first();
+
+
+
+        if ($validated['penjamin'] === 'UMUM') {
+            return response()->json([
+                'message' => 'Data rujukan berhasil disimpan',
+                'data' => $pelayanan
+            ]);
+        } elseif ($validated['penjamin'] === 'BPJS') {
+            return response()->json([
+                'message' => 'Data rujukan berhasil disimpan',
+                'data' => $pelayanan
+            ]);
+        }
+
+        // return response()->json(['message' => 'Data rujukan berhasil disimpan']);
+    }
 }
 
 
