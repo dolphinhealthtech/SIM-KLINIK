@@ -137,10 +137,10 @@ Route::prefix('pemeriksaan')->group(function () {
 });
 
 //untuk list pasien
- Route::middleware('auth')->prefix('pasien-selesai')->group(function () {
-     Route::get('/', [soap::class, 'pelayana_selesai'])->name('list_pasien.get');
-     Route::get('/rme/{norawat}', [soap::class, 'pelayana_rme_selesai'])->name('list_pasien_rme.get');
- });
+Route::middleware('auth')->prefix('pasien-selesai')->group(function () {
+    Route::get('/', [soap::class, 'pelayana_selesai'])->name('list_pasien.get');
+    Route::get('/rme/{norawat}', [soap::class, 'pelayana_rme_selesai'])->name('list_pasien_rme.get');
+});
 
     Route::get('/list_pasien', [soap::class, 'list_pasien'])->name('list_pasien.get');
     Route::get('/rme/{norawat}', [soap::class, 'pelayana_rme_selesai'])->name('list_pasien_rme.get');
@@ -163,6 +163,19 @@ Route::prefix('pendataan')->group(function () {
     Route::get('/gudang-utama', [DataMasterGudangController::class,'laporan_gudang_utama'])->name('laporan_gudang_utama.get');
     Route::post('/print/gudang-utama', [DataMasterGudangController::class,'print_gudang_utama'])->name('print_gudang_utama');
 });
+
+// Menu Inventaris
+Route::get('/data-inventaris', [SuperadminController::class,'inventaris'])->name('inventaris.get');
+Route::post('/data-inventaris/add', [SuperadminController::class,'inventarisadd'])->name('inventaris.store');
+Route::post('/data-inventaris/update', [SuperadminController::class,'inventarisedit'])->name('inventaris.update');
+Route::post('/data-inventaris/delete', [SuperadminController::class,'inventarisdelete'])->name('inventaris.destroy');
+Route::get('/data-inventaris/export', [SuperadminController::class, 'inventarisexport'])->name('inventaris.export');
+Route::post('/data-inventaris/import', [SuperadminController::class, 'inventarisimport'])->name('inventaris.import');
+// Inventaris koneksi antar database
+    Route::get('/data-inventaris/singkron/{id}', [SuperadminController::class, 'inventarissingkron'])->name('inventaris.singkron');
+
+Route::get('/inventaris-pembelian', [SuperadminController::class, 'inventaris_pembelian'])->name('inventaris_pembelian.get');
+Route::post('/inventaris-pembelian/add', [SuperadminController::class, 'inventaris_pembelianadd'])->name('inventaris_pembelian.add');
 
 // Menu data master
     // Menu data master umum
@@ -413,6 +426,14 @@ Route::prefix('pendataan')->group(function () {
             Route::get('/setting-harga-jual/singkron/{id}', [DataMasterGudangController::class, 'sethargasingkron'])->name('setharga.singkron');
             Route::get('/harga-barang-jual', [DataMasterGudangController::class,'hargajual'])->name('hargajual.get');
             Route::get('/stok-obat-alkes', [DataMasterGudangController::class,'stokobatalkes'])->name('stokobatalkes.get');
+
+            // Menu Jenis Kategori
+            Route::get('/kategori-inventaris', [DataMasterGudangController::class,'katin'])->name('katin.get');
+            Route::post('/kategori-inventaris/add', [DataMasterGudangController::class,'katinadd'])->name('katin.store');
+            Route::post('/kategori-inventaris/update', [DataMasterGudangController::class,'katinedit'])->name('katin.update');
+            Route::post('/kategori-inventaris/delete', [DataMasterGudangController::class,'katindelete'])->name('katin.destroy');
+            Route::get('/kategori-inventaris/export', [DataMasterGudangController::class,'katinexport'])->name('katin.export');
+            Route::post('/kategori-inventaris/import', [DataMasterGudangController::class,'katinimport'])->name('katin.import');
 
             // Menu Request Obat Klinik Omega
             Route::get('/gudang-request', [DataMasterGudangController::class, 'gudangrequest'])->name('gudangrequest.get');
