@@ -35,6 +35,9 @@ Route::get('/get-subspesialis/{kode}', [soap::class, 'getSubSpesialis']);
 
 Route::get('/get-pemeriksaan-laboratorium/{id}', [soap::class, 'getSubBidangLab']);
 
+Route::get('/odontogram/load', [soap::class, 'odontogramload']);
+Route::post('/odontogram/load-details', [soap::class, 'odontogramdetailsload']);
+
 
 Route::prefix('lokasi')->group(function(){
     Route::get('/kabupaten', [LokasiController::class, 'getKabupaten'])->name('get.kabupaten');

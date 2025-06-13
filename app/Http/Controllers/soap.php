@@ -31,6 +31,8 @@ use App\Models\spesialis;
 use App\Models\subspesialis;
 use App\Models\laboratorium_bidang;
 use App\Models\laboratorium_bidang_sub;
+use App\Models\odontogram;
+use App\Models\odontogram_details;
 use App\Models\radiologi_pemeriksaan;
 use App\Models\radiologi_jenis;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -944,7 +946,6 @@ class soap extends Controller
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
 
-    //list pasien selesai
     public function pelayana_selesai()
     {
         $title = "list_pasien";
@@ -954,7 +955,6 @@ class soap extends Controller
         return view('module.pelayanan.list_pasien_selesai', compact('title','pelayanan'));
     }
 
-    //rme pasien selesai
     public function pelayana_rme_selesai($norawat)
     {
         $nomor_rawat = base64_decode($norawat);
@@ -1201,6 +1201,127 @@ class soap extends Controller
         return view('module.pelayanan.list_pasien_selesai_rme', compact('title','pelayanan','umur','timeline'));
     }
 
+    public function odontogramadd(Request $request)
+    {
+        $data = $request->all(); // Data berupa array JSON dari JS
+
+        foreach ($data as $item) {
+            odontogram::updateOrCreate(
+                [
+                    'nomor_rm'    => $item['nomor_rm'],
+                    'nama'  => $item['nama'],
+                    'no_rawat'  => $item['no_rawat'],
+                    'sex'  => $item['sex'],
+                    'penjamin'  => $item['penjamin'],
+                    'tanggal_lahir'  => $item['tanggal_lahir'],
+                    'tooth_number'  => $item['tooth_number']
+                ],
+                [
+                    'condition' => $item['condition'],
+                    'note'      => $item['note']
+                ]
+            );
+        }
+
+        return response()->json(['message' => 'Data kondisi gigi berhasil disimpan atau diperbarui.']);
+    }
+
+    public function odontogramload(Request $request)
+    {
+        $request->validate([
+            'nomor_rm'    => 'required|string',
+            'no_rawat'  => 'required|string',
+        ]);
+
+        $conditions = odontogram::where('nomor_rm', $request->nomor_rm)
+            ->where('no_rawat', $request->no_rawat)
+            ->get();
+
+        return response()->json($conditions);
+    }
+
+    public function odontogramdetailsadd(Request $request)
+    {
+        $validated = $request->validate([
+            'nomor_rm' => 'required|string',
+            'no_rawat' => 'required|string',
+            'nama' => 'required|string',
+            'sex' => 'nullable|string',
+            'penjamin' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|date',
+            'Decayed' => 'nullable|string',
+            'Missing' => 'nullable|string',
+            'Filled' => 'nullable|string',
+            'Oclusi' => 'nullable|string',
+            'Palatinus' => 'nullable|string',
+            'Mandibularis' => 'nullable|string',
+            'Platum' => 'nullable|string',
+            'Diastema' => 'nullable|string',
+            'Anomali' => 'nullable|string',
+        ]);
+
+        // Simpan atau update data
+        odontogram_details::updateOrCreate(
+            [
+                'nomor_rm' => $validated['nomor_rm'],
+                'no_rawat' => $validated['no_rawat']
+            ],
+            $validated
+        );
+
+        return response()->json(['message' => 'Data berhasil disimpan']);
+    }
+
+    public function odontogramdetailsload(Request $request)
+    {
+        $request->validate([
+            'nomor_rm' => 'required|string',
+            'no_rawat' => 'required|string',
+        ]);
+
+        $data = odontogram_details::where('nomor_rm', $request->nomor_rm)
+                        ->where('no_rawat', $request->no_rawat)
+                        ->first();
+
+        return response()->json($data);
+    }
+
+    public function pelayana_rujukan_add(Request $request)
+    {
+        $validated = $request->validate([
+            'nomor_rm' => 'required|string',
+            'no_rawat' => 'required|string',
+            'penjamin' => 'required|string',
+            'tujuan_rujukan' => 'required|string',
+            'opsi_rujukan' => 'required|string',
+        ]);
+
+        $pelayanan = Pelayanan::with('poli','pelayanan_so', 'pelayanan_soap' ,'dokter.namauser', 'pasien', 'pendaftaran.status')
+            ->where('nomor_rm', $validated['nomor_rm'])
+            ->where('nomor_register', $validated['no_rawat'])
+            ->first();
+
+
+         $data = [
+            "noKunjungan" => null,
+            "noKartu" => $pelayanan->no_bpjs,
+
+        ];
+
+        if ($validated['penjamin'] === 'UMUM') {
+            return response()->json([
+                'message' => 'Data rujukan berhasil disimpan',
+                'data' => $pelayanan
+            ]);
+        } elseif ($validated['penjamin'] === 'BPJS') {
+            return response()->json([
+                'message' => 'Data rujukan berhasil disimpan',
+                'data' => $pelayanan
+            ]);
+        }
+
+        // return response()->json(['message' => 'Data rujukan berhasil disimpan']);
+    }
 }
 
 
