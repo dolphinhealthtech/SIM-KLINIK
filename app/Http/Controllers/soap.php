@@ -1296,12 +1296,17 @@ class soap extends Controller
             'opsi_rujukan' => 'required|string',
         ]);
 
-        $pelayanan = Pelayanan::with('poli', 'dokter.namauser', 'pasien', 'pendaftaran.status')
+        $pelayanan = Pelayanan::with('poli','pelayanan_so', 'pelayanan_soap' ,'dokter.namauser', 'pasien', 'pendaftaran.status')
             ->where('nomor_rm', $validated['nomor_rm'])
             ->where('nomor_register', $validated['no_rawat'])
             ->first();
 
 
+         $data = [
+            "noKunjungan" => null,
+            "noKartu" => $pelayanan->no_bpjs,
+
+        ];
 
         if ($validated['penjamin'] === 'UMUM') {
             return response()->json([
