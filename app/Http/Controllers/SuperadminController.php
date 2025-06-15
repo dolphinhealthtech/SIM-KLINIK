@@ -4167,6 +4167,7 @@ public function panggilPasien($id)
                 if ($detail['jenis_barang'] === 'Inventaris') {
                     for ($i = 0; $i < intval($detail['qty_pembelian']); $i++) {
                         inventaris_stok::create([
+                            'kode_pembelian' => $request->input('kode_pembelian_inventaris'),
                             'kode_barang' => $detail['kode_barang'],
                             'nama_barang' => $detail['nama_barang'],
                             'kategori_barang' => $detail['kategori_barang'],
@@ -4186,6 +4187,7 @@ public function panggilPasien($id)
                     }
                 } else {
                     inventaris_stok::create([
+                        'kode_pembelian' => $request->input('kode_pembelian_inventaris'),
                         'kode_barang' => $detail['kode_barang'],
                         'nama_barang' => $detail['nama_barang'],
                         'kategori_barang' => $detail['kategori_barang'],
@@ -4226,6 +4228,31 @@ public function panggilPasien($id)
             ], 500);
         }
     }
+
+    public function generatePembelianInventaris()
+    {
+        $today = date('Ymd'); // Tanggal hari ini dalam format YYYYMMDD
+
+        // Ambil data terakhir yang dibuat hari ini berdasarkan kode
+        $last = inventaris_pembelian::orderBy('id', 'desc')
+            ->first();
+
+        if (!$last) {
+            $nextNumber = 1;
+        } else {
+            // Ambil nomor urut terakhir dari kode
+            preg_match('/FIP-\d{8}-(\d{5})$/', $last->kode, $match);
+            $nextNumber = isset($match[1]) ? ((int)$match[1] + 1) : 1;
+        }
+
+        $kode = 'FIP-' . $today . '-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+
+        return response()->json([
+            'success' => true,
+            'kode' => $kode
+        ]);
+    }
+
 
     // END PEMBELIAN INVENTARIS
 }

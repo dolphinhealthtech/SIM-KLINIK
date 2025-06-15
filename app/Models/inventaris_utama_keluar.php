@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class inventaris_stok extends Model
+class inventaris_utama_keluar extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'kode_pembelian',
+        'kode_request',
+        'nama_klinik',
+        'tanggal_request',
         'kode_barang',
         'nama_barang',
         'kategori_barang',

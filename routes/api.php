@@ -26,6 +26,7 @@ Route::get('/get-dokter-by-poli/{id}', [SuperadminController::class, 'getByPoli'
 Route::get('/generate-kode-data-barang', [SuperadminController::class, 'generateKodeDataBarang'])->name('generateKodeDataBarang');
 Route::get('/generate-faktur-pembelian', [SuperadminController::class, 'generateFakturPembelian'])->name('generateFakturPembelian');
 Route::get('/generate-kode-inventaris', [SuperadminController::class, 'generateKodeInventaris'])->name('generateKodeInventaris');
+Route::get('/generate-kode-pembelian-inventaris', [SuperadminController::class, 'generatePembelianInventaris'])->name('generatePembelianInventaris');
 
 Route::get('/sub-pemeriksaan/{id}', [soap::class, 'getSubPemeriksaan']);
 Route::get('/alergi/by-jenis/{id}', [soap::class, 'getByJenis']);
@@ -82,6 +83,16 @@ Route::prefix('data-master-medis')->group(function(){
 // Data Master Gudang
 Route::prefix('data-master-gudang')->group(function(){
     Route::get('/supplier-industri/getLastKode', [DataMasterGudangController::class, 'getLastKode'])->name('supplier_industri.getLastKode');
+
+    Route::get('/request/inventaris/getLastKode', [DataMasterGudangController::class, 'inventaris_request_getLastKode'])->name('inventaris.request_getLastKode');
+    Route::get('/request/inventaris/getDetails/{kode_request}', [DataMasterGudangController::class, 'inventaris_getDetails'])->name('inventaris.request_getDetails');
+    Route::get('/request/inventaris/detailsAprroval/{kode_request}', [DataMasterGudangController::class, 'inventaris_detailsAprroval'])->name('inventaris.request_detailsAprroval');
+    Route::post('/request/inventaris/terimaData/{id}', [DataMasterGudangController::class, 'inventaris_terimaData'])->name('inventaris.request_terimaData');
+    Route::post('/request/inventaris/tolakData/{id}', [DataMasterGudangController::class, 'inventaris_tolakData'])->name('inventaris.request_tolakData');
+
+    Route::get('/utama/inventaris/getData/{kode_barang}', [DataMasterGudangController::class, 'inventaris_getData'])->name('utama.getData');
+    Route::post('/utama/inventaris/proses-permintaan', [DataMasterGudangController::class, 'inventaris_prosesPermintaan'])->name('inventaris.utama_prosesPermintaan');
+    Route::get('/pdf/inventaris/{kodeRequest}', [DataMasterGudangController::class, 'inventaris_generatePdf'])->name('inventaris.utama_pdf');
 
     Route::get('/request/getLastKode', [DataMasterGudangController::class, 'request_getLastKode'])->name('request.getLastKode');
     Route::get('/request/getDetails/{kode_request}', [DataMasterGudangController::class, 'getDetails'])->name('request.getDetails');

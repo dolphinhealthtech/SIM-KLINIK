@@ -12,7 +12,7 @@
                             <h1 class="m-0">Inventaris Pembelian</h1>
                         </div><!-- /.col -->
                         <div class="col-sm-2 d-flex justify-content-end">
-                            <input type="text" class="form-control" id="kode_pembelian_inventaris" name="kode_pembelian_inventaris" value="FIP-20250613-00001" readonly>
+                            <input type="text" class="form-control" id="kode_pembelian_inventaris" name="kode_pembelian_inventaris" readonly>
                         </div><!-- /.col -->
                     </div><!-- /.row -->
                 </div><!-- /.container-fluid -->
@@ -67,7 +67,7 @@
                                     <div class="form-group row">
                                         <div class="col-md-6">
                                             <label for="lokasi_barang">Lokasi Barang</label>
-                                            <input type="text" class="form-control" id="lokasi_barang" name="lokasi_barang" placeholder="Masukan Lokasi Barang Digunakan">
+                                            <input type="text" class="form-control" id="lokasi_barang" name="lokasi_barang" placeholder="Lokasi Barang Digunakan">
                                         </div>
                                         <div class="col-md-6">
                                             <label for="kondisi_barang_investasi">Kondisi Barang</label>
@@ -200,6 +200,24 @@
         });
 
         $(document).ready(function () {
+            $.ajax({
+                url: '/api/generate-kode-pembelian-inventaris',
+                method: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        // Isi input nomor faktur dengan nomor yang dihasilkan
+                        $('#kode_pembelian_inventaris').val(response.kode);
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan dalam mengambil nomor faktur.'
+                    });
+                }
+            });
+
             $('#barang_investasi').on('change', function () {
                 const selected = $(this).find(':selected');
 

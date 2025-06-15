@@ -22,6 +22,10 @@ use App\Models\gudang_klinik_request;
 use App\Models\gudang_klinik_request_details;
 use App\Models\gudang_utama_keluar;
 use App\Models\inventaris_kategori;
+use App\Models\inventaris_stok;
+use App\Models\inventaris_data_barang;
+use App\Models\inventaris_request;
+use App\Models\inventaris_utama_keluar;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -29,6 +33,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class DataMasterGudangController extends Controller
 {
@@ -548,7 +553,7 @@ class DataMasterGudangController extends Controller
 
     public function katin()
     {
-        $title = "Master Jenis Kategori Inventaris";
+        $title = "Master Kategori Inventaris";
         $katin = inventaris_kategori::all();
         return view('module.master-data-gudang.kategori_inventaris', compact('title','katin'));
     }
@@ -652,6 +657,719 @@ class DataMasterGudangController extends Controller
     }
 
     // Jenis Kategori Inventaris end
+
+    // Stok Inventaris
+
+    public function stokin()
+    {
+        $title = "Master Stok Inventaris ";
+        $stok_inventaris = DB::table('inventaris_stoks as a')
+            ->join(
+                DB::raw('(SELECT MIN(id) as id FROM inventaris_stoks GROUP BY kode_pembelian, kode_barang) as b'),
+                'a.id',
+                '=',
+                'b.id'
+            )
+            ->select(
+                'a.id',
+                'a.kode_pembelian',
+                'a.kode_barang',
+                'a.nama_barang',
+                'a.kategori_barang',
+                'a.jenis_barang',
+                'a.tanggal_pembelian',
+                'a.masa_akhir_penggunaan',
+                'a.detail_barang'
+            )
+            ->get();
+        return view('module.master-data-gudang.stok_inventaris', compact('title','stok_inventaris'));
+    }
+
+    public function stokin_data(Request $request, $id)
+    {
+        $title = "Detail Data Stok Inventaris";
+        $kode = $request->query('kode');
+
+        $stok = inventaris_stok::where('kode_pembelian', $id)
+                ->where('kode_barang', $kode)
+                ->get();
+
+        // dd($tindakanTabel);
+        return view('module.master-data-gudang.stok_inventaris_data', compact('title','kode','stok'));
+    }
+
+    public function stokin_datadelete(Request $request)
+    {
+
+        $request->validate([
+            'data_inventaris_id_delete' => 'required'
+        ]);
+
+        $stok = inventaris_stok::find($request->data_inventaris_id_delete);
+
+        if (!$stok) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data stok inventaris tidak ditemukan!'
+            ], 404);
+        }
+
+        $stok->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data stok inventaris berhasil dihapus!'
+        ]);
+    }
+
+    public function stokin_dataedit(Request $request)
+    {
+        $request->validate([
+            'kode_edit' => 'required|string',
+            'nama_edit' => 'required|string',
+            'lokasi_barang_edit' => 'required|string',
+            'penanggung_jawab_edit' => 'required|string',
+            'kondisi_barang_edit' => 'required|string',
+            'no_seri_edit' => 'required|string',
+        ]);
+
+        $stok = inventaris_stok::find($request->data_id_edit);
+
+        if (!$stok) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data stok inventaris tidak ditemukan!'
+            ], 404);
+        }
+
+        $stok->lokasi = $request->lokasi_barang_edit;
+        $stok->penanggung_jawab = $request->penanggung_jawab_edit;
+        $stok->kondisi = $request->kondisi_barang_edit;
+        $stok->no_seri = $request->no_seri_edit;
+        $stok->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data stok inventaris berhasil diperbarui!'
+        ]);
+    }
+
+    // End Stok Inventaris
+
+    // Inventaris Klinik Request (OMEGA)
+
+    public function inventarisrequest()
+    {
+        $title = "Request Data Inventaris";
+        $inventaris = inventaris_data_barang::all();
+        $singkron = external_database::all();
+
+        // Ambil koneksi external (contoh id=1)
+        $connExternal = external_database::find(1);
+
+        if ($connExternal) {
+            $config = [
+                'driver'    => 'mysql',
+                'host'      => $connExternal->host,
+                'database'  => $connExternal->database,
+                'username'  => $connExternal->username,
+                'password'  => $connExternal->password,
+                'port'      => $connExternal->port ?? 3306,
+                'charset'   => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+            ];
+
+            $factory = app(ConnectionFactory::class);
+            $connection = $factory->make($config, $connExternal->name);
+
+            // Gunakan koneksi ini untuk query
+            $request = $connection->table('inventaris_requests')
+                                ->where('kode_klinik', 'BLRJ')
+                                ->get();
+
+            $data_kirim = $connection->table('inventaris_utama_keluars')
+                                ->select('kode_request', 'tanggal_request', 'nama_klinik')
+                                ->where('nama_klinik', 'Klinik Balaraja')
+                                ->groupBy('kode_request', 'tanggal_request', 'nama_klinik')
+                                ->get();
+
+        } else {
+            $request = collect(); // kosong jika tidak ada koneksi eksternal
+            $data_kirim = collect(); // kosong jika tidak ada koneksi eksternal
+        }
+
+        return view('module.master-data-gudang.request_inventaris', compact('title', 'inventaris','request','singkron','data_kirim'));
+    }
+
+    public function inventarisrequestadd(Request $request)
+    {
+        try {
+            $request->validate([
+                'data_tabel_request'  => 'required|string',
+                'kode_request'  => 'required|string',
+                'external_database'  => 'required|string',
+            ], [
+                'data_tabel_request'  => 'Tidak Input Request',
+                'kode_request'  => 'Kode Request',
+                'external_database'  => 'Koneksi Database',
+            ]);
+
+            // Ambil ID dari input request
+            $externalDbId = $request->input('external_database');
+
+            // Ambil data dari tabel external_database
+            $externalDb = external_database::findOrFail($externalDbId);
+
+            // Buat config koneksi
+            $config = [
+                'driver'    => 'mysql',
+                'host'      => $externalDb->host,
+                'database'  => $externalDb->database,
+                'username'  => $externalDb->username,
+                'password'  => $externalDb->password,
+                'port'      => $externalDb->port ?? 3306,
+                'charset'   => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+            ];
+
+            $factory = app(ConnectionFactory::class);
+            $connection = $factory->make($config, $externalDb->name);
+
+            $kodeRequest = $request->kode_request;
+            $kodeKlinik = explode('-', $kodeRequest)[0];
+
+            // Mapping kode klinik ke nama
+            $namaKlinik = match($kodeKlinik) {
+                'KRNJ' => 'Klinik Kronjo',
+                'BLRJ' => 'Klinik Balaraja',
+                'KRSK' => 'Klinik Kresek',
+                'RJEG' => 'Klinik Rajeg',
+                'CITR' => 'Klinik Citra',
+                'TGRS' => 'Klinik Tiga Raksa',
+                'CTRY' => 'Klinik Citra Raya',
+                'JAYA' => 'Klinik Jaya',
+                default => 'Klinik Tidak Dikenal'
+            };
+
+            $connection->table('inventaris_requests')->insert([
+                'kode_request' => $kodeRequest,
+                'kode_klinik' => $kodeKlinik,
+                'nama_klinik' => $namaKlinik,
+                'status' => 0,
+                'tanggal_input' => now()->toDateString(),
+                'user_input_id' => Auth::user()->id,
+                'user_input_name' => Auth::user()->name,
+                'created_at'       => now(),
+                'updated_at'       => now(),
+            ]);
+
+            // Simpan detail pembelian
+            $dataDetail = json_decode($request->data_tabel_request, true);
+
+            foreach ($dataDetail as $detail) {
+                $connection->table('inventaris_request_details')->insert([
+                    'kode_request'    => $request->input('kode_request'),
+                    'kode_barang' => $detail['kode_barang'],
+                    'nama_barang' => $detail['nama_barang'],
+                    'qty'             => $detail['jumlah'],
+                    'user_input_id'   => Auth::user()->id,
+                    'user_input_name' => Auth::user()->name,
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                ]);
+            }
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Request data inventaris berhasil dilakukan!',
+                'data' => $connection
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Request data inventaris sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan request data inventaris!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
+
+    public function inventaris_request_getLastKode()
+    {
+        $kodeKlinik = 'BLRJ'; // Bisa juga ambil dari request jika dynamic
+        $tanggal = now()->format('Ymd'); // Format YYYYMMDD
+
+        $connExternal = external_database::find(1); // Ambil koneksi eksternal
+
+        if ($connExternal) {
+            $config = [
+                'driver'    => 'mysql',
+                'host'      => $connExternal->host,
+                'database'  => $connExternal->database,
+                'username'  => $connExternal->username,
+                'password'  => $connExternal->password,
+                'port'      => $connExternal->port ?? 3306,
+                'charset'   => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+            ];
+
+            $factory = app(ConnectionFactory::class);
+            $connection = $factory->make($config, $connExternal->name);
+
+            // Ambil kode terakhir yang sesuai tanggal & klinik
+            $last = $connection->table('inventaris_requests')
+                ->where('kode_klinik', $kodeKlinik)
+                ->where('kode_request', 'like', "{$kodeKlinik}-{$tanggal}-%")
+                ->orderByDesc('kode_request')
+                ->first();
+
+            // Tentukan nomor urut
+            if ($last) {
+                $lastNumber = (int) substr($last->kode_request, -5); // Ambil 5 digit terakhir
+                $nextNumber = $lastNumber + 1;
+            } else {
+                $nextNumber = 1;
+            }
+
+            $kodeBaru = $kodeKlinik . '-' . $tanggal . '-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+
+            return response()->json([
+                'kode_request' => $kodeBaru
+            ]);
+        }
+
+        return response()->json([
+            'kode_request' => null
+        ]);
+    }
+
+    public function inventaris_getDetails($kodeRequest)
+    {
+        // Ambil koneksi external (contoh id=1)
+        $connExternal = external_database::find(1);
+
+        if ($connExternal) {
+            $config = [
+                'driver'    => 'mysql',
+                'host'      => $connExternal->host,
+                'database'  => $connExternal->database,
+                'username'  => $connExternal->username,
+                'password'  => $connExternal->password,
+                'port'      => $connExternal->port ?? 3306,
+                'charset'   => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+            ];
+
+            $factory = app(ConnectionFactory::class);
+            $connection = $factory->make($config, $connExternal->name);
+
+            // Query detail request berdasarkan kode_request
+            $details = $connection->table('inventaris_request_details')
+                ->where('kode_request', $kodeRequest)
+                ->select('kode_barang', 'nama_barang', 'qty')
+                ->get();
+
+        } else {
+            $details = collect(); // kosong jika tidak ada koneksi eksternal
+        }
+
+        return response()->json([
+            'details' => $details
+        ]);
+    }
+
+    public function inventaris_detailsAprroval($kodeRequest)
+    {
+        // Ambil koneksi external (contoh id=1)
+        $connExternal = external_database::find(1);
+
+        if ($connExternal) {
+            $config = [
+                'driver'    => 'mysql',
+                'host'      => $connExternal->host,
+                'database'  => $connExternal->database,
+                'username'  => $connExternal->username,
+                'password'  => $connExternal->password,
+                'port'      => $connExternal->port ?? 3306,
+                'charset'   => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+            ];
+
+            $factory = app(ConnectionFactory::class);
+            $connection = $factory->make($config, $connExternal->name);
+
+            // Query detail request berdasarkan kode_request
+            $details = $connection->table('inventaris_utama_keluars')
+                ->where('kode_request', $kodeRequest)
+                ->get();
+
+        } else {
+            $details = collect(); // kosong jika tidak ada koneksi eksternal
+        }
+
+        return response()->json([
+            'details' => $details
+        ]);
+    }
+
+    public function inventaris_terimaData(Request $request, $id)
+    {
+        try {
+            // Ambil koneksi eksternal (misalnya id = 1)
+            $connExternal = external_database::find(1);
+
+            $config = [
+                'driver'    => 'mysql',
+                'host'      => $connExternal->host,
+                'database'  => $connExternal->database,
+                'username'  => $connExternal->username,
+                'password'  => $connExternal->password,
+                'port'      => $connExternal->port ?? 3306,
+                'charset'   => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+            ];
+
+            $factory = app(ConnectionFactory::class);
+            $connection = $factory->make($config, $connExternal->name);
+
+            // Ambil data berdasarkan ID
+            $data = $connection->table('inventaris_utama_keluars')->where('id', $id)->first();
+
+            if (!$data) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak ditemukan.'
+                ], 404);
+            }
+
+            // Simpan ke tabel tujuan
+            inventaris_stok::create([
+                'kode_pembelian' => $data->kode_request,
+                'kode_barang' => $data->kode_barang,
+                'nama_barang' => $data->nama_barang,
+                'kategori_barang' => $data->kategori_barang,
+                'jenis_barang' => $data->jenis_barang,
+                'qty_barang' => $data->qty_barang,
+                'harga_barang' => $data->harga_barang,
+                'masa_akhir_penggunaan' => $data->masa_akhir_penggunaan,
+                'tanggal_pembelian' => $data->tanggal_pembelian,
+                'detail_barang' => $data->detail_barang,
+                'lokasi' => null,
+                'penanggung_jawab' => null,
+                'kondisi' => null,
+                'no_seri' => null,
+                'user_input_id' => $request->input('user_id'),
+                'user_input_name' => $request->input('user_name'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $connection->table('inventaris_utama_keluars')->where('id', $id)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil diterima dan dipindahkan.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function inventaris_tolakData(Request $request, $id)
+    {
+        try {
+            $connExternal = external_database::find(1);
+
+            $config = [
+                'driver'    => 'mysql',
+                'host'      => $connExternal->host,
+                'database'  => $connExternal->database,
+                'username'  => $connExternal->username,
+                'password'  => $connExternal->password,
+                'port'      => $connExternal->port ?? 3306,
+                'charset'   => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+            ];
+
+            $factory = app(ConnectionFactory::class);
+            $connection = $factory->make($config, $connExternal->name);
+
+            $data = $connection->table('inventaris_utama_keluars')->where('id', $id)->first();
+
+            if (!$data) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak ditemukan.'
+                ], 404);
+            }
+
+            // Tambahkan kembali qty ke gudang_barang
+            $connection->table('inventaris_stoks')->insert([
+                'kode_pembelian' => $data->kode_request,
+                'kode_barang' => $data->kode_barang,
+                'nama_barang' => $data->nama_barang,
+                'kategori_barang' => $data->kategori_barang,
+                'jenis_barang' => $data->jenis_barang,
+                'qty_barang' => $data->qty_barang,
+                'harga_barang' => $data->harga_barang,
+                'masa_akhir_penggunaan' => $data->masa_akhir_penggunaan,
+                'tanggal_pembelian' => $data->tanggal_pembelian,
+                'detail_barang' => $data->detail_barang,
+                'lokasi' => null,
+                'penanggung_jawab' => null,
+                'kondisi' => null,
+                'no_seri' => null,
+                'user_input_id' => $request->input('user_id'),
+                'user_input_name' => $request->input('user_name'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Hapus data dari keluar
+            $connection->table('inventaris_utama_keluars')->where('id', $id)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Stok berhasil dikembalikan ke gudang.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // End Inventaris Klinik Request (OMEGA)
+
+    // Inventaris Gudang Utama (OMEGA)
+
+    public function inventarisutama()
+    {
+        $title = "Inventaris Gudang Utama";
+        $request = inventaris_request::with('details')->get();
+        $inventaris = inventaris_data_barang::all();
+
+        return view('module.master-data-gudang.utama_inventaris', compact('title','request','inventaris'));
+    }
+
+    public function inventarisutamakonfirmasi(Request $request)
+    {
+        $request->validate([
+            'detail_kode_request' => 'required|string',
+            'detail_tanggal' => 'required|string',
+        ]);
+
+        try {
+            $found = inventaris_request::where('kode_request', $request->input('detail_kode_request'))
+                ->where('tanggal_input', $request->input('detail_tanggal'))
+                ->first();
+
+            if (!$found) {
+                // Data tidak ditemukan, return error
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak valid atau tidak ditemukan!',
+                ], 404);
+            }
+
+            // Update status
+            $found->update([
+                'status' => 1,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil dikonfirmasi',
+                'data' => $found,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat konfirmasi data!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function inventaris_getData($kode_barang)
+    {
+        try {
+            $harga = inventaris_data_barang::where('kode_barang', $kode_barang)->first();
+
+            return response()->json([
+                'success' => true,
+                'harga_dasar' => $harga
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function inventaris_prosesPermintaan(Request $request)
+    {
+        try {
+            $itemsJson = $request->input('items_json');
+            $items = json_decode($itemsJson, true);
+            $kodeRequest = $request->input('kode_request');
+            $tanggalRequest = $request->input('tanggal_request');
+            $namaKlinik = $request->input('nama_klinik');
+
+            $found = inventaris_request::where('kode_request', $kodeRequest)
+                ->where('tanggal_input', $tanggalRequest)
+                ->first();
+
+            if (!$found) {
+                // Data tidak ditemukan, return error
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak valid atau tidak ditemukan!',
+                ], 404);
+            }
+
+            // Update status
+            $found->update([
+                'status' => 2,
+            ]);
+
+            foreach ($items as $item) {
+                $kodeBarang = $item['kode_barang'];
+                $jumlahDibutuhkan = intval($item['jumlah']);
+
+                if ($jumlahDibutuhkan <= 0) {
+                    continue;
+                }
+
+                // Ambil info jenis barang (anggap field-nya 'jenis')
+                $jenisBarang = $item['jenis'];
+
+                $stokList = inventaris_stok::where('kode_barang', $kodeBarang)
+                    ->where('qty_barang', '>', 0)
+                    ->orderBy('tanggal_pembelian', 'asc')
+                    ->orderBy('masa_akhir_penggunaan', 'desc')
+                    ->get();
+
+                $totalTersedia = $stokList->sum('qty_barang');
+
+                if ($totalTersedia < $jumlahDibutuhkan) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Stok tidak cukup untuk {$kodeBarang}. Dibutuhkan: {$jumlahDibutuhkan}, tersedia: {$totalTersedia}",
+                    ], 422);
+                }
+
+                foreach ($stokList as $stok) {
+                    if ($jumlahDibutuhkan <= 0) break;
+
+                    if ($jenisBarang == 'Inventaris') {
+                        // Ambil per item
+                        $stok->qty_barang -= 1;
+                        $stok->save();
+
+                        inventaris_utama_keluar::create([
+                            'kode_request' => $kodeRequest,
+                            'nama_klinik' => $namaKlinik,
+                            'tanggal_request' => $tanggalRequest,
+                            'kode_barang' => $kodeBarang,
+                            'nama_barang' => $stok->nama_barang,
+                            'kategori_barang' => $stok->kategori_barang,
+                            'jenis_barang' => $stok->jenis_barang,
+                            'qty_barang' => 1,
+                            'harga_barang' => $stok->harga_barang,
+                            'masa_akhir_penggunaan' => $stok->masa_akhir_penggunaan,
+                            'tanggal_pembelian' => $stok->tanggal_pembelian,
+                            'detail_barang' => $stok->detail_barang,
+                            'lokasi' => null,
+                            'penanggung_jawab' => null,
+                            'kondisi' => null,
+                            'no_seri' => null,
+                            'user_input_id' => $request->input('user_id'),
+                            'user_input_name' => $request->input('user_name'),
+                        ]);
+
+                        $jumlahDibutuhkan -= 1;
+                    } else {
+                        // Barang habis pakai, bisa sekaligus
+                        $ambil = min($stok->qty_barang, $jumlahDibutuhkan);
+
+                        $stok->qty_barang -= $ambil;
+                        $stok->save();
+
+                        inventaris_utama_keluar::create([
+                            'kode_request' => $kodeRequest,
+                            'nama_klinik' => $namaKlinik,
+                            'tanggal_request' => $tanggalRequest,
+                            'kode_barang' => $kodeBarang,
+                            'nama_barang' => $stok->nama_barang,
+                            'kategori_barang' => $stok->kategori_barang,
+                            'jenis_barang' => $stok->jenis_barang,
+                            'qty_barang' => $ambil,
+                            'harga_barang' => $stok->harga_barang,
+                            'masa_akhir_penggunaan' => $stok->masa_akhir_penggunaan,
+                            'tanggal_pembelian' => $stok->tanggal_pembelian,
+                            'detail_barang' => $stok->detail_barang,
+                            'lokasi' => null,
+                            'penanggung_jawab' => null,
+                            'kondisi' => null,
+                            'no_seri' => null,
+                            'user_input_id' => $request->input('user_id'),
+                            'user_input_name' => $request->input('user_name'),
+                        ]);
+
+                        $jumlahDibutuhkan -= $ambil;
+                    }
+                }
+            }
+
+            // Return jika berhasil
+            return response()->json([
+                'success' => true,
+                'message' => 'Permintaan berhasil diproses!',
+                'data' => $kodeRequest,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memproses permintaan!',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function inventaris_generatePdf($kodeRequest)
+    {
+        $data = inventaris_utama_keluar::where('kode_request', $kodeRequest)->get();
+
+        $data_sendiri = inventaris_utama_keluar::where('kode_request', $kodeRequest)
+        ->select('kode_request', 'nama_klinik', 'tanggal_request')
+        ->first();
+
+        $total_invoice = 0;
+
+        foreach ($data as $item) {
+            $total_invoice++;
+        }
+
+        $pdf = Pdf::loadView('pdf.faktur_pengiriman_inventaris', compact('data','data_sendiri','total_invoice'))->setPaper('a4', 'landscape');
+        return $pdf->stream('faktur_pengiriman_inventaris_' . $kodeRequest . '.pdf');
+    }
+
+    // End Inventaris Gudang Utama (OMEGA)
 
     // Gudang Klinik Request (OMEGA)
 

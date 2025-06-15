@@ -432,13 +432,27 @@ Route::post('/inventaris-pembelian/add', [SuperadminController::class, 'inventar
             Route::get('/harga-barang-jual', [DataMasterGudangController::class,'hargajual'])->name('hargajual.get');
             Route::get('/stok-obat-alkes', [DataMasterGudangController::class,'stokobatalkes'])->name('stokobatalkes.get');
 
-            // Menu Jenis Kategori
+            // Menu Kategori Inventaris
             Route::get('/kategori-inventaris', [DataMasterGudangController::class,'katin'])->name('katin.get');
             Route::post('/kategori-inventaris/add', [DataMasterGudangController::class,'katinadd'])->name('katin.store');
             Route::post('/kategori-inventaris/update', [DataMasterGudangController::class,'katinedit'])->name('katin.update');
             Route::post('/kategori-inventaris/delete', [DataMasterGudangController::class,'katindelete'])->name('katin.destroy');
             Route::get('/kategori-inventaris/export', [DataMasterGudangController::class,'katinexport'])->name('katin.export');
             Route::post('/kategori-inventaris/import', [DataMasterGudangController::class,'katinimport'])->name('katin.import');
+
+            // Menu Stok Inventaris
+            Route::get('/stok-inventaris', [DataMasterGudangController::class,'stokin'])->name('stokin.get');
+            Route::get('/stok-inventaris/data/{id}', [DataMasterGudangController::class,'stokin_data'])->name('stokin_data.get');
+            Route::post('/stok-inventaris/data/update', [DataMasterGudangController::class,'stokin_dataedit'])->name('stokin_data.update');
+            Route::post('/stok-inventaris/data/delete', [DataMasterGudangController::class,'stokin_datadelete'])->name('stokin_data.destroy');
+
+            // Menu Request Obat Klinik Omega
+            Route::get('/inventaris-request', [DataMasterGudangController::class, 'inventarisrequest'])->name('inventarisrequest.get');
+            Route::post('/inventaris-request/add', [DataMasterGudangController::class, 'inventarisrequestadd'])->name('inventarisrequest.store');
+
+            // Menu Utama Klinik Omega
+            Route::get('/inventaris-utama', [DataMasterGudangController::class, 'inventarisutama'])->name('inventarisutama.get');
+            Route::post('/inventaris-utama/konfirmasi', [DataMasterGudangController::class, 'inventarisutamakonfirmasi'])->name('inventarisutama.konfirmasi');
 
             // Menu Request Obat Klinik Omega
             Route::get('/gudang-request', [DataMasterGudangController::class, 'gudangrequest'])->name('gudangrequest.get');
