@@ -432,6 +432,14 @@ Route::post('/inventaris-pembelian/add', [SuperadminController::class, 'inventar
             Route::get('/harga-barang-jual', [DataMasterGudangController::class,'hargajual'])->name('hargajual.get');
             Route::get('/stok-obat-alkes', [DataMasterGudangController::class,'stokobatalkes'])->name('stokobatalkes.get');
 
+            // Menu Satuan Inventaris
+            Route::get('/satuan-inventaris', [DataMasterGudangController::class,'satuan_inventaris'])->name('satuan_inventaris.get');
+            Route::post('/satuan-inventaris/add', [DataMasterGudangController::class,'satuan_inventarisadd'])->name('satuan_inventaris.store');
+            Route::post('/satuan-inventaris/update', [DataMasterGudangController::class,'satuan_inventarisedit'])->name('satuan_inventaris.update');
+            Route::post('/satuan-inventaris/delete', [DataMasterGudangController::class,'satuan_inventarisdelete'])->name('satuan_inventaris.destroy');
+            Route::get('/satuan-inventaris/export', [DataMasterGudangController::class, 'satuan_inventarisexport'])->name('satuan_inventaris.export');
+            Route::post('/satuan-inventaris/import', [DataMasterGudangController::class, 'satuan_inventarisimport'])->name('satuan_inventaris.import');
+
             // Menu Kategori Inventaris
             Route::get('/kategori-inventaris', [DataMasterGudangController::class,'katin'])->name('katin.get');
             Route::post('/kategori-inventaris/add', [DataMasterGudangController::class,'katinadd'])->name('katin.store');
