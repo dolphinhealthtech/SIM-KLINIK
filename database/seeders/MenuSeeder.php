@@ -128,12 +128,20 @@ class MenuSeeder extends Seeder
             'order' => 12,
         ]);
 
-            $requestobat = menu::create([
+        $requestobat = menu::create([
             'name' => 'Request obat',
             'url' => '/data-master-gudang/gudang-request',
             'icon' => 'fas fa-prescription-bottle',
             'parent_id' => null,
             'order' => 13,
+        ]);
+
+        $inventaris = menu::create([
+            'name' => 'Inventaris',
+            'url' => '#',
+            'icon' => 'fas fa-boxes-stacked',
+            'parent_id' => null,
+            'order' => 14,
         ]);
 
         //laporan
@@ -142,7 +150,7 @@ class MenuSeeder extends Seeder
             'url' => '#',
             'icon' => 'fa-pen atau fa-edit',
             'parent_id' => null,
-            'order' => 14,
+            'order' => 15,
         ]);
 
 
@@ -151,7 +159,7 @@ class MenuSeeder extends Seeder
             'url' => '#',
             'icon' => 'database',
             'parent_id' => null,
-            'order' => 15,
+            'order' => 16,
         ]);
 
         $pengaturan = menu::create([
@@ -159,7 +167,7 @@ class MenuSeeder extends Seeder
             'url' => '#', // Use # for dropdown menu
             'icon' => 'cog',
             'parent_id' => null,
-            'order' => 16,
+            'order' => 17,
         ]);
 
         // Tambahkan role ke menu utama untuk Super-admin
@@ -178,6 +186,7 @@ class MenuSeeder extends Seeder
             $dataBarang->roles()->attach($superAdminRole->id);
             $gudangutama->roles()->attach($superAdminRole->id);
             $requestobat->roles()->attach($superAdminRole->id);
+            $inventaris->roles()->attach($superAdminRole->id);
             $dataMaster->roles()->attach($superAdminRole->id);
             $pengaturan->roles()->attach($superAdminRole->id);
         }
@@ -316,6 +325,29 @@ class MenuSeeder extends Seeder
 
             if ($sdmRole) {
                 $menu->roles()->attach($sdmRole->id);
+            }
+        }
+
+        // Submenu inventaris
+        $subMenusinventaris = [
+            ['name' => 'Data Inventaris', 'url' => '/data-inventaris', 'icon' => 'fas fa-database', 'order' => 1],
+            ['name' => 'Pembelian Inventaris', 'url' => '/inventaris-pembelian', 'icon' => 'fas fa-cart-plus', 'order' => 2],
+            ['name' => 'Inventaris Request', 'url' => '/inventaris-request', 'icon' => 'fas fa-paper-plane', 'order' => 3],
+            ['name' => 'Inventaris Utama', 'url' => '/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 4]
+
+        ];
+
+        foreach ($subMenusinventaris as $subMenu) {
+            $menu = menu::create([
+                'name' => $subMenu['name'],
+                'url' => $subMenu['url'],
+                'icon' => $subMenu['icon'],
+                'parent_id' => $inventaris->id,
+                'order' => $subMenu['order'],
+            ]);
+
+            if ($superAdminRole) {
+                $menu->roles()->attach($superAdminRole->id);
             }
         }
 
@@ -492,6 +524,9 @@ class MenuSeeder extends Seeder
             ['name' => 'Setting Harga Jual', 'url' => '/data-master-gudang/setting-harga-jual', 'icon' => 'money-bill-wave', 'order' => 4],
             ['name' => 'Harga Jual', 'url' => '/data-master-gudang/harga-barang-jual', 'icon' => 'tag', 'order' => 5],
             ['name' => 'Stok', 'url' => '/data-master-gudang/stok-obat-alkes', 'icon' => 'boxes', 'order' => 6],
+            ['name' => 'Satuan Inventaris', 'url' => '/data-master-gudang/satuan-inventaris', 'icon' => 'fas fa-ruler-combined', 'order' => 7],
+            ['name' => 'Kategori Inventaris', 'url' => '/data-master-gudang/kategori-inventaris', 'icon' => 'fas fa-layer-group', 'order' => 8],
+            ['name' => 'Stok Inventaris', 'url' => '/data-master-gudang/stok-inventaris', 'icon' => 'fas fa-clipboard-list', 'order' => 9]
         ];
 
         foreach ($subMenusDataMasterGudang as $subMenu) {
