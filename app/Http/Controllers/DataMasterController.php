@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\agamaExport;
+use App\Exports\AgamaExport;
 use App\Exports\BahasaExport;
 use App\Exports\BangsaExport;
 use App\Exports\BankExport;

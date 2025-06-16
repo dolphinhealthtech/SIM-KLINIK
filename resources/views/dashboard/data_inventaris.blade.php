@@ -55,11 +55,11 @@
                                 <table id="inventaristabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Kode Barang</th>
-                                            <th class="text-center">Nama Barang</th>
-                                            <th class="text-center">Kategori Barang</th>
-                                            <th class="text-center">Masa Pakai Barang</th>
-                                            <th class="text-center">Deskripsi Barang</th>
+                                            <th class="text-center">Kode Inventaris</th>
+                                            <th class="text-center">Nama Inventaris</th>
+                                            <th class="text-center">Kategori Inventaris</th>
+                                            <th class="text-center">Masa Pakai Inventaris</th>
+                                            <th class="text-center">Deskripsi Inventaris</th>
                                             <th class="text-center" width="15%">Action</th>
                                         </tr>
                                     </thead>
@@ -123,11 +123,11 @@
                     <div class="row">
                         <input type="hidden" class="form-control" id="kode_barang" name="kode_barang" value="321">
                         <div class="col-md-6">
-                            <label for="nama_barang">Nama Barang</label>
+                            <label for="nama_barang">Nama Inventaris</label>
                             <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan Nama Barang" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="kategori_barang">Kategori Barang</label>
+                            <label for="kategori_barang">Kategori Inventaris</label>
                             <select class="form-control select2bs4" id="kategori_barang" name="kategori_barang" style="width: 100%;">
                                 <option value="" disabled selected>-- Pilih Kategori --</option>
                                 @foreach ($kategori as $kategori_add)
@@ -136,7 +136,7 @@
                             </select>
                         </div>
                         <div class="col-md-3 mt-2">
-                            <label for="satuan_barang">Satuan Barang</label>
+                            <label for="satuan_barang">Satuan Inventaris</label>
                             <select class="form-control select2bs4" id="satuan_barang" name="satuan_barang" style="width: 100%;">
                                 <option value="" disabled selected>-- Pilih Satuan --</option>
                                 @foreach ($satuan as $satuan_add)
@@ -145,7 +145,7 @@
                             </select>
                         </div>
                         <div class="col-md-3 mt-2">
-                            <label for="jenis_barang">Jenis Barang</label>
+                            <label for="jenis_barang">Jenis Inventaris</label>
                             <select class="form-control" id="jenis_barang" name="jenis_barang" style="width: 100%;">
                                 <option value="" disabled selected>-- Pilih Data --</option>
                                 <option value="Inventaris">Inventaris</option>
@@ -167,7 +167,7 @@
                             </select>
                         </div>
                         <div class="col-md-12 mt-2">
-                            <label for="deskripsi_barang">Deskripsi Barang</label>
+                            <label for="deskripsi_barang">Deskripsi Inventaris</label>
                             <textarea class="form-control" id="deskripsi_barang" name="deskripsi_barang" rows="2" placeholder="Masukkan Spesifikasi / Deskripsi singkat" required></textarea>
                         </div>
                     </div>
@@ -198,11 +198,11 @@
                     <div class="row">
                         <input type="hidden" class="form-control" id="kode_barang_edit" name="kode_barang_edit" value="321">
                         <div class="col-md-6">
-                            <label for="nama_barang_edit">Nama Barang</label>
+                            <label for="nama_barang_edit">Nama Inventaris</label>
                             <input type="text" class="form-control" id="nama_barang_edit" name="nama_barang_edit" placeholder="Masukkan Nama Barang" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="kategori_barang_edit">Kategori Barang</label>
+                            <label for="kategori_barang_edit">Kategori Inventaris</label>
                             <select class="form-control select2bs4" id="kategori_barang_edit" name="kategori_barang_edit" style="width: 100%;">
                                 <option value="" disabled selected>-- Pilih Kategori --</option>
                                 @foreach ($kategori as $kategori_edit)
@@ -210,8 +210,8 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6 mt-2">
-                            <label for="satuan_barang_edit">Satuan Barang</label>
+                        <div class="col-md-3 mt-2">
+                            <label for="satuan_barang_edit">Satuan Inventaris</label>
                             <select class="form-control select2bs4" id="satuan_barang_edit" name="satuan_barang_edit" style="width: 100%;">
                                 <option value="" disabled selected>-- Pilih Satuan --</option>
                                 @foreach ($satuan as $satuanEdit)
@@ -220,7 +220,7 @@
                             </select>
                         </div>
                         <div class="col-md-3 mt-2">
-                            <label for="jenis_barang_edit">Jenis Barang</label>
+                            <label for="jenis_barang_edit">Jenis Inventaris</label>
                             <select class="form-control" id="jenis_barang_edit" name="jenis_barang_edit" style="width: 100%;">
                                 <option value="" disabled selected>-- Pilih Data --</option>
                                 <option value="Inventaris">Inventaris</option>
@@ -232,7 +232,7 @@
                             <input type="text" class="form-control" id="masa_pakai_barang_edit" name="masa_pakai_barang_edit" maxlength="2" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2);" placeholder="Masukkan angka masa pakai">
                         </div>
                         <div class="col-md-3 mt-2">
-                            <label>&nbsp;</label>
+                            <label for="masa_pakai_waktu_barang_edit">Tahun</label>
                             <select class="form-control select2bs4" id="masa_pakai_waktu_barang_edit" name="masa_pakai_waktu_barang_edit" style="width: 100%;">
                                 <option value="" disabled selected>-- Masa Pakai --</option>
                                 <option value="Tahun">Tahun</option>
@@ -241,8 +241,9 @@
                                 <option value="Hari">Hari</option>
                             </select>
                         </div>
+
                         <div class="col-md-12 mt-2">
-                            <label for="deskripsi_barang_edit">Deskripsi Barang</label>
+                            <label for="deskripsi_barang_edit">Deskripsi Inventaris</label>
                             <textarea class="form-control" id="deskripsi_barang_edit" name="deskripsi_barang_edit" rows="2" placeholder="Masukkan Spesifikasi / Deskripsi singkat" required></textarea>
                         </div>
                     </div>
@@ -261,7 +262,7 @@
         <form id="deleteForminventaris" action="{{ route('inventaris.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data Barang</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data Inventaris</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -285,7 +286,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importinventarisModalLabel">Import Data Barang</h5>
+                <h5 class="modal-title" id="importinventarisModalLabel">Import Data Inventaris</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -311,7 +312,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="singkroninventarisModalLabel">Singkron Data Barang</h5>
+                <h5 class="modal-title" id="singkroninventarisModalLabel">Singkron Data Inventaris</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -627,7 +628,7 @@
 
             $('#inventarisid_delete').val(id);
             $('#deleteTextinventaris').html(
-            `<span>Apa Anda yakin ingin menghapus data barang <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data Inventaris <b>${name}</b> ?</span>`);
         });
 
         $('#deleteForminventaris').on('submit', function(e) {
@@ -664,7 +665,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                        text: 'Terjadi kesalahan saat menghapus Inventaris!',
                     });
                 }
             });

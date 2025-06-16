@@ -663,13 +663,31 @@ class DataMasterGudangController extends Controller
     public function stokin()
     {
         $title = "Master Stok Inventaris ";
-        $stok_inventaris = DB::table('inventaris_stoks as a')
-            ->join(
-                DB::raw('(SELECT MIN(id) as id FROM inventaris_stoks GROUP BY kode_pembelian, kode_barang) as b'),
-                'a.id',
-                '=',
-                'b.id'
-            )
+        // $stok_inventaris = DB::table('inventaris_stoks as a')
+        //     ->join(
+        //         DB::raw('(SELECT MIN(id) as id FROM inventaris_stoks GROUP BY kode_pembelian, kode_barang) as b'),
+        //         'a.id',
+        //         '=',
+        //         'b.id'
+        //     )
+        //     ->select(
+        //         'a.id',
+        //         'a.kode_pembelian',
+        //         'a.kode_barang',
+        //         'a.nama_barang',
+        //         'a.kategori_barang',
+        //         'a.jenis_barang',
+        //         'a.tanggal_pembelian',
+        //         'a.masa_akhir_penggunaan',
+        //         'a.detail_barang'
+        //     )
+        //     ->get();
+
+        $subQuery = inventaris_stok::select(DB::raw('MIN(id) as id'))
+            ->groupBy('kode_pembelian', 'kode_barang');
+
+        $stok_inventaris = inventaris_stok::from('inventaris_stoks as a')
+            ->joinSub($subQuery, 'b', 'a.id', '=', 'b.id')
             ->select(
                 'a.id',
                 'a.kode_pembelian',
@@ -679,7 +697,8 @@ class DataMasterGudangController extends Controller
                 'a.jenis_barang',
                 'a.tanggal_pembelian',
                 'a.masa_akhir_penggunaan',
-                'a.detail_barang'
+                'a.detail_barang',
+                DB::raw('(SELECT SUM(qty_barang) FROM inventaris_stoks WHERE kode_pembelian = a.kode_pembelian AND kode_barang = a.kode_barang) as total_qty_barang')
             )
             ->get();
         return view('module.master-data-gudang.stok_inventaris', compact('title','stok_inventaris'));

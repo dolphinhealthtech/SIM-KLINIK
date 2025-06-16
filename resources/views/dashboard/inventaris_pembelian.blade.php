@@ -184,6 +184,48 @@
     </div>
 
     <script>
+        $('#addFormpembelian').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        $('#addFormpembelian').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = "Terjadi kesalahan dalam menyimpan data!";
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: errorMessage
+                    });
+                }
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
             Inputmask({
                 alias: "numeric",

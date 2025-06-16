@@ -38,6 +38,7 @@
                                             <th class="text-center">Nama</th>
                                             <th class="text-center">Kategori</th>
                                             <th class="text-center">Jenis</th>
+                                            <th class="text-center">Qty</th>
                                             <th class="text-center">Tanggal Pembelian</th>
                                             <th class="text-center">Akhir Penggunaan</th>
                                             <th class="text-center">Detail Barang</th>
@@ -51,6 +52,7 @@
                                                 <td class="text-center">{{ $stok_inventarisdata->nama_barang }}</td>
                                                 <td class="text-center">{{ $stok_inventarisdata->kategori_barang }}</td>
                                                 <td class="text-center">{{ $stok_inventarisdata->jenis_barang }}</td>
+                                                <td class="text-center">{{ $stok_inventarisdata->total_qty_barang       }}</td>
                                                 <td class="text-center">{{ $stok_inventarisdata->tanggal_pembelian }}</td>
                                                 <td class="text-center">{{ $stok_inventarisdata->masa_akhir_penggunaan }}</td>
                                                 <td class="text-center">{{ $stok_inventarisdata->detail_barang }}</td>
