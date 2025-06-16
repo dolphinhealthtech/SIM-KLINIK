@@ -743,7 +743,7 @@
                                                         </div>
 
                                                         <div class="card collapsed-card">
-                                                            <div class="card-header">
+                                                            <div class="card-header bg-info">
                                                                 <p class="card-title">Pemeriksaan Gigi</p>
 
                                                                 <div class="card-tools">
