@@ -242,13 +242,30 @@
         });
 
         $(document).ready(function () {
+            Swal.fire({
+                icon: 'info',
+                title: 'Mengambil kode pembelian...',
+                text: 'Mohon tunggu sebentar.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             $.ajax({
                 url: '/api/generate-kode-pembelian-inventaris',
                 method: 'GET',
                 success: function(response) {
+                    Swal.close(); // Tutup loading swal
                     if (response.success) {
                         // Isi input nomor faktur dengan nomor yang dihasilkan
                         $('#kode_pembelian_inventaris').val(response.kode);
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Gagal!',
+                            text: 'Gagal mendapatkan kode pembelian.'
+                        });
                     }
                 },
                 error: function(xhr) {
