@@ -211,7 +211,7 @@
             document.getElementById('detail_kode_request').value = kodeRequest;
             document.getElementById('detail_tanggal').value = tanggalInput;
 
-            fetch(`/api/data-master-gudang/request/getDetails/${kodeRequest}`)
+            fetch(`/api/data-master-gudang/utama/getDetails/${kodeRequest}`)
                 .then(response => response.json())
                 .then(data => {
                     // Kosongkan dan isi ulang isi tabel

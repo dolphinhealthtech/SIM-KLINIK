@@ -1990,6 +1990,21 @@ class DataMasterGudangController extends Controller
         }
     }
 
+    public function utamaGetDetails($kodeRequest)
+    {
+        $details = collect(); // Default: koleksi kosong
+
+        if (!empty($kodeRequest)) {
+            $details = gudang_klinik_request_details::where('kode_request', $kodeRequest)
+                ->select('kode_obat_alkes', 'nama_obat_alkes', 'qty')
+                ->get();
+        }
+
+        return response()->json([
+            'details' => $details
+        ]);
+    }
+
     public function prosesPermintaan(Request $request)
     {
         try {
