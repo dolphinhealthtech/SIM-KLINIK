@@ -29,6 +29,7 @@ use App\Models\inventaris_data_barang;
 use App\Models\inventaris_request;
 use App\Models\inventaris_utama_keluar;
 use App\Models\inventaris_satuan;
+use App\Models\inventaris_request_detail;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -1352,6 +1353,21 @@ class DataMasterGudangController extends Controller
         }
     }
 
+    public function inventarisGetDetails($kodeRequest)
+    {
+        $details = collect(); // Default: koleksi kosong
+
+        if (!empty($kodeRequest)) {
+            $details = inventaris_request_detail::where('kode_request', $kodeRequest)
+                ->select('kode_barang', 'nama_barang', 'qty')
+                ->get();
+        }
+
+        return response()->json([
+            'details' => $details
+        ]);
+    }
+
     public function inventaris_prosesPermintaan(Request $request)
     {
         try {
@@ -1990,6 +2006,21 @@ class DataMasterGudangController extends Controller
         }
     }
 
+    public function utamaGetDetails($kodeRequest)
+    {
+        $details = collect(); // Default: koleksi kosong
+
+        if (!empty($kodeRequest)) {
+            $details = gudang_klinik_request_details::where('kode_request', $kodeRequest)
+                ->select('kode_obat_alkes', 'nama_obat_alkes', 'qty')
+                ->get();
+        }
+
+        return response()->json([
+            'details' => $details
+        ]);
+    }
+
     public function prosesPermintaan(Request $request)
     {
         try {
@@ -1998,6 +2029,23 @@ class DataMasterGudangController extends Controller
             $kodeRequest = $request->input('kode_request');
             $tanggalRequest = $request->input('tanggal_request');
             $namaKlinik = $request->input('nama_klinik');
+
+            $found = gudang_klinik_request::where('kode_request', $kodeRequest)
+                ->where('tanggal_input', $tanggalRequest)
+                ->first();
+
+            if (!$found) {
+                // Data tidak ditemukan, return error
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak valid atau tidak ditemukan!',
+                ], 404);
+            }
+
+            // Update status
+            $found->update([
+                'status' => 2,
+            ]);
 
             foreach ($items as $item) {
                 $kodeObat = $item['kode_obat'];

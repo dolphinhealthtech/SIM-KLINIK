@@ -91,6 +91,7 @@ Route::prefix('data-master-gudang')->group(function(){
     Route::post('/request/inventaris/tolakData/{id}', [DataMasterGudangController::class, 'inventaris_tolakData'])->name('inventaris.request_tolakData');
 
     Route::get('/utama/inventaris/getData/{kode_barang}', [DataMasterGudangController::class, 'inventaris_getData'])->name('utama.getData');
+    Route::get('/utama/inventaris/getDetails/{kode_request}', [DataMasterGudangController::class, 'inventarisGetDetails'])->name('inventaris.utama_getDetails');
     Route::post('/utama/inventaris/proses-permintaan', [DataMasterGudangController::class, 'inventaris_prosesPermintaan'])->name('inventaris.utama_prosesPermintaan');
     Route::get('/pdf/inventaris/{kodeRequest}', [DataMasterGudangController::class, 'inventaris_generatePdf'])->name('inventaris.utama_pdf');
 
@@ -101,6 +102,7 @@ Route::prefix('data-master-gudang')->group(function(){
     Route::post('/request/tolakData/{id}', [DataMasterGudangController::class, 'tolakData'])->name('request.tolakData');
 
     Route::get('/utama/getHargaDasar/{kode_obat}', [DataMasterGudangController::class, 'getHargaDasar'])->name('utama.getHargaDasar');
+    Route::get('/utama/getDetails/{kode_request}', [DataMasterGudangController::class, 'utamaGetDetails'])->name('utama.getDetails');
     Route::post('/utama/proses-permintaan', [DataMasterGudangController::class, 'prosesPermintaan'])->name('utama.prosesPermintaan');
     Route::get('/pdf/{kodeRequest}', [DataMasterGudangController::class, 'generatePdf'])->name('utama.pdf');
 });

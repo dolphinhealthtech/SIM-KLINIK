@@ -131,7 +131,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Tambah Data Dokter</h5>
+                    <h5 class="modal-title" id="modalTitle">Tambah Dokter</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>

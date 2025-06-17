@@ -10,7 +10,7 @@
                         <h1 class="m-0">Users</h1>
                     </div>
                     <div class="col-sm-6">
-                        
+
                     </div>
                 </div>
             </div>
@@ -227,7 +227,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Repet Password</label>
+                                <label>Repeat Password</label>
                                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="password confirmation users" required>
                             </div>
                         </div>
