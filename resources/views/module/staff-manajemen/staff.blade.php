@@ -28,7 +28,7 @@
                             <div class="inner">
                                 <h3>{{ $dokterall }}</h3>
 
-                                <p>Total Dokter</p>
+                                <p>Total Staff</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-person-add"></i>
@@ -42,7 +42,7 @@
                             <div class="inner">
                                 <h3>{{ $dokternoverif }}</h3>
 
-                                <p>Dokter Belun Verifikasi</p>
+                                <p>Staff Belun Verifikasi</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-pie-graph"></i>
@@ -121,7 +121,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Tambah Data Dokter</h5>
+                    <h5 class="modal-title" id="modalTitle">Tambah Data Staff</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -485,7 +485,7 @@
             <form id="deleteFormdokter" action="{{ route('staff.destroy') }}" method="POST">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data dokter</h5>
+                        <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span>&times;</span>
                         </button>
@@ -510,7 +510,7 @@
             <form id="lengkapiFormdokter" action="{{ route('staff.verifikasi') }}" method="POST">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="lengkapiModalLabel">Verifikasi Data dokter</h5>
+                        <h5 class="modal-title" id="lengkapiModalLabel">Verifikasi Data </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span>&times;</span>
                         </button>
@@ -584,7 +584,7 @@
         <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editdokterModalLabel">Edit Data Dokter</h5>
+                <h5 class="modal-title" id="editdokterModalLabel">Edit Data Staff</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>

@@ -332,9 +332,8 @@ class MenuSeeder extends Seeder
         $subMenusinventaris = [
             ['name' => 'Data Inventaris', 'url' => '/data-inventaris', 'icon' => 'fas fa-database', 'order' => 1],
             ['name' => 'Pembelian Inventaris', 'url' => '/inventaris-pembelian', 'icon' => 'fas fa-cart-plus', 'order' => 2],
-            ['name' => 'Inventaris Request', 'url' => '/inventaris-request', 'icon' => 'fas fa-paper-plane', 'order' => 3],
-            ['name' => 'Inventaris Utama', 'url' => '/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 4]
-
+            ['name' => 'Inventaris Request', 'url' => '/data-master-gudang/inventaris-request', 'icon' => 'fas fa-paper-plane', 'order' => 3],
+            ['name' => 'Inventaris Utama', 'url' => '/data-master-gudang/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 4]
         ];
 
         foreach ($subMenusinventaris as $subMenu) {
