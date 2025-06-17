@@ -22,7 +22,7 @@ class MenuSeeder extends Seeder
         DB::table('menus')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
-        // Ambil semua role
+        // Ambil semua role (existing + new)
         $superAdminRole = Role::where('name', 'Super-admin')->first();
         $dokterRole = Role::where('name', 'Dokter')->first();
         $resepsionisRole = Role::where('name', 'Resepsionis')->first();
@@ -30,6 +30,10 @@ class MenuSeeder extends Seeder
         $kasirRole = Role::where('name', 'Kasir')->first();
         $sdmRole = Role::where('name', 'SDM')->first();
         $apotekerRole = Role::where('name', 'Apoteker')->first();
+        $registrasiRole = Role::where('name', 'Registrasi')->first();
+        $personaliaRole = Role::where('name', 'Personalia')->first();
+        $gudangRole = Role::where('name', 'Gudang')->first();
+        $managementRole = Role::where('name', 'Manajemen')->first();
 
         // Buat menu utama terlebih dahulu
         $dashboard = Menu::create([
@@ -120,7 +124,7 @@ class MenuSeeder extends Seeder
             'order' => 11,
         ]);
 
-            $gudangutama = menu::create([
+        $gudangutama = menu::create([
             'name' => 'Gudang utama',
             'url' => '/data-master-gudang/gudang-utama',
             'icon' => 'fas fa-boxes',
@@ -153,7 +157,6 @@ class MenuSeeder extends Seeder
             'order' => 15,
         ]);
 
-
         $dataMaster = menu::create([
             'name' => 'Data Master',
             'url' => '#',
@@ -170,7 +173,9 @@ class MenuSeeder extends Seeder
             'order' => 17,
         ]);
 
-        // Tambahkan role ke menu utama untuk Super-admin
+        // ===== ROLE ASSIGNMENTS FOR MAIN MENUS =====
+
+        // Super-admin gets access to everything
         if ($superAdminRole) {
             $dashboard->roles()->attach($superAdminRole->id);
             $antrian->roles()->attach($superAdminRole->id);
@@ -191,13 +196,67 @@ class MenuSeeder extends Seeder
             $pengaturan->roles()->attach($superAdminRole->id);
         }
 
-        // Tambahkan role ke menu untuk Dokter
+        // User Registrasi: Dashboard Antrian, Pasien, Pendaftaran, Laporan (Antrian + Pendaftaran)
+        if ($registrasiRole) {
+            $dashboard->roles()->attach($registrasiRole->id);
+            $antrian->roles()->attach($registrasiRole->id);
+            $pasien->roles()->attach($registrasiRole->id);
+            $pendaftaran->roles()->attach($registrasiRole->id);
+            $pendataan->roles()->attach($registrasiRole->id); // For Laporan
+        }
+
+        // User Perawat: Perawat, Laporan Perawat
+        if ($perawatRole) {
+            $dashboard->roles()->attach($perawatRole->id);
+            $pemeriksaan->roles()->attach($perawatRole->id);
+            $pendataan->roles()->attach($perawatRole->id); // For Laporan
+        }
+
+        // User Dokter: Dokter, Laporan Dokter
         if ($dokterRole) {
             $dashboard->roles()->attach($dokterRole->id);
             $pemeriksaan->roles()->attach($dokterRole->id);
+            $pendataan->roles()->attach($dokterRole->id); // For Laporan
         }
 
-        // Tambahkan role ke menu untuk Resepsionis
+        // User Apoteker: Apotek, Laporan Apotek
+        if ($apotekerRole) {
+            $dashboard->roles()->attach($apotekerRole->id);
+            $apotek->roles()->attach($apotekerRole->id);
+            $pendataan->roles()->attach($apotekerRole->id); // For Laporan
+        }
+
+        // User Kasir: Kasir, Keuangan
+        if ($kasirRole) {
+            $dashboard->roles()->attach($kasirRole->id);
+            $kasir->roles()->attach($kasirRole->id);
+            $keuangan->roles()->attach($kasirRole->id);
+        }
+
+        // User Personalia: SDM
+        if ($personaliaRole) {
+            $dashboard->roles()->attach($personaliaRole->id);
+            $sdm->roles()->attach($personaliaRole->id);
+        }
+
+        // User Gudang: Pembelian, Data Barang, Gudang Utama, Request Obat, Inventaris
+        if ($gudangRole) {
+            $dashboard->roles()->attach($gudangRole->id);
+            $pembelian->roles()->attach($gudangRole->id);
+            $dataBarang->roles()->attach($gudangRole->id);
+            $gudangutama->roles()->attach($gudangRole->id);
+            $requestobat->roles()->attach($gudangRole->id);
+            $inventaris->roles()->attach($gudangRole->id);
+        }
+
+        // User Management: Data Master, Setting
+        if ($managementRole) {
+            $dashboard->roles()->attach($managementRole->id);
+            $dataMaster->roles()->attach($managementRole->id);
+            $pengaturan->roles()->attach($managementRole->id);
+        }
+
+        // Legacy role assignments (keeping existing functionality)
         if ($resepsionisRole) {
             $dashboard->roles()->attach($resepsionisRole->id);
             $antrian->roles()->attach($resepsionisRole->id);
@@ -205,30 +264,13 @@ class MenuSeeder extends Seeder
             $pendaftaran->roles()->attach($resepsionisRole->id);
         }
 
-        // Tambahkan role ke menu untuk Perawat
-        if ($perawatRole) {
-            $dashboard->roles()->attach($perawatRole->id);
-            $pemeriksaan->roles()->attach($perawatRole->id);
-        }
-
-        // Tambahkan role ke menu untuk Kasir
-        if ($kasirRole) {
-            $dashboard->roles()->attach($kasirRole->id);
-            $kasir->roles()->attach($kasirRole->id);
-        }
-
-        // Tambahkan role ke menu untuk SDM
         if ($sdmRole) {
             $dashboard->roles()->attach($sdmRole->id);
             $sdm->roles()->attach($sdmRole->id);
             $dataMaster->roles()->attach($sdmRole->id);
         }
 
-        // Tambahkan role ke menu untuk Apoteker
-        if ($apotekerRole) {
-            $dashboard->roles()->attach($apotekerRole->id);
-            $apotek->roles()->attach($apotekerRole->id);
-        }
+        // ===== SUBMENUS =====
 
         // Submenu Pemeriksaan
         $subMenusPemeriksaan = [
@@ -249,12 +291,12 @@ class MenuSeeder extends Seeder
                 $menu->roles()->attach($superAdminRole->id);
             }
 
-            // Tambahkan submenu Dokter untuk role Dokter
+            // Assign submenu Dokter to Dokter role
             if ($subMenu['name'] === 'Dokter' && $dokterRole) {
                 $menu->roles()->attach($dokterRole->id);
             }
 
-            // Tambahkan submenu Perawat untuk role Perawat
+            // Assign submenu Perawat to Perawat role
             if ($subMenu['name'] === 'Perawat' && $perawatRole) {
                 $menu->roles()->attach($perawatRole->id);
             }
@@ -262,10 +304,9 @@ class MenuSeeder extends Seeder
 
         //submenu dashboard antrian
         $subMenusAntrian = [
-            ['name' => 'Antrian', 'url' => '/monitor', 'icon' => 'users', 'order' => 1], // 👥 Representasi orang dalam antrian
-            ['name' => 'Loket Antrian', 'url' => '/monitor/loket-antrian', 'icon' => 'desktop', 'order' => 2], // 🖥️ Representasi loket/operator
+            ['name' => 'Antrian', 'url' => '/monitor', 'icon' => 'users', 'order' => 1],
+            ['name' => 'Loket Antrian', 'url' => '/monitor/loket-antrian', 'icon' => 'desktop', 'order' => 2],
         ];
-
 
         foreach ($subMenusAntrian as $subMenu) {
             $menu = menu::create([
@@ -280,6 +321,15 @@ class MenuSeeder extends Seeder
                 $menu->roles()->attach($superAdminRole->id);
             }
 
+            // Assign to Registrasi role
+            if ($registrasiRole) {
+                $menu->roles()->attach($registrasiRole->id);
+            }
+
+            // Legacy assignment for Resepsionis
+            if ($resepsionisRole) {
+                $menu->roles()->attach($resepsionisRole->id);
+            }
         }
 
         // Submenu Keuangan
@@ -302,6 +352,10 @@ class MenuSeeder extends Seeder
                 $menu->roles()->attach($superAdminRole->id);
             }
 
+            // Assign to Kasir role
+            if ($kasirRole) {
+                $menu->roles()->attach($kasirRole->id);
+            }
         }
 
         // Submenu SDM
@@ -323,6 +377,12 @@ class MenuSeeder extends Seeder
                 $menu->roles()->attach($superAdminRole->id);
             }
 
+            // Assign to Personalia role
+            if ($personaliaRole) {
+                $menu->roles()->attach($personaliaRole->id);
+            }
+
+            // Legacy assignment for SDM role
             if ($sdmRole) {
                 $menu->roles()->attach($sdmRole->id);
             }
@@ -348,6 +408,11 @@ class MenuSeeder extends Seeder
             if ($superAdminRole) {
                 $menu->roles()->attach($superAdminRole->id);
             }
+
+            // Assign to Gudang role
+            if ($gudangRole) {
+                $menu->roles()->attach($gudangRole->id);
+            }
         }
 
         //sub menu Laporan
@@ -357,9 +422,8 @@ class MenuSeeder extends Seeder
             ['name' => 'Dokter', 'url' => '/pendataan/soap-dokter', 'icon' => 'fas fa-user-md', 'order' => 3],
             ['name' => 'Perawat', 'url' => '/pendataan/so-perawat', 'icon' => 'fas fa-user-nurse', 'order' => 4], 
             ['name' => 'Apotek', 'url' => '/datakasir/apotek', 'icon' => 'capsules', 'order' => 5],
-            ['name' => 'Tindakan', 'url' => '/datakasir/tindakan', 'icon' => 'briefcase-medical', 'order' => 6], // jika menggunakan Font Awesome
+            ['name' => 'Tindakan', 'url' => '/datakasir/tindakan', 'icon' => 'briefcase-medical', 'order' => 6],
         ];
-
 
         foreach ($subMenuPendataan as $subMenu) {
             $menu = menu::create([
@@ -374,6 +438,30 @@ class MenuSeeder extends Seeder
                 $menu->roles()->attach($superAdminRole->id);
             }
 
+            // Role-specific laporan assignments
+            switch ($subMenu['name']) {
+                case 'Antrian':
+                case 'Pendaftaran':
+                    if ($registrasiRole) {
+                        $menu->roles()->attach($registrasiRole->id);
+                    }
+                    break;
+                case 'Dokter':
+                    if ($dokterRole) {
+                        $menu->roles()->attach($dokterRole->id);
+                    }
+                    break;
+                case 'Perawat':
+                    if ($perawatRole) {
+                        $menu->roles()->attach($perawatRole->id);
+                    }
+                    break;
+                case 'Apotek':
+                    if ($apotekerRole) {
+                        $menu->roles()->attach($apotekerRole->id);
+                    }
+                    break;
+            }
         }
 
         // Submenu Data Master - Loket
@@ -389,6 +477,11 @@ class MenuSeeder extends Seeder
             $loket->roles()->attach($superAdminRole->id);
         }
 
+        if ($managementRole) {
+            $loket->roles()->attach($managementRole->id);
+        }
+
+        // Legacy assignment
         if ($sdmRole) {
             $loket->roles()->attach($sdmRole->id);
         }
@@ -406,6 +499,11 @@ class MenuSeeder extends Seeder
             $dataMasterUmum->roles()->attach($superAdminRole->id);
         }
 
+        if ($managementRole) {
+            $dataMasterUmum->roles()->attach($managementRole->id);
+        }
+
+        // Legacy assignment
         if ($sdmRole) {
             $dataMasterUmum->roles()->attach($sdmRole->id);
         }
@@ -438,6 +536,11 @@ class MenuSeeder extends Seeder
                 $menu->roles()->attach($superAdminRole->id);
             }
 
+            if ($managementRole) {
+                $menu->roles()->attach($managementRole->id);
+            }
+
+            // Legacy assignment
             if ($sdmRole) {
                 $menu->roles()->attach($sdmRole->id);
             }
@@ -456,6 +559,11 @@ class MenuSeeder extends Seeder
             $dataMasterMedis->roles()->attach($superAdminRole->id);
         }
 
+        if ($managementRole) {
+            $dataMasterMedis->roles()->attach($managementRole->id);
+        }
+
+        // Legacy assignment
         if ($sdmRole) {
             $dataMasterMedis->roles()->attach($sdmRole->id);
         }
@@ -476,8 +584,6 @@ class MenuSeeder extends Seeder
             ['name' => 'Radiologi', 'url' => '/data-master-medis/radiologi_jenis', 'icon' => 'x-ray', 'order' => 12], 
             ['name' => 'Radiologi Pemeriksaan', 'url' => '/data-master-medis/radiologi_pemeriksaan', 'icon' => 'microscope', 'order' => 13],
             ['name' => 'Laboratorium', 'url' => '/data-master-medis/bidang-lab', 'icon' => 'vials', 'order' => 14],
-            
-
         ];
 
         foreach ($subMenusDataMasterMedis as $subMenu) {
@@ -493,6 +599,11 @@ class MenuSeeder extends Seeder
                 $menu->roles()->attach($superAdminRole->id);
             }
 
+            if ($managementRole) {
+                $menu->roles()->attach($managementRole->id);
+            }
+
+            // Legacy assignment
             if ($sdmRole) {
                 $menu->roles()->attach($sdmRole->id);
             }
@@ -511,6 +622,11 @@ class MenuSeeder extends Seeder
             $dataMasterGudang->roles()->attach($superAdminRole->id);
         }
 
+        if ($managementRole) {
+            $dataMasterGudang->roles()->attach($managementRole->id);
+        }
+
+        // Legacy assignment
         if ($sdmRole) {
             $dataMasterGudang->roles()->attach($sdmRole->id);
         }
@@ -541,13 +657,18 @@ class MenuSeeder extends Seeder
                 $menu->roles()->attach($superAdminRole->id);
             }
 
+            if ($managementRole) {
+                $menu->roles()->attach($managementRole->id);
+            }
+
+            // Legacy assignment
             if ($sdmRole) {
                 $menu->roles()->attach($sdmRole->id);
             }
         }
 
-        //baru
-        $dataMasterGudang = menu::create([
+        // Data Master Manajemen
+        $dataMasterManajemen = menu::create([
             'name' => 'Data Master Manajemen',
             'url' => '#',
             'icon' => 'briefcase',
@@ -556,24 +677,29 @@ class MenuSeeder extends Seeder
         ]);
 
         if ($superAdminRole) {
-            $dataMasterGudang->roles()->attach($superAdminRole->id);
+            $dataMasterManajemen->roles()->attach($superAdminRole->id);
         }
 
+        if ($managementRole) {
+            $dataMasterManajemen->roles()->attach($managementRole->id);
+        }
+
+        // Legacy assignment
         if ($sdmRole) {
-            $dataMasterGudang->roles()->attach($sdmRole->id);
+            $dataMasterManajemen->roles()->attach($sdmRole->id);
         }
 
         // Submenu untuk Data Master Manajemen
-        $subMenusDataMasterGudang = [
+        $subMenusDataMasterManajemen = [
             ['name' => 'Posker', 'url' => '/data-master-manajemen/posker', 'icon' => 'chart-line', 'order' => 1],
         ];
 
-        foreach ($subMenusDataMasterGudang as $subMenu) {
+        foreach ($subMenusDataMasterManajemen as $subMenu) {
             $menu = menu::create([
                 'name' => $subMenu['name'],
                 'url' => $subMenu['url'],
                 'icon' => $subMenu['icon'],
-                'parent_id' => $dataMasterGudang->id,
+                'parent_id' => $dataMasterManajemen->id,
                 'order' => $subMenu['order'],
             ]);
 
@@ -581,12 +707,17 @@ class MenuSeeder extends Seeder
                 $menu->roles()->attach($superAdminRole->id);
             }
 
+            if ($managementRole) {
+                $menu->roles()->attach($managementRole->id);
+            }
+
+            // Legacy assignment
             if ($sdmRole) {
                 $menu->roles()->attach($sdmRole->id);
             }
         }
 
-        // Submenu Setting
+        // Submenu Setting - Only for Management and Super Admin
         $subMenusSetting = [
             ['name' => 'Role', 'url' => '/setting/role', 'icon' => 'user-tag', 'order' => 1],
             ['name' => 'Permission', 'url' => '/setting/permission', 'icon' => 'key', 'order' => 2],
@@ -606,7 +737,13 @@ class MenuSeeder extends Seeder
             if ($superAdminRole) {
                 $menu->roles()->attach($superAdminRole->id);
             }
+
+            if ($managementRole) {
+                $menu->roles()->attach($managementRole->id);
+            }
         }
+
+       
     }
 }
 

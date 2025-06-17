@@ -3,36 +3,35 @@
 namespace Database\Seeders;
 
 use App\Models\role_redirect;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RolePermissionSeeder extends Seeder
 {
-
-
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $permissions = ['add', 'edit', 'delete'];
-        $roles = ['Super-admin', 'Administrasi', 'Apoteker', 'Perawat', 'Dokter', 'Manajemen', 'User'];
+        $roles = ['Super-admin', 'Administrasi', 'Apoteker', 'Perawat', 'Dokter', 'Manajemen', 'User', 'Gudang', 'Personalia', 'Registrasi'];
 
-        // Membuat Permission
+        // Membuat Permissions (hindari duplikat)
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => 'web'
+            ]);
         }
 
-        // Membuat Role
+        // Membuat Roles + mapping ke role_redirect
         foreach ($roles as $role) {
-            // Simpan role ke database
-            $newRole = Role::create(['name' => $role]);
+            $newRole = Role::firstOrCreate([
+                'name' => $role,
+                'guard_name' => 'web'
+            ]);
 
-            // Masukkan role_id ke dalam role_redirect dengan redirect_route = 'dashboard'
-            role_redirect::create([
-                'role_id' => $newRole->id,
+            role_redirect::firstOrCreate([
+                'role_id' => $newRole->id
+            ], [
                 'redirect_route' => 'dashboard'
             ]);
         }
