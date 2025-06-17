@@ -743,7 +743,7 @@
                                                         </div>
 
                                                         <div class="card collapsed-card">
-                                                            <div class="card-header">
+                                                            <div class="card-header bg-info">
                                                                 <p class="card-title">Pemeriksaan Gigi</p>
 
                                                                 <div class="card-tools">
@@ -851,7 +851,7 @@
                 <option value="COF" data-color="COF">COF</option>
                 <option value="FIS" data-color="FIS">FIS</option>
                 <option value="NVT" data-color="NVT">NVT</option>
-                <option value="RCT" data-color="RCT">RCT</option>
+                <option value="CRT" data-color="CRT">CRT</option>
                 <option value="CAR" data-color="CAR">CAR</option>
                 <option value="AMF-CRT" data-color="AMF-CRT">AMF-CRT</option>
                 <option value="FMC" data-color="FMC">FMC</option>
@@ -1776,7 +1776,7 @@ $('#acceptICD10').on('click', function () {
     console.log('Accept clicked'); // Debug log
     console.log('selectedICD10:', selectedICD10); // Debug log
     console.log('selectedPriorityICD10:', selectedPriorityICD10); // Debug log
-    
+
     // Validasi 1: Cek apakah diagnosa dan prioritas sudah dipilih
     if (!selectedICD10 || !selectedPriorityICD10) {
         console.log('Validation failed: Missing data'); // Debug log
@@ -1788,7 +1788,7 @@ $('#acceptICD10').on('click', function () {
         });
         return;
     }
-    
+
     // Validasi 2: Cek duplikasi data
     if (isDuplicate('.icd_10 tbody', selectedICD10.code)) {
         console.log('Validation failed: Duplicate data'); // Debug log
@@ -1800,7 +1800,7 @@ $('#acceptICD10').on('click', function () {
         });
         return;
     }
-    
+
     // Validasi 3: Cek primary hanya boleh satu
     if (selectedPriorityICD10 === 'Primary' && hasPrimary('.icd_10 tbody')) {
         console.log('Validation failed: Primary already exists'); // Debug log
@@ -1814,7 +1814,7 @@ $('#acceptICD10').on('click', function () {
     }
 
     console.log('All validations passed, adding data'); // Debug log
-    
+
     // Jika semua validasi berhasil, tambahkan data
     $('.icd_10 tbody').append(generateRow(selectedICD10, selectedPriorityICD10, 'ICD10'));
     resetFields('#icd10', '#kodeICD10', '#prioritas_icd_10');
