@@ -19,7 +19,26 @@
         <div class="container-fluid">
             <!-- Small boxes (Stat box) -->
             <div class="row">
-                <div class="col-lg-6 col-6">
+                {{-- <div class="col-lg-4 col-12">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h4 class="text-center text-white mb-0">Total Pasien</h4> <!-- Judul -->
+                            <div class="row">
+                                @foreach($rekapPerPoliDokter as $rekap)
+                                    <div class="col-md-3 col-sm-6 mb-2">
+                                        <h4>{{ $rekap->jumlah }}</h4>
+                                        <p class="mb-1">Poli: {{ $rekap->poli->nama ?? 'Tidak diketahui' }}</p>
+                                        <p class="mb-0">Dokter: {{ $rekap->dokter->namauser->name ?? 'Tidak diketahui' }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-medkit"></i>
+                        </div>
+                    </div>
+                </div> --}}
+                <div class="col-lg-4 col-6">
                     <!-- small box -->
                     <div class="small-box bg-info">
                         <div class="inner">
@@ -29,10 +48,31 @@
                         <div class="icon">
                             <i class="ion ion-bag"></i>
                         </div>
+                        <a class="small-box-footer">&nbsp;</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <div class="row text-center text-white">
+                                <div class="col-md-6">
+                                    <h3>{{ $jumlahDokter }}</h3>
+                                    <p>Jumlah Dokter</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h3>{{ $totalPasien }}</h3>
+                                    <p>Total Pasien</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#" class="small-box-footer" data-toggle="modal" data-target="#rekapModal">
+                            More info <i class="fas fa-arrow-circle-right"></i>
+                        </a>
                     </div>
                 </div>
                 <!-- ./col -->
-                <div class="col-lg-6 col-6">
+                <div class="col-lg-4 col-6">
                     <!-- small box -->
                     <div class="small-box bg-success">
                         <div class="inner">
@@ -42,6 +82,7 @@
                         <div class="icon">
                             <i class="ion ion-stats-bars"></i>
                         </div>
+                        <a class="small-box-footer">&nbsp;</a>
                     </div>
                 </div>
                 <!-- ./col -->
@@ -296,6 +337,33 @@
                 </div>
             </div>
         </form>
+    </div>
+</div>
+
+{{-- Modal Detail Data Box --}}
+<div class="modal fade" id="rekapModal" tabindex="-1" role="dialog" aria-labelledby="rekapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="rekapModalLabel"></h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    @foreach($rekapPerPoliDokter as $rekap)
+                        <div class="col-md-4 col-sm-6 mb-3 mx-auto">
+                            <div class="p-3 border rounded bg-light text-center">
+                                <h4>Pasien Terdaftar: {{ $rekap->jumlah }}</h4>
+                                <p class="mb-1"><strong>Poli:</strong> {{ $rekap->poli->nama ?? 'Tidak diketahui' }}</p>
+                                <p class="mb-0"><strong>Dokter:</strong> {{ $rekap->dokter->namauser->name ?? 'Tidak diketahui' }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

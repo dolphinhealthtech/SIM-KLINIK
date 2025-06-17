@@ -1546,15 +1546,19 @@ public function panggilPasien($id)
         $pasiens = pasien::all();
         $poli = poli::all();
 
+        $today = Carbon::today(); // atau now()->startOfDay()
+
         $pendaftaran = Pendaftaran_rawat_jalan::with('status', 'poli', 'dokter.namauser', 'pasien' ,'penjamin')
         ->whereHas('status', function ($query) {
             $query->whereIn('status_pendaftaran', ['1', '2']);
         })
+        ->whereDate('tanggal_kujungan', '=', $today)
         ->whereDoesntHave('apotek') // Filter: yang belum ada di tabel apotek
         ->get();
 
 
-        $pasienallold = Pendaftaran_rawat_jalan::count();
+        $pasienallold = Pendaftaran_rawat_jalan::whereDate('tanggal_kujungan', '=', $today)
+        ->count();
         $pasienallnewnow = Pendaftaran_rawat_jalan::with('status')
         ->whereHas('status', function ($query) {
             $query->whereIn('status_pendaftaran', ['3']);
@@ -1563,7 +1567,21 @@ public function panggilPasien($id)
 
         $penjamin = penjamin::all();
 
-        return view('module.pendaftaran.daftar', compact('title', 'pendaftaran','pasiens','penjamin','poli','pasienallnewnow','pasienallold'));
+        $rekapPerPoliDokter = Pendaftaran_rawat_jalan::whereDate('tanggal_kujungan', $today)
+        ->whereHas('dokter.jadwal', function ($query) use ($today) {
+            $query->whereDate('start', '=', $today);
+        })
+        ->select('poli_id', 'dokter_id', DB::raw('count(*) as jumlah'))
+        ->groupBy('poli_id', 'dokter_id')
+        ->with(['poli', 'dokter'])
+        ->get();
+
+        $jumlahDokter = $rekapPerPoliDokter->count(); // Banyaknya dokter unik
+        $totalPasien = $rekapPerPoliDokter->sum('jumlah'); // Total pasien dari semua dokter
+
+        // dd($rekapPerPoliDokter,$jumlahDokter,$totalPasien);
+
+        return view('module.pendaftaran.daftar', compact('title','jumlahDokter','totalPasien','rekapPerPoliDokter','pendaftaran','pasiens','penjamin','poli','pasienallnewnow','pasienallold'));
     }
 
     public function getByPoli($id, Request $request)
