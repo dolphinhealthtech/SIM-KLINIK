@@ -19,25 +19,6 @@
         <div class="container-fluid">
             <!-- Small boxes (Stat box) -->
             <div class="row">
-                {{-- <div class="col-lg-4 col-12">
-                    <div class="small-box bg-success">
-                        <div class="inner">
-                            <h4 class="text-center text-white mb-0">Total Pasien</h4> <!-- Judul -->
-                            <div class="row">
-                                @foreach($rekapPerPoliDokter as $rekap)
-                                    <div class="col-md-3 col-sm-6 mb-2">
-                                        <h4>{{ $rekap->jumlah }}</h4>
-                                        <p class="mb-1">Poli: {{ $rekap->poli->nama ?? 'Tidak diketahui' }}</p>
-                                        <p class="mb-0">Dokter: {{ $rekap->dokter->namauser->name ?? 'Tidak diketahui' }}</p>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-medkit"></i>
-                        </div>
-                    </div>
-                </div> --}}
                 <div class="col-lg-4 col-6">
                     <!-- small box -->
                     <div class="small-box bg-info">
@@ -74,7 +55,7 @@
                 <!-- ./col -->
                 <div class="col-lg-4 col-6">
                     <!-- small box -->
-                    <div class="small-box bg-success">
+                    <div class="small-box bg-secondary">
                         <div class="inner">
                             <h3>{{ $pasienallnewnow }}</h3>
                             <p>Total Pasien Selesai Di layani</p>
