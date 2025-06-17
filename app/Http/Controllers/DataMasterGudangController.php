@@ -2030,6 +2030,23 @@ class DataMasterGudangController extends Controller
             $tanggalRequest = $request->input('tanggal_request');
             $namaKlinik = $request->input('nama_klinik');
 
+            $found = gudang_klinik_request::where('kode_request', $kodeRequest)
+                ->where('tanggal_input', $tanggalRequest)
+                ->first();
+
+            if (!$found) {
+                // Data tidak ditemukan, return error
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak valid atau tidak ditemukan!',
+                ], 404);
+            }
+
+            // Update status
+            $found->update([
+                'status' => 2,
+            ]);
+
             foreach ($items as $item) {
                 $kodeObat = $item['kode_obat'];
                 $jumlahDibutuhkan = intval($item['jumlah']);
