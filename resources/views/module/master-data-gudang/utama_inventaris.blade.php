@@ -28,7 +28,7 @@
                     <div class="col-md-5">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Daftar Permintaan Obat</h3>
+                                <h3 class="card-title">Daftar Permintaan Inventaris</h3>
                             </div>
                             <div class="card-body">
                                 <div class="row mb-3">
@@ -38,8 +38,6 @@
                                             <option value="">Semua Klinik</option>
                                             <option value="Klinik Balaraja">Klinik Balaraja</option>
                                             <option value="Klinik Jaya">Klinik Jaya</option>
-                                            <option value="Klinik Sentosa">Klinik Sentosa</option>
-                                            <option value="Klinik Makmur">Klinik Makmur</option>
                                         </select>
                                     </div>
                                 </div>
@@ -77,7 +75,7 @@
                     <div class="col-md-7">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Form Permintaan Obat</h3>
+                                <h3 class="card-title">Form Permintaan Inventaris</h3>
                             </div>
                             <div class="card-body">
                                 <div class="row mb-3">
@@ -109,9 +107,9 @@
                                 <table class="table table-bordered table-striped" id="approval_permintaan">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Kode Barang</th>
-                                            <th class="text-center">Nama Barang</th>
-                                            <th class="text-center">Jenis Barang</th>
+                                            <th class="text-center">Kode Inventaris</th>
+                                            <th class="text-center">Nama Inventaris</th>
+                                            <th class="text-center">Jenis Inventaris</th>
                                             <th class="text-center">Jumlah</th>
                                             <th class="text-center">Aksi</th>
                                         </tr>
@@ -139,7 +137,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="detailModalLabel">Detail Permintaan Obat</h5>
+                    <h5 class="modal-title" id="detailModalLabel">Detail Permintaan Inventaris</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -167,8 +165,8 @@
                             <thead class="bg-light">
                                 <tr>
                                     <th class="text-center" width="5%">No</th>
-                                    <th class="text-center" width="15%">Kode Obat</th>
-                                    <th class="text-center" width="50%">Nama Obat</th>
+                                    <th class="text-center" width="15%">Kode Inventaris</th>
+                                    <th class="text-center" width="50%">Nama Inventaris</th>
                                     <th class="text-center" width="15%">Jumlah</th>
                                 </tr>
                             </thead>

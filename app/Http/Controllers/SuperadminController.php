@@ -71,6 +71,7 @@ use App\Models\inventaris_data_barang;
 use App\Models\inventaris_pembelian;
 use App\Models\inventaris_pembelian_detail;
 use App\Models\inventaris_stok;
+use App\Models\inventaris_satuan;
 use App\Exports\Inventaris_data_barangExport;
 use App\Imports\Inventaris_data_barangImport;
 use Carbon\Carbon;
@@ -3869,7 +3870,7 @@ public function panggilPasien($id)
     {
         $title = "Data Inventaris";
         $inventaris = inventaris_data_barang::all();
-        $satuan = gudang_satuan::all();
+        $satuan = inventaris_satuan::all();
         $kategori = inventaris_kategori::all();
         $singkron = external_database::all();
         return view('dashboard.data_inventaris', compact('title','inventaris','satuan','kategori','singkron'));

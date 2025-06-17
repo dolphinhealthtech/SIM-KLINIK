@@ -76,7 +76,7 @@
                 <div class="row mb-2">
                     <div class="col-12 text-right">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addRequestModal">
-                            <i class="fas fa-plus-circle"></i> Buat Request Obat Baru
+                            <i class="fas fa-plus-circle"></i> Buat Request Inventaris Baru
                         </button>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
                             <div class="card-header bg-white">
                                 <h3 class="card-title">
                                     <i class="fas fa-check-circle mr-1"></i>
-                                    Approve Data Obat
+                                    Approve Data Inventaris
                                 </h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -132,7 +132,7 @@
                             <div class="card-header bg-white">
                                 <h3 class="card-title">
                                     <i class="fas fa-clipboard-list mr-1"></i>
-                                    Request Obat
+                                    Request Inventaris
                                 </h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -246,7 +246,7 @@
                                 <div class="step" data-target="#requestObatAlkes">
                                     <button type="button" class="step-trigger" role="tab" aria-controls="requestObatAlkes" id="requestObatAlkes-trigger">
                                         <span class="bs-stepper-circle">2</span>
-                                        <span class="bs-stepper-label">Request Obat / Alkes</span>
+                                        <span class="bs-stepper-label">Request Inventaris</span>
                                     </button>
                                 </div>
                             </div>
@@ -312,8 +312,8 @@
                                                     <thead class="thead-light">
                                                         <tr>
                                                             <th style="width: 5%;">No</th>
-                                                            <th>Kode Obat</th>
-                                                            <th>Nama Obat</th>
+                                                            <th>Kode Inventaris</th>
+                                                            <th>Nama Inventaris</th>
                                                             <th>Jumlah</th>
                                                         </tr>
                                                     </thead>
@@ -340,7 +340,7 @@
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detailsModalLabel">Details</h5>
+                    <h5 class="modal-title" id="detailsModalLabel">Details Inventaris</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -357,8 +357,8 @@
                                 <thead class="bg-white">
                                     <tr>
                                         <th class="text-center" width="5%">No</th>
-                                        <th class="text-center">Kode Obat/Alkes</th>
-                                        <th class="text-center">Nama Obat/Alkes</th>
+                                        <th class="text-center">Kode Inventaris</th>
+                                        <th class="text-center">Nama Inventaris</th>
                                         <th class="text-center">Jumlah</th>
                                     </tr>
                                 </thead>
