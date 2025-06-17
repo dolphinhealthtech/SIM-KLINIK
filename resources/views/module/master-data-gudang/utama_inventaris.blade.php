@@ -219,7 +219,7 @@
             document.getElementById('detail_tanggal').value = tanggalInput;
 
             // Fetch detail data dari backend
-            fetch(`/api/data-master-gudang/request/inventaris/getDetails/${kodeRequest}`)
+            fetch(`/api/data-master-gudang/utama/inventaris/getDetails/${kodeRequest}`)
                 .then(response => response.json())
                 .then(data => {
                     Swal.close(); // Tutup loading Swal saat data berhasil diterima

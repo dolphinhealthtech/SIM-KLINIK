@@ -29,6 +29,7 @@ use App\Models\inventaris_data_barang;
 use App\Models\inventaris_request;
 use App\Models\inventaris_utama_keluar;
 use App\Models\inventaris_satuan;
+use App\Models\inventaris_request_detail;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -1350,6 +1351,21 @@ class DataMasterGudangController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function inventarisGetDetails($kodeRequest)
+    {
+        $details = collect(); // Default: koleksi kosong
+
+        if (!empty($kodeRequest)) {
+            $details = inventaris_request_detail::where('kode_request', $kodeRequest)
+                ->select('kode_barang', 'nama_barang', 'qty')
+                ->get();
+        }
+
+        return response()->json([
+            'details' => $details
+        ]);
     }
 
     public function inventaris_prosesPermintaan(Request $request)
