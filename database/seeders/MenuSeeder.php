@@ -461,7 +461,19 @@ class MenuSeeder extends Seeder
                         $menu->roles()->attach($apotekerRole->id);
                     }
                     break;
-            }
+                    case 'Tindakan':
+                // Tindakan boleh diakses oleh dokter, perawat, dan manajemen
+                if ($dokterRole) {
+                    $menu->roles()->attach($dokterRole->id);
+                }
+                if ($perawatRole) {
+                    $menu->roles()->attach($perawatRole->id);
+                }
+                if ($managementRole) {
+                    $menu->roles()->attach($managementRole->id);
+                }
+                break;
+                }
         }
 
         // Submenu Data Master - Loket
