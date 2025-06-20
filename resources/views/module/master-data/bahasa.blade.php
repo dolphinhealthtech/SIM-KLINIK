@@ -155,7 +155,7 @@
         <form id="deleteFormbahasa" action="{{ route('bahasa.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data bahasa</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus bahasa</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>

@@ -95,7 +95,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addgoldarLabel">Tambah Master Golongan Darah</h5>
+                <h5 class="modal-title" id="addgoldarLabel">Tambah Golongan Darah</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -137,7 +137,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Master Golongan Darah</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Golongan Darah</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -181,7 +181,7 @@
         <form id="deleteFormgoldar" action="{{ route('goldar.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data Golongan Darah</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Golongan Darah</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
