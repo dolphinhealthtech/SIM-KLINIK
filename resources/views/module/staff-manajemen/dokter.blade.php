@@ -539,7 +539,7 @@
             <form id="deleteFormdokter" action="{{ route('dokter.destroy') }}" method="POST">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data dokter</h5>
+                        <h5 class="modal-title" id="deleteModalLabel">Hapus dokter</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span>&times;</span>
                         </button>

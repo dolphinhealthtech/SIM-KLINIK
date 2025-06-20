@@ -86,7 +86,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Medis poli</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Medis poli</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -119,7 +119,7 @@
         <form id="deleteFormpoli" action="{{ route('poli.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data poli</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus poli</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>

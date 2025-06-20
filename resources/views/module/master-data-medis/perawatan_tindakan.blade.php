@@ -105,7 +105,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Perawatan Tindakan</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Perawatan Tindakan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -166,7 +166,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Master Data Perawatan Tindakan</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Perawatan Tindakan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -227,7 +227,7 @@
         <form id="deleteFormperawatan_tindakan" action="{{ route('perawatan_tindakan.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data Kategori Perawatan</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Kategori Perawatan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>

@@ -519,7 +519,7 @@
         <form id="deleteFormdabar" action="{{ route('dabar.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data Barang</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data Barang</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>

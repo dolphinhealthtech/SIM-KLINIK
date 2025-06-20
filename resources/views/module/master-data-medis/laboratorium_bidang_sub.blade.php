@@ -86,7 +86,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Medis htt_sub_pemeriksaan</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Medis htt_sub_pemeriksaan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -123,7 +123,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Medis htt_sub_pemeriksaan</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Medis htt_sub_pemeriksaan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -163,7 +163,7 @@
         <form id="deleteFormhtt_sub_pemeriksaan" action="{{ route('laboratorium_bidang_sub.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data htt_sub_pemeriksaan</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus htt_sub_pemeriksaan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>

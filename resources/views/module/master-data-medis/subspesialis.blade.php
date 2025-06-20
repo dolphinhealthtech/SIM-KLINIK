@@ -80,7 +80,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Medis subspesialis</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah subspesialis</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -113,7 +113,7 @@
         <form id="deleteFormsubspesialis" action="{{ route('subspesialis.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data subspesialis</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus subspesialis</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
