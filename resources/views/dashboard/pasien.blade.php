@@ -654,6 +654,29 @@
                     <form action="{{ route('pasien.update') }}" method="POST">
                         @csrf
                         <div class="row">
+                            <style>
+                                    .alert {
+                                        padding: 15px;
+                                        margin-bottom: 20px;
+                                        border: 1px solid transparent;
+                                        border-radius: 4px;
+                                    }
+                                    .alert-danger {
+                                        color: #721c24;
+                                        background-color: #f8d7da;
+                                        border-color: #f5c6cb;
+                                    }
+                                </style>
+                                <div class="text-center col-sm-6">
+                                    <div class="form-group">
+                                        <div id="bpjs_error1" class="alert alert-warning" style="display: none;"></div>
+                                    </div>
+                                </div>
+                                <div class="text-center col-sm-6">
+                                    <div class="form-group">
+                                        <div id="bpjs_error" class="alert alert-danger" style="display: none;"></div>
+                                    </div>
+                                </div>
                             <div class="col-md-3 d-flex justify-content-center">
                                 <div class="position-relative text-center">
                                     <!-- Input Gambar -->
