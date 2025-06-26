@@ -109,7 +109,7 @@
                                                             data-id="{{ $pasiensdata->id }}">
                                                             <i class="fa fa-exclamation-circle"></i> Lengkapi
                                                         </a>
-                                                        
+
                                                         <!-- Tombol Panggil untuk data yang belum dilengkapi -->
                                                         <a class="btn btn-primary rounded-pill panggil-btn" data-toggle="modal"
                                                             data-target="#panggilModal"
@@ -165,9 +165,9 @@
     $(document).on('click', '.panggil-btn', function() {
         let id = $(this).data('id');
         let nama = $(this).data('nama');
-        
+
         $('#panggilText').html(`<span>Apakah Anda yakin ingin memanggil pasien <b>${nama}</b>?</span>`);
-        
+
         // Ketika tombol konfirmasi diklik
         $('#konfirmasiPanggil').off('click').on('click', function() {
             $.ajax({
@@ -222,6 +222,29 @@
                     <form action="{{ route('pasien.verifikasi') }}" method="POST">
                         @csrf
                         <div class="row">
+                            <style>
+                                    .alert {
+                                        padding: 15px;
+                                        margin-bottom: 20px;
+                                        border: 1px solid transparent;
+                                        border-radius: 4px;
+                                    }
+                                    .alert-danger {
+                                        color: #721c24;
+                                        background-color: #f8d7da;
+                                        border-color: #f5c6cb;
+                                    }
+                                </style>
+                                <div class="text-center col-sm-6">
+                                    <div class="form-group">
+                                        <div id="bpjs_error1" class="alert alert-warning" style="display: none;"></div>
+                                    </div>
+                                </div>
+                                <div class="text-center col-sm-6">
+                                    <div class="form-group">
+                                        <div id="bpjs_error" class="alert alert-danger" style="display: none;"></div>
+                                    </div>
+                                </div>
                             <div class="col-md-3 d-flex justify-content-center">
                                 <div class="position-relative text-center">
                                     <!-- Input Gambar -->
@@ -409,7 +432,7 @@
 
                                     <div class="col-sm-4">
                                         <div class="form-group text-center">
-                                            <label>Provide & Masa Berlaku Kartu BPJS</label>
+                                            <label>Faskes & Masa Berlaku Kartu BPJS</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="provide"
                                                 name="provide"
@@ -614,7 +637,7 @@
             </div>
         </div>
     </div>
-    
+
 
     <!-- Modal XL -->
     <div class="modal fade" id="EditModal" tabindex="-1"
@@ -819,7 +842,7 @@
 
                                     <div class="col-sm-4">
                                         <div class="form-group text-center">
-                                            <label>Provide & Masa Berlaku Kartu BPJS</label>
+                                            <label>Faskes & Masa Berlaku Kartu BPJS</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="provide_edit"
                                                 name="provide_edit" value="{{ old('provide_edit') }}"
@@ -1079,6 +1102,24 @@
                         }
                         updateInputValue_edit(namaInput, data.nama);
 
+                        var ket = data.aktif || false;
+
+                        if (ket === true) {
+                            $('#bpjs_error').hide();
+                        } else {
+                            $('#bpjs_error').text(data.ketAktif || 'Status tidak aktif').show();
+                        }
+
+                        const kode = {
+                            KPFK: "{{ $kodefasyankes->KPFK }}"
+                        };
+                        console.log(kode);
+                        if (kode.KPFK === data.kdProviderPst.kdProvider) {
+                            $('#bpjs_error1').hide();
+                        } else {
+                            $('#bpjs_error1').text('Faskes BPJS tidak Sesuai').show();
+                        }
+
                             // **Panggil route tambahan setelah namaInput diperbarui**
                             let noihsApiUrl = `{{ route('satusehat.nik', ':nik') }}`.replace(':nik', nik); // Sesuaikan URL
                             fetch(noihsApiUrl, {
@@ -1297,7 +1338,7 @@
                     $('#pernikahan').val(data.pernikahan);
                     $('#goldar').val(data.goldar).trigger('change');
                     $('#seks').val(data.seks).trigger('change');
-                    generateCredentials();
+                    // generateCredentials();
                 }).fail(function (error) {
                     console.error("Gagal mengambil data pasien:", error);
                 });
@@ -1358,6 +1399,22 @@
                         updateInputValue(tgllahirInput, formatDate(data.tglLahir));
                     }
                     updateInputValue(namaInput, data.nama);
+
+                    var ket = data.aktif || false;
+                        if (ket === true) {
+                            $('#bpjs_error').hide();
+                        } else {
+                            $('#bpjs_error').text(data.ketAktif || 'Status tidak aktif').show();
+                        }
+                        const kode = {
+                            KPFK: "{{ $kodefasyankes->KPFK }}"
+                        };
+                        console.log(kode);
+                        if (kode.KPFK === data.kdProviderPst.kdProvider) {
+                            $('#bpjs_error1').hide();
+                        } else {
+                            $('#bpjs_error1').text('Faskes BPJS tidak Sesuai').show();
+                        }
 
                         // **Panggil route tambahan setelah namaInput diperbarui**
                         let noihsApiUrl = `{{ route('satusehat.nik', ':nik') }}`.replace(':nik', nik); // Sesuaikan URL
@@ -1493,10 +1550,10 @@
             }).buttons().container().appendTo('#userstabel_wrapper .col-md-6:eq(0)');
         });
 
-        
-    </script>
-    
 
-    
+    </script>
+
+
+
 @endsection
 

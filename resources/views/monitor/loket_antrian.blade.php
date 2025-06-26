@@ -12,93 +12,93 @@
         --bg-light: #f8f9fa;
         --bg-dark: #1a2a2a;
     }
-    
+
     body {
         background-color: var(--bg-light);
         color: var(--text-dark);
         overflow: hidden;
     }
-    
+
     .content-wrapper {
         overflow: hidden;
         height: 100vh;
         padding: 0.5rem !important;
     }
-    
+
     .content {
         height: 100%;
     }
-    
+
     .container-fluid {
         height: 100%;
         overflow: hidden;
     }
-    
+
     /* Reduce spacing */
     .row {
         max-height: 100%;
         margin-bottom: 0.5rem !important;
     }
-    
+
     .mb-4 {
         margin-bottom: 0.5rem !important;
     }
-    
+
     .py-4, .py-5, .py-3 {
         padding-top: 0.5rem !important;
         padding-bottom: 0.5rem !important;
     }
-    
+
     /* Scale down elements */
     .page-title {
         font-size: 1.8rem;
         margin-bottom: 0 !important;
     }
-    
+
     .subtitle {
         font-size: 1.2rem;
     }
-    
+
     .queue-number {
         font-size: 6rem;
     }
-    
+
     .loket-number {
         font-size: 2.5rem;
     }
-    
+
     .card-body {
         padding: 0.75rem;
     }
-    
+
     .card-header {
         padding: 0.75rem;
     }
-    
+
     .card-header h2, .card-header h3 {
         font-size: 1.2rem;
         margin-bottom: 0;
     }
-    
+
     /* Keep other existing styles */
     .bg-theme-primary {
         background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
         color: var(--text-light);
     }
-    
+
     .bg-theme-accent {
         background: linear-gradient(135deg, var(--accent-color), #e74c3c);
         color: var(--text-light);
     }
-    
+
     .text-theme-primary {
         color: var(--primary-color);
     }
-    
+
     .border-theme {
         border: 2px solid var(--primary-color);
     }
-    
+
     .card {
         border-radius: 15px;
         overflow: hidden;
@@ -106,28 +106,28 @@
         border: none;
         transition: transform 0.3s ease;
     }
-    
+
     .card:hover {
         transform: translateY(-5px);
     }
-    
+
     .card-header {
         border-bottom: none;
         padding: 1.25rem;
     }
-    
+
     .queue-number {
         font-size: 9rem;
         font-weight: 800;
         color: var(--accent-color);
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
     }
-    
+
     .loket-number {
         font-size: 4rem;
         font-weight: 700;
     }
-    
+
     .badge-custom {
         background-color: rgba(255, 255, 255, 0.2);
         color: var(--text-light);
@@ -135,7 +135,7 @@
         border-radius: 50px;
         font-size: 1rem;
     }
-    
+
     .time-date-box {
         background-color: rgba(255, 255, 255, 0.1);
         border-radius: 10px;
@@ -143,7 +143,7 @@
         display: inline-block;
         margin-top: 1rem;
     }
-    
+
     .announcement-card {
         border-left: 5px solid var(--primary-color);
         background-color: var(--primary-light);
@@ -151,14 +151,14 @@
         padding: 1rem;
         margin-bottom: 1rem;
     }
-    
+
     .page-title {
         font-weight: 800;
         letter-spacing: 1px;
         color: var(--primary-dark);
         text-transform: uppercase;
     }
-    
+
     .subtitle {
         color: var(--primary-color);
         font-weight: 500;
@@ -181,7 +181,7 @@
                     <h3 class="subtitle">{{ $settings->nama ?? 'Klinik' }}</h3>
                 </div>
             </div>
-            
+
             <!-- Main Content -->
             <div class="row">
                 <!-- Current Queue Section - Left Side -->
@@ -194,14 +194,14 @@
         @php
             // Ambil semua antrian yang tersedia untuk hari ini
             $allQueues = collect();
-            
+
             // Ambil antrian A (pasien_antrian)
             $antrianA = App\Models\pasien_antrian::where('nomor_antrian', 'like', 'A-%')
                 ->where('status_panggil', '1')
                 ->whereDate('created_at', \Carbon\Carbon::today())
                 ->select('nomor_antrian as antrian', 'created_at', DB::raw("'A' as loket"), DB::raw("'LOKET A' as loket_nama"))
                 ->first();
-            
+
             if ($antrianA) {
                 $allQueues->push([
                     'antrian' => $antrianA->antrian,
@@ -211,7 +211,7 @@
                     'created_at' => $antrianA->created_at
                 ]);
             }
-            
+
             // Ambil antrian B (perawat)
             $antrianB = DB::table('pendaftaran_rawat_jalans')
                 ->join('pendaftaran_rawat_jalan_statuses', 'pendaftaran_rawat_jalan_statuses.nomor_register', '=', 'pendaftaran_rawat_jalans.nomor_register')
@@ -219,7 +219,7 @@
                 ->whereDate('pendaftaran_rawat_jalans.created_at', \Carbon\Carbon::today())
                 ->select('pendaftaran_rawat_jalans.antrian', 'pendaftaran_rawat_jalans.created_at')
                 ->first();
-            
+
             if ($antrianB) {
                 $allQueues->push([
                     'antrian' => $antrianB->antrian,
@@ -229,7 +229,7 @@
                     'created_at' => $antrianB->created_at
                 ]);
             }
-            
+
             // Ambil antrian C (dokter)
             $antrianC = DB::table('pendaftaran_rawat_jalans')
                 ->join('pendaftaran_rawat_jalan_statuses', 'pendaftaran_rawat_jalan_statuses.nomor_register', '=', 'pendaftaran_rawat_jalans.nomor_register')
@@ -237,7 +237,7 @@
                 ->whereDate('pendaftaran_rawat_jalans.created_at', \Carbon\Carbon::today())
                 ->select('pendaftaran_rawat_jalans.antrian', 'pendaftaran_rawat_jalans.created_at')
                 ->first();
-            
+
             if ($antrianC) {
                 $allQueues->push([
                     'antrian' => $antrianC->antrian,
@@ -247,38 +247,38 @@
                     'created_at' => $antrianC->created_at
                 ]);
             }
-            
+
             // Convert collection to array for JavaScript
             $allQueuesArray = $allQueues->toArray();
         @endphp
-        
+
         <div class="bg-white rounded-lg p-4 shadow-sm mx-auto" style="max-width: 400px;">
             <h1 class="queue-number mb-0" id="displayed-queue-number">--</h1>
             <h3 class="text-theme-primary font-weight-bold mt-3" id="displayed-status">MENUNGGU PANGGILAN</h3>
         </div>
-        
+
         <div class="time-date-box mt-4">
             <h4 class="mb-0"><i class="far fa-clock mr-2"></i><span id="current-time">00:00:00</span></h4>
             <h4 class="mb-0"><i class="far fa-calendar-alt mr-2"></i><span id="current-date">01 Januari 2023</span></h4>
-            <div class="mt-2"><small>Refresh dalam <span id="countdown">30</span> detik</small></div>
+            <div class="mt-2"><small>Refresh dalam <span id="countdown">10</span> detik</small></div>
         </div>
-        
+
         <!-- Toggle untuk auto-announce -->
         <div class="custom-control custom-switch mt-3">
             <input type="checkbox" class="custom-control-input" id="autoAnnounceToggle">
             <label class="custom-control-label auto-announce-label" for="autoAnnounceToggle"></label>
         </div>
-        
+
         <script>
         // Data antrian dari PHP
         const allQueues = @json($allQueuesArray);
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             let displayInterval;
-            
+
             // Track which queues have been displayed (persist in sessionStorage)
             let displayedQueues = [];
-            
+
             // Try to load previously displayed queues from sessionStorage
             try {
                 const savedDisplayedQueues = sessionStorage.getItem('displayedQueues');
@@ -289,14 +289,14 @@
                 console.error('Error loading displayed queues:', e);
                 displayedQueues = [];
             }
-            
+
             // Simpan status autoplay di localStorage
             const autoAnnounceToggle = document.getElementById('autoAnnounceToggle');
             autoAnnounceToggle.checked = localStorage.getItem('autoAnnounce') === 'true';
-            
+
             autoAnnounceToggle.addEventListener('change', function() {
                 localStorage.setItem('autoAnnounce', this.checked);
-                
+
                 if (this.checked) {
                     startContinuousDisplay();
                 } else {
@@ -306,7 +306,7 @@
                     document.getElementById('displayed-status').textContent = 'MENUNGGU PANGGILAN';
                 }
             });
-            
+
             // Fungsi untuk memulai tampilan bergantian
             function startContinuousDisplay() {
                 if (allQueues.length === 0) {
@@ -314,75 +314,75 @@
                     document.getElementById('displayed-status').textContent = 'TIDAK ADA ANTRIAN';
                     return;
                 }
-                
+
                 // Set interval untuk memeriksa antrian baru setiap 5 detik
                 displayInterval = setInterval(function() {
                     checkAndDisplayNewQueues();
                 }, 5000);
-                
+
                 // Periksa dan tampilkan antrian baru segera
                 checkAndDisplayNewQueues();
             }
-            
+
             // Fungsi untuk memeriksa dan menampilkan antrian baru
             function checkAndDisplayNewQueues() {
                 console.log('Checking for new queues. Currently displayed:', displayedQueues);
                 console.log('All queues:', allQueues);
-                
+
                 // Filter queues that haven't been displayed for their current counter
                 const newQueues = allQueues.filter(queue => {
                     const key = queue.antrian + '-' + queue.loket;
                     return !displayedQueues.includes(key);
                 });
-                
+
                 console.log('New queues to display:', newQueues);
-                
+
                 if (newQueues.length === 0) {
                     document.getElementById('displayed-queue-number').textContent = '--';
                     document.getElementById('displayed-status').textContent = 'MENUNGGU PANGGILAN';
                     return;
                 }
-                
+
                 // Ambil antrian pertama yang belum ditampilkan
                 const queueToDisplay = newQueues[0];
-                
+
                 // Tampilkan antrian
                 document.getElementById('displayed-queue-number').textContent = queueToDisplay.antrian;
                 document.getElementById('displayed-status').textContent = queueToDisplay.status_display;
-                
+
                 // Tandai antrian ini sudah ditampilkan
                 const queueKey = queueToDisplay.antrian + '-' + queueToDisplay.loket;
                 displayedQueues.push(queueKey);
-                
+
                 // Save displayed queues to sessionStorage
                 try {
                     sessionStorage.setItem('displayedQueues', JSON.stringify(displayedQueues));
                 } catch (e) {
                     console.error('Error saving displayed queues:', e);
                 }
-                
+
                 // Umumkan antrian ini
                 if (autoAnnounceToggle.checked) {
                     announceQueue(queueToDisplay);
                 }
             }
-            
+
             // Fungsi untuk mengumumkan antrian
             function announceQueue(queue) {
                 const announcementText = `Nomor Antrian ${queue.antrian}, silakan menuju ${queue.loket_nama}`;
-                
+
                 // Hentikan pengumuman sebelumnya jika masih berjalan
                 speechSynthesis.cancel();
-                
+
                 const utterance = new SpeechSynthesisUtterance(announcementText);
                 utterance.lang = 'id-ID';
                 utterance.rate = 0.8;
                 utterance.pitch = 1;
                 utterance.volume = 1;
-                
+
                 speechSynthesis.speak(utterance);
             }
-            
+
             // Fungsi untuk menghentikan tampilan bergantian
             function stopContinuousDisplay() {
                 if (displayInterval) {
@@ -392,36 +392,36 @@
                 // Hentikan speech synthesis
                 speechSynthesis.cancel();
             }
-            
+
             // Mulai tampilan bergantian jika toggle aktif
             if (autoAnnounceToggle.checked) {
                 startContinuousDisplay();
             }
-            
+
             // Fungsi untuk update waktu dan tanggal
             function updateDateTime() {
                 const now = new Date();
-                
+
                 // Format waktu: HH:MM:SS
                 const hours = String(now.getHours()).padStart(2, '0');
                 const minutes = String(now.getMinutes()).padStart(2, '0');
                 const seconds = String(now.getSeconds()).padStart(2, '0');
                 document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
-                
+
                 // Format tanggal: DD Bulan YYYY
                 const options = { day: 'numeric', month: 'long', year: 'numeric' };
                 document.getElementById('current-date').textContent = now.toLocaleDateString('id-ID', options);
             }
-            
+
             // Fungsi untuk auto-refresh halaman
             function setupAutoRefresh() {
-                let countdown = 30; // 30 detik
+                let countdown = 10; // 10 detik
                 const countdownElement = document.getElementById('countdown');
-                
+
                 function updateCountdown() {
                     countdownElement.textContent = countdown;
                     countdown--;
-                    
+
                     if (countdown < 0) {
                         // Refresh halaman
                         window.location.reload();
@@ -429,22 +429,22 @@
                         setTimeout(updateCountdown, 1000);
                     }
                 }
-                
+
                 updateCountdown();
             }
-            
+
             // Update waktu dan tanggal setiap detik
             updateDateTime();
             setInterval(updateDateTime, 1000);
-            
+
             // Setup auto-refresh
             setupAutoRefresh();
         });
         </script>
-        
+
     </div>
                     </div>
-                    
+
                     <!-- Loket Status Cards -->
                     <div class="row" style="margin-top: 30px;">
                         @php
@@ -455,7 +455,7 @@
                                 ['nama' => 'LOKET C']
                             ];
                         @endphp
-                        
+
                         @foreach($lokets as $loket)
                                 <div class="col-md-4">
                                     <div class="card mb-4">
@@ -526,7 +526,7 @@
 
                     </div>
                 </div>
-                
+
                 <!-- Video and Information - Right Side -->
                 <div class="col-md-5">
                     <div class="card mb-4" style="height: 455px;"> <!-- Adjust this height to match NOMOR ANTRIAN YANG DIPANGGIL -->
@@ -539,7 +539,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Announcement Card -->
                     <div class="card" style="height: 180px; margin-top: 27px;"> <!-- Adjust this height to match the loket cards -->
                         <div class="card-header bg-theme-primary text-center py-3">
@@ -562,18 +562,18 @@
     // Update time and date
     function updateDateTime() {
         const now = new Date();
-        
+
         // Format time: HH:MM:SS
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const seconds = String(now.getSeconds()).padStart(2, '0');
         document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
-        
+
         // Format date: DD Month YYYY
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
         document.getElementById('current-date').textContent = now.toLocaleDateString('id-ID', options);
     }
-    
+
     // Update time every second
     setInterval(updateDateTime, 1000);
     updateDateTime(); // Initial call
