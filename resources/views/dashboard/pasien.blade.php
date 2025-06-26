@@ -669,12 +669,12 @@
                                 </style>
                                 <div class="text-center col-sm-6">
                                     <div class="form-group">
-                                        <div id="bpjs_error1" class="alert alert-warning" style="display: none;"></div>
+                                        <div id="bpjs_error_edit_1" class="alert alert-warning" style="display: none;"></div>
                                     </div>
                                 </div>
                                 <div class="text-center col-sm-6">
                                     <div class="form-group">
-                                        <div id="bpjs_error" class="alert alert-danger" style="display: none;"></div>
+                                        <div id="bpjs_error_edit" class="alert alert-danger" style="display: none;"></div>
                                     </div>
                                 </div>
                             <div class="col-md-3 d-flex justify-content-center">
@@ -1128,9 +1128,9 @@
                         var ket = data.aktif || false;
 
                         if (ket === true) {
-                            $('#bpjs_error').hide();
+                            $('#bpjs_error_edit').hide();
                         } else {
-                            $('#bpjs_error').text(data.ketAktif || 'Status tidak aktif').show();
+                            $('#bpjs_error_edit').text(data.ketAktif || 'Status tidak aktif').show();
                         }
 
                         const kode = {
@@ -1138,9 +1138,9 @@
                         };
                         console.log(kode);
                         if (kode.KPFK === data.kdProviderPst.kdProvider) {
-                            $('#bpjs_error1').hide();
+                            $('#bpjs_error_edit_1').hide();
                         } else {
-                            $('#bpjs_error1').text('Faskes BPJS tidak Sesuai').show();
+                            $('#bpjs_error_edit_1').text('Faskes BPJS tidak Sesuai').show();
                         }
 
                             // **Panggil route tambahan setelah namaInput diperbarui**
