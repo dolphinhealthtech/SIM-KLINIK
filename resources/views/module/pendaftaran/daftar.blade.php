@@ -193,7 +193,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Jadwal Kunjunagan</label>
+                                <label>Jadwal Kunjungan</label>
                                 <input type="datetime-local" class="form-control" id="tanggal_kunjungan" name="tanggal_kunjungan">
                             </div>
                         </div>

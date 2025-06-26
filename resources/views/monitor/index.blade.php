@@ -87,7 +87,7 @@
 
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label>Jadwal Kunjunagan</label>
+                                    <label>Jadwal Kunjungan</label>
                                     <input type="datetime-local" class="form-control" id="tanggal_kunjungan" name="tanggal_kunjungan">
                                 </div>
                             </div>
@@ -149,7 +149,7 @@
 
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label>Jadwal Kunjunagan</label>
+                                    <label>Jadwal Kunjungan</label>
                                     <input type="datetime-local" class="form-control" id="tanggal_kunjungan_no" name="tanggal_kunjungan_no">
                                 </div>
                             </div>
@@ -298,7 +298,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="maritalStatus">Status Perkawinan</label>
+                                                    <label for="maritalStatus">Status Pernikahan</label>
                                                     <select class="form-control" id="maritalStatus" name="maritalStatus">
                                                         <option value="" disabled>Pilih Status Pernikahan</option>
                                                         @foreach ($pernikaha as $pernikahadata)
