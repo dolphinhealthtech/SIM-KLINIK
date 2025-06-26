@@ -34,7 +34,7 @@
                                     <div class="card-tools">
                                         <!-- Tombol Sinkron (Memunculkan Modal) -->
                                         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
-                                            <i class="fas fa-file-upload"></i> Singkron
+                                            <i class="fas fa-file-upload"></i> Sinkron
                                         </button>
                                     </div>
                                 </div>
@@ -53,7 +53,7 @@
                                                 </div>
 
                                                 <div class="col-md-3">
-                                                    <span class="form-text">Rawat Jalan</span>
+                                                    <span class="form-text">BPJS</span>
                                                 </div>
                                             </div>
                                             {{-- HARGA JUAL 2 --}}
@@ -118,7 +118,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="singkrondabarModalLabel">Singkron Data Barang</h5>
+                <h5 class="modal-title" id="singkrondabarModalLabel">Sinkron Setting Harga Jual</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

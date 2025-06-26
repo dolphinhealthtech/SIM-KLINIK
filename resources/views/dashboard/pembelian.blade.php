@@ -11,10 +11,10 @@
                         <h1 class="m-0">Pembelian Obat / Alkes</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
+                        {{-- <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
                             <li class="breadcrumb-item active">Dashboard v1</li>
-                        </ol>
+                        </ol> --}}
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -154,7 +154,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <button type="button" class="btn btn-primary" onclick="validateDataAwal()">Next</button>
+                                                <button type="button" class="btn btn-primary" onclick="validateDataAwal()">Selanjutnya</button>
                                                 {{-- <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button> --}}
                                             </div>
                                             <div id="data-pembelian" class="content" role="tabpanel" aria-labelledby="data-pembelian-trigger">
@@ -406,7 +406,7 @@
                                                                     <br><br><br><br><br><br>
                                                                     <div class="form-group row">
                                                                         <div class="col-md-6">
-                                                                            <button type="button" class="btn btn-primary btn-block" onclick="stepper.previous()">Previous</button>
+                                                                            <button type="button" class="btn btn-primary btn-block" onclick="stepper.previous()">Sebelumnya</button>
                                                                         </div>
                                                                         <div class="col-md-6">
                                                                             <button type="submit" id="btnSimpanCetak" class="btn btn-info btn-block">Simpan & Cetak</button>
@@ -512,18 +512,18 @@
         $(document).ready(function() {
             // Tambahkan logging untuk debugging
             console.log('Document ready, setting up form handler');
-            
+
             // Tangani submit form dengan ID yang benar
             $('#addFormpembelian').on('submit', function(e) {
                 e.preventDefault();
                 console.log('Form submitted');
-                
+
                 // Nonaktifkan tombol untuk mencegah klik ganda
                 $('#btnSimpanCetak').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Menyimpan...');
-                
+
                 // Ambil data form
                 var formData = $(this).serialize();
-                
+
                 // Kirim data ke server
                 $.ajax({
                     url: $(this).attr('action'),
@@ -532,7 +532,7 @@
                     dataType: 'json',
                     success: function(response) {
                         console.log('Success response:', response);
-                        
+
                         if (response.success) {
                             Swal.fire({
                                 icon: 'success',
@@ -541,18 +541,18 @@
                                 showConfirmButton: false,
                                 timer: 1500
                             });
-                            
+
                             // Buka PDF di tab baru tanpa mengganti URL saat ini
                             setTimeout(function() {
                                 // Buka PDF di tab baru
                                 window.open('{{ url("/pembelian/cetak") }}/' + response.data.nomor_faktur, '_blank');
-                                
+
                                 // Reset form dan kembali ke awal
                                 $('#addFormpembelian')[0].reset();
-                                
+
                                 // Reset semua data
                                 resetAllData();
-                                
+
                                 // Ambil nomor faktur baru
                                 $.ajax({
                                     url: '/api/generate-faktur-pembelian',
@@ -563,10 +563,10 @@
                                         }
                                     }
                                 });
-                                
+
                                 // Reset stepper ke langkah pertama
                                 stepper.to(1);
-                                
+
                                 // Aktifkan kembali tombol simpan
                                 $('#btnSimpanCetak').prop('disabled', false).text('Simpan & Cetak');
                             }, 1500);
@@ -645,7 +645,29 @@
                 const type = input.type;
                 const isVisible = input.offsetParent !== null;
 
-                // Skip jika: tidak terlihat, disabled, readonly, hidden, button
+                // --- CEK KHUSUS: Supplier Select/Input
+                if (input.id === 'supplier_select' || input.id === 'supplier_input') {
+                    const supplierSelect = document.querySelector('#supplier_select');
+                    const supplierInput = document.querySelector('#supplier_input');
+
+                    const selectVal = supplierSelect && supplierSelect.value.trim();
+                    const inputVal = supplierInput && supplierInput.value.trim();
+
+                    // Jika salah satu sudah terisi, skip keduanya
+                    if (selectVal !== '' || inputVal !== '') {
+                        return; // skip validasi untuk supplier
+                    }
+
+                    // Kalau belum terisi dua-duanya dan input ini visible, maka masuk unfilled
+                    if (isVisible) {
+                        const name = 'Supplier';
+                        if (!unfilled.includes(name)) unfilled.push(name);
+                    }
+
+                    return; // skip ke input berikutnya
+                }
+
+                // --- CEK UMUM
                 if (
                     !input.disabled &&
                     type !== 'hidden' &&
@@ -680,7 +702,7 @@
         $(document).ready(function() {
             // Reset data awal
             resetAllData();
-            
+
             // Ketika halaman atau modal terbuka, ambil nomor faktur terbaru
             $.ajax({
                 url: '/api/generate-faktur-pembelian',
@@ -820,15 +842,15 @@
 
             // Set nilai tanggal hari ini
             input.value = formattedDate;
-            
+
             // Jika checkbox tidak dicentang, set input menjadi readonly
             if (!checkbox.checked) {
                 // Tambahkan atribut readonly
                 input.setAttribute("readonly", true);
-                
+
                 // Tambahkan class untuk styling (opsional)
                 input.classList.add("bg-light");
-                
+
                 // Nonaktifkan event click untuk mencegah date picker muncul
                 $(input).off('click').on('click', function(e) {
                     e.preventDefault();
@@ -837,15 +859,15 @@
             } else {
                 // Hapus atribut readonly
                 input.removeAttribute("readonly");
-                
+
                 // Hapus class styling (opsional)
                 input.classList.remove("bg-light");
-                
+
                 // Aktifkan kembali event click untuk memunculkan date picker
                 $(input).off('click').on('click', function() {
                     this.showPicker();
                 });
-                
+
                 // Fokus ke input dan tampilkan date picker
                 setTimeout(function() {
                     input.focus();
@@ -926,7 +948,7 @@
         function cetak_data() {
             // Ambil nomor faktur
             const nomorFaktur = $('#nomor_faktur').val();
-            
+
             if (!nomorFaktur) {
                 Swal.fire({
                     icon: 'error',
@@ -935,7 +957,7 @@
                 });
                 return;
             }
-            
+
             // Buka halaman cetak PDF dengan download langsung
             window.location.href = '{{ url("/pembelian/cetak") }}/' + nomorFaktur;
         }
@@ -1300,7 +1322,7 @@
         function resetAllData() {
             // Kosongkan tabel
             $('#dataTable tbody').empty();
-            
+
             // Reset nilai perhitungan dan tampilan
             $('#sub_total_keseluruhan').text('Rp 0');
             $('#sub_total_keseluruhan_input').val(0);
@@ -1310,18 +1332,18 @@
             $('#ppn_total_keseluruhan_input').val(0);
             $('#total_keseluruhan').text('Rp 0');
             $('#total_keseluruhan_input').val(0);
-            
+
             // Reset input form di langkah pertama
             $('#tanggal_faktur').val('');
             $('#tanggal_jatuh_tempo').val('');
             $('#supplier').val('').trigger('change');
             $('#pajak_ppn').val('0%');
-            
+
             // Reset input form di langkah kedua
             $('#materai').val('0').trigger('change');
             $('#koreksi').val('0');
             $('#penerima_barang').val('').trigger('change');
-            
+
             // Reset semua input lainnya
             $('#nama_obat_alkes').val('').trigger('change');
             $('#nilai_satuan_kecil').val('');
@@ -1330,22 +1352,22 @@
             $('#diskon_rupiah').val('');
             $('#tgl_expired').val('');
             $('#no_batch').val('');
-            
+
             // Reset data JSON
             $('#data_json_tabel').val('[]');
-            
+
             // Pastikan checkbox tidak tercentang
             $('input[type="checkbox"]').prop('checked', false);
-            
+
             // Reset semua pesan error jika ada
             $('.is-invalid').removeClass('is-invalid');
             $('.invalid-feedback').hide();
-            
+
             // Reset semua elemen select2 jika digunakan
             if ($.fn.select2) {
                 $('select.select2').val(null).trigger('change');
             }
-            
+
             // Jika ada elemen lain yang perlu direset di langkah kedua
             // tambahkan di sini
         }

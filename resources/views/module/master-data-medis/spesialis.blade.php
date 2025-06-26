@@ -63,7 +63,7 @@
                                                         data-toggle="modal"data-id="{{ $spesialisdata->id }}"
                                                         data-nama-spesialis="{{ $spesialisdata->nama }}"
                                                         data-target="#deletespesialisModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                     <a href="{{ route('subspesialis.get', ['kode' => $spesialisdata->kode]) }}" class="btn btn-info btn-sm"><i class="fa-solid fa-briefcase-medical"></i> Sub Spesialis</a>
 

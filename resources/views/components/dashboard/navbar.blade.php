@@ -51,7 +51,7 @@
         <li class="nav-item dropdown">
             <a class="nav-link d-flex align-items-center" data-toggle="dropdown" href="#" role="button">
                 <div class="image">
-                    <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image" width="35" height="35">
+                    <img src="{{ asset('profile/' . Auth::user()->profile) }}" class="img-circle elevation-2" alt="User Image" width="35" height="35">
                 </div>
             </a>
 

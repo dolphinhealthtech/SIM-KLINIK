@@ -83,7 +83,7 @@
                                                         data-toggle="modal"data-id="{{ $perawatan_tindakandata->id }}"
                                                         data-nama-perawatan_tindakan="{{ $perawatan_tindakandata->nama }}"
                                                         data-target="#deleteperawatan_tindakanModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

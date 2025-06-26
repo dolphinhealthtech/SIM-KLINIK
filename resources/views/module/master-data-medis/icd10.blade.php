@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Icd10</h1>
+                        <h1 class="m-0">ICD 10</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -32,7 +32,7 @@
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#addalergiModal">
-                                        <i class="fas fa-plus"></i> singkron
+                                        <i class="fas fa-plus"></i> Sinkron
                                     </button>
 
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
@@ -55,7 +55,7 @@
                                 <table id="icd10tabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nama Icd 10</th>
+                                            <th class="text-center">Nama ICD 10</th>
                                             <th class="text-center">Kode ICD 10 </th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
@@ -78,7 +78,7 @@
                                                         data-nama-icd10="{{ $icd10data->nama_icd10 }}"
                                                         data-rhesus="{{ $icd10data->kode_icd10 }}"
                                                         data-target="#deleteicd10Modal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -100,7 +100,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah ICD10</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah ICD 10</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -152,14 +152,14 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Nama Golongan Darah</label>
-                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Golongan" required>
+                                <label>Nama ICD 10</label>
+                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama ICD 10" required>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="kode">Rhesus Darah </label>
-                                <input type="text" class="form-control" id="kode" name="kode" placeholder="Nama Golongan" required>
+                                <label for="kode">Kode ICD 10 </label>
+                                <input type="text" class="form-control" id="kode" name="kode" placeholder="Kode ICD 10" required>
                             </div>
                         </div>
                     </div>
@@ -191,13 +191,13 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Nama ICD 10</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Golongan" required>
+                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama ICD 10" required>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="kode_edit">KODE ICD 10 </label>
-                                <input type="text" class="form-control" id="kode_edit" name="kode_edit" placeholder="Nama Golongan" required>
+                                <label for="kode_edit">Kode ICD 10 </label>
+                                <input type="text" class="form-control" id="kode_edit" name="kode_edit" placeholder="Kode ICD 10" required>
                             </div>
                         </div>
                     </div>

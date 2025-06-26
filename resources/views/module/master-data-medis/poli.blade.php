@@ -66,7 +66,7 @@
                                                         data-toggle="modal"data-id="{{ $polidata->id }}"
                                                         data-nama-poli="{{ $polidata->nama }}"
                                                         data-target="#deletepoliModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

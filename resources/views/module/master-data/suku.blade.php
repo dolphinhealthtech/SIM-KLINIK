@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $sukudata->id }}"
                                                         data-nama-suku="{{ $sukudata->nama }}"
                                                         data-target="#deletesukuModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -134,7 +134,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama Golongan Darah</label>
+                                <label>Nama Suku</label>
                                 <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Golongan" required>
                             </div>
                         </div>

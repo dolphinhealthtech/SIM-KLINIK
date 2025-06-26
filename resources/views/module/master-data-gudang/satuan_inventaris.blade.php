@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $satuan_inventarisdata->id }}"
                                                         data-nama-satuan_inventaris="{{ $satuan_inventarisdata->nama }}"
                                                         data-target="#deletesatuan_inventarisModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -91,7 +91,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Master Data Jenis Satuan Inventaris</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Data Jenis Satuan Inventaris</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -122,7 +122,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Master Data satuan_inventaris</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Data Satuan Inventaris</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -155,7 +155,7 @@
         <form id="deleteFormsatuan_inventaris" action="{{ route('satuan_inventaris.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Master Data satuan_inventaris</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data Satuan Inventaris</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -179,7 +179,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importsatuan_inventarisModalLabel">Import Data satuan_inventaris</h5>
+                <h5 class="modal-title" id="importsatuan_inventarisModalLabel">Import Data Satuan Inventaris</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

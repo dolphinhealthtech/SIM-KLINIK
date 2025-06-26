@@ -79,7 +79,7 @@
                                                         data-nama-pic-supplier="{{ $supplierdata->nama_pic }}"
                                                         data-telepon-pic-supplier="{{ $supplierdata->telepon_pic }}"
                                                         data-target="#deletesupplierModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -145,7 +145,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit supplier</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Supplier Industri</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -190,7 +190,7 @@
         <form id="deleteFormsupplier" action="{{ route('supplier.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus supplier</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Supplier Industri</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -214,7 +214,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importsupplierModalLabel">Import Data supplier</h5>
+                <h5 class="modal-title" id="importsupplierModalLabel">Import Data Supplier Industri</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

@@ -9,7 +9,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-10">
-                            <h1 class="m-0">Inventaris Pembelian</h1>
+                            <h1 class="m-0">Pembelian Inventaris</h1>
                         </div><!-- /.col -->
                         <div class="col-sm-2 d-flex justify-content-end">
                             <input type="text" class="form-control" id="kode_pembelian_inventaris" name="kode_pembelian_inventaris" readonly>
@@ -30,7 +30,7 @@
                                     @csrf
                                     <div class="form-group row">
                                         <div class="col-md-12">
-                                            <label for="barang_investasi">Barang Investasi</label>
+                                            <label for="barang_investasi">Barang Inventaris</label>
                                             <select class="form-control select2bs4" id="barang_investasi" name="barang_investasi" style="width: 100%;">
                                                 <option value="" disabled selected>-- Pilih Data --</option>
                                                 @foreach ($inventaris as $inventarisData)
@@ -160,7 +160,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <select class="form-control select2bs4 mt-2" id="penerima_barang" name="penerima_barang">
-                                                <option value="" disabled selected>Pilih Supplier</option>
+                                                <option value="" disabled selected>Pilih Penerima</option>
                                                 @foreach ($user as $userData)
                                                     <option value="{{ $userData->name }}">{{ $userData->name }}</option>
                                                 @endforeach

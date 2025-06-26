@@ -6,7 +6,7 @@
         <section class="content mt-3">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Projects Detail</h3>
+                    <h3 class="card-title">Web Setting</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">

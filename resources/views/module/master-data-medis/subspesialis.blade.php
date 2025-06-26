@@ -58,7 +58,7 @@
                                                         data-toggle="modal"data-id="{{ $subspesialisdata->id }}"
                                                         data-nama-subspesialis="{{ $subspesialisdata->nama }}"
                                                         data-target="#deletesubspesialisModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

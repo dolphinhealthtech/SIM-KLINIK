@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $bahasadata->id }}"
                                                         data-nama-bahasa="{{ $bahasadata->nama }}"
                                                         data-target="#deletebahasaModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

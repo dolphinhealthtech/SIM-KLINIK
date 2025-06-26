@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $kategori_perawatandata->id }}"
                                                         data-nama-kategori_perawatan="{{ $kategori_perawatandata->nama }}"
                                                         data-target="#deletekategori_perawatanModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

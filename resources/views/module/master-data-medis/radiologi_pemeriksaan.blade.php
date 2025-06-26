@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $radiologi_pemeriksaandata->id }}"
                                                         data-nama-pemeriksaan_htt="{{ $radiologi_pemeriksaandata->nama }}"
                                                         data-target="#deletepemeriksaan_httModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $katindata->id }}"
                                                         data-nama-katin="{{ $katindata->nama }}"
                                                         data-target="#deletekatinModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -122,7 +122,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit katin</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Kategori Inventaris</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -155,7 +155,7 @@
         <form id="deleteFormkatin" action="{{ route('katin.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus katin</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Kategori Inventaris</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -179,7 +179,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importkatinModalLabel">Import Data katin</h5>
+                <h5 class="modal-title" id="importkatinModalLabel">Import Data Kategori Inventaris</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

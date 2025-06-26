@@ -72,7 +72,7 @@
                                                         data-toggle="modal"data-id="{{ $kelamindata->id }}"
                                                         data-nama-kelamin="{{ $kelamindata->nama }}"
                                                         data-target="#deletekelaminModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

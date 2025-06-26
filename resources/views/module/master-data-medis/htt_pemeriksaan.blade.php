@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $pemeriksaan_httdata->id }}"
                                                         data-nama-pemeriksaan_htt="{{ $pemeriksaan_httdata->nama_pemeriksaan }}"
                                                         data-target="#deletepemeriksaan_httModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
 
                                                     <a href="{{ route('htt_sub_pemeriksaan.get', ['kode' => $pemeriksaan_httdata->id]) }}" class="btn btn-info btn-sm"><i class="fa-solid fa-briefcase-medical"></i> Sub Pemeriksaan</a>
@@ -93,7 +93,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Pemerikan HTT</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Pemerikan Head To Toe</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -124,7 +124,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Kategori Perawatan</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Pemerikan Head To Toe</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -136,8 +136,8 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama Kategori Perawatan</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Kategori Perawatan" required>
+                                <label>Bagian Pemeriksaan</label>
+                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Pemeriksaan" required>
                             </div>
                         </div>
                     </div>
@@ -157,7 +157,7 @@
         <form id="deleteFormpemeriksaan_htt" action="{{ route('htt_pemeriksaan.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Kategori Perawatan</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Pemerikan Head To Toe</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -181,7 +181,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importpemeriksaan_httModalLabel">Import Data Kategori Perawatan</h5>
+                <h5 class="modal-title" id="importpemeriksaan_httModalLabel">Import Data Pemerikan Head To Toe</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

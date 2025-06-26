@@ -23,7 +23,7 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                
+
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -34,12 +34,12 @@
                                         data-target="#addnama_makananModal">
                                         <i class="fas fa-plus"></i> Tambah
                                     </button>
-                                    
+
                                     <a href="{{ route('nama_makanan.export') }}" class="btn btn-success">
                                         <i class="fas fa-file-download"></i> Export
                                     </a>
 
-                                    
+
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importnama_makananModal">
                                         <i class="fas fa-file-upload"></i> Import
                                     </button>
@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $nama_makanandata->id }}"
                                                         data-nama-nama_makanan="{{ $nama_makanandata->nama }}"
                                                         data-target="#deletenama_makananModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -91,7 +91,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah nama_makanan</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Nama Makanan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -102,7 +102,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama nama_makanan</label>
+                                <label>Nama Makanan</label>
                                 <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama nama_makanan" required>
                             </div>
                         </div>
@@ -110,7 +110,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary">Tambah</button> 
+                <button type="submit" class="btn btn-primary">Tambah</button>
             </div>
             </form>
         </div>
@@ -122,7 +122,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit nama_makanan</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Nama Makanan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -134,14 +134,14 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama nama_makanan</label>
+                                <label>Nama Makanan</label>
                                 <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama nama_makanan" required>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Perbarui</button> 
+                        <button type="submit" class="btn btn-primary">Perbarui</button>
                     </div>
                 </form>
             </div>
@@ -155,7 +155,7 @@
         <form id="deleteFormnama_makanan" action="{{ route('nama_makanan.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus nama makanan</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Nama Makanan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -179,7 +179,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importnama_makananModalLabel">Import Data nama_makanan</h5>
+                <h5 class="modal-title" id="importnama_makananModalLabel">Import Data Nama Makanan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -231,8 +231,8 @@
                             text: response.message,
                             showConfirmButton: true
                         }).then(() => {
-                            $('.modal-backdrop').remove(); 
-                            location.reload(); 
+                            $('.modal-backdrop').remove();
+                            location.reload();
                         });
                     } else {
                         Swal.fire({
@@ -263,7 +263,7 @@
 
             $('#nama_makananid_edit').val(id);
             $('#nama_edit').val(nama);
-            
+
         });
 
         $('#editFormnama_makanan').on('submit', function(e) {
@@ -285,8 +285,8 @@
                             text: response.message,
                             showConfirmButton: true
                         }).then(() => {
-                            $('.modal-backdrop').remove(); 
-                            location.reload(); 
+                            $('.modal-backdrop').remove();
+                            location.reload();
                         });
                     } else {
                         Swal.fire({
@@ -334,8 +334,8 @@
                             text: response.message,
                             showConfirmButton: true
                         }).then(() => {
-                            $('.modal-backdrop').remove(); 
-                            location.reload(); 
+                            $('.modal-backdrop').remove();
+                            location.reload();
                         });
                     } else {
                         Swal.fire({

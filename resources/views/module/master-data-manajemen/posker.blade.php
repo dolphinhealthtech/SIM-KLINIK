@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $poskerdata->id }}"
                                                         data-nama-posker="{{ $poskerdata->nama }}"
                                                         data-target="#deleteposkerModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -102,7 +102,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama Posisi</label>
+                                <label>Nama Posisi Kerja</label>
                                 <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Posisi Kerja" required>
                             </div>
                         </div>
@@ -122,7 +122,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit posker</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Posisi Kerja</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -155,7 +155,7 @@
         <form id="deleteFormposker" action="{{ route('posker.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus posker</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Posisi Kerja</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -179,7 +179,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importposkerModalLabel">Import Data posker</h5>
+                <h5 class="modal-title" id="importposkerModalLabel">Import Data Posisi Kerja</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

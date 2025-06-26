@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Goldar;
+use App\Models\goldar;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
@@ -15,7 +15,7 @@ class GoldarImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
-        return new Goldar([
+        return new goldar([
             'nama'  => $row[0], // Ambil dari kolom pertama
             'resus' => $row[1], // Ambil dari kolom kedua
         ]);

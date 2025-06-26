@@ -37,9 +37,9 @@
                                 <table id="userstabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nama Role</th>
-                                            <th class="text-center">Nama Role</th>
-                                            <th class="text-center">Nama Permission</th>
+                                            <th class="text-center">Nama User</th>
+                                            <th class="text-center">Role User</th>
+                                            <th class="text-center">Permission</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
@@ -78,7 +78,7 @@
                                                         data-toggle="modal"data-id="{{ $usersdata->id }}"
                                                         data-nama-users="{{ $usersdata->name }}"
                                                         data-target="#deleteusersModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                     <a href="#" class="btn btn-info btn-sm give-data-role"
                                                         data-toggle="modal" data-id="{{ $usersdata->id }}"
@@ -106,7 +106,7 @@
             <form id="nonaktifusersFormrole" action="{{ route('user.aktiva') }}" method="POST">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="nonaktifusersModalLabel">Nonaktivasi Users</h5>
+                        <h5 class="modal-title" id="nonaktifusersModalLabel">Nonaktivasi User</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span>&times;</span>
                         </button>

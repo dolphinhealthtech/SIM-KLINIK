@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Sub pemeriksaan</h3>
+                                <h3 class="card-title">Rincian Data Inventaris</h3>
                                 <div class="card-tools">
                                     <a href="{{ route('stokin.get') }}" class="btn btn-info">
                                         <i class="fa-solid fa-arrow-left"></i> Kembali

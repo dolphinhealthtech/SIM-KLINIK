@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Request Obat Klinik</h1>
+                        <h1 class="m-0">Permintaan Obat Klinik</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -76,7 +76,7 @@
                 <div class="row mb-2">
                     <div class="col-12 text-right">
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addRequestModal">
-                            <i class="fas fa-plus-circle"></i> Buat Request Obat Baru
+                            <i class="fas fa-plus-circle"></i> Buat Permintaan Baru
                         </button>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
                             <div class="card-header bg-white">
                                 <h3 class="card-title">
                                     <i class="fas fa-check-circle mr-1"></i>
-                                    Approve Data Obat
+                                    Menunggu Persetujuan Permintaan
                                 </h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -102,8 +102,8 @@
                                     <thead class="bg-white">
                                         <tr>
                                             <th class="text-center" width="5%">No</th>
-                                            <th class="text-center">Kode Request</th>
-                                            <th class="text-center">Tanggal Request</th>
+                                            <th class="text-center">Kode Permintaan</th>
+                                            <th class="text-center">Tanggal Permintaan</th>
                                             <th class="text-center" width="20%">Aksi</th>
                                         </tr>
                                     </thead>
@@ -132,7 +132,7 @@
                             <div class="card-header bg-white">
                                 <h3 class="card-title">
                                     <i class="fas fa-clipboard-list mr-1"></i>
-                                    Request Obat
+                                    Permintaan Obat
                                 </h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -145,7 +145,7 @@
                                     <thead class="bg-white">
                                         <tr>
                                             <th class="text-center" width="5%">No</th>
-                                            <th class="text-center">Kode Request</th>
+                                            <th class="text-center">Kode Permintaan</th>
                                             <th class="text-center">Tanggal</th>
                                         </tr>
                                     </thead>
@@ -169,7 +169,7 @@
                 </div>
 
                 <!-- Bottom Row: Stok Obat -->
-                <div class="row mt-4">
+                {{-- <div class="row mt-4">
                     <div class="col-12">
                         <div class="card card-outline">
                             <div class="card-header bg-white">
@@ -213,7 +213,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
@@ -224,7 +224,7 @@
         <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addRequestModalLabel">Tambah Request Obat</h5>
+                    <h5 class="modal-title" id="addRequestModalLabel">Tambah Permintaan Obat</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -246,7 +246,7 @@
                                 <div class="step" data-target="#requestObatAlkes">
                                     <button type="button" class="step-trigger" role="tab" aria-controls="requestObatAlkes" id="requestObatAlkes-trigger">
                                         <span class="bs-stepper-circle">2</span>
-                                        <span class="bs-stepper-label">Request Obat / Alkes</span>
+                                        <span class="bs-stepper-label">Permintaan Obat / Alkes</span>
                                     </button>
                                 </div>
                             </div>
@@ -265,8 +265,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                    <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
+                                    <button type="button" class="btn btn-primary" onclick="stepper.next()">Selanjutnya</button>
                                 </div>
 
                                 <!-- Step 2: Request Obat atau Alkes -->
@@ -274,7 +273,7 @@
                                     <div class="form-group row">
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label for="kode_request">Kode Request</label>
+                                                <label for="kode_request">Kode Permintaan</label>
                                                 <input type="text" class="form-control" id="kode_request" name="kode_request" readonly>
                                             </div>
                                         </div>
@@ -312,7 +311,7 @@
                                                     <thead class="thead-light">
                                                         <tr>
                                                             <th style="width: 5%;">No</th>
-                                                            <th >Kode Obat</th>
+                                                            <th>Kode Obat</th>
                                                             <th>Nama Obat</th>
                                                             <th>Jumlah</th>
                                                         </tr>
@@ -324,8 +323,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="button" class="btn btn-primary" onclick="stepper.previous()">Sebelumnya</button>
+                                    <button type="submit" class="btn btn-primary">Kirim</button>
                                 </div>
                             </div>
                         </div>
@@ -340,7 +339,7 @@
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detailsModalLabel">Details</h5>
+                    <h5 class="modal-title" id="detailsModalLabel">Rincian Permintaan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -357,8 +356,8 @@
                                 <thead class="bg-white">
                                     <tr>
                                         <th class="text-center" width="5%">No</th>
-                                        <th class="text-center">Kode Obat/Alkes</th>
-                                        <th class="text-center">Nama Obat/Alkes</th>
+                                        <th class="text-center">Kode Barang</th>
+                                        <th class="text-center">Nama Barang</th>
                                         <th class="text-center">Jumlah</th>
                                     </tr>
                                 </thead>
@@ -371,7 +370,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -382,7 +381,7 @@
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="approveDetailsModalLabel">Details</h5>
+                    <h5 class="modal-title" id="approveDetailsModalLabel">Rincian Permintaan Disetujui</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -399,8 +398,8 @@
                                 <thead class="bg-white">
                                     <tr>
                                         <th class="text-center" width="5%">No</th>
-                                        <th class="text-center">Kode Obat/Alkes</th>
-                                        <th class="text-center">Nama Obat/Alkes</th>
+                                        <th class="text-center">Kode Barang</th>
+                                        <th class="text-center">Nama Barang</th>
                                         <th class="text-center">Qty</th>
                                         <th class="text-center">Expired</th>
                                         <th class="text-center">Aksi</th>
@@ -415,7 +414,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>

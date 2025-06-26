@@ -10,7 +10,7 @@
                         <h1 class="m-0">Role</h1>
                     </div>
                     <div class="col-sm-6">
-                        
+
                     </div>
                 </div>
             </div>
@@ -63,7 +63,7 @@
                                                         data-toggle="modal"data-id="{{ $roledata->id }}"
                                                         data-nama-role="{{ $roledata->name }}"
                                                         data-target="#deleteroleModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                     <a href="#" class="btn btn-info btn-sm give-role-permission"
                                                         data-toggle="modal" data-id="{{ $roledata->id }}"

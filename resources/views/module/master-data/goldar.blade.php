@@ -73,7 +73,7 @@
                                                         data-nama-goldar="{{ $goldardata->nama }}"
                                                         data-rhesus="{{ $goldardata->resus }}"
                                                         data-target="#deletegoldarModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

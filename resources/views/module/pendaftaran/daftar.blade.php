@@ -48,7 +48,7 @@
                             </div>
                         </div>
                         <a href="#" class="small-box-footer" data-toggle="modal" data-target="#rekapModal">
-                            More info <i class="fas fa-arrow-circle-right"></i>
+                            Selengkapnya <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
@@ -134,7 +134,7 @@
                                                                href="javascript:void(0)"
                                                                data-id="{{ $pendaftarandata->status->id }}"
                                                                data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
-                                                               <i class="fas fa-phone"></i> Panggil
+                                                               <i class="fas fa-phone"></i> Hadir
                                                             </a>
                                                         </li>
                                                     @endif

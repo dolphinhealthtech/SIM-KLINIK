@@ -23,7 +23,7 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                
+
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -34,12 +34,12 @@
                                         data-target="#addradiologi_jenisModal">
                                         <i class="fas fa-plus"></i> Tambah
                                     </button>
-                                    
+
                                     <a href="{{ route('radiologi_jenis.export') }}" class="btn btn-success">
                                         <i class="fas fa-file-download"></i> Export
                                     </a>
 
-                                    
+
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importradiologi_jenisModal">
                                         <i class="fas fa-file-upload"></i> Import
                                     </button>
@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $radiologi_jenisdata->id }}"
                                                         data-nama-radiologi_jenis="{{ $radiologi_jenisdata->nama }}"
                                                         data-target="#deleteradiologi_jenisModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -102,15 +102,15 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama radiologi_jenis</label>
-                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama radiologi_jenis" required>
+                                <label>Radiologi Jenis</label>
+                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Radiologi Jenis" required>
                             </div>
                         </div>
                     </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary">Tambah</button> 
+                <button type="submit" class="btn btn-primary">Tambah</button>
             </div>
             </form>
         </div>
@@ -134,14 +134,14 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama radiologi_jenis</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama radiologi_jenis" required>
+                                <label>Radiologi Jenis</label>
+                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Radiologi Jenis" required>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Perbarui</button> 
+                        <button type="submit" class="btn btn-primary">Perbarui</button>
                     </div>
                 </form>
             </div>
@@ -179,7 +179,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importradiologi_jenisModalLabel">Import Data radiologi_jenis</h5>
+                <h5 class="modal-title" id="importradiologi_jenisModalLabel">Import Data Radiologi Jenis</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -231,8 +231,8 @@
                             text: response.message,
                             showConfirmButton: true
                         }).then(() => {
-                            $('.modal-backdrop').remove(); 
-                            location.reload(); 
+                            $('.modal-backdrop').remove();
+                            location.reload();
                         });
                     } else {
                         Swal.fire({
@@ -263,7 +263,7 @@
 
             $('#radiologi_jenisid_edit').val(id);
             $('#nama_edit').val(nama);
-            
+
         });
 
         $('#editFormradiologi_jenis').on('submit', function(e) {
@@ -285,8 +285,8 @@
                             text: response.message,
                             showConfirmButton: true
                         }).then(() => {
-                            $('.modal-backdrop').remove(); 
-                            location.reload(); 
+                            $('.modal-backdrop').remove();
+                            location.reload();
                         });
                     } else {
                         Swal.fire({
@@ -334,8 +334,8 @@
                             text: response.message,
                             showConfirmButton: true
                         }).then(() => {
-                            $('.modal-backdrop').remove(); 
-                            location.reload(); 
+                            $('.modal-backdrop').remove();
+                            location.reload();
                         });
                     } else {
                         Swal.fire({

@@ -86,7 +86,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Medis htt_sub_pemeriksaan</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Pemeriksaan Sub Head To Toe</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -104,8 +104,8 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Bagian Pemeriksaan</label>
-                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Pemeriksaan" required>
+                                <label>Bagian Sub Pemeriksaan</label>
+                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Sub Pemeriksaan" required>
                             </div>
                         </div>
                     </div>
@@ -123,7 +123,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Medis htt_sub_pemeriksaan</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Pemeriksaan Sub Head To Toe</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -142,8 +142,8 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Bagian Pemeriksaan</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Pemeriksaan" required>
+                                <label>Bagian Sub Pemeriksaan</label>
+                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Sub Pemeriksaan" required>
                             </div>
                         </div>
                     </div>
@@ -163,7 +163,7 @@
         <form id="deleteFormhtt_sub_pemeriksaan" action="{{ route('htt_sub_pemeriksaan.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus htt_sub_pemeriksaan</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Pemeriksaan Sub Head To Toe</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>

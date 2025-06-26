@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Data Inventaris</h1>
+                        <h1 class="m-0">Inventaris</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Data Inventaris</h3>
+                                <h3 class="card-title">Data Barang</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#addinventarisModal" >
@@ -46,7 +46,7 @@
 
                                     <!-- Tombol Sinkron (Memunculkan Modal) -->
                                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkroninventarisModal">
-                                        <i class="fas fa-file-upload"></i> Singkron
+                                        <i class="fas fa-file-upload"></i> Sinkron
                                     </button>
 
                                 </div>
@@ -55,11 +55,11 @@
                                 <table id="inventaristabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Kode Inventaris</th>
-                                            <th class="text-center">Nama Inventaris</th>
+                                            <th class="text-center">Kode</th>
+                                            <th class="text-center">Nama</th>
                                             <th class="text-center">Kategori Inventaris</th>
-                                            <th class="text-center">Masa Pakai Inventaris</th>
-                                            <th class="text-center">Deskripsi Inventaris</th>
+                                            <th class="text-center">Masa Pakai</th>
+                                            <th class="text-center">Deskripsi</th>
                                             <th class="text-center" width="15%">Action</th>
                                         </tr>
                                     </thead>
@@ -90,7 +90,7 @@
                                                         data-toggle="modal"data-id="{{ $inventarisdata->id }}"
                                                         data-nama-inventaris="{{ $inventarisdata->nama_barang }}"
                                                         data-target="#deleteinventarisModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -112,7 +112,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addinventarisModalLabel">Input Data Inventaris</h5>
+                <h5 class="modal-title" id="addinventarisModalLabel">Tambah Data Barang</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -123,7 +123,7 @@
                     <div class="row">
                         <input type="hidden" class="form-control" id="kode_barang" name="kode_barang" value="321">
                         <div class="col-md-6">
-                            <label for="nama_barang">Nama Inventaris</label>
+                            <label for="nama_barang">Nama</label>
                             <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan Nama Barang" required>
                         </div>
                         <div class="col-md-6">
@@ -136,7 +136,7 @@
                             </select>
                         </div>
                         <div class="col-md-3 mt-2">
-                            <label for="satuan_barang">Satuan Inventaris</label>
+                            <label for="satuan_barang">Satuan</label>
                             <select class="form-control select2bs4" id="satuan_barang" name="satuan_barang" style="width: 100%;">
                                 <option value="" disabled selected>-- Pilih Satuan --</option>
                                 @foreach ($satuan as $satuan_add)
@@ -167,12 +167,12 @@
                             </select>
                         </div>
                         <div class="col-md-12 mt-2">
-                            <label for="deskripsi_barang">Deskripsi Inventaris</label>
+                            <label for="deskripsi_barang">Deskripsi</label>
                             <textarea class="form-control" id="deskripsi_barang" name="deskripsi_barang" rows="2" placeholder="Masukkan Spesifikasi / Deskripsi singkat" required></textarea>
                         </div>
                     </div>
                     <div class="text-right mt-3">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -186,7 +186,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Data Inventaris</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Data Barang</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -198,7 +198,7 @@
                     <div class="row">
                         <input type="hidden" class="form-control" id="kode_barang_edit" name="kode_barang_edit" value="321">
                         <div class="col-md-6">
-                            <label for="nama_barang_edit">Nama Inventaris</label>
+                            <label for="nama_barang_edit">Nama</label>
                             <input type="text" class="form-control" id="nama_barang_edit" name="nama_barang_edit" placeholder="Masukkan Nama Barang" required>
                         </div>
                         <div class="col-md-6">
@@ -211,7 +211,7 @@
                             </select>
                         </div>
                         <div class="col-md-3 mt-2">
-                            <label for="satuan_barang_edit">Satuan Inventaris</label>
+                            <label for="satuan_barang_edit">Satuan</label>
                             <select class="form-control select2bs4" id="satuan_barang_edit" name="satuan_barang_edit" style="width: 100%;">
                                 <option value="" disabled selected>-- Pilih Satuan --</option>
                                 @foreach ($satuan as $satuanEdit)
@@ -243,12 +243,12 @@
                         </div>
 
                         <div class="col-md-12 mt-2">
-                            <label for="deskripsi_barang_edit">Deskripsi Inventaris</label>
+                            <label for="deskripsi_barang_edit">Deskripsi</label>
                             <textarea class="form-control" id="deskripsi_barang_edit" name="deskripsi_barang_edit" rows="2" placeholder="Masukkan Spesifikasi / Deskripsi singkat" required></textarea>
                         </div>
                     </div>
                     <div class="text-right mt-3">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -262,7 +262,7 @@
         <form id="deleteForminventaris" action="{{ route('inventaris.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data Inventaris</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data Barang</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -312,7 +312,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="singkroninventarisModalLabel">Singkron Data Inventaris</h5>
+                <h5 class="modal-title" id="singkroninventarisModalLabel">Sinkron Data Barang</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

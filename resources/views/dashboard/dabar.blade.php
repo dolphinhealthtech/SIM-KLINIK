@@ -46,7 +46,7 @@
 
                                     <!-- Tombol Sinkron (Memunculkan Modal) -->
                                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
-                                        <i class="fas fa-file-upload"></i> Singkron
+                                        <i class="fas fa-file-upload"></i> Sinkron
                                     </button>
 
                                 </div>
@@ -97,7 +97,7 @@
                                                         data-toggle="modal"data-id="{{ $dabardata->id }}"
                                                         data-nama-dabar="{{ $dabardata->nama_barang }}"
                                                         data-target="#deletedabarModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -201,7 +201,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
+                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Selanjutnya</button>
                             </div>
 
                             <!-- Step 2: Satuan dan Nilai Satuan -->
@@ -261,8 +261,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
+                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Sebelumnya</button>
+                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Selanjutnya</button>
                             </div>
 
                             <!-- Step 3: Penyimpanan dan Informasi Lainnya -->
@@ -303,8 +303,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Sebelumnya</button>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
                             </div>
                         </div>
                     </div>
@@ -400,7 +400,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
+                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Selanjutnya</button>
                             </div>
 
                             <!-- Step 2: Satuan dan Nilai Satuan -->
@@ -460,8 +460,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
+                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Sebelumnya</button>
+                                <button type="button" class="btn btn-primary" onclick="stepper.next()">Selanjutnya</button>
                             </div>
 
                             <!-- Step 3: Penyimpanan dan Informasi Lainnya -->
@@ -502,7 +502,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
+                                <button type="button" class="btn btn-primary" onclick="stepper.previous()">Sebelumnya</button>
                                 <button type="submit" class="btn btn-primary">Perbarui</button>
                             </div>
                         </div>
@@ -569,7 +569,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="singkrondabarModalLabel">Singkron Data Barang</h5>
+                <h5 class="modal-title" id="singkrondabarModalLabel">Sinkron Data Barang</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -1033,14 +1033,14 @@
             kfa_kode: '',
             nama_industri_barang: ''
         };
-        
+
         // Simpan data saat tombol next diklik
         $(document).on('click', '.btn-next, button[onclick="stepper.next()"]', function() {
             formData.nama_barang = $('#nama_barang').val();
             formData.kfa_kode = $('#kfa_kode').val();
             formData.nama_industri_barang = $('#nama_industri_barang').val();
         });
-        
+
         // Kembalikan data saat tombol previous diklik
         $(document).on('click', '.btn-prev, button[onclick="stepper.previous()"]', function() {
             setTimeout(function() {
@@ -1049,7 +1049,7 @@
                 $('#nama_industri_barang').val(formData.nama_industri_barang);
             }, 100); // Delay sedikit untuk memastikan step sudah berubah
         });
-        
+
         // Set a debounce timer untuk membatasi jumlah panggilan AJAX
         let debounceTimer;
 
@@ -1106,14 +1106,14 @@
                     const itemNamedisplay = item.product_template?.display_name || fullName;
                     const itemKfaCode = item.kfa_code || ""; // Akses kfa_code dengan aman
                     const itemManufacturer = item.manufacturer || ""; // Akses manufacturer dengan aman
-                    
+
                     // Format nama barang dengan industri dalam tanda kurung
                     const displayName = `${itemName} (${itemManufacturer})`;
 
                     const suggestionItem = $(`
-                        <a href="#" class="list-group-item list-group-item-action" 
-                           data-name="${displayName}" 
-                           data-kfa="${itemKfaCode}" 
+                        <a href="#" class="list-group-item list-group-item-action"
+                           data-name="${displayName}"
+                           data-kfa="${itemKfaCode}"
                            data-idn="${itemManufacturer}">
                             ${itemName} - ${itemManufacturer}
                         </a>
@@ -1124,7 +1124,7 @@
                         $('#nama_barang').val($(this).data('name')); // Menggunakan nama barang dengan format "nama (industri)"
                         $('#kfa_kode').val($(this).data('kfa')); // Set kfa_code di field KFA CODE
                         $('#nama_industri_barang').val($(this).data('idn')); // Set manufacturer di field Industri Barang
-                        
+
                         // Simpan data ke formData saat item dipilih
                         formData.nama_barang = $(this).data('name');
                         formData.kfa_kode = $(this).data('kfa');
@@ -1174,7 +1174,7 @@
                 }
             `)
             .appendTo('head');
-            
+
         // Tambahkan div suggestions jika belum ada
         if ($('#suggestions').length === 0) {
             $('#nama_barang').after('<div id="suggestions" class="list-group" style="display: none;"></div>');

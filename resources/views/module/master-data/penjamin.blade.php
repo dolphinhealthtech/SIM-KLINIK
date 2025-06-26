@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $penjamindata->id }}"
                                                         data-nama-penjamin="{{ $penjamindata->nama }}"
                                                         data-target="#deletepenjaminModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

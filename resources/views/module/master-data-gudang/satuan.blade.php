@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $satuandata->id }}"
                                                         data-nama-satuan="{{ $satuandata->nama }}"
                                                         data-target="#deletesatuanModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

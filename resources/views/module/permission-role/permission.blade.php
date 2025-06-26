@@ -56,7 +56,7 @@
                                                         data-toggle="modal"data-id="{{ $permissiondata->id }}"
                                                         data-nama-permission="{{ $permissiondata->name }}"
                                                         data-target="#deletepermissionModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

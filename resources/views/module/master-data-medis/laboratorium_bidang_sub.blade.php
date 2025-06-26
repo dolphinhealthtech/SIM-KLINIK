@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Sub pemeriksaan Laboratorium</h1>
+                        <h1 class="m-0">Sub Pemeriksaan Laboratorium</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -43,8 +43,8 @@
                                 <table id="htt_sub_pemeriksaantabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nama Pemeriksaan</th>
-                                            <th class="text-center">Nama Sub Pemeriksaan</th>
+                                            <th class="text-center">Pemeriksaan Laboratorium</th>
+                                            <th class="text-center">Sub Pemeriksaan Laboratorium</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
@@ -54,17 +54,17 @@
                                                 <td class="text-center">{{ $laboratorium_bidang_subdata->nama_laboratorium_bidang }}</td>
                                                 <td class="text-center">{{ $laboratorium_bidang_subdata->nama_sublaboratorium_bidang }}</td>
                                                 <td class="text-center">
-                                                    <a href="#" class="btn btn-danger btn-sm delete-data-pemeriksaan_htt"
-                                                        data-toggle="modal"data-id="{{ $laboratorium_bidang_subdata->id }}"
-                                                        data-nama-htt_sub_pemeriksaan="{{ $laboratorium_bidang_subdata->nama_sublaboratorium_bidang }}"
-                                                        data-target="#deletehtt_sub_pemeriksaanModal">
-                                                        <i class="fas fa-trash"></i> Delete
-                                                    </a>
                                                     <a href="#" class="btn btn-warning btn-sm edit-data-goldar"
                                                         data-toggle="modal"data-id="{{ $laboratorium_bidang_subdata->id }}"
                                                         data-nama-htt_sub_pemeriksaan="{{ $laboratorium_bidang_subdata->nama_sublaboratorium_bidang }}"
                                                         data-target="#edithtt_sub_pemeriksaanModal">
                                                         <i class="fas fa-trash"></i> edit
+                                                    </a>
+                                                    <a href="#" class="btn btn-danger btn-sm delete-data-pemeriksaan_htt"
+                                                        data-toggle="modal"data-id="{{ $laboratorium_bidang_subdata->id }}"
+                                                        data-nama-htt_sub_pemeriksaan="{{ $laboratorium_bidang_subdata->nama_sublaboratorium_bidang }}"
+                                                        data-target="#deletehtt_sub_pemeriksaanModal">
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

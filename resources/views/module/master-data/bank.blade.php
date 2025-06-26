@@ -70,7 +70,7 @@
                                                         data-toggle="modal"data-id="{{ $bankdata->id }}"
                                                         data-nama-bank="{{ $bankdata->nama }}"
                                                         data-target="#deletebankModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -147,7 +147,7 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label>Nama Kode</label>
+                                <label>Kode bank</label>
                                 <input type="text" class="form-control" id="kode_edit" name="kode_edit" placeholder="Kode bank" required>
                             </div>
                         </div>

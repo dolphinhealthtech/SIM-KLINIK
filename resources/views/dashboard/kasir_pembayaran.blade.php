@@ -118,7 +118,7 @@
                                             <option value="" disabled selected>-- Pilih --</option>
                                             @foreach ($penjamin as $penjaminData)
                                                 <option value="{{ $penjaminData->nama }}"
-                                                    {{ optional($apotek)->penjamin ?? optional(optional($tindakan)->data_soap)->penjamin == $penjaminData->nama ? 'selected' : '' }}>
+                                                    {{ (optional($apotek)->penjamin ?? optional(optional($tindakan)->data_soap)->penjamin) == $penjaminData->nama ? 'selected' : '' }}>
                                                     {{ $penjaminData->nama }}
                                                 </option>
                                             @endforeach

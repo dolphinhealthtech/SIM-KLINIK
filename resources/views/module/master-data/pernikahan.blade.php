@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $pernikahandata->id }}"
                                                         data-nama-pernikahan="{{ $pernikahandata->nama }}"
                                                         data-target="#deletepernikahanModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

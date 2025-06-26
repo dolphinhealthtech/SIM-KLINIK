@@ -50,7 +50,7 @@
                                 <table id="jenis_diettabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nama jenis_diet</th>
+                                            <th class="text-center">Jenis Diet</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
@@ -69,7 +69,7 @@
                                                         data-toggle="modal"data-id="{{ $jenis_dietdata->id }}"
                                                         data-nama-jenis_diet="{{ $jenis_dietdata->nama }}"
                                                         data-target="#deletejenis_dietModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -102,7 +102,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama jenis diet</label>
+                                <label>Jenis diet</label>
                                 <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama jenis diet" required>
                             </div>
                         </div>
@@ -134,7 +134,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama jenis diet</label>
+                                <label>Jenis diet</label>
                                 <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama jenis diet" required>
                             </div>
                         </div>

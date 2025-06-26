@@ -72,7 +72,7 @@
                                                         data-toggle="modal"data-id="{{ $loketdata->id }}"
                                                         data-nama-loket="{{ $loketdata->nama }}"
                                                         data-target="#deleteloketModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>
@@ -148,7 +148,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label>Nama Golongan Darah</label>
+                                <label>Nama Loket</label>
                                 <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Golongan" required>
                             </div>
                         </div>

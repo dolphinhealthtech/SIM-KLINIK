@@ -40,7 +40,7 @@
                                 <table id="alergitabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nama Jenis alergi</th>
+                                            <th class="text-center">Jenis alergi</th>
                                             <th class="text-center">Nama alergi</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
@@ -63,7 +63,7 @@
                                                         data-toggle="modal"data-id="{{ $alergidata->id }}"
                                                         data-nama-alergi="{{ $alergidata->nama_jenis_alergi }}"
                                                         data-target="#deletealergiModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

@@ -66,7 +66,7 @@
                                                         data-toggle="modal"data-id="{{ $agamadata->id }}"
                                                         data-nama-agama="{{ $agamadata->nama }}"
                                                         data-target="#deleteagamaModal">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                        <i class="fas fa-trash"></i> Hapus
                                                     </a>
                                                 </td>
                                             </tr>

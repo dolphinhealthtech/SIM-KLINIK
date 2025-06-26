@@ -113,8 +113,8 @@
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="sumbit" class="btn btn-primary">Lanjutkan</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="sumbit" class="btn btn-primary">Selanjutnya</button>
                 </div>
                 </form>
             </div>
@@ -175,8 +175,8 @@
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="sumbit" class="btn btn-primary">Lanjutkan</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="sumbit" class="btn btn-primary">Selanjutnya</button>
                 </div>
                 </form>
             </div>
@@ -218,7 +218,7 @@
                                     <button type="button" class="step-trigger" role="tab"
                                         aria-controls="information-part" id="information-part-trigger">
                                         <span class="bs-stepper-circle">3</span>
-                                        <span class="bs-stepper-label">Various information</span>
+                                        <span class="bs-stepper-label">Informasi lanjutan</span>
                                     </button>
                                 </div>
                             </div>
@@ -272,7 +272,7 @@
                                             <input type="hidden" id="timestamp" name="timestamp">
 
                                         </div>
-                                        <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
+                                        <button type="button" class="btn btn-primary" onclick="stepper.next()">Selanjutnya</button>
                                     </div>
 
 
@@ -320,8 +320,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                                        <button type="button" class="btn btn-primary" onclick="stepper.next()">Next</button>
+                                        <button type="button" class="btn btn-primary" onclick="stepper.previous()">Kembali</button>
+                                        <button type="button" class="btn btn-primary" onclick="stepper.next()">Selanjutnya</button>
                                     </div>
 
 
@@ -337,7 +337,7 @@
 
 
                                         <!-- Tombol Navigasi -->
-                                        <button type="button" class="btn btn-primary mt-3" onclick="stepper.previous()">Previous</button>
+                                        <button type="button" class="btn btn-primary mt-3" onclick="stepper.previous()">Kembali</button>
                                         <button type="submit" class="btn btn-primary mt-3">Submit</button>
                                     </div>
                                 </form>
