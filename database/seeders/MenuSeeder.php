@@ -420,7 +420,7 @@ class MenuSeeder extends Seeder
             ['name' => 'Antrian', 'url' => '/pendataan/antrian', 'icon' => 'fas fa-people-arrows', 'order' => 1],
             ['name' => 'Pendaftaran', 'url' => '/pendataan/pendaftaran', 'icon' => 'fas fa-user-plus', 'order' => 2],
             ['name' => 'Dokter', 'url' => '/pendataan/soap-dokter', 'icon' => 'fas fa-user-md', 'order' => 3],
-            ['name' => 'Perawat', 'url' => '/pendataan/so-perawat', 'icon' => 'fas fa-user-nurse', 'order' => 4], 
+            ['name' => 'Perawat', 'url' => '/pendataan/so-perawat', 'icon' => 'fas fa-user-nurse', 'order' => 4],
             ['name' => 'Apotek', 'url' => '/datakasir/apotek', 'icon' => 'capsules', 'order' => 5],
             ['name' => 'Tindakan', 'url' => '/datakasir/tindakan', 'icon' => 'briefcase-medical', 'order' => 6],
         ];
@@ -585,15 +585,15 @@ class MenuSeeder extends Seeder
             ['name' => 'Poli', 'url' => '/data-master-medis/poli', 'icon' => 'hospital', 'order' => 1],
             ['name' => 'Sarana', 'url' => '/data-master-medis/sarana', 'icon' => 'building', 'order' => 2],
             ['name' => 'Spesialis', 'url' => '/data-master-medis/spesialis', 'icon' => 'user-md', 'order' => 3],
-            ['name' => 'Kategori Perawatan', 'url' => '/data-master-medis/katper', 'icon' => 'list', 'order' => 4],
-            ['name' => 'Perawatan & Tindakan', 'url' => '/data-master-medis/perawatan-tindakan', 'icon' => 'procedures', 'order' => 5],
+            ['name' => 'Kategori Pemeriksaan & Tindakan', 'url' => '/data-master-medis/katper', 'icon' => 'list', 'order' => 4],
+            ['name' => 'Pemeriksaan & Tindakan', 'url' => '/data-master-medis/perawatan-tindakan', 'icon' => 'procedures', 'order' => 5],
             ['name' => 'HTT Pemeriksaan', 'url' => '/data-master-medis/htt-pemeriksaan', 'icon' => 'stethoscope', 'order' => 6],
             ['name' => 'Alergi', 'url' => '/data-master-medis/alergi', 'icon' => 'allergies', 'order' => 7],
             ['name' => 'Jenis Diet', 'url' => '/data-master-medis/jenis-diet', 'icon' => 'utensils', 'order' => 8],
             ['name' => 'Nama Makanan', 'url' => '/data-master-medis/nama-makanan', 'icon' => 'hamburger', 'order' => 9],
             ['name' => 'ICD 10', 'url' => '/data-master-medis/icd10', 'icon' => 'file', 'order' => 10],
             ['name' => 'ICD 9', 'url' => '/data-master-medis/icd9', 'icon' => 'file', 'order' => 11],
-            ['name' => 'Radiologi', 'url' => '/data-master-medis/radiologi_jenis', 'icon' => 'x-ray', 'order' => 12], 
+            ['name' => 'Radiologi', 'url' => '/data-master-medis/radiologi_jenis', 'icon' => 'x-ray', 'order' => 12],
             ['name' => 'Radiologi Pemeriksaan', 'url' => '/data-master-medis/radiologi_pemeriksaan', 'icon' => 'microscope', 'order' => 13],
             ['name' => 'Laboratorium', 'url' => '/data-master-medis/bidang-lab', 'icon' => 'vials', 'order' => 14],
         ];
@@ -755,7 +755,7 @@ class MenuSeeder extends Seeder
             }
         }
 
-       
+
     }
 }
 
