@@ -40,7 +40,7 @@
                                         <i class="fas fa-file-upload"></i> Import
                                     </button>
                                     <!-- Tombol Export -->
-                                    <a href="{{ route('poli.export') }}" class="btn btn-success">
+                                    <a href="{{ route('sarana.export') }}" class="btn btn-success">
                                         <i class="fas fa-file-download"></i> Export
                                     </a>
                                 </div>
@@ -116,7 +116,7 @@
 {{-- modal Delete Role --}}
 <div class="modal fade" id="deletepoliModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
     <div class="modal-dialog">
-        <form id="deleteFormpoli" action="{{ route('poli.destroy') }}" method="POST">
+        <form id="deleteFormpoli" action="{{ route('sarana.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteModalLabel">Hapus sarana</h5>
@@ -148,7 +148,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('poli.import') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('sarana.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label for="file">Pilih File Excel</label>

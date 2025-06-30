@@ -235,7 +235,7 @@ class DataMasterMedisController extends Controller
         Excel::import(new SpesialisImport, $request->file('file'));
 
 
-        return redirect()->route('speislais.get')->with('success', 'Data berhasil diimpor!');
+        return redirect()->route('spesialis.get')->with('success', 'Data berhasil diimpor!');
     }
 
      // data poli
@@ -861,7 +861,7 @@ class DataMasterMedisController extends Controller
     }
     public function icd10()
     {
-        $title = "Master Gologan Darah";
+        $title = "Master ICD 10";
         $icd10 = icd10::all();
         return view('module.master-data-medis.icd10', compact('title','icd10'));
     }
@@ -1170,7 +1170,7 @@ class DataMasterMedisController extends Controller
 
     public function icd9()
     {
-        $title = "Master Gologan Darah";
+        $title = "Master ICD 9";
         $icd9 = icd9::all();
         return view('module.master-data-medis.icd9', compact('title','icd9'));
     }
@@ -1355,7 +1355,7 @@ class DataMasterMedisController extends Controller
 
     public function saranaexport()
     {
-        return Excel::download(new SaranaExport, 'Poli.xlsx');
+        return Excel::download(new SaranaExport, 'Sarana.xlsx');
     }
 
     public function saranaimport(Request $request)
