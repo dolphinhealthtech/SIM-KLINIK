@@ -96,19 +96,19 @@
                         <div class="card-header p-0 border-bottom-0">
                         <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link" id="custom-tabs-four-radiologi-tab" data-toggle="pill" href="#custom-tabs-four-radiologi" role="tab" aria-controls="custom-tabs-four-radiologi" aria-selected="true">Radiologi</a>
+                                <a class="nav-link active" id="custom-tabs-four-radiologi-tab" data-toggle="pill" href="#custom-tabs-four-radiologi" role="tab" aria-controls="custom-tabs-four-radiologi" aria-selected="true">Radiologi</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="custom-tabs-four-laboratorium-tab" data-toggle="pill" href="#custom-tabs-four-laboratorium" role="tab" aria-controls="custom-tabs-four-laboratorium" aria-selected="false">Laboratorium</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" id="custom-tabs-four-skd-tab" data-toggle="pill" href="#custom-tabs-four-skd" role="tab" aria-controls="custom-tabs-four-skd" aria-selected="false">Surat Keterangan Dokter</a>
+                                <a class="nav-link" id="custom-tabs-four-skd-tab" data-toggle="pill" href="#custom-tabs-four-skd" role="tab" aria-controls="custom-tabs-four-skd" aria-selected="false">Surat Keterangan Dokter</a>
                             </li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content" id="custom-tabs-four-tabContent">
-                            <div class="tab-pane fade" id="custom-tabs-four-radiologi" role="tabpanel" aria-labelledby="custom-tabs-four-radiologi-tab">
+                            <div class="tab-pane fade show active" id="custom-tabs-four-radiologi" role="tabpanel" aria-labelledby="custom-tabs-four-radiologi-tab">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <input type="hidden" id="rad_table_hidden" name="rad_table_hidden">
@@ -331,7 +331,7 @@
                                 </div>
                             </div>
 
-                            <div class="tab-pane fade show active" id="custom-tabs-four-skd" role="tabpanel" aria-labelledby="custom-tabs-four-skd-tab">
+                            <div class="tab-pane fade" id="custom-tabs-four-skd" role="tabpanel" aria-labelledby="custom-tabs-four-skd-tab">
                                 <div class="row">
                                     <input type="hidden" id="lab_table_hidden" name="lab_table_hidden">
                                     <div class="col-md-12">
