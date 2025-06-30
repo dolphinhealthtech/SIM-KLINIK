@@ -35,6 +35,7 @@ use App\Models\odontogram;
 use App\Models\odontogram_details;
 use App\Models\radiologi_pemeriksaan;
 use App\Models\radiologi_jenis;
+use App\Models\kode_surat;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -526,18 +527,18 @@ class soap extends Controller
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'pelayanan soap dokter icd berhasil ditambahkan!'
+                'message' => 'Pelayanan soap dokter berhasil ditambahkan!'
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'pelayanan soap dokter icd Sudah ada!',
+                'message' => 'Pelayanan soap dokter Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan pelayanan soap dokter icd!',
+                'message' => 'Terjadi kesalahan saat menyimpan pelayanan soap dokter!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -840,7 +841,7 @@ class soap extends Controller
     {
         $nomor_rawat = base64_decode($norawat);
         $title = "Permintaan Pengecekan";
-        $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien.kelamin','pendaftaran.penjamin')->where('nomor_register', $nomor_rawat)->first();
+        $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien.kelamin','pendaftaran.penjamin','icd')->where('nomor_register', $nomor_rawat)->first();
 
         $tgl_lahir = Carbon::createFromFormat('Y-m-d', $pelayanan->pasien->tanggal_lahir);
         $diff = $tgl_lahir->diff(Carbon::now());
@@ -866,7 +867,22 @@ class soap extends Controller
 
         $radiologi_jenis = radiologi_jenis::all();
 
-        return view('module.pelayanan.pelayanan_permintaan', compact('title','pelayanan','umur','data_icd9','data_lab','radiologi_pemeriksaan','radiologi_jenis'));
+        $now = Carbon::now();
+        $bulan = $now->format('m');
+        $tahun = $now->format('Y');
+
+        // Hitung jumlah surat yang sudah ada bulan ini
+        $jumlah = kode_surat::whereMonth('created_at', $bulan)
+                    ->whereYear('created_at', $tahun)
+                    ->count();
+
+        // Nomor urut berikutnya (increment)
+        $nomorUrut = str_pad($jumlah + 1, 4, '0', STR_PAD_LEFT); // 0001, 0002, dst
+
+        // Buat format kode surat
+        $kodeSurat = "BLRJ/{$nomorUrut}/SKD/{$bulan}/{$tahun}";
+
+        return view('module.pelayanan.pelayanan_permintaan', compact('title','kodeSurat','pelayanan','umur','data_icd9','data_lab','radiologi_pemeriksaan','radiologi_jenis'));
     }
 
     public function getSubBidangLab($id)
@@ -942,6 +958,53 @@ class soap extends Controller
         ])->setPaper('a6', 'portrait');
 
         $filename = 'permintaan_radiologi_' . $nama_pasien . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    public function skdPrint(Request $request)
+    {
+        $tgl_pemeriksaan = $request->tgl_pemeriksaan_skd;
+        $kode_surat = $request->kode_surat_skd;
+        $tgl_awal = $request->tgl_awal_skd;
+        $tgl_akhir = $request->tgl_akhir_skd;
+        $diagnosa = $request->diagnosa_skd;
+        $nama_pasien = $request->nama_pasien;
+        $dokter_pengirim = $request->dokter_pengirim;
+        $jenis_kelamin = $request->jenis_kelamin;
+        $tanggal_lahir = $request->tanggal_lahir;
+        $alamat = $request->alamat;
+        $umur = $request->umur;
+        $now = Carbon::now();
+
+        $tgl_awal_proses = Carbon::parse($request->tgl_awal_skd);
+        $tgl_akhir_proses = Carbon::parse($request->tgl_akhir_skd);
+
+        $jumlah_hari = $tgl_awal_proses->diffInDays($tgl_akhir_proses) + 1;
+
+        kode_surat::create([
+            'kode_surat_skd' => $kode_surat,
+            'user_input_id' => Auth::user()->id,
+            'user_input_name' => Auth::user()->name,
+        ]);
+
+        $pdf = PDF::loadView('pdf.permintaan_skd', [
+            'tgl_pemeriksaan' => $tgl_pemeriksaan,
+            'kode_surat' => $kode_surat,
+            'tgl_awal' => $tgl_awal,
+            'tgl_akhir' => $tgl_akhir,
+            'diagnosa' => $diagnosa,
+            'nama_pasien' => $nama_pasien,
+            'dokter_pengirim' => $dokter_pengirim,
+            'jenis_kelamin' => $jenis_kelamin,
+            'tanggal_lahir' => $tanggal_lahir,
+            'alamat' => $alamat,
+            'umur' => $umur,
+            'now' => $now,
+            'jumlah_hari' => $jumlah_hari,
+        ])->setPaper('a6', 'portrait');
+
+        $filename = 'surat_keterangan_dokter_' . $nama_pasien . '.pdf';
 
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }

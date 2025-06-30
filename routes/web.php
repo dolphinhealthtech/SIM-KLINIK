@@ -130,6 +130,7 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::post('/resep/print', [soap::class, 'print'])->name('resep.print');
     Route::post('/laboratorium/print', [soap::class, 'laboratoriumPrint'])->name('laboratorium.print');
     Route::post('/radiologi/print', [soap::class, 'radiologiPrint'])->name('radiologi.print');
+    Route::post('/skd/print', [soap::class, 'skdPrint'])->name('skd.print');
     Route::post('/dokter/so/odontogram/add', [soap::class, 'odontogramadd'])->name('odontogram.add');
     Route::post('/dokter/so/odontogram/details/add', [soap::class, 'odontogramdetailsadd'])->name('odontogram.details.add');
 
@@ -357,8 +358,8 @@ Route::post('/inventaris-pembelian/add', [SuperadminController::class, 'inventar
             Route::post('/nama-makanan/import', [DataMasterMedisController::class,'nama_makananimport'])->name('nama_makanan.import');
 
             Route::get('/icd10', [DataMasterMedisController::class,'icd10'])->name('icd10.get');
-            Route::get('/icd10/sync', [DataMasterMedisController::class,'icd10singkron'])->name('icd10.store');
-            Route::get('/icd10/add', [DataMasterMedisController::class,'icd10add'])->name('icd10.singkron');
+            Route::post('/icd10/sync', [DataMasterMedisController::class,'icd10singkron'])->name('icd10.singkron');
+            Route::post('/icd10/add', [DataMasterMedisController::class,'icd10add'])->name('icd10.store');
             Route::post('/icd10/update', [DataMasterMedisController::class,'icd10edit'])->name('icd10.update');
             Route::post('/icd10/delete', [DataMasterMedisController::class,'icd10delete'])->name('icd10.destroy');
             Route::get('/icd10/export', [DataMasterMedisController::class, 'icd10export'])->name('icd10.export');

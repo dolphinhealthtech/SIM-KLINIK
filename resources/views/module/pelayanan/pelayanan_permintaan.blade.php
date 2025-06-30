@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Permintaan Radiologi / Laboratorium</h1>
+                    <h1>Permintaan Pasien</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -96,16 +96,19 @@
                         <div class="card-header p-0 border-bottom-0">
                         <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="custom-tabs-four-radiologi-tab" data-toggle="pill" href="#custom-tabs-four-radiologi" role="tab" aria-controls="custom-tabs-four-radiologi" aria-selected="true">Radiologi</a>
+                                <a class="nav-link" id="custom-tabs-four-radiologi-tab" data-toggle="pill" href="#custom-tabs-four-radiologi" role="tab" aria-controls="custom-tabs-four-radiologi" aria-selected="true">Radiologi</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="custom-tabs-four-laboratorium-tab" data-toggle="pill" href="#custom-tabs-four-laboratorium" role="tab" aria-controls="custom-tabs-four-laboratorium" aria-selected="false">Laboratorium</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" id="custom-tabs-four-skd-tab" data-toggle="pill" href="#custom-tabs-four-skd" role="tab" aria-controls="custom-tabs-four-skd" aria-selected="false">Surat Keterangan Dokter</a>
                             </li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content" id="custom-tabs-four-tabContent">
-                            <div class="tab-pane fade show active" id="custom-tabs-four-radiologi" role="tabpanel" aria-labelledby="custom-tabs-four-radiologi-tab">
+                            <div class="tab-pane fade" id="custom-tabs-four-radiologi" role="tabpanel" aria-labelledby="custom-tabs-four-radiologi-tab">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <input type="hidden" id="rad_table_hidden" name="rad_table_hidden">
@@ -204,7 +207,7 @@
                                         </div>
                                         <div class="form-group row mt-3">
                                             <div class="col-md-2">
-                                                <label class="col-form-label">Tanggal Periksa</label>
+                                                <label for="tanggal_periksa_radiologi">Tanggal Periksa</label>
                                             </div>
                                             <div class="col-md-4">
                                                 <input type="datetime-local" class="form-control" id="tanggal_periksa_radiologi" name="tanggal_periksa_radiologi">
@@ -303,7 +306,7 @@
                                         </div>
                                         <div class="form-group row mt-3">
                                             <div class="col-md-2">
-                                                <label class="col-form-label">Tanggal Periksa</label>
+                                                <label for="tanggal_periksa_laboratorium">Tanggal Periksa</label>
                                             </div>
                                             <div class="col-md-4">
                                                 <input type="datetime-local" class="form-control" id="tanggal_periksa_laboratorium" name="tanggal_periksa_laboratorium">
@@ -327,6 +330,47 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="tab-pane fade show active" id="custom-tabs-four-skd" role="tabpanel" aria-labelledby="custom-tabs-four-skd-tab">
+                                <div class="row">
+                                    <input type="hidden" id="lab_table_hidden" name="lab_table_hidden">
+                                    <div class="col-md-12">
+                                        <div class="form-group row mt-3">
+                                            <div class="col-md-6">
+                                                <label for="tanggal_pemeriksaan_skd">Tgl Pemeriksaan</label>
+                                                <input type="datetime-local" class="form-control" id="tanggal_pemeriksaan_skd" name="tanggal_pemeriksaan_skd">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>&nbsp;</label>
+                                                <input type="text" class="form-control" id="kode_surat_skd" name="kode_surat_skd" readonly value="{{ $kodeSurat }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mt-3">
+                                            <div class="col-md-6">
+                                                <label for="tanggal_mulai_istirahat_skd">Tgl Mulai Istirahat</label>
+                                                <input type="date" class="form-control" id="tanggal_mulai_istirahat_skd" name="tanggal_mulai_istirahat_skd">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="tanggal_akhir_istirahat_skd">Tgl Akhir Istirahat</label>
+                                                <input type="date" class="form-control" id="tanggal_akhir_istirahat_skd" name="tanggal_akhir_istirahat_skd">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mt-3">
+                                            <div class="col-md-12">
+                                                <label for="diagnosa_skd">Diagnosa Pasien</label>
+                                                <textarea class="form-control" id="diagnosa_skd" name="diagnosa_skd" rows="3">{{ $pelayanan->icd->nama_icd10 ?? '' }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mt-3">
+                                            <div class="col-md-12 text-right">
+                                                <button type="button" class="btn btn-success" id="btn-print-skd">
+                                                    <i class="fas fa-print"></i> Print
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -336,14 +380,68 @@
 </div>
 
 <script>
-    const datetimeInputRadiologi = document.getElementById('tanggal_periksa_radiologi');
-    const datetimeInputLaboratorium = document.getElementById('tanggal_periksa_laboratorium');
+    document.addEventListener('DOMContentLoaded', function () {
+        const tanggal_pemeriksaan_skd = document.getElementById('tanggal_pemeriksaan_skd');
+        const tanggal_mulai_istirahat_skd = document.getElementById('tanggal_mulai_istirahat_skd');
+        const tanggal_akhir_istirahat_skd = document.getElementById('tanggal_akhir_istirahat_skd');
+        const tanggal_periksa_laboratorium = document.getElementById('tanggal_periksa_laboratorium');
+        const tanggal_periksa_radiologi = document.getElementById('tanggal_periksa_radiologi');
 
-    datetimeInputRadiologi.addEventListener('click', function () {
-        this.showPicker && this.showPicker(); // untuk browser yang support
+        tanggal_pemeriksaan_skd.addEventListener('click', function () {
+            tanggal_pemeriksaan_skd.showPicker?.() || tanggal_pemeriksaan_skd.focus(); // Buka date picker jika didukung, atau fokus
+        });
+
+        tanggal_mulai_istirahat_skd.addEventListener('click', function () {
+            tanggal_mulai_istirahat_skd.showPicker?.() || tanggal_mulai_istirahat_skd.focus(); // Buka date picker jika didukung, atau fokus
+        });
+
+        tanggal_akhir_istirahat_skd.addEventListener('click', function () {
+            tanggal_akhir_istirahat_skd.showPicker?.() || tanggal_akhir_istirahat_skd.focus(); // Buka date picker jika didukung, atau fokus
+        });
+        tanggal_periksa_laboratorium.addEventListener('click', function () {
+            tanggal_periksa_laboratorium.showPicker?.() || tanggal_periksa_laboratorium.focus(); // Buka date picker jika didukung, atau fokus
+        });
+
+        tanggal_periksa_radiologi.addEventListener('click', function () {
+            tanggal_periksa_radiologi.showPicker?.() || tanggal_periksa_radiologi.focus(); // Buka date picker jika didukung, atau fokus
+        });
     });
-    datetimeInputLaboratorium.addEventListener('click', function () {
-        this.showPicker && this.showPicker(); // untuk browser yang support
+</script>
+
+<script>
+    function getCurrentDateTimeLocal() {
+        const now = new Date();
+
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // bulan dimulai dari 0
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+
+    $(document).ready(function () {
+        const datetimeInputRadiologi = document.getElementById('tanggal_periksa_radiologi');
+        const datetimeInputLaboratorium = document.getElementById('tanggal_periksa_laboratorium');
+        const datetimeInputSkd = document.getElementById('tanggal_pemeriksaan_skd');
+
+        // Isi otomatis dengan waktu sekarang
+        const now = getCurrentDateTimeLocal();
+        if (datetimeInputRadiologi) datetimeInputRadiologi.value = now;
+        if (datetimeInputLaboratorium) datetimeInputLaboratorium.value = now;
+        if (datetimeInputSkd) datetimeInputSkd.value = now;
+
+        datetimeInputRadiologi.addEventListener('click', function () {
+            this.showPicker && this.showPicker(); // untuk browser yang support
+        });
+        datetimeInputLaboratorium.addEventListener('click', function () {
+            this.showPicker && this.showPicker(); // untuk browser yang support
+        });
+        datetimeInputSkd.addEventListener('click', function () {
+            this.showPicker && this.showPicker(); // untuk browser yang support
+        });
     });
 </script>
 
@@ -643,6 +741,75 @@
                 form.append($('<input>', { type: 'hidden', name: 'tanggal_lahir', value: tanggal_lahir }));
                 form.append($('<input>', { type: 'hidden', name: 'alamat', value: alamat }));
                 form.append($('<input>', { type: 'hidden', name: 'penjamin', value: penjamin }));
+
+                $('body').append(form);
+                form.submit();
+                form.remove();
+
+                // Setelah submit, redirect ke route dokter
+                setTimeout(() => {
+                    window.location.href = '{{ route("pelayanad.get") }}';
+                }, 1000); // delay 1 detik agar PDF sempat terbuka
+            }
+        });
+    });
+</script>
+
+<script>
+    $('#btn-print-skd').on('click', function () {
+        const tgl_pemeriksaan = $('#tanggal_pemeriksaan_skd').val();
+        const kode_surat = $('#kode_surat_skd').val();
+        const tgl_awal = $('#tanggal_mulai_istirahat_skd').val();
+        const tgl_akhir = $('#tanggal_akhir_istirahat_skd').val();
+        const diagnosa = $('#diagnosa_skd').val();
+        const nama_pasien = $('#nama').val();
+        const dokter_pengirim = $('#dokter_pengirim').val();
+        const jenis_kelamin = $('#jenis_kelamin').val();
+        const tanggal_lahir = $('#tanggal_lahir').val();
+        const alamat = $('#alamat').val();
+        const umur = $('#umur').val();
+        const csrfToken = '{{ csrf_token() }}';
+
+        if (!tgl_pemeriksaan || !tgl_awal || !tgl_akhir || !diagnosa || !kode_surat) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data Tidak Lengkap',
+                text: 'Pastikan data diagnosa dan tanggal periksa sudah diisi.'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Cetak Permintaan SKD?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Cetak!',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Buat form dinamis
+                const form = $('<form>', {
+                    method: 'POST',
+                    action: '{{ route("skd.print") }}',
+                    target: '_blank'
+                });
+
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: '_token',
+                    value: csrfToken
+                }));
+                form.append($('<input>', { type: 'hidden', name: 'tgl_pemeriksaan_skd', value: tgl_pemeriksaan }));
+                form.append($('<input>', { type: 'hidden', name: 'kode_surat_skd', value: kode_surat }));
+                form.append($('<input>', { type: 'hidden', name: 'tgl_awal_skd', value: tgl_awal }));
+                form.append($('<input>', { type: 'hidden', name: 'tgl_akhir_skd', value: tgl_akhir }));
+                form.append($('<input>', { type: 'hidden', name: 'diagnosa_skd', value: diagnosa }));
+                form.append($('<input>', { type: 'hidden', name: 'nama_pasien', value: nama_pasien }));
+                form.append($('<input>', { type: 'hidden', name: 'dokter_pengirim', value: dokter_pengirim }));
+                form.append($('<input>', { type: 'hidden', name: 'jenis_kelamin', value: jenis_kelamin }));
+                form.append($('<input>', { type: 'hidden', name: 'tanggal_lahir', value: tanggal_lahir }));
+                form.append($('<input>', { type: 'hidden', name: 'alamat', value: alamat }));
+                form.append($('<input>', { type: 'hidden', name: 'umur', value: umur }));
 
                 $('body').append(form);
                 form.submit();

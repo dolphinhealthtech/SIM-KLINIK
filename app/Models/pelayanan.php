@@ -44,4 +44,9 @@ class pelayanan extends Model
     {
         return $this->hasMany(pelayanan_soap_dokter::class,'no_rawat','nomor_register');
     }
+
+    public function icd()
+    {
+        return $this->hasOne(pelayanan_soap_dokter_icd::class, 'no_rawat', 'nomor_register');
+    }
 }
