@@ -462,15 +462,50 @@
                         method: 'POST',
                         data: $(this).serialize(),
                         success: function(response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: 'Data pasien berhasil ditambahkan',
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                location.reload();
-                            });
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: response.message,
+                                    showConfirmButton: true
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Cetak atau tampilkan nomor antrian
+                                        let noAntrian = response.noantrian || 'Tidak ada nomor antrian';
+                                        Swal.fire({
+                                            icon: 'info',
+                                            title: 'Nomor Antrian Anda',
+                                            html: `<div id="printArea"><h1 style="font-size: 3rem; text-align: center;">${noAntrian}</h1></div>`,
+                                            showConfirmButton: true
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                // Buat jendela print khusus
+                                                let printContents = document.getElementById('printArea').innerHTML;
+                                                let originalTitle = document.title;
+                                                let printWindow = window.open('', '', 'height=500,width=400');
+
+                                                printWindow.document.write('<html><head><title>Cetak Nomor Antrian</title>');
+                                                printWindow.document.write('</head><body style="text-align:center; font-family:sans-serif;">');
+                                                printWindow.document.write(printContents);
+                                                printWindow.document.write('</body></html>');
+
+                                                printWindow.document.close();
+                                                printWindow.focus();
+                                                printWindow.print();
+                                                printWindow.close();
+                                            }
+                                        }).then(() => {
+                                            location.reload(); // Reload halaman untuk update data
+                                        });
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal!',
+                                    text: response.message || 'Terjadi kesalahan saat memproses data'
+                                });
+                            }
                         },
                         error: function(xhr, status, error) {
                             let errorMessage = 'Terjadi kesalahan saat menyimpan data';

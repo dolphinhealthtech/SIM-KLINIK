@@ -649,7 +649,7 @@ class SuperadminController extends Controller
                 'success' => true,
                 'message' => 'Data pasien berhasil disimpan.',
                 'noantrian' => $antrianBaru,
-                
+
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -759,7 +759,9 @@ class SuperadminController extends Controller
         $pasienall = Pasien::count();
         $pasienallnewnow = Pasien::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
         ->count();
-        return view('dashboard.pasien', compact('title','pasiens','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa','pendidikan','pekerjaan','pasiennoverif','pasienall','pasienallnewnow','pasienallold'));
+        $kodefasyankes = Set_Bpjs::first();
+
+        return view('dashboard.pasien', compact('title','kodefasyankes','pasiens','provinsi','kelamin','goldar','agama','pernikahan','suku','bangsa','bahasa','pendidikan','pekerjaan','pasiennoverif','pasienall','pasienallnewnow','pasienallold'));
     }
 
     public function getPasien($id)
@@ -1701,7 +1703,8 @@ public function panggilPasien($id)
             }
             return response()->json([
                 'success' => true,
-                'message' => 'Data pasien berhasil disimpan.',
+                'message' => 'Pasien berhasil didaftarkan.',
+                'noantrian' => $antrianBaru,
                 'data' => $data
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
