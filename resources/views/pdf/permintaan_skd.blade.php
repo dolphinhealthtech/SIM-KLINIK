@@ -11,20 +11,6 @@
             padding: 0;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .clinic-name {
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .clinic-info {
-            font-size: 10px;
-        }
-
         .divider {
             border-top: 1px solid #000;
             margin: 5px 0;
@@ -87,14 +73,24 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="clinic-name">KLINIK OMEGA CITRA RAYA</div>
-        <div class="clinic-info">
-            Ruko Danau Citra, Jl. Citra Raya Boulevard No.10<br>
-            Kec. Cikupa, Kab. Tangerang, Banten 15131<br>
-            Telp: 0813-1089-4294
-        </div>
-    </div>
+    <table style="width: 100%; margin-bottom: 10px;">
+        <tr>
+            <td style="width: 60px; text-align: center; vertical-align: middle;">
+                <img src="{{ public_path('profile/default.png') }}" alt="Logo"
+                    style="width: 50px; height: 50px; border-radius: 50%;">
+            </td>
+            <td style="text-align: center;">
+                <div style="font-size: 14px; font-weight: bold; margin: 0;">
+                    KLINIK OMEGA CITRA RAYA
+                </div>
+                <div style="font-size: 9px; line-height: 1.3; margin: 0;">
+                    Ruko Danau Citra, Jl. Citra Raya Boulevard No.10, Kec. Cikupa,
+                    Kabupaten Tangerang, Banten 15131<br>
+                    0813-1089-4294
+                </div>
+            </td>
+        </tr>
+    </table>
 
     <div class="divider"></div>
 
