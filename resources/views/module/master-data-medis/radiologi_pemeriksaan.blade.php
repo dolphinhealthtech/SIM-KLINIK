@@ -50,7 +50,7 @@
                                 <table id="pemeriksaan_htttabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nama Bidang Labotorium</th>
+                                            <th class="text-center">Nama Radiologi Pemeriksaan</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
@@ -91,7 +91,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Bidang Labotorium</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Radiologi Pemeriksaan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -102,7 +102,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama Bidang Labotorium</label>
+                                <label>Nama Radiologi Pemeriksaan</label>
                                 <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Pemeriksaan" required>
                             </div>
                         </div>
@@ -122,7 +122,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Data Bidang Labotorium</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Radiologi Pemeriksaan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -134,7 +134,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama Bidang Labotorium</label>
+                                <label>Nama Radiologi Pemeriksaan</label>
                                 <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Kategori Perawatan" required>
                             </div>
                         </div>
@@ -155,7 +155,7 @@
         <form id="deleteFormpemeriksaan_htt" action="{{ route('radiologi_pemeriksaan.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Bidang Labotorium</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Radiologi Pemeriksaan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -179,7 +179,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importpemeriksaan_httModalLabel">Import Data Kategori Perawatan</h5>
+                <h5 class="modal-title" id="importpemeriksaan_httModalLabel">Import Radiologi Pemeriksaan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

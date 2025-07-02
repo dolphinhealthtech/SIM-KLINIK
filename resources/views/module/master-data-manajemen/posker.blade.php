@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Posisi Kerja</h1>
+                        <h1 class="m-0">Unit / Departemen</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Posisi Kerja</h3>
+                                <h3 class="card-title">Unit / Departemen</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#addposkerModal">
@@ -50,7 +50,7 @@
                                 <table id="poskertabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nama Posisi Kerja</th>
+                                            <th class="text-center">Nama Unit / Departemen</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
                                     </thead>
@@ -91,7 +91,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Posisi Kerja</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Unit / Departemen</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -102,8 +102,8 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama Posisi Kerja</label>
-                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Posisi Kerja" required>
+                                <label>Nama Unit / Departemen</label>
+                                <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Unit / Departemen" required>
                             </div>
                         </div>
                     </div>
@@ -122,7 +122,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Posisi Kerja</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Unit / Departemen</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -134,8 +134,8 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama posisi Kerja</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama posisi Kerja" required>
+                                <label>Nama Unit / Departemen</label>
+                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Unit / Departemen" required>
                             </div>
                         </div>
                     </div>
@@ -155,7 +155,7 @@
         <form id="deleteFormposker" action="{{ route('posker.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Posisi Kerja</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Unit / Departemen</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -179,7 +179,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importposkerModalLabel">Import Data Posisi Kerja</h5>
+                <h5 class="modal-title" id="importposkerModalLabel">Import Data Unit / Departemen</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -349,7 +349,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Posisi Kerja!',
+                        text: 'Terjadi kesalahan saat menghapus Unit / Departemen!',
                     });
                 }
             });

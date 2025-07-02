@@ -1373,7 +1373,7 @@ class DataMasterMedisController extends Controller
     // Radiologi_jenis Start
     public function radiologi_jenis()
     {
-    $title = "Master radiologi_jenis";
+    $title = "Master radiologi jenis";
     $radiologi_jenis = radiologi_jenis::all();
         return view('module.master-data-medis.radiologi_jenis', compact('title','radiologi_jenis'));
     }
@@ -1460,7 +1460,7 @@ class DataMasterMedisController extends Controller
 
     public function radiologi_jenisexport()
     {
-        return Excel::download(new radiologi_jenisExport, 'radiologi_jenis.xlsx');
+        return Excel::download(new radiologi_jenisExport, 'Radiologi jenis.xlsx');
     }
 
     public function radiologi_jenisimport(Request $request)
@@ -1563,7 +1563,7 @@ class DataMasterMedisController extends Controller
 
     public function laboratorium_bidangexport()
     {
-        return Excel::download(new Laboratorium_bidangExport, 'Macam-macam labotorium.xlsx');
+        return Excel::download(new Laboratorium_bidangExport, 'labotorium Bidang.xlsx');
     }
 
     public function laboratorium_bidangeimport(Request $request)
@@ -1696,19 +1696,19 @@ class DataMasterMedisController extends Controller
 
              return response()->json([
                  'success' => true,
-                 'message' => 'radiologi_pemeriksaan berhasil ditambahkan!',
+                 'message' => 'radiologi pemeriksaan berhasil ditambahkan!',
                  'data' => $radiologi_pemeriksaan
              ], 201);
          } catch (ValidationException $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'radiologi_pemeriksaan Sudah ada!',
+                 'message' => 'radiologi pemeriksaan Sudah ada!',
                  'errors' => $e->errors()
              ], 422);
          } catch (\Exception $e) {
              return response()->json([
                  'success' => false,
-                 'message' => 'Terjadi kesalahan saat menyimpan radiologi_pemeriksaan!',
+                 'message' => 'Terjadi kesalahan saat menyimpan radiologi pemeriksaan!',
                  'error' => $e->getMessage()
              ], 500);
          }
@@ -1725,7 +1725,7 @@ class DataMasterMedisController extends Controller
          if (!$radiologi_pemeriksaan) {
              return response()->json([
                  'success' => false,
-                 'message' => 'radiologi_pemeriksaan tidak ditemukan!'
+                 'message' => 'radiologi pemeriksaan tidak ditemukan!'
              ], 404);
          }
 
@@ -1734,7 +1734,7 @@ class DataMasterMedisController extends Controller
 
          return response()->json([
              'success' => true,
-             'message' => 'radiologi_pemeriksaan berhasil diperbarui!'
+             'message' => 'radiologi pemeriksaan berhasil diperbarui!'
          ]);
     }
 
@@ -1749,20 +1749,20 @@ class DataMasterMedisController extends Controller
         if (!$radiologi_pemeriksaan) {
             return response()->json([
                 'success' => false,
-                'message' => 'radiologi_pemeriksaan tidak ditemukan!'
+                'message' => 'radiologi pemeriksaan tidak ditemukan!'
             ], 404);
         }
         $radiologi_pemeriksaan->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'radiologi_pemeriksaan berhasil dihapus!'
+            'message' => 'radiologi pemeriksaan berhasil dihapus!'
         ]);
     }
 
     public function radiologi_pemeriksaanexport()
     {
-        return Excel::download(new Radiologi_pemeriksaanExport, 'Macam-macam labotorium.xlsx');
+        return Excel::download(new Radiologi_pemeriksaanExport, 'Radiologi Pemeriksaan.xlsx');
     }
 
     public function radiologi_pemeriksaaneimport(Request $request)

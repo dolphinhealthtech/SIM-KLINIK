@@ -612,7 +612,7 @@ foreach ($subMenuObatAllkes as $subMenu) {
             ['name' => 'HTT Pemeriksaan', 'url' => '/data-master-medis/htt-pemeriksaan', 'icon' => 'stethoscope', 'order' => 6],
             ['name' => 'Alergi', 'url' => '/data-master-medis/alergi', 'icon' => 'allergies', 'order' => 7],
             ['name' => 'Jenis Diet', 'url' => '/data-master-medis/jenis-diet', 'icon' => 'utensils', 'order' => 8],
-            ['name' => 'Nama Makanan', 'url' => '/data-master-medis/nama-makanan', 'icon' => 'hamburger', 'order' => 9],
+            ['name' => 'Makanan', 'url' => '/data-master-medis/nama-makanan', 'icon' => 'hamburger', 'order' => 9],
             ['name' => 'ICD 10', 'url' => '/data-master-medis/icd10', 'icon' => 'file', 'order' => 10],
             ['name' => 'ICD 9', 'url' => '/data-master-medis/icd9', 'icon' => 'file', 'order' => 11],
             ['name' => 'Radiologi', 'url' => '/data-master-medis/radiologi_jenis', 'icon' => 'x-ray', 'order' => 12],
@@ -725,7 +725,7 @@ foreach ($subMenuObatAllkes as $subMenu) {
 
         // Submenu untuk Data Master Manajemen
         $subMenusDataMasterManajemen = [
-            ['name' => 'Posker', 'url' => '/data-master-manajemen/posker', 'icon' => 'chart-line', 'order' => 1],
+            ['name' => 'Unit/Departemen', 'url' => '/data-master-manajemen/posker', 'icon' => 'chart-line', 'order' => 1],
         ];
 
         foreach ($subMenusDataMasterManajemen as $subMenu) {
