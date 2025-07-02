@@ -32,7 +32,7 @@
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#addpoliModal">
-                                        <i class="fas fa-plus"></i> Tambah
+                                        <i class="fas fa-plus"></i> Sinkron
                                     </button>
 
                                     <!-- Tombol Import (Memunculkan Modal) -->

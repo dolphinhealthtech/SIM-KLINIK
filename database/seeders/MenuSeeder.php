@@ -108,36 +108,15 @@ class MenuSeeder extends Seeder
             'order' => 9,
         ]);
 
-        $pembelian = menu::create([
-            'name' => 'Pembelian',
-            'url' => '/pembelian',
-            'icon' => 'shopping-cart',
+
+
+
+        $obatdanallkes = menu::create([
+            'name' => 'Obat dan Allkes',
+            'url' => '#',
+            'icon' => 'fas fa-boxes-stacked',
             'parent_id' => null,
             'order' => 10,
-        ]);
-
-        $dataBarang = menu::create([
-            'name' => 'Data Barang',
-            'url' => '/data-barang',
-            'icon' => 'pills',
-            'parent_id' => null,
-            'order' => 11,
-        ]);
-
-        $gudangutama = menu::create([
-            'name' => 'Gudang utama',
-            'url' => '/data-master-gudang/gudang-utama',
-            'icon' => 'fas fa-boxes',
-            'parent_id' => null,
-            'order' => 12,
-        ]);
-
-        $requestobat = menu::create([
-            'name' => 'Request obat',
-            'url' => '/data-master-gudang/gudang-request',
-            'icon' => 'fas fa-prescription-bottle',
-            'parent_id' => null,
-            'order' => 13,
         ]);
 
         $inventaris = menu::create([
@@ -145,7 +124,7 @@ class MenuSeeder extends Seeder
             'url' => '#',
             'icon' => 'fas fa-boxes-stacked',
             'parent_id' => null,
-            'order' => 14,
+            'order' => 11,
         ]);
 
         //laporan
@@ -154,7 +133,7 @@ class MenuSeeder extends Seeder
             'url' => '#',
             'icon' => 'fa-pen atau fa-edit',
             'parent_id' => null,
-            'order' => 15,
+            'order' => 12,
         ]);
 
         $dataMaster = menu::create([
@@ -162,7 +141,7 @@ class MenuSeeder extends Seeder
             'url' => '#',
             'icon' => 'database',
             'parent_id' => null,
-            'order' => 16,
+            'order' => 13,
         ]);
 
         $pengaturan = menu::create([
@@ -170,7 +149,7 @@ class MenuSeeder extends Seeder
             'url' => '#', // Use # for dropdown menu
             'icon' => 'cog',
             'parent_id' => null,
-            'order' => 17,
+            'order' => 14,
         ]);
 
         // ===== ROLE ASSIGNMENTS FOR MAIN MENUS =====
@@ -187,10 +166,7 @@ class MenuSeeder extends Seeder
             $keuangan->roles()->attach($superAdminRole->id);
             $sdm->roles()->attach($superAdminRole->id);
             $pendataan->roles()->attach($superAdminRole->id);
-            $pembelian->roles()->attach($superAdminRole->id);
-            $dataBarang->roles()->attach($superAdminRole->id);
-            $gudangutama->roles()->attach($superAdminRole->id);
-            $requestobat->roles()->attach($superAdminRole->id);
+            $obatdanallkes->roles()->attach($superAdminRole->id);
             $inventaris->roles()->attach($superAdminRole->id);
             $dataMaster->roles()->attach($superAdminRole->id);
             $pengaturan->roles()->attach($superAdminRole->id);
@@ -242,10 +218,7 @@ class MenuSeeder extends Seeder
         // User Gudang: Pembelian, Data Barang, Gudang Utama, Request Obat, Inventaris
         if ($gudangRole) {
             $dashboard->roles()->attach($gudangRole->id);
-            $pembelian->roles()->attach($gudangRole->id);
-            $dataBarang->roles()->attach($gudangRole->id);
-            $gudangutama->roles()->attach($gudangRole->id);
-            $requestobat->roles()->attach($gudangRole->id);
+            $obatdanallkes->roles()->attach($gudangRole->id);
             $inventaris->roles()->attach($gudangRole->id);
         }
 
@@ -332,6 +305,55 @@ class MenuSeeder extends Seeder
             }
         }
 
+
+        // Submenu Obat dan Allkes
+$subMenuObatAllkes = [
+    [
+        'name' => 'Daftar Barang',
+        'url' => '/data-barang',
+        'icon' => 'pills',
+        'order' => 1,
+    ],
+    [
+        'name' => 'Gudang utama (obat)',
+        'url' => '/data-master-gudang/gudang-utama',
+        'icon' => 'fas fa-boxes',
+        'order' => 2,
+    ],
+    [
+        'name' => 'Permintaan obat',
+        'url' => '/data-master-gudang/gudang-request',
+        'icon' => 'fas fa-prescription-bottle',
+        'order' => 3,
+    ],
+    [
+        'name' => 'Pembelian',
+        'url' => '/pembelian',
+        'icon' => 'shopping-cart',
+        'order' => 4,
+    ],
+];
+
+foreach ($subMenuObatAllkes as $subMenu) {
+    $menu = menu::create([
+        'name' => $subMenu['name'],
+        'url' => $subMenu['url'],
+        'icon' => $subMenu['icon'],
+        'parent_id' => $obatdanallkes->id,
+        'order' => $subMenu['order'],
+    ]);
+
+    if ($superAdminRole) {
+        $menu->roles()->attach($superAdminRole->id);
+    }
+
+    // Assign to Kasir role, atau role lain sesuai kebutuhan
+    if ($gudangRole) {
+        $menu->roles()->attach($gudangRole->id);
+    }
+}
+
+
         // Submenu Keuangan
         $subMenuKeuangan = [
             ['name' => 'Data Kasir', 'url' => '/datakasir', 'icon' => 'dollar-sign', 'order' => 1],
@@ -390,10 +412,10 @@ class MenuSeeder extends Seeder
 
         // Submenu inventaris
         $subMenusinventaris = [
-            ['name' => 'Data Inventaris', 'url' => '/data-inventaris', 'icon' => 'fas fa-database', 'order' => 1],
+            ['name' => 'Daftar Inventaris', 'url' => '/data-inventaris', 'icon' => 'fas fa-database', 'order' => 1],
             ['name' => 'Pembelian Inventaris', 'url' => '/inventaris-pembelian', 'icon' => 'fas fa-cart-plus', 'order' => 2],
-            ['name' => 'Inventaris Request', 'url' => '/data-master-gudang/inventaris-request', 'icon' => 'fas fa-paper-plane', 'order' => 3],
-            ['name' => 'Inventaris Utama', 'url' => '/data-master-gudang/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 4]
+            ['name' => 'Permintaan Inventaris', 'url' => '/data-master-gudang/inventaris-request', 'icon' => 'fas fa-paper-plane', 'order' => 3],
+            ['name' => 'Gudang Utama (Inventaris)', 'url' => '/data-master-gudang/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 4]
         ];
 
         foreach ($subMenusinventaris as $subMenu) {
