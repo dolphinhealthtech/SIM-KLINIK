@@ -44,16 +44,12 @@ use Illuminate\Validation\ValidationException;
 
 class soap extends Controller
 {
-<<<<<<< HEAD
-
     protected $PcareController;
 
     public function __construct(PcareController $PcareController)
     {
         $this->PcareController = $PcareController;
     }
-=======
->>>>>>> teknoapp/main
     public function pelayana()
     {
         $title = "Pelayanan";
@@ -316,7 +312,6 @@ class soap extends Controller
 
         $pelayanan = Pelayanan::with('pendaftaran.status')->where('nomor_register', $nomor_rawat)->first();
 
-<<<<<<< HEAD
         if (!$pelayanan) {
             return response()->json([
                 'success' => false,
@@ -420,23 +415,12 @@ class soap extends Controller
         if ($pelayanan->pendaftaran && $pelayanan->pendaftaran->status) {
             $pelayanan->pendaftaran->status->status_panggil = 3;
             $pelayanan->kunjungan = $noKunjungan;
-=======
-        if ($pelayanan && $pelayanan->pendaftaran && $pelayanan->pendaftaran->status) {
-            $pelayanan->pendaftaran->status->status_panggil = 3;
->>>>>>> teknoapp/main
             $pelayanan->pendaftaran->status->save();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Status panggil berhasil diperbarui.'
             ]);
-<<<<<<< HEAD
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Data status tidak ditemukan.'
-=======
         } else {
             return response()->json([
                 'success' => false,
@@ -448,7 +432,6 @@ class soap extends Controller
         return response()->json([
             'success' => false,
             'message' => 'Data tidak ditemukan atau belum memiliki status.'
->>>>>>> teknoapp/main
         ], 404);
     }
 
@@ -961,7 +944,7 @@ class soap extends Controller
         return $pdf->download('resep-obat.pdf'); // akan dibuka lewat blob di JS
     }
 
-<<<<<<< HEAD
+
     public function pelayana_rujukanadd(Request $request)
     {
         $request->validate([
@@ -1045,17 +1028,13 @@ class soap extends Controller
             ], 500);
         }
     }
-=======
->>>>>>> teknoapp/main
+
     public function pelayana_permintaan($norawat)
     {
         $nomor_rawat = base64_decode($norawat);
         $title = "Permintaan Pengecekan";
         $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien.kelamin','pendaftaran.penjamin','icd')->where('nomor_register', $nomor_rawat)->first();
-<<<<<<< HEAD
-=======
 
->>>>>>> teknoapp/main
         $tgl_lahir = Carbon::createFromFormat('Y-m-d', $pelayanan->pasien->tanggal_lahir);
         $diff = $tgl_lahir->diff(Carbon::now());
 
@@ -1590,7 +1569,6 @@ class soap extends Controller
                 'data' => $pelayanan
             ]);
         } elseif ($validated['penjamin'] === 'BPJS') {
-<<<<<<< HEAD
 
             if ($validated['opsi_rujukan'] === 'rujukan_khusus') {
                 $soap = pelayanan_soap_dokter::where('no_rawat', $pelayanan->nomor_register)->first();
@@ -1805,13 +1783,6 @@ class soap extends Controller
             } else {
                 return response()->json(['message' => 'Opsi rujukan tidak valid'], 400);
             }
-
-=======
-            return response()->json([
-                'message' => 'Data rujukan berhasil disimpan',
-                'data' => $pelayanan
-            ]);
->>>>>>> teknoapp/main
         }
 
         // return response()->json(['message' => 'Data rujukan berhasil disimpan']);
