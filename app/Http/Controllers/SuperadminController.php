@@ -355,8 +355,11 @@ class SuperadminController extends Controller
 
             // Toggle status: jika 1 jadi 0, jika 0 jadi 1
             $user->is_active = $user->is_active ? 0 : 1;
-
             $user->email_verified_at = $user->is_active ? now() : null; // Set email_verified_at jika diaktifkan
+            $user->save();
+
+            // Menentukan pesan berdasarkan status user
+            $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
 
             // Return response JSON untuk AJAX
             return response()->json([
@@ -4283,6 +4286,7 @@ public function panggilPasien($id)
         $kodepoli = $dokter->namapoli->kode;
         $tanggal = date('Y-m-d');
 
+        $listDokter = $this->PcareController->get_jadwal_dokter_bpjs($kodepoli, $tanggal)->getData(true); // Ambil data sebagai array
 
         if (!$listDokter) {
             Log::error("Tidak ada data dokter dari BPJS untuk poli {$kodepoli} tanggal {$tanggal}");
