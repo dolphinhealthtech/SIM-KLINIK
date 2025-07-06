@@ -1,5 +1,0 @@
-# Abaikan semua file di dalam folder setting
-public/setting/*
-
-# Kecuali default.png
-!public/setting/default.png

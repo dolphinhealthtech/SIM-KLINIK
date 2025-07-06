@@ -1,5 +1,0 @@
-# Abaikan semua file di dalam folder profile
-public/profile/*
-
-# Kecuali default.png
-!public/profile/default.png
