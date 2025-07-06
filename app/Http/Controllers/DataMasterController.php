@@ -704,19 +704,19 @@ class DataMasterController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Kelamin berhasil ditambahkan!',
+                'message' => 'Jenis Kelamin berhasil ditambahkan!',
                 'data' => $kelamin
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Kelamin Sudah ada!',
+                'message' => 'Jenis Kelamin Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Kelamin!',
+                'message' => 'Terjadi kesalahan saat menyimpan Jenis Kelamin!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -744,7 +744,7 @@ class DataMasterController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Kelamin berhasil diperbarui!'
+            'message' => 'Jenis Kelamin berhasil diperbarui!'
         ]);
     }
 
@@ -759,14 +759,14 @@ class DataMasterController extends Controller
         if (!$kelamin) {
             return response()->json([
                 'success' => false,
-                'message' => 'Kelamin tidak ditemukan!'
+                'message' => 'Jenis Kelamin tidak ditemukan!'
             ], 404);
         }
         $kelamin->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Kelamin berhasil dihapus!'
+            'message' => 'Jenis Kelamin berhasil dihapus!'
         ]);
     }
 

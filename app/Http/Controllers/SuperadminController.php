@@ -3940,19 +3940,19 @@ public function panggilPasien($id)
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Data Barang berhasil ditambahkan!',
+                'message' => 'Inventaris berhasil ditambahkan!',
                 'data' => $inventaris_data
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data Barang Sudah ada!',
+                'message' => 'Inventaris Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Data Barang!',
+                'message' => 'Terjadi kesalahan saat menyimpan Inventaris!',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -3985,7 +3985,7 @@ public function panggilPasien($id)
         if (!$inventaris) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data barang tidak ditemukan!'
+                'message' => 'Inventaris tidak ditemukan!'
             ], 404);
         }
 
@@ -4002,7 +4002,7 @@ public function panggilPasien($id)
 
         return response()->json([
             'success' => true,
-            'message' => 'Data barang berhasil diperbarui!'
+            'message' => 'Inventaris berhasil diperbarui!'
         ]);
     }
 
@@ -4018,7 +4018,7 @@ public function panggilPasien($id)
         if (!$inventaris) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data barang tidak ditemukan!'
+                'message' => 'Inventaris tidak ditemukan!'
             ], 404);
         }
 
@@ -4026,7 +4026,7 @@ public function panggilPasien($id)
 
         return response()->json([
             'success' => true,
-            'message' => 'Data barang berhasil dihapus!'
+            'message' => 'Inventaris berhasil dihapus!'
         ]);
     }
 
@@ -4092,18 +4092,18 @@ public function panggilPasien($id)
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Data barang berhasil ditambahkan!'
+                'message' => 'Inventaris berhasil ditambahkan!'
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data barang Sudah ada!',
+                'message' => 'Inventaris Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Data barang!',
+                'message' => 'Terjadi kesalahan saat menyimpan Inventaris!',
                 'error' => $e->getMessage()
             ], 500);
         }
