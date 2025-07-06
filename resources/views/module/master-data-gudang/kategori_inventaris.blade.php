@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Kategori Barang Inventaris</h1>
+                        <h1 class="m-0">Kategori Inventaris</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Kategori Barang Inventaris</h3>
+                                <h3 class="card-title">Kategori Inventaris</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#addkatinModal">
@@ -300,7 +300,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate katin!',
+                        text: 'Terjadi kesalahan saat mengupdate Kategori Inventaris!',
                     });
                 }
             });
@@ -312,7 +312,7 @@
 
             $('#katinid_delete').val(id);
             $('#deleteTextkatin').html(
-            `<span>Apa Anda yakin ingin menghapus data katin <b>${name}</b> ?</span>`);
+            `<span>Apa Anda yakin ingin menghapus data Kategori Inventaris <b>${name}</b> ?</span>`);
         });
 
         $('#deleteFormkatin').on('submit', function(e) {
@@ -349,7 +349,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Kategori!',
+                        text: 'Terjadi kesalahan saat menghapus Kategori Inventaris!',
                     });
                 }
             });
