@@ -287,7 +287,7 @@
 <!-- SCRIPT SECTION - DIPERBAIKI -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    
+
     // 1. Fetch total pendapatan harian
     fetch('/api/pendapatan-hari-ini')
         .then(response => response.json())

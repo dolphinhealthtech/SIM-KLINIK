@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Daftar Barang</h1>
+                        <h1 class="m-0">Daftar Obat</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Daftar Barang</h3>
+                                <h3 class="card-title">Daftar Obat</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#adddabarModal" >
@@ -160,7 +160,7 @@
                                     <input type="hidden" class="form-control" id="kode_barang" name="kode_barang">
                                     <div class="col-md-6">
                                         <div class="form-group position-relative">
-                                            <label for="nama_barang">Nama Barang</label>
+                                            <label for="nama_barang">Nama Obat</label>
                                             <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan Nama Barang" required>
                                             <!-- Container untuk saran/suggestions -->
                                             <div id="suggestions" class="list-group position-absolute w-100" style="z-index: 1000; display: none; max-height: 200px; overflow-y: auto;"></div>
@@ -184,7 +184,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="nama_industri_barang">Industri Barang</label>
+                                            <label for="nama_industri_barang">Industri Obat</label>
                                             <input type="text" class="form-control" id="nama_industri_barang" name="nama_industri_barang" placeholder="Industri Barang akan terisi otomatis" readonly>
                                         </div>
                                     </div>
@@ -282,9 +282,9 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="barang_kategori">Kategori Barang</label>
+                                            <label for="barang_kategori">Kategori Obat</label>
                                             <select class="form-control select2bs4" id="barang_kategori" name="barang_kategori">
-                                                <option value="" disabled selected>Pilih Kategori Barang</option>
+                                                <option value="" disabled selected>Pilih Kategori Obat</option>
                                                 @foreach ($kategori as $kategoriData)
                                                     <option value="{{ $kategoriData->nama }}">{{ $kategoriData->nama }}</option>
                                                 @endforeach
@@ -319,7 +319,7 @@
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Data Gudang Barang</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Data Gudang Obat</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -361,7 +361,7 @@
                                     <input type="hidden" class="form-control" id="kode_barang" name="kode_barang">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="nama_barang_edit">Nama Barang</label>
+                                            <label for="nama_barang_edit">Nama Obat</label>
                                             <input type="text" class="form-control" id="nama_barang_edit" name="nama_barang_edit" placeholder="Masukkan nama barang">
                                         </div>
                                     </div>
@@ -383,7 +383,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="industri_barang_edit">Industri Barang</label>
+                                            <label for="industri_barang_edit">Industri Obat</label>
                                             <input type="text" class="form-control" id="industri_barang_edit" name="industri_barang_edit" readonly value="PT 123">
                                         </div>
                                     </div>
@@ -481,7 +481,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="barang_kategori_edit">Kategori Barang</label>
+                                            <label for="barang_kategori_edit">Kategori Obat</label>
                                             <select class="form-control select2bs4" id="barang_kategori_edit" name="barang_kategori_edit">
                                                 <option value="" disabled selected>Pilih Kategori Barang</option>
                                                 @foreach ($kategori as $kategoriData)
@@ -519,7 +519,7 @@
         <form id="deleteFormdabar" action="{{ route('dabar.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data Barang</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data Obat</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -543,7 +543,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importdabarModalLabel">Import Data Barang</h5>
+                <h5 class="modal-title" id="importdabarModalLabel">Import Data Obat</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -569,7 +569,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="singkrondabarModalLabel">Sinkron Data Barang</h5>
+                <h5 class="modal-title" id="singkrondabarModalLabel">Sinkron Data Obat</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

@@ -50,5 +50,4 @@ class pelayanan extends Model
     {
         return $this->hasOne(pelayanan_soap_dokter_icd::class, 'no_rawat', 'nomor_register');
     }
-
 }
