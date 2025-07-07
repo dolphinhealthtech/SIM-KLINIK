@@ -309,29 +309,31 @@ class MenuSeeder extends Seeder
         // Submenu Obat dan Allkes
 $subMenuObatAllkes = [
     [
-        'name' => 'Daftar Barang',
+        'name' => 'Daftar Obat',
         'url' => '/data-barang',
         'icon' => 'pills',
         'order' => 1,
     ],
+    ['name' => 'Stok Obat', 'url' => '/data-master-gudang/stok-obat-alkes', 'icon' => 'boxes', 'order' => 2],
     [
         'name' => 'Gudang utama (obat)',
         'url' => '/data-master-gudang/gudang-utama',
         'icon' => 'fas fa-boxes',
-        'order' => 2,
+        'order' => 3,
     ],
     [
-        'name' => 'Permintaan obat',
+        'name' => 'Permintaan Obat',
         'url' => '/data-master-gudang/gudang-request',
         'icon' => 'fas fa-prescription-bottle',
-        'order' => 3,
+        'order' => 4,
     ],
     [
         'name' => 'Pembelian',
         'url' => '/pembelian',
         'icon' => 'shopping-cart',
-        'order' => 4,
+        'order' => 5,
     ],
+    
 ];
 
 foreach ($subMenuObatAllkes as $subMenu) {
@@ -415,7 +417,8 @@ foreach ($subMenuObatAllkes as $subMenu) {
             ['name' => 'Daftar Inventaris', 'url' => '/data-inventaris', 'icon' => 'fas fa-database', 'order' => 1],
             ['name' => 'Pembelian Inventaris', 'url' => '/inventaris-pembelian', 'icon' => 'fas fa-cart-plus', 'order' => 2],
             ['name' => 'Permintaan Inventaris', 'url' => '/data-master-gudang/inventaris-request', 'icon' => 'fas fa-paper-plane', 'order' => 3],
-            ['name' => 'Gudang Utama (Inventaris)', 'url' => '/data-master-gudang/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 4]
+            ['name' => 'Gudang Utama (Inventaris)', 'url' => '/data-master-gudang/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 4],
+            ['name' => 'Stok Inventaris', 'url' => '/data-master-gudang/stok-inventaris', 'icon' => 'fas fa-clipboard-list', 'order' => 5]
         ];
 
         foreach ($subMenusinventaris as $subMenu) {
@@ -667,15 +670,13 @@ foreach ($subMenuObatAllkes as $subMenu) {
 
         // Submenu untuk Data Master Gudang
         $subMenusDataMasterGudang = [
-            ['name' => 'Satuan', 'url' => '/data-master-gudang/satuan', 'icon' => 'ruler', 'order' => 1],
-            ['name' => 'Kategori', 'url' => '/data-master-gudang/kategori', 'icon' => 'tags', 'order' => 2],
-            ['name' => 'Supplier Industri', 'url' => '/data-master-gudang/supplier-industri', 'icon' => 'industry', 'order' => 3],
+            ['name' => 'Satuan Obat', 'url' => '/data-master-gudang/satuan', 'icon' => 'ruler', 'order' => 1],
+            ['name' => 'Kategori Obat', 'url' => '/data-master-gudang/kategori', 'icon' => 'tags', 'order' => 2],
+            ['name' => 'Supplier', 'url' => '/data-master-gudang/supplier-industri', 'icon' => 'industry', 'order' => 3],
             ['name' => 'Setting Harga Jual', 'url' => '/data-master-gudang/setting-harga-jual', 'icon' => 'money-bill-wave', 'order' => 4],
-            ['name' => 'Harga Jual', 'url' => '/data-master-gudang/harga-barang-jual', 'icon' => 'tag', 'order' => 5],
-            ['name' => 'Stok', 'url' => '/data-master-gudang/stok-obat-alkes', 'icon' => 'boxes', 'order' => 6],
-            ['name' => 'Satuan Inventaris', 'url' => '/data-master-gudang/satuan-inventaris', 'icon' => 'fas fa-ruler-combined', 'order' => 7],
-            ['name' => 'Kategori Inventaris', 'url' => '/data-master-gudang/kategori-inventaris', 'icon' => 'fas fa-layer-group', 'order' => 8],
-            ['name' => 'Stok Inventaris', 'url' => '/data-master-gudang/stok-inventaris', 'icon' => 'fas fa-clipboard-list', 'order' => 9]
+            ['name' => 'Daftar Harga Jual', 'url' => '/data-master-gudang/harga-barang-jual', 'icon' => 'tag', 'order' => 5],
+            ['name' => 'Satuan Inventaris', 'url' => '/data-master-gudang/satuan-inventaris', 'icon' => 'fas fa-ruler-combined', 'order' => 6],
+            ['name' => 'Kategori Inventaris', 'url' => '/data-master-gudang/kategori-inventaris', 'icon' => 'fas fa-layer-group', 'order' =>  7],  
         ];
 
         foreach ($subMenusDataMasterGudang as $subMenu) {

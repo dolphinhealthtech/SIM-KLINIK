@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Supplier Industri</h1>
+                        <h1 class="m-0">Supplier</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Supplier Industri</h3>
+                                <h3 class="card-title">Supplier</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#addsupplierModal">
@@ -51,7 +51,7 @@
                                     <thead>
                                         <tr>
                                             <th class="text-center">Kode</th>
-                                            <th class="text-center">Nama Supplier Industri</th>
+                                            <th class="text-center">Nama Supplier</th>
                                             <th class="text-center">Nama PIC</th>
                                             <th class="text-center">No. Telepon PIC</th>
                                             <th class="text-center" width="25%">Action</th>
@@ -101,7 +101,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Tambah Supplier Industri</h5>
+                <h5 class="modal-title" id="addModalLabel">Tambah Supplier</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -113,7 +113,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama Supplier Industri</label>
+                                <label>Nama Supplier</label>
                                 <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama Supplier Industri" required>
                             </div>
                         </div>
@@ -145,7 +145,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Supplier Industri</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Supplier</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -157,8 +157,8 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label>Nama Supplier Industri</label>
-                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Supplier Industri" required>
+                                <label>Nama Supplier</label>
+                                <input type="text" class="form-control" id="nama_edit" name="nama_edit" placeholder="Nama Supplier" required>
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -190,7 +190,7 @@
         <form id="deleteFormsupplier" action="{{ route('supplier.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Supplier Industri</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Supplier</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -214,7 +214,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="importsupplierModalLabel">Import Data Supplier Industri</h5>
+                <h5 class="modal-title" id="importsupplierModalLabel">Import Data Supplier</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

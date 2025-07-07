@@ -1315,7 +1315,7 @@ class DataMasterMedisController extends Controller
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Poli Sudah ada!',
+                'message' => 'sarana Sudah ada!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
