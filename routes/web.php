@@ -171,6 +171,12 @@ Route::prefix('pendataan')->group(function () {
     Route::get('/so-perawat', [SuperadminController::class,'pendataan_perawat'])->name('pendataan_perawat.get');
     Route::post('/print/perawat', [SuperadminController::class,'print_perawat'])->name('print_perawat');
 
+    Route::get('/stok-penyesuaian', [SuperadminController::class,'stok_penyesuaian'])->name('stok_penyesuaian.get');
+    Route::post('/print/stok-penyesuaian', [SuperadminController::class,'print_stok_penyesuaian'])->name('print_stok_penyesuaian');
+
+    Route::get('/stok-opname', [SuperadminController::class,'stok_opname'])->name('stok_opname.get');
+    Route::post('/print/stok-opname', [SuperadminController::class,'print_stok_opname'])->name('print_stok_opname');
+
     //Gudang utama
     Route::get('/gudang-utama', [DataMasterGudangController::class,'laporan_gudang_utama'])->name('laporan_gudang_utama.get');
     Route::post('/print/gudang-utama', [DataMasterGudangController::class,'print_gudang_utama'])->name('print_gudang_utama');
@@ -438,6 +444,9 @@ Route::post('/inventaris-pembelian/add', [SuperadminController::class, 'inventar
             Route::get('/setting-harga-jual/singkron/{id}', [DataMasterGudangController::class, 'sethargasingkron'])->name('setharga.singkron');
             Route::get('/harga-barang-jual', [DataMasterGudangController::class,'hargajual'])->name('hargajual.get');
             Route::get('/stok-obat-alkes', [DataMasterGudangController::class,'stokobatalkes'])->name('stokobatalkes.get');
+
+            Route::get('/stok-penyesuaian-opname', [DataMasterGudangController::class,'stok_penyesuaian'])->name('stok_penyesuaian.get');
+            Route::post('/stok-penyesuaian-opname/add', [DataMasterGudangController::class,'stok_penyesuaianadd'])->name('stok_penyesuaian.store');
 
             // Menu Satuan Inventaris
             Route::get('/satuan-inventaris', [DataMasterGudangController::class,'satuan_inventaris'])->name('satuan_inventaris.get');
