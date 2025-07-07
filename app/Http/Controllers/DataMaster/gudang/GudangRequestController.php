@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\DataMaster\inventaris;
+namespace App\Http\Controllers\DataMaster\gudang;
 
 use App\Http\Controllers\Controller;
 use App\Models\external_database;
