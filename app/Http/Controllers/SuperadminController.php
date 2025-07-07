@@ -72,6 +72,9 @@ use App\Models\inventaris_pembelian;
 use App\Models\inventaris_pembelian_detail;
 use App\Models\inventaris_stok;
 use App\Models\inventaris_satuan;
+use App\Models\gudang_penyesuaian_masuk;
+use App\Models\gudang_penyesuaian_keluar;
+use App\Models\gudang_stok_opname;
 use App\Exports\Inventaris_data_barangExport;
 use App\Imports\Inventaris_data_barangImport;
 use Carbon\Carbon;
@@ -3828,7 +3831,7 @@ public function panggilPasien($id)
 
     public function pendataan_dokter()
     {
-        $title = "Pendataan Pemeriksaan Dokter";
+        $title = "Data Pemeriksaan Dokter";
 
         $data = Pendaftaran_rawat_jalan::with('poli', 'dokter.namauser', 'pasien', 'penjamin', 'soap_dokter')
                 ->whereHas('soap_dokter')
@@ -3857,7 +3860,7 @@ public function panggilPasien($id)
 
     public function pendataan_perawat()
     {
-        $title = "Pendataan Pemeriksaan Perawat";
+        $title = "Data Pemeriksaan Perawat";
 
         $data = Pendaftaran_rawat_jalan::with('poli', 'dokter.namauser', 'pasien', 'penjamin', 'soap_perawat')
                 ->whereHas('soap_perawat')
@@ -3880,6 +3883,74 @@ public function panggilPasien($id)
                 ->setPaper('a4', 'landscape');
 
         $filename = 'laporan_pelayanan_perawat_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    public function stok_penyesuaian()
+    {
+        $title = "Laporan Selisih Mutasi & Penyesuaian";
+
+        // Gabungkan data masuk dan keluar menjadi satu collection
+        $data_masuk = gudang_penyesuaian_masuk::all()->map(function ($item) {
+            $item->tipe = 'MASUK';
+            return $item;
+        });
+
+        $data_keluar = gudang_penyesuaian_keluar::all()->map(function ($item) {
+            $item->tipe = 'KELUAR';
+            return $item;
+        });
+
+        // Gabung semua data
+        $data = $data_masuk->concat($data_keluar);
+
+        // dd($data);
+        return view('module.pendataan.stok_penyesuaian', compact('title', 'data'));
+    }
+
+    public function print_stok_penyesuaian(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $obat = $request->input('obat');
+        $jenis = $request->input('jenis');
+
+        $total_invoice = count($data);
+
+        $pdf = Pdf::loadView('pdf.data_mutasi_penyesuaian', compact('data', 'tanggal_awal', 'tanggal_akhir', 'obat', 'jenis', 'total_invoice'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'laporan_selisih_mutasi_penyesuaian_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
+
+        return $pdf->stream($filename); // tampilkan langsung di tab baru
+    }
+
+    public function stok_opname()
+    {
+        $title = "Laporan Stok Opname";
+
+        $data = gudang_stok_opname::all();
+
+        // dd($data);
+        return view('module.pendataan.stok_opname', compact('title', 'data'));
+    }
+
+
+    public function print_stok_opname(Request $request)
+    {
+        $data = json_decode($request->input('data'), true); // penting! decode data JSON
+        $tanggal_awal = $request->input('tanggal_awal');
+        $tanggal_akhir = $request->input('tanggal_akhir');
+        $obat = $request->input('obat');
+
+        $total_invoice = count($data);
+
+        $pdf = Pdf::loadView('pdf.data_stok_opname', compact('data', 'tanggal_awal', 'tanggal_akhir', 'obat', 'total_invoice'))
+                ->setPaper('a4', 'landscape');
+
+        $filename = 'laporan_stok_opname_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
 
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
