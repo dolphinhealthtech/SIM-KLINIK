@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Data Barang</h3>
+                                <h3 class="card-title">Inventaris</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#addinventarisModal" >
@@ -112,7 +112,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addinventarisModalLabel">Tambah Data Barang</h5>
+                <h5 class="modal-title" id="addinventarisModalLabel">Tambah Inventaris</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -186,7 +186,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Data Barang</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Inventaris</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -262,7 +262,7 @@
         <form id="deleteForminventaris" action="{{ route('inventaris.destroy') }}" method="POST">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Hapus Data Barang</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Hapus Inventaris</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
@@ -312,7 +312,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="singkroninventarisModalLabel">Sinkron Data Barang</h5>
+                <h5 class="modal-title" id="singkroninventarisModalLabel">Sinkron Inventaris</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
