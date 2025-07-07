@@ -56,7 +56,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">
-                                    Selamat datang {{ Auth::user()->name; }}
+                                    Selamat datang {{ Auth::user()->name;}}
                                 </h3>
                             </div><!-- /.card-header -->
                             <div class="card-body">
