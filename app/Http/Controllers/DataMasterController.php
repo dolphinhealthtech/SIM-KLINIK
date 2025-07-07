@@ -50,528 +50,24 @@ class DataMasterController extends Controller
     // Golongan darah end
 
     // Suku Start
-    public function suku()
-    {
-        $title = "Master Suku";
-        $suku = suku::all();
-        return view('module.master-data.suku', compact('title','suku'));
-    }
 
-    public function sukuadd(Request $request)
-    {
-        try {
-            $request->validate([
-                "nama" => 'required|string|unique:sukus,nama',
-            ]);
-
-            $suku = suku::create([
-                'nama' => $request->nama
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Suku berhasil ditambahkan!',
-                'data' => $suku
-            ], 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Suku Sudah ada!',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Suku!',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function sukuedit(Request $request)
-    {
-        $request->validate([
-            'nama_edit' => 'required|string',
-        ]);
-
-        $suku = suku::find($request->sukuid_edit);
-
-        if (!$suku) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Suku tidak ditemukan!'
-            ], 404);
-        }
-
-        $suku->nama = $request->nama_edit;
-        $suku->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'suku berhasil diperbarui!'
-        ]);
-    }
-
-    public function sukudelete(Request $request)
-    {
-
-        $request->validate([
-            'sukuid_delete' => 'required'
-        ]);
-
-        $suku = suku::find($request->sukuid_delete);
-        if (!$suku) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Suku tidak ditemukan!'
-            ], 404);
-        }
-        $suku->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Suku berhasil dihapus!'
-        ]);
-    }
-
-    public function sukuexport()
-    {
-        return Excel::download(new SukuExport, 'suku.xlsx');
-    }
-
-    public function sukuimport(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls'
-        ]);
-
-        Excel::import(new SukuImport, $request->file('file'));
-
-
-        return redirect()->route('suku.get')->with('success', 'Data berhasil diimpor!');
-    }
     // Suku End
 
     // Bangsa Start
-    public function bangsa()
-    {
-        $title = "Master Bangsa";
-        $bangsa = bangsa::all();
-        return view('module.master-data.bangsa', compact('title','bangsa'));
-    }
 
-    public function bangsaadd(Request $request)
-    {
-        try {
-            $request->validate([
-                "nama" => 'required|string|unique:bangsas,nama',
-            ]);
-
-            $bangsa = bangsa::create([
-                'nama' => $request->nama
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'bangsa berhasil ditambahkan!',
-                'data' => $bangsa
-            ], 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bangsa Sudah ada!',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Bangsa!',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function bangsaedit(Request $request)
-    {
-        $request->validate([
-            'nama_edit' => 'required|string',
-        ]);
-
-        $bangsa = bangsa::find($request->bangsaid_edit);
-
-        if (!$bangsa) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bangsa tidak ditemukan!'
-            ], 404);
-        }
-
-        $bangsa->nama = $request->nama_edit;
-        $bangsa->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Bangsa berhasil diperbarui!'
-        ]);
-    }
-
-    public function bangsadelete(Request $request)
-    {
-
-        $request->validate([
-            'bahasaid_delete' => 'required'
-        ]);
-
-        $bangsa = bangsa::find($request->bahasaid_delete);
-        if (!$bangsa) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bangsa tidak ditemukan!'
-            ], 404);
-        }
-        $bangsa->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Bangsa berhasil dihapus!'
-        ]);
-    }
-
-    public function bangsaexport()
-    {
-        return Excel::download(new BangsaExport, 'bangsa.xlsx');
-    }
-
-    public function bangsaimport(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls'
-        ]);
-
-        Excel::import(new BangsaImport, $request->file('file'));
-
-
-        return redirect()->route('bangsa.get')->with('success', 'Data berhasil diimpor!');
-    }
     // Bangsa end
 
 
     // Bahasa Start
-    public function bahasa()
-    {
-        $title = "Master Bahasa";
-        $bahasa = bahasa::all();
-        return view('module.master-data.bahasa', compact('title','bahasa'));
-    }
 
-    public function bahasaadd(Request $request)
-    {
-        try {
-            $request->validate([
-                "nama" => 'required|string|unique:bahasas,nama',
-            ]);
-
-            $bahasa = bahasa::create([
-                'nama' => $request->nama
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Bahasa berhasil ditambahkan!',
-                'data' => $bahasa
-            ], 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bahasa Sudah ada!',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Bahasa!',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function bahasaedit(Request $request)
-    {
-        $request->validate([
-            'nama_edit' => 'required|string',
-        ]);
-
-        $bahasa = bahasa::find($request->bahasaid_edit);
-
-        if (!$bahasa) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bahasa tidak ditemukan!'
-            ], 404);
-        }
-
-        $bahasa->nama = $request->nama_edit;
-        $bahasa->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Bahasa berhasil diperbarui!'
-        ]);
-    }
-
-    public function bahasadelete(Request $request)
-    {
-
-        $request->validate([
-            'bahasaid_delete' => 'required'
-        ]);
-
-        $bahasa = bahasa::find($request->bahasaid_delete);
-        if (!$bahasa) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bahasa tidak ditemukan!'
-            ], 404);
-        }
-        $bahasa->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Bahasa berhasil dihapus!'
-        ]);
-    }
-
-    public function bahasaexport()
-    {
-        return Excel::download(new BahasaExport, 'bahasa.xlsx');
-    }
-
-    public function bahasaimport(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls'
-        ]);
-
-        Excel::import(new BahasaImport, $request->file('file'));
-
-
-        return redirect()->route('bahasa.get')->with('success', 'Data berhasil diimpor!');
-    }
     // Bahasa end
 
     // Agama start
-    public function agama()
-    {
-        $title = "Master Agama";
-        $agama = agama::all();
-        return view('module.master-data.agama', compact('title','agama'));
-    }
 
-    public function agamaadd(Request $request)
-    {
-        try {
-            $request->validate([
-                "nama" => 'required|string|unique:agamas,nama',
-            ]);
-
-            $agama = agama::create([
-                'nama' => $request->nama
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Agama berhasil ditambahkan!',
-                'data' => $agama
-            ], 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Agama Sudah ada!',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Agama!',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function agamaedit(Request $request)
-    {
-        $request->validate([
-            'nama_edit' => 'required|string',
-        ]);
-
-        $agama = agama::find($request->agamaid_edit);
-
-        if (!$agama) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Agama tidak ditemukan!'
-            ], 404);
-        }
-
-        $agama->nama = $request->nama_edit;
-        $agama->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Agama berhasil diperbarui!'
-        ]);
-    }
-
-    public function agamadelete(Request $request)
-    {
-
-        $request->validate([
-            'agamaid_delete' => 'required'
-        ]);
-
-        $agama = agama::find($request->agamaid_delete);
-        if (!$agama) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Agama tidak ditemukan!'
-            ], 404);
-        }
-        $agama->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Agama berhasil dihapus!'
-        ]);
-    }
-
-    public function agamaexport()
-    {
-        return Excel::download(new AgamaExport, 'Agama.xlsx');
-    }
-
-    public function agamaimport(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls'
-        ]);
-
-        Excel::import(new AgamaImport, $request->file('file'));
-
-
-        return redirect()->route('agama.get')->with('success', 'Data berhasil diimpor!');
-    }
     // Agama End
 
     // Pendidikan Start
-    public function pendidikan()
-    {
-        $title = "Master Pendidikan";
-        $pendidikan = pendidikan::all();
-        return view('module.master-data.pendidikan', compact('title','pendidikan'));
-    }
 
-    public function pendidikanadd(Request $request)
-    {
-        try {
-            $request->validate([
-                "nama" => 'required|string|unique:pendidikans,nama',
-                "kode" => 'required|string|unique:pendidikans,kode',
-                "urutan" => 'required|string|unique:pendidikans,urutan',
-            ]);
-
-            $pendidikan = pendidikan::create([
-                'nama' => $request->nama,
-                'kode' => $request->kode,
-                'urutan' => $request->urutan,
-
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Pendidikan berhasil ditambahkan!',
-                'data' => $pendidikan
-            ], 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Pendidikan Sudah ada!',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Pendidikan!',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function pendidikanedit(Request $request)
-    {
-        $request->validate([
-            'nama_edit' => 'required|string',
-            'kode_edit' => 'required|string',
-            'urutan_edit' => 'required|string',
-        ]);
-
-        $pendidikan = pendidikan::find($request->pendidikanid_edit);
-
-        if (!$pendidikan) {
-            return response()->json([
-                'success' => false,
-                'message' => 'pendidikan tidak ditemukan!'
-            ], 404);
-        }
-
-        $pendidikan->nama = $request->nama_edit;
-        $pendidikan->kode = $request->kode_edit;
-        $pendidikan->urutan = $request->urutan_edit;
-        $pendidikan->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Pendidikan berhasil diperbarui!'
-        ]);
-    }
-
-    public function pendidikandelete(Request $request)
-    {
-
-        $request->validate([
-            'pendidikanid_delete' => 'required'
-        ]);
-
-        $pendidikan = pendidikan::find($request->pendidikanid_delete);
-        if (!$pendidikan) {
-            return response()->json([
-                'success' => false,
-                'message' => 'pendidikan tidak ditemukan!'
-            ], 404);
-        }
-        $pendidikan->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'pendidikan berhasil dihapus!'
-        ]);
-    }
-
-    public function pendidikanexport()
-    {
-        return Excel::download(new PendidikanExport, 'Pendidikan.xlsx');
-    }
-
-    public function pendidikanimport(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls'
-        ]);
-
-        Excel::import(new PendidikanImport, $request->file('file'));
-
-
-        return redirect()->route('pendidikan.get')->with('success', 'Data berhasil diimpor!');
-    }
     // Pendidikan End
 
     // Jenis Kelamin Start
@@ -579,7 +75,7 @@ class DataMasterController extends Controller
     {
         $title = "Master Jenis Kelamin";
         $kelamin = kelamin::all();
-        return view('module.master-data.kelamin', compact('title','kelamin'));
+        return view('module.master-data.kelamin', compact('title', 'kelamin'));
     }
 
     public function kelaminadd(Request $request)
@@ -686,7 +182,7 @@ class DataMasterController extends Controller
     {
         $title = "Master Pernikahan";
         $pernikahan = pernikahan::all();
-        return view('module.master-data.pernikahan', compact('title','pernikahan'));
+        return view('module.master-data.pernikahan', compact('title', 'pernikahan'));
     }
 
     public function pernikahanadd(Request $request)
@@ -785,174 +281,174 @@ class DataMasterController extends Controller
     // Pernikahan End
 
 
-     // Pernikahan Start
+    // Pernikahan Start
     public function pekerjaan()
     {
-         $title = "Master Pekerjaan";
-         $pekerjaan = pekerjaan::all();
-         return view('module.master-data.pekerjaan', compact('title','pekerjaan'));
+        $title = "Master Pekerjaan";
+        $pekerjaan = pekerjaan::all();
+        return view('module.master-data.pekerjaan', compact('title', 'pekerjaan'));
     }
 
     public function pekerjaanadd(Request $request)
     {
-         try {
-             $request->validate([
-                 "nama" => 'required|string|unique:pekerjaans,nama',
-             ]);
+        try {
+            $request->validate([
+                "nama" => 'required|string|unique:pekerjaans,nama',
+            ]);
 
-             $pekerjaan = pekerjaan::create([
-                 'nama' => $request->nama,
-             ]);
+            $pekerjaan = pekerjaan::create([
+                'nama' => $request->nama,
+            ]);
 
-             return response()->json([
-                 'success' => true,
-                 'message' => 'pekerjaan berhasil ditambahkan!',
-                 'data' => $pekerjaan
-             ], 201);
-         } catch (ValidationException $e) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'pekerjaan Sudah ada!',
-                 'errors' => $e->errors()
-             ], 422);
-         } catch (\Exception $e) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'Terjadi kesalahan saat menyimpan pekerjaan!',
-                 'error' => $e->getMessage()
-             ], 500);
-         }
+            return response()->json([
+                'success' => true,
+                'message' => 'pekerjaan berhasil ditambahkan!',
+                'data' => $pekerjaan
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'pekerjaan Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan pekerjaan!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function pekerjaanedit(Request $request)
     {
-         $request->validate([
-             'nama_edit' => 'required|string',
-         ]);
+        $request->validate([
+            'nama_edit' => 'required|string',
+        ]);
 
-         $pekerjaan = pekerjaan::find($request->pekerjaanid_edit);
+        $pekerjaan = pekerjaan::find($request->pekerjaanid_edit);
 
-         if (!$pekerjaan) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'pekerjaan tidak ditemukan!'
-             ], 404);
-         }
+        if (!$pekerjaan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'pekerjaan tidak ditemukan!'
+            ], 404);
+        }
 
-         $pekerjaan->nama = $request->nama_edit;
-         $pekerjaan->save();
+        $pekerjaan->nama = $request->nama_edit;
+        $pekerjaan->save();
 
-         return response()->json([
-             'success' => true,
-             'message' => 'pekerjaan berhasil diperbarui!'
-         ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'pekerjaan berhasil diperbarui!'
+        ]);
     }
 
-     public function pekerjaandelete(Request $request)
-     {
+    public function pekerjaandelete(Request $request)
+    {
 
-         $request->validate([
-             'pekerjaanid_delete' => 'required'
-         ]);
+        $request->validate([
+            'pekerjaanid_delete' => 'required'
+        ]);
 
-         $pekerjaan = pekerjaan::find($request->pekerjaanid_delete);
-         if (!$pekerjaan) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'pekerjaan tidak ditemukan!'
-             ], 404);
-         }
-         $pekerjaan->delete();
+        $pekerjaan = pekerjaan::find($request->pekerjaanid_delete);
+        if (!$pekerjaan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'pekerjaan tidak ditemukan!'
+            ], 404);
+        }
+        $pekerjaan->delete();
 
-         return response()->json([
-             'success' => true,
-             'message' => 'pekerjaan berhasil dihapus!'
-         ]);
-     }
+        return response()->json([
+            'success' => true,
+            'message' => 'pekerjaan berhasil dihapus!'
+        ]);
+    }
 
     public function pekerjaanexport()
     {
-         return Excel::download(new PekerjaanExport, 'Pekerjaan.xlsx');
+        return Excel::download(new PekerjaanExport, 'Pekerjaan.xlsx');
     }
 
     public function pekerjaanimport(Request $request)
     {
         $request->validate([
-             'file' => 'required|mimes:xlsx,xls'
-         ]);
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
 
-         Excel::import(new PekerjaanImport, $request->file('file'));
+        Excel::import(new PekerjaanImport, $request->file('file'));
 
 
-         return redirect()->route('pekerjaan.get')->with('success', 'Data berhasil diimpor!');
+        return redirect()->route('pekerjaan.get')->with('success', 'Data berhasil diimpor!');
     }
-     // Pernikahan End
+    // Pernikahan End
 
 
     public function bank()
     {
-         $title = "Master Bnak";
-         $bank = bank::all();
-         return view('module.master-data.bank', compact('title','bank'));
+        $title = "Master Bnak";
+        $bank = bank::all();
+        return view('module.master-data.bank', compact('title', 'bank'));
     }
 
     public function bankadd(Request $request)
     {
-         try {
-             $request->validate([
-                 "nama" => 'required|string|unique:banks,nama',
-                 "kode" => 'required|string|unique:banks,kode',
-             ]);
+        try {
+            $request->validate([
+                "nama" => 'required|string|unique:banks,nama',
+                "kode" => 'required|string|unique:banks,kode',
+            ]);
 
-             $bank = bank::create([
-                 'nama' => $request->nama,
-                 'kode' => $request->kode,
-             ]);
+            $bank = bank::create([
+                'nama' => $request->nama,
+                'kode' => $request->kode,
+            ]);
 
-             return response()->json([
-                 'success' => true,
-                 'message' => 'bank berhasil ditambahkan!',
-                 'data' => $bank
-             ], 201);
-         } catch (ValidationException $e) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'bank Sudah ada!',
-                 'errors' => $e->errors()
-             ], 422);
-         } catch (\Exception $e) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'Terjadi kesalahan saat menyimpan bank!',
-                 'error' => $e->getMessage()
-             ], 500);
-         }
+            return response()->json([
+                'success' => true,
+                'message' => 'bank berhasil ditambahkan!',
+                'data' => $bank
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'bank Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan bank!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function bankedit(Request $request)
     {
-         $request->validate([
-             'nama_edit' => 'required|string',
-             'kode_edit' => 'required|string',
-         ]);
+        $request->validate([
+            'nama_edit' => 'required|string',
+            'kode_edit' => 'required|string',
+        ]);
 
-         $bank = bank::find($request->bankid_edit);
+        $bank = bank::find($request->bankid_edit);
 
-         if (!$bank) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'bank tidak ditemukan!'
-             ], 404);
-         }
+        if (!$bank) {
+            return response()->json([
+                'success' => false,
+                'message' => 'bank tidak ditemukan!'
+            ], 404);
+        }
 
-         $bank->nama = $request->nama_edit;
-         $bank->kode = $request->kode_edit;
-         $bank->save();
+        $bank->nama = $request->nama_edit;
+        $bank->kode = $request->kode_edit;
+        $bank->save();
 
-         return response()->json([
-             'success' => true,
-             'message' => 'bank berhasil diperbarui!'
-         ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'bank berhasil diperbarui!'
+        ]);
     }
 
     public function bankdelete(Request $request)
@@ -979,83 +475,83 @@ class DataMasterController extends Controller
 
     public function bankexport()
     {
-         return Excel::download(new BankExport, 'bank.xlsx');
+        return Excel::download(new BankExport, 'bank.xlsx');
     }
 
     public function bankimport(Request $request)
     {
         $request->validate([
-             'file' => 'required|mimes:xlsx,xls'
-         ]);
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
 
-         Excel::import(new BankImport, $request->file('file'));
+        Excel::import(new BankImport, $request->file('file'));
 
 
-         return redirect()->route('bank.get')->with('success', 'Data berhasil diimpor!');
+        return redirect()->route('bank.get')->with('success', 'Data berhasil diimpor!');
     }
 
     // Penjamin
 
     public function penjamin()
     {
-         $title = "Master Penjamin";
-         $penjamin = penjamin::all();
-         return view('module.master-data.penjamin', compact('title','penjamin'));
+        $title = "Master Penjamin";
+        $penjamin = penjamin::all();
+        return view('module.master-data.penjamin', compact('title', 'penjamin'));
     }
 
     public function penjaminadd(Request $request)
     {
-         try {
-             $request->validate([
-                 "nama" => 'required|string|unique:penjamins,nama',
-             ]);
+        try {
+            $request->validate([
+                "nama" => 'required|string|unique:penjamins,nama',
+            ]);
 
-             $penjamin = penjamin::create([
-                 'nama' => $request->nama,
-             ]);
+            $penjamin = penjamin::create([
+                'nama' => $request->nama,
+            ]);
 
-             return response()->json([
-                 'success' => true,
-                 'message' => 'Penjamin berhasil ditambahkan!',
-                 'data' => $penjamin
-             ], 201);
-         } catch (ValidationException $e) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'Penjamin Sudah ada!',
-                 'errors' => $e->errors()
-             ], 422);
-         } catch (\Exception $e) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'Terjadi kesalahan saat menyimpan Penjamin!',
-                 'error' => $e->getMessage()
-             ], 500);
-         }
+            return response()->json([
+                'success' => true,
+                'message' => 'Penjamin berhasil ditambahkan!',
+                'data' => $penjamin
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Penjamin Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Penjamin!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function penjaminedit(Request $request)
     {
-         $request->validate([
-             'nama_edit' => 'required|string',
-         ]);
+        $request->validate([
+            'nama_edit' => 'required|string',
+        ]);
 
-         $penjamin = penjamin::find($request->penjaminid_edit);
+        $penjamin = penjamin::find($request->penjaminid_edit);
 
-         if (!$penjamin) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'Penjamin tidak ditemukan!'
-             ], 404);
-         }
+        if (!$penjamin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Penjamin tidak ditemukan!'
+            ], 404);
+        }
 
-         $penjamin->nama = $request->nama_edit;
-         $penjamin->save();
+        $penjamin->nama = $request->nama_edit;
+        $penjamin->save();
 
-         return response()->json([
-             'success' => true,
-             'message' => 'Penjamin berhasil diperbarui!'
-         ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Penjamin berhasil diperbarui!'
+        ]);
     }
 
     public function penjamindelete(Request $request)
@@ -1082,19 +578,19 @@ class DataMasterController extends Controller
 
     public function penjaminexport()
     {
-         return Excel::download(new PenjaminExport, 'penjamin.xlsx');
+        return Excel::download(new PenjaminExport, 'penjamin.xlsx');
     }
 
     public function penjaminimport(Request $request)
     {
         $request->validate([
-             'file' => 'required|mimes:xlsx,xls'
-         ]);
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
 
-         Excel::import(new PenjaminImport, $request->file('file'));
+        Excel::import(new PenjaminImport, $request->file('file'));
 
 
-         return redirect()->route('penjamin.get')->with('success', 'Data berhasil diimpor!');
+        return redirect()->route('penjamin.get')->with('success', 'Data berhasil diimpor!');
     }
 
     // End Penjamin
@@ -1103,69 +599,69 @@ class DataMasterController extends Controller
     // antrian
     public function loket()
     {
-         $title = "Master Loket Antrian";
-         $loket = loket::with('poli')->get();
-         $poli = poli::all();
-         return view('module.master-data.loket', compact('title','loket','poli'));
+        $title = "Master Loket Antrian";
+        $loket = loket::with('poli')->get();
+        $poli = poli::all();
+        return view('module.master-data.loket', compact('title', 'loket', 'poli'));
     }
 
     public function loketadd(Request $request)
     {
-         try {
-             $request->validate([
-                 "nama" => 'required|string|unique:lokets,nama',
-                 "poli_id" => 'required',
-             ]);
+        try {
+            $request->validate([
+                "nama" => 'required|string|unique:lokets,nama',
+                "poli_id" => 'required',
+            ]);
 
-             $penjamin = loket::create([
-                 'nama' => $request->nama,
-                 'poli_id' => $request->poli_id,
-             ]);
+            $penjamin = loket::create([
+                'nama' => $request->nama,
+                'poli_id' => $request->poli_id,
+            ]);
 
-             return response()->json([
-                 'success' => true,
-                 'message' => 'Loket berhasil ditambahkan!',
-                 'data' => $penjamin
-             ], 201);
-         } catch (ValidationException $e) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'Loket Sudah ada!',
-                 'errors' => $e->errors()
-             ], 422);
-         } catch (\Exception $e) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'Terjadi kesalahan saat menyimpan Loket!',
-                 'error' => $e->getMessage()
-             ], 500);
-         }
+            return response()->json([
+                'success' => true,
+                'message' => 'Loket berhasil ditambahkan!',
+                'data' => $penjamin
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Loket Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Loket!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function loketedit(Request $request)
     {
-         $request->validate([
-             'nama_edit' => 'required|string',
-             'poli_edit' => 'required|string',
-         ]);
+        $request->validate([
+            'nama_edit' => 'required|string',
+            'poli_edit' => 'required|string',
+        ]);
 
-         $loket = loket::find($request->loketid_edit);
+        $loket = loket::find($request->loketid_edit);
 
-         if (!$loket) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'loket tidak ditemukan!'
-             ], 404);
-         }
+        if (!$loket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'loket tidak ditemukan!'
+            ], 404);
+        }
 
-         $loket->nama = $request->nama_edit;
-         $loket->poli_id = $request->poli_edit;
-         $loket->save();
+        $loket->nama = $request->nama_edit;
+        $loket->poli_id = $request->poli_edit;
+        $loket->save();
 
-         return response()->json([
-             'success' => true,
-             'message' => 'loket berhasil diperbarui!'
-         ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'loket berhasil diperbarui!'
+        ]);
     }
 
     public function loketdelete(Request $request)
@@ -1193,19 +689,18 @@ class DataMasterController extends Controller
 
     public function loketexport()
     {
-         return Excel::download(new LoketExport, 'loket.xlsx');
+        return Excel::download(new LoketExport, 'loket.xlsx');
     }
 
     public function loketimport(Request $request)
     {
         $request->validate([
-             'file' => 'required|mimes:xlsx,xls'
-         ]);
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
 
-         Excel::import(new LoketImport, $request->file('file'));
+        Excel::import(new LoketImport, $request->file('file'));
 
 
-         return redirect()->route('loket.get')->with('success', 'Data berhasil diimpor!');
+        return redirect()->route('loket.get')->with('success', 'Data berhasil diimpor!');
     }
-
 }
