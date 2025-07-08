@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\soap\PelayananController;
+use App\Http\Controllers\Soap\PelayananController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Panggil Pasien

@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\DataMaster\soap\PelayananController;
-use App\Http\Controllers\DataMaster\soap\OdoController;
-use App\Http\Controllers\DataMaster\soap\RujukanController;
+use App\Http\Controllers\Soap\PelayananController;
+use App\Http\Controllers\Soap\OdoController;
+use App\Http\Controllers\Soap\RujukanController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Pemeriksaan

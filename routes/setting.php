@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\UserController;
-use App\Http\Controllers\DataMaster\superadmin\MonitorController;
+use App\Http\Controllers\SuperAdmin\UserController;
+use App\Http\Controllers\SuperAdmin\MonitorController;
 use App\Http\Controllers\WebSettingController;
 use Illuminate\Support\Facades\Route;
 

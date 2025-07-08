@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\KasirController;
+use App\Http\Controllers\SuperAdmin\KasirController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Kasir

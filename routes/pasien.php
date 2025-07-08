@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\PasienController;
+use App\Http\Controllers\SuperAdmin\PasienController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Pasien

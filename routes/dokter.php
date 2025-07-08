@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\DokterController;
+use App\Http\Controllers\SuperAdmin\DokterController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Dokter

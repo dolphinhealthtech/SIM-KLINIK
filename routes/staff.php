@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\StaffController;
+use App\Http\Controllers\SuperAdmin\StaffController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Staff

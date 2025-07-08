@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\PendaftaranController;
+use App\Http\Controllers\SuperAdmin\PendaftaranController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Pendaftaran

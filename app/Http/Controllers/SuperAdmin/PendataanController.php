@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\DataMaster\superadmin;
+namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\gudang_penyesuaian_keluar;

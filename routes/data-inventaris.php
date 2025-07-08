@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\InventarisController;
+use App\Http\Controllers\SuperAdmin\InventarisController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Inventaris

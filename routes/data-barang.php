@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\DabarController;
+use App\Http\Controllers\SuperAdmin\DabarController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Data Barang (obat)

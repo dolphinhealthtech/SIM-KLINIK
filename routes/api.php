@@ -4,10 +4,24 @@ use App\Http\Controllers\dashboard;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PcareController;
 use App\Http\Controllers\SatusehatController;
-use App\Http\Controllers\SuperadminController;
-use App\Http\Controllers\DataMasterMedisController;
-use App\Http\Controllers\DataMasterGudangController;
-use App\Http\Controllers\soap;
+use App\Http\Controllers\SuperAdmin\ApotekController;
+use App\Http\Controllers\SuperAdmin\DabarController;
+use App\Http\Controllers\SuperAdmin\DokterController;
+use App\Http\Controllers\SuperAdmin\InventarisController;
+use App\Http\Controllers\SuperAdmin\KasirController;
+use App\Http\Controllers\SuperAdmin\PasienController;
+use App\Http\Controllers\SuperAdmin\PembelianController;
+use App\Http\Controllers\SuperAdmin\PendaftaranController;
+use App\Http\Controllers\SuperAdmin\StaffController;
+use App\Http\Controllers\DataMaster\gudang\GudangRequestController;
+use App\Http\Controllers\DataMaster\gudang\GudangUtamaController;
+use App\Http\Controllers\DataMaster\gudang\SupplierController;
+use App\Http\Controllers\DataMaster\inventaris\InventarisRequestController;
+use App\Http\Controllers\DataMaster\inventaris\InventarisUtamaController;
+use App\Http\Controllers\DataMaster\medis\PerawatanTindakanController;
+use App\Http\Controllers\Soap\OdoController;
+use App\Http\Controllers\Soap\PelayananController;
+use App\Http\Controllers\Soap\RujukanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,39 +29,38 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/get-pasien/{id}', [SuperadminController::class, 'getPasien']);
-Route::post('/get-pasien-nikornoka', [SuperadminController::class, 'cariNikNoka']);
-Route::post('/get-pasien-nikornama', [SuperadminController::class, 'cariNikNama']);
-Route::get('/get-dokter/{id}', [SuperadminController::class, 'getDokter']);
-Route::get('/get-staff/{id}', [SuperadminController::class, 'getStaff']);
-Route::get('/get-dokter-all/{id}', [SuperadminController::class, 'getDokterEdit']);
-Route::get('/get-staff-all/{id}', [SuperadminController::class, 'getStaffEdit']);
-Route::get('/jadwal/json/{id}', [SuperadminController::class, 'dokterjadwaljson']);
-Route::get('/get-dokter-by-poli/{id}', [SuperadminController::class, 'getByPoli']);
-Route::get('/generate-kode-data-barang', [SuperadminController::class, 'generateKodeDataBarang'])->name('generateKodeDataBarang');
-Route::get('/generate-faktur-pembelian', [SuperadminController::class, 'generateFakturPembelian'])->name('generateFakturPembelian');
-Route::get('/generate-kode-inventaris', [SuperadminController::class, 'generateKodeInventaris'])->name('generateKodeInventaris');
-Route::get('/generate-kode-pembelian-inventaris', [SuperadminController::class, 'generatePembelianInventaris'])->name('generatePembelianInventaris');
+Route::get('/get-pasien/{id}', [PasienController::class, 'getPasien']);
+Route::post('/get-pasien-nikornoka', [PasienController::class, 'cariNikNoka']);
+Route::post('/get-pasien-nikornama', [PasienController::class, 'cariNikNama']);
+Route::get('/get-dokter/{id}', [DokterController::class, 'getDokter']);
+Route::get('/get-staff/{id}', [StaffController::class, 'getStaff']);
+Route::get('/get-dokter-all/{id}', [DokterController::class, 'getDokterEdit']);
+Route::get('/get-staff-all/{id}', [StaffController::class, 'getStaffEdit']);
+Route::get('/jadwal/json/{id}', [DokterController::class, 'dokterjadwaljson']);
+Route::get('/get-dokter-by-poli/{id}', [PendaftaranController::class, 'getByPoli']);
+Route::get('/generate-kode-data-barang', [DabarController::class, 'generateKodeDataBarang'])->name('generateKodeDataBarang');
+Route::get('/generate-faktur-pembelian', [PembelianController::class, 'generateFakturPembelian'])->name('generateFakturPembelian');
+Route::get('/generate-kode-inventaris', [InventarisController::class, 'generateKodeInventaris'])->name('generateKodeInventaris');
+Route::get('/generate-kode-pembelian-inventaris', [InventarisController::class, 'generatePembelianInventaris'])->name('generatePembelianInventaris');
 
-Route::get('/sub-pemeriksaan/{id}', [soap::class, 'getSubPemeriksaan']);
-Route::get('/alergi/by-jenis/{id}', [soap::class, 'getByJenis']);
-Route::get('/dokter/data/so/{norawat}', [soap::class,'soappelayanandata'])->name('pelayana_dokter_data.get');
+Route::get('/sub-pemeriksaan/{id}', [PelayananController::class, 'getSubPemeriksaan']);
+Route::get('/alergi/by-jenis/{id}', [PelayananController::class, 'getByJenis']);
+Route::get('/dokter/data/so/{norawat}', [PelayananController::class, 'soappelayanandata'])->name('pelayana_dokter_data.get');
 
-Route::get('/get-subspesialis/{kode}', [soap::class, 'getSubSpesialis']);
+Route::get('/get-subspesialis/{kode}', [RujukanController::class, 'getSubSpesialis']);
 
-Route::get('/get-pemeriksaan-laboratorium/{id}', [soap::class, 'getSubBidangLab']);
+Route::get('/get-pemeriksaan-laboratorium/{id}', [PelayananController::class, 'getSubBidangLab']);
 
-Route::get('/odontogram/load', [soap::class, 'odontogramload']);
-Route::post('/odontogram/load-details', [soap::class, 'odontogramdetailsload']);
+Route::get('/odontogram/load', [OdoController::class, 'odontogramload']);
+Route::post('/odontogram/load-details', [OdoController::class, 'odontogramdetailsload']);
 
 
-Route::prefix('lokasi')->group(function(){
+Route::prefix('lokasi')->group(function () {
     Route::get('/kabupaten', [LokasiController::class, 'getKabupaten'])->name('get.kabupaten');
     Route::get('/kecamatan', [LokasiController::class, 'getKecamatan'])->name('get.kecamatan');
     Route::get('/kelurahan', [LokasiController::class, 'getKelurahan'])->name('get.kelurahan');
-
 });
-Route::prefix('satusehat')->group(function(){
+Route::prefix('satusehat')->group(function () {
     Route::get('/token', [SatusehatController::class, 'get_token'])->name('satusehat.token'); // di privat fungsi nya
     Route::get('/nik/{nomor}', [SatusehatController::class, 'get_nik_satusehat'])->name('satusehat.nik'); // di privat fungsi nya
     Route::get('/nik-practitioner/{nomor}', [SatusehatController::class, 'get_nik_practitioner_satusehat'])->name('satusehat.nik_practitione'); // di privat fungsi nya
@@ -80,55 +93,59 @@ Route::prefix('pcare')->group(function () {
 });
 
 // Data Master Medis
-Route::prefix('data-master-medis')->group(function(){
-    Route::get('/perawatan_tindakan/getLastKode', [DataMasterMedisController::class, 'getLastKode'])->name('perawatan_tindakan.getLastKode'); // di privat fungsi nya
+Route::prefix('data-master-medis')->group(function () {
+    Route::get('/perawatan_tindakan/getLastKode', [PerawatanTindakanController::class, 'getLastKode'])->name('perawatan_tindakan.getLastKode'); // di privat fungsi nya
 });
 
 // Data Master Gudang
-Route::prefix('data-master-gudang')->group(function(){
-    Route::get('/supplier-industri/getLastKode', [DataMasterGudangController::class, 'getLastKode'])->name('supplier_industri.getLastKode');
+Route::prefix('data-master-gudang')->group(function () {
+    Route::get('/supplier-industri/getLastKode', [SupplierController::class, 'getLastKode'])->name('supplier_industri.getLastKode');
 
-    Route::get('/request/inventaris/getLastKode', [DataMasterGudangController::class, 'inventaris_request_getLastKode'])->name('inventaris.request_getLastKode');
-    Route::get('/request/inventaris/getDetails/{kode_request}', [DataMasterGudangController::class, 'inventaris_getDetails'])->name('inventaris.request_getDetails');
-    Route::get('/request/inventaris/detailsAprroval/{kode_request}', [DataMasterGudangController::class, 'inventaris_detailsAprroval'])->name('inventaris.request_detailsAprroval');
-    Route::post('/request/inventaris/terimaData/{id}', [DataMasterGudangController::class, 'inventaris_terimaData'])->name('inventaris.request_terimaData');
-    Route::post('/request/inventaris/tolakData/{id}', [DataMasterGudangController::class, 'inventaris_tolakData'])->name('inventaris.request_tolakData');
+    Route::get('/request/inventaris/getLastKode', [InventarisRequestController::class, 'inventaris_request_getLastKode'])->name('inventaris.request_getLastKode');
+    Route::get('/request/inventaris/getDetails/{kode_request}', [InventarisRequestController::class, 'inventaris_getDetails'])->name('inventaris.request_getDetails');
+    Route::get('/request/inventaris/detailsAprroval/{kode_request}', [InventarisRequestController::class, 'inventaris_detailsAprroval'])->name('inventaris.request_detailsAprroval');
+    Route::post('/request/inventaris/terimaData/{id}', [InventarisRequestController::class, 'inventaris_terimaData'])->name('inventaris.request_terimaData');
+    Route::post('/request/inventaris/tolakData/{id}', [InventarisRequestController::class, 'inventaris_tolakData'])->name('inventaris.request_tolakData');
 
-    Route::get('/utama/inventaris/getData/{kode_barang}', [DataMasterGudangController::class, 'inventaris_getData'])->name('utama.getData');
-    Route::get('/utama/inventaris/getDetails/{kode_request}', [DataMasterGudangController::class, 'inventarisGetDetails'])->name('inventaris.utama_getDetails');
-    Route::post('/utama/inventaris/proses-permintaan', [DataMasterGudangController::class, 'inventaris_prosesPermintaan'])->name('inventaris.utama_prosesPermintaan');
-    Route::get('/pdf/inventaris/{kodeRequest}', [DataMasterGudangController::class, 'inventaris_generatePdf'])->name('inventaris.utama_pdf');
+    Route::get('/utama/inventaris/getData/{kode_barang}', [InventarisUtamaController::class, 'inventaris_getData'])->name('utama.getData');
+    Route::get('/utama/inventaris/getDetails/{kode_request}', [InventarisUtamaController::class, 'inventarisGetDetails'])->name('inventaris.utama_getDetails');
+    Route::post('/utama/inventaris/proses-permintaan', [InventarisUtamaController::class, 'inventaris_prosesPermintaan'])->name('inventaris.utama_prosesPermintaan');
+    Route::get('/pdf/inventaris/{kodeRequest}', [InventarisUtamaController::class, 'inventaris_generatePdf'])->name('inventaris.utama_pdf');
 
-    Route::get('/request/getLastKode', [DataMasterGudangController::class, 'request_getLastKode'])->name('request.getLastKode');
-    Route::get('/request/getDetails/{kode_request}', [DataMasterGudangController::class, 'getDetails'])->name('request.getDetails');
-    Route::get('/request/detailsAprroval/{kode_request}', [DataMasterGudangController::class, 'detailsAprroval'])->name('request.detailsAprroval');
-    Route::post('/request/terimaData/{id}', [DataMasterGudangController::class, 'terimaData'])->name('request.terimaData');
-    Route::post('/request/tolakData/{id}', [DataMasterGudangController::class, 'tolakData'])->name('request.tolakData');
+    Route::get('/request/getLastKode', [GudangRequestController::class, 'request_getLastKode'])->name('request.getLastKode');
+    Route::get('/request/getDetails/{kode_request}', [GudangRequestController::class, 'getDetails'])->name('request.getDetails');
+    Route::get('/request/detailsAprroval/{kode_request}', [GudangRequestController::class, 'detailsAprroval'])->name('request.detailsAprroval');
+    Route::post('/request/terimaData/{id}', [GudangRequestController::class, 'terimaData'])->name('request.terimaData');
+    Route::post('/request/tolakData/{id}', [GudangRequestController::class, 'tolakData'])->name('request.tolakData');
 
-    Route::get('/utama/getHargaDasar/{kode_obat}', [DataMasterGudangController::class, 'getHargaDasar'])->name('utama.getHargaDasar');
-    Route::get('/utama/getDetails/{kode_request}', [DataMasterGudangController::class, 'utamaGetDetails'])->name('utama.getDetails');
-    Route::post('/utama/proses-permintaan', [DataMasterGudangController::class, 'prosesPermintaan'])->name('utama.prosesPermintaan');
-    Route::get('/pdf/{kodeRequest}', [DataMasterGudangController::class, 'generatePdf'])->name('utama.pdf');
+    Route::get('/utama/getHargaDasar/{kode_obat}', [GudangUtamaController::class, 'getHargaDasar'])->name('utama.getHargaDasar');
+    Route::get('/utama/getDetails/{kode_request}', [GudangUtamaController::class, 'utamaGetDetails'])->name('utama.getDetails');
+    Route::post('/utama/proses-permintaan', [GudangUtamaController::class, 'prosesPermintaan'])->name('utama.prosesPermintaan');
+    Route::get('/pdf/{kodeRequest}', [GudangUtamaController::class, 'generatePdf'])->name('utama.pdf');
 });
 
 //Apotek
-Route::prefix('apotek')->group(function(){
+Route::prefix('apotek')->group(function () {
     //RESEP
-    Route::post('/kodeFaktur', [SuperadminController::class, 'getKodeFaktur'])->name('apotek.getKodeFaktur');
-    Route::post('/kodeObat', [SuperadminController::class, 'getKodeObat'])->name('apotek.getKodeObat');
-    Route::post('/hargaBebas', [SuperadminController::class, 'hargaBebas'])->name('apotek.hargaBebas');
+    Route::post('/kodeFaktur', [ApotekController::class, 'getKodeFaktur'])->name('apotek.getKodeFaktur');
+    Route::post('/kodeObat', [ApotekController::class, 'getKodeObat'])->name('apotek.getKodeObat');
+    Route::post('/hargaBebas', [ApotekController::class, 'hargaBebas'])->name('apotek.hargaBebas');
 
     //BELI BEBAS
-    Route::get('/BeliBebas', [SuperadminController::class, 'getBeliBebas'])->name('apotek.getBeliBebas');
-    Route::get('/KodeFakturBeliBebas', [SuperadminController::class, 'getKodeFakturBeliBebas'])->name('apotek.getKodeFakturBeliBebas');
+    Route::get('/BeliBebas', [ApotekController::class, 'getBeliBebas'])->name('apotek.getBeliBebas');
+    Route::get('/KodeFakturBeliBebas', [ApotekController::class, 'getKodeFakturBeliBebas'])->name('apotek.getKodeFakturBeliBebas');
 });
 
 //KASIR
-Route::prefix('kasir')->group(function(){
-    Route::post('/previewData', [SuperadminController::class, 'previewData'])->name('kasir.previewData');
-    Route::get('/pdf/{kode_faktur}', [SuperadminController::class, 'generatePdf'])->name('kasir.pdf');
+Route::prefix('kasir')->group(function () {
+    Route::post('/previewData', [KasirController::class, 'previewData'])->name('kasir.previewData');
+    Route::get('/pdf/{kode_faktur}', [KasirController::class, 'generatePdf'])->name('kasir.pdf');
 });
 
 
 Route::get('/kunjungan-harian', [dashboard::class, 'kunjunganHarian']);
 Route::get('/kunjungan-per-poli', [dashboard::class, 'kunjunganPerPoli']);
+
+Route::get('/pendapatan-hari-ini', [dashboard::class, 'getPendapatanHariIni']);
+Route::get('/pendapatan-bulanan', [dashboard::class, 'getPendapatanBulanan']);
+Route::get('/pendapatan-detail', [dashboard::class, 'getPendapatanDetail']);

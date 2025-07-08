@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\ApotekController;
+use App\Http\Controllers\SuperAdmin\ApotekController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Apotek

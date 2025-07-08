@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\DataMaster\superadmin;
+namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Exports\Inventaris_data_barangExport;

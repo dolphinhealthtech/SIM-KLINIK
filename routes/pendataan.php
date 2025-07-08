@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\PendataanController;
+use App\Http\Controllers\SuperAdmin\PendataanController;
 use App\Http\Controllers\DataMaster\gudang\GudangUtamaController;
 use Illuminate\Support\Facades\Route;
 

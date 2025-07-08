@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\MonitorController;
+use App\Http\Controllers\SuperAdmin\MonitorController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Monitor

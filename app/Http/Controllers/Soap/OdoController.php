@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\DataMaster\soap;
+namespace App\Http\Controllers\Soap;
 
 use App\Http\Controllers\Controller;
 use App\Models\odontogram;

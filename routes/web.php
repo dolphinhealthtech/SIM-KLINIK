@@ -17,13 +17,6 @@ Route::get('/', function () {
 
 // Route untuk Superadmin
 Route::get('/dashboard', [dashboard::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/api/pendapatan-hari-ini', [dashboard::class, 'getPendapatanHariIni'])
-    ->middleware(['auth', 'verified']);
-Route::get('/api/pendapatan-bulanan', [dashboard::class, 'getPendapatanBulanan'])
-    ->middleware(['auth', 'verified']);
-Route::get('/api/pendapatan-detail', [dashboard::class, 'getPendapatanDetail'])
-    ->middleware(['auth', 'verified']);
-
 
 
 Route::middleware('auth')->group(function () {

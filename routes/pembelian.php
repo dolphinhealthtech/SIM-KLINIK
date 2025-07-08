@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\DataMaster\superadmin\PembelianController;
+use App\Http\Controllers\SuperAdmin\PembelianController;
 use Illuminate\Support\Facades\Route;
 
 // Menu Pembelian
