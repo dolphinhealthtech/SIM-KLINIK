@@ -18,7 +18,7 @@ Route::prefix('pendataan')->group(function () {
     Route::get('/so-perawat', [PendataanController::class,'pendataan_perawat'])->name('pendataan_perawat.get');
     Route::post('/print/perawat', [PendataanController::class,'print_perawat'])->name('print_perawat');
 
-    Route::get('/stok-penyesuaian', [PendataanController::class,'stok_penyesuaian'])->name('stok_penyesuaian.get');
+    Route::get('/stok-penyesuaian', [PendataanController::class,'laporan_stok_penyesuaian'])->name('laporan_stok_penyesuaian.get');
     Route::post('/print/stok-penyesuaian', [PendataanController::class,'print_stok_penyesuaian'])->name('print_stok_penyesuaian');
 
     Route::get('/stok-opname', [PendataanController::class,'stok_opname'])->name('stok_opname.get');

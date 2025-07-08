@@ -447,6 +447,8 @@ foreach ($subMenuObatAllkes as $subMenu) {
             ['name' => 'Perawat', 'url' => '/pendataan/so-perawat', 'icon' => 'fas fa-user-nurse', 'order' => 4],
             ['name' => 'Apotek', 'url' => '/datakasir/apotek', 'icon' => 'capsules', 'order' => 5],
             ['name' => 'Tindakan', 'url' => '/datakasir/tindakan', 'icon' => 'briefcase-medical', 'order' => 6],
+            ['name' => 'Mutasi Penyesuaian', 'url' => '/pendataan/stok-penyesuaian', 'icon' => 'exchange-alt', 'order' => 7],
+            ['name' => 'Stok Opname', 'url' => '/pendataan/stok-opname', 'icon' => 'clipboard-check', 'order' => 8],
         ];
 
         foreach ($subMenuPendataan as $subMenu) {
@@ -676,7 +678,7 @@ foreach ($subMenuObatAllkes as $subMenu) {
             ['name' => 'Daftar Harga Jual', 'url' => '/data-master-gudang/harga-barang-jual', 'icon' => 'tag', 'order' => 5],
             ['name' => 'Satuan Inventaris', 'url' => '/data-master-gudang/satuan-inventaris', 'icon' => 'fas fa-ruler-combined', 'order' => 6],
             ['name' => 'Kategori Inventaris', 'url' => '/data-master-gudang/kategori-inventaris', 'icon' => 'fas fa-layer-group', 'order' =>  7],
-            ['name' => 'Mutasi Penyesuaian', 'url' => '/pendataan/stok-penyesuaian', 'icon' => 'fas fa-exchange-alt', 'order' => 8],
+            ['name' => 'Mutasi Penyesuaian', 'url' => '/data-master-gudang/stok-penyesuaian-opname', 'icon' => 'fas fa-exchange-alt', 'order' => 8],
             ['name' => 'Kartu Stok', 'url' => '/data-master-gudang/kartu-stok', 'icon' => 'fas fa-clipboard-list', 'order' => 9],
         ];
 

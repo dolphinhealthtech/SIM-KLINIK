@@ -124,7 +124,7 @@ class PendataanController extends Controller
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
 
-    public function stok_penyesuaian()
+    public function laporan_stok_penyesuaian()
     {
         $title = "Laporan Selisih Mutasi & Penyesuaian";
 
