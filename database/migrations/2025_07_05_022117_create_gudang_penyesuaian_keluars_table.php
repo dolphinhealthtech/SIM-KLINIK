@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('alasan');
             $table->string('tanggal');
             $table->string('jam');
+            $table->string('harga');
+            $table->string('expired');
             $table->string('user_input_id');
             $table->string('user_input_name');
             $table->timestamps();

@@ -29,4 +29,10 @@ class pembelian extends Model
         'user_input_id',
         'user_input_nama'
     ];
+
+    public function details()
+    {
+        return $this->hasMany(pembelian_details::class, 'nomor_faktur', 'nomor_faktur');
+    }
+
 }
