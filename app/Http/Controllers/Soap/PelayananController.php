@@ -167,7 +167,7 @@ class PelayananController extends Controller
 
         try {
             // Simpan data ke database
-            $pemeriksaan = pelayanan_soap_perawat::create([
+            $pemeriksaan = pelayanan_soap_perawat::updateOrCreate([
                 'nomor_rm' => $request->nomor_rm,
                 'nama' => $request->nama,
                 'no_rawat' => $request->no_rawat,
