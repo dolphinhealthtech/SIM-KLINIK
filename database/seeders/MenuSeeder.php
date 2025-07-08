@@ -676,6 +676,8 @@ foreach ($subMenuObatAllkes as $subMenu) {
             ['name' => 'Daftar Harga Jual', 'url' => '/data-master-gudang/harga-barang-jual', 'icon' => 'tag', 'order' => 5],
             ['name' => 'Satuan Inventaris', 'url' => '/data-master-gudang/satuan-inventaris', 'icon' => 'fas fa-ruler-combined', 'order' => 6],
             ['name' => 'Kategori Inventaris', 'url' => '/data-master-gudang/kategori-inventaris', 'icon' => 'fas fa-layer-group', 'order' =>  7],
+            ['name' => 'Mutasi Penyesuaian', 'url' => '/pendataan/stok-penyesuaian', 'icon' => 'fas fa-exchange-alt', 'order' => 8],
+            ['name' => 'Kartu Stok', 'url' => '/data-master-gudang/kartu-stok', 'icon' => 'fas fa-clipboard-list', 'order' => 9],
         ];
 
         foreach ($subMenusDataMasterGudang as $subMenu) {
