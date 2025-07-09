@@ -60,88 +60,107 @@ class PcareController extends Controller
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
         $feature = 'peserta';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+        $maxDecryptRetries = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
-            try {
-                $startTime = microtime(true);
+        try {
+            $startTime = microtime(true);
 
-                $headers = array_merge([
-                    'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
-                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$noka}");
-                $responseBody = json_decode($response->body(), true);
+            $token = $this->get_token();
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
 
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
+            $response = Http::withHeaders($headers)
+                ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$noka}");
 
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
+            $responseBody = json_decode($response->body(), true);
+            $responseTime = microtime(true) - $startTime;
 
+            if (!is_array($responseBody)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Respon BPJS tidak valid',
+                    'response_time' => number_format($responseTime, 2)
+                ], 400);
+            }
 
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
+            if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $responseBody['metadata']['message'] ?? 'Permintaan BPJS gagal',
+                    'response_time' => number_format($responseTime, 2)
+                ], 400);
+            }
 
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-                // Decrypt the base64-encoded encrypted string
-                // $decryptedString = openssl_decrypt(base64_decode($encryptedString), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
+            if (!isset($responseBody['response'])) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Field response tidak ditemukan',
+                    'response_time' => number_format($responseTime, 2)
+                ], 400);
+            }
+
+            $encryptedString = $responseBody['response'];
+            $encrypt_method = 'AES-256-CBC';
+            $key_hash = hash('sha256', $key, true);
+            $iv = substr($key_hash, 0, 16);
+
+            for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
                 $decryptedString = openssl_decrypt(
                     base64_decode($encryptedString),
                     $encrypt_method,
                     $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
+                    OPENSSL_RAW_DATA,
                     $iv
                 );
 
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if ($decryptedString) {
+                    $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                    if ($jsonString) {
+                        $data = json_decode($jsonString, true);
+                        if ($data !== null) {
+                            break;
+                        }
+                    }
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                Log::warning("Dekripsi NOKA gagal percobaan ke-{$decAttempt}");
+            }
 
-                if ($data !== null) {
-                    break;
-                }
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => $responseTime], 400);
+            // Fallback jika dekripsi gagal
+            if ($data === null) {
+                Log::warning("Fallback ke bpjs_dekrip_internal");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                 }
             }
-            $attempt++;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
+        }
+
+        if (empty($data)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak ditemukan atau kosong',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function get_nik_bpjs($nik)
     {
@@ -153,106 +172,111 @@ class PcareController extends Controller
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
         $feature = 'peserta/nik';
-        $maxRetries = 3;
-        $data = null;
+        $maxDecryptRetries = 3;
         $responseTime = 0;
+        $data = null;
 
-        // Ambil token hanya sekali
-        $tokenData = $this->get_token();
-        if (!$tokenData || !isset($tokenData['headers'], $tokenData['key_decrypt'])) {
-            return response()->json(['status' => 'error', 'message' => 'Failed to retrieve token'], 500);
-        }
+        try {
+            $startTime = microtime(true);
 
-        $headers = array_merge([
-            'Content-Type' => 'application/json; charset=utf-8'
-        ], $tokenData['headers']);
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
 
-        for ($attempt = 0; $attempt < $maxRetries; $attempt++) {
-            try {
-                $startTime = microtime(true);
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
 
-                // Kirim permintaan ke API
-                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$nik}");
+            $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$nik}");
+            $responseTime = microtime(true) - $startTime;
 
-                $endTime = microtime(true);
-                $responseTime = round(($endTime - $startTime) * 1000, 2); // dalam milidetik
+            $responseBody = json_decode($response->body(), true);
 
-                // Jika respons berhasil, langsung proses dan keluar dari loop
-                if ($response->successful()) {
-                    $responseBody = $response->json();
+            if (!is_array($responseBody)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid BPJS response format',
+                    'response_time' => number_format($responseTime, 2)
+                ], 400);
+            }
 
-                    if (!isset($responseBody['response'])) {
-                        return response()->json(['status' => 'error', 'message' => 'Invalid response format'], 500);
-                    }
+            if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $responseBody['metadata']['message'] ?? 'BPJS request failed',
+                    'response_time' => number_format($responseTime, 2)
+                ], 400);
+            }
 
-                    // Dekripsi data
-                    $encryptedString = $responseBody['response'];
+            if (!isset($responseBody['response'])) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Field "response" not found',
+                    'response_time' => number_format($responseTime, 2)
+                ], 400);
+            }
 
+            $encryptedString = $responseBody['response'];
+            $encrypt_method = 'AES-256-CBC';
+            $key_hash = hash('sha256', $key, true);
+            $iv = substr($key_hash, 0, 16);
 
-                    // Decrypt the string using AES-256-CBC
-                    $key = $this->get_token()['key_decrypt'];
-                    $encrypt_method = 'AES-256-CBC';
-                    $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                    $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
+            for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                $decryptedString = openssl_decrypt(
+                    base64_decode($encryptedString),
+                    $encrypt_method,
+                    $key_hash,
+                    OPENSSL_RAW_DATA,
+                    $iv
+                );
 
-                    // Log sebelum dekripsi
-                    Log::info("Mulai proses dekripsi", [
-                        'encryptedString' => $encryptedString,
-                        'key' => $key,
-                        'key_hash' => bin2hex($key_hash),
-                        'iv' => bin2hex($iv)
-                    ]);
-                    // Decrypt the base64-encoded encrypted string
-                    // $decryptedString = openssl_decrypt(base64_decode($encryptedString), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
-                    $decryptedString = openssl_decrypt(
-                        base64_decode($encryptedString),
-                        $encrypt_method,
-                        $key_hash,
-                        OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                        $iv
-                    );
-
-
-                    Log::info("Hasil dekripsi", [
-                        'decryptedString' => $decryptedString
-                    ]);
-
+                if ($decryptedString) {
                     $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                    // Jika gagal decompress, log error dan beri respons error
-                    if ($jsonString === false || $jsonString === null) {
-                        Log::error("Gagal decompress", [
-                            'decryptedString' => $decryptedString
-                        ]);
-                        return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
-                    }
-                    Log::info("Hasil decompressed", [
-                        'jsonString' => $jsonString
-                    ]);
-
-                    $data = json_decode($jsonString, true);
-
-                    if ($data !== null) {
-                        break; // Keluar dari loop jika berhasil
+                    if ($jsonString) {
+                        $data = json_decode($jsonString, true);
+                        if ($data !== null) {
+                            break;
+                        }
                     }
                 }
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => $e->getMessage(),
-                        'response_time_ms' => $responseTime
-                    ], 400);
+
+                Log::warning("Dekripsi NIK gagal percobaan ke-{$decAttempt}");
+            }
+
+            // Fallback jika dekripsi gagal
+            if ($data === null) {
+                Log::warning("Fallback ke bpjs_dekrip_internal");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                 }
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
+        }
+
+        if (empty($data)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak ditemukan atau kosong',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
         return response()->json([
-            "status" => "success",
-            "data" => $data,
-            "response_time_ms" => $responseTime
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function get_poli_fktp_bpjs()
     {
@@ -262,94 +286,101 @@ class PcareController extends Controller
         $feature = 'poli/fktp';
         $params = '0';
         $params1 = '500';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+        $maxRequestRetries = 3;
+        $maxDecryptRetries = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
+        for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
 
-                // Assuming $this->generateHeaders() returns an array of headers
+                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                ], $token['headers']);
+                $timestamp = $token['headers']['X-Timestamp'];
+                $key = $token['key_decrypt'];
 
-                // Make the API request
                 $response = Http::withHeaders($headers)
                     ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$params}/{$params1}");
 
-                // Decode the response body
                 $responseBody = json_decode($response->body(), true);
+                $responseTime = microtime(true) - $startTime;
 
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-                // Decrypt the base64-encoded encrypted string
-                // $decryptedString = openssl_decrypt(base64_decode($encryptedString), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    Log::warning("BPJS response bukan array", ['body' => $response->body()]);
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'Permintaan BPJS gagal',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    Log::warning("BPJS response tidak mengandung 'response'", ['responseBody' => $responseBody]);
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // sukses: keluar dari 2 loop
+                            }
+                        }
+                    }
+
+                    Log::warning("Percobaan dekripsi ke-{$decAttempt} gagal");
+                }
+
+                // Jika gagal semua percobaan dekripsi, coba fallback
+                Log::warning("Gagal dekripsi 3x, fallback ke bpjs_dekrip");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
             } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
+                Log::error("Error: " . $e->getMessage());
+                if ($reqAttempt >= $maxRequestRetries - 1) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $e->getMessage(),
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
                 }
             }
-            $attempt++;
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-        // Transform the data
         $transformedData = array_map(function ($practitioner) {
             return [
                 'kode_poli' => $practitioner['kdPoli'],
@@ -364,6 +395,7 @@ class PcareController extends Controller
         ]);
     }
 
+
     public function get_dokter_bpjs()
     {
         $config = set_bpjs::find(1);
@@ -372,96 +404,107 @@ class PcareController extends Controller
         $feature = 'dokter';
         $params = '1';
         $params1 = '100';
-        $maxRetries = 3;
+        $maxRequestRetries = 3;
+        $maxDecryptRetries = 3;
         $attempt = 0;
         $data = null;
         $responseTime = 0;
 
-        while ($attempt < $maxRetries && $data === null) {
+        for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
 
-                // Assuming $this->generateHeaders() returns an array of headers
+                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                ], $token['headers']);
+                $timestamp = $token['headers']['X-Timestamp'];
+                $key = $token['key_decrypt'];
 
-                // Make the API request
                 $response = Http::withHeaders($headers)
                     ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$params}/{$params1}");
 
-                // Decode the response body
                 $responseBody = json_decode($response->body(), true);
+                $responseTime = microtime(true) - $startTime;
 
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-                // Decrypt the base64-encoded encrypted string
-                // $decryptedString = openssl_decrypt(base64_decode($encryptedString), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    Log::warning("BPJS response bukan array", ['body' => $response->body()]);
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
-                // Decompress the string
-                $data = json_decode($jsonString, true);
 
-                if ($data !== null) {
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'Permintaan BPJS gagal',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
+
+                if (!isset($responseBody['response'])) {
+                    Log::warning("BPJS response tidak mengandung 'response'", ['responseBody' => $responseBody]);
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // keluar dari kedua loop
+                            }
+                        }
+                    }
+
+                    Log::warning("Percobaan dekripsi ke-{$decAttempt} gagal");
+                }
+
+                Log::warning("Gagal dekripsi 3x, fallback ke bpjs_dekrip");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
             } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
+                Log::error("Error: " . $e->getMessage());
+                if ($reqAttempt >= $maxRequestRetries - 1) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $e->getMessage(),
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
                 }
             }
-            $attempt++;
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function get_spesialis_bpjs()
     {
@@ -469,389 +512,440 @@ class PcareController extends Controller
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
         $feature = 'spesialis';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+        $maxRequestRetries = 3;
+        $maxDecryptRetries = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
+        for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
 
-                // Assuming $this->generateHeaders() returns an array of headers
+                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                ], $token['headers']);
+                $timestamp = $token['headers']['X-Timestamp'];
+                $key = $token['key_decrypt'];
 
-                // Make the API request
                 $response = Http::withHeaders($headers)
                     ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}");
 
-                // Decode the response body
                 $responseBody = json_decode($response->body(), true);
+                $responseTime = microtime(true) - $startTime;
 
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    Log::warning("BPJS response bukan array", ['body' => $response->body()]);
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'Permintaan BPJS gagal',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    Log::warning("BPJS response tidak mengandung 'response'", ['responseBody' => $responseBody]);
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // Keluar dari kedua loop
+                            }
+                        }
+                    }
+
+                    Log::warning("Percobaan dekripsi ke-{$decAttempt} gagal");
+                }
+
+                // Fallback
+                Log::warning("Gagal dekripsi 3x, fallback ke bpjs_dekrip_internal");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
             } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
+                Log::error("Error: " . $e->getMessage());
+                if ($reqAttempt >= $maxRequestRetries - 1) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $e->getMessage(),
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
                 }
             }
-            $attempt++;
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function get_sub_spesialis_bpjs($nama)
     {
         $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
         $feature = 'spesialis';
-        $params = $nama;
         $params1 = 'subspesialis';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+
+        $maxDecryptRetries = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
-            try {
-                $startTime = microtime(true);
-                // Assuming $this->generateHeaders() returns an array of headers
-                $headers = array_merge([
-                    'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+        try {
+            $startTime = microtime(true);
 
-                // Make the API request
-                $response = Http::withHeaders($headers)
-                    ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$params}/{$params1}");
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
 
-                // Decode the response body
-                $responseBody = json_decode($response->body(), true);
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
 
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
+            // Kirim permintaan API
+            $response = Http::withHeaders($headers)
+                ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$nama}/{$params1}");
 
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
+            $responseTime = microtime(true) - $startTime;
 
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
+            $responseBody = json_decode($response->body(), true);
+            if (!is_array($responseBody)) {
+                return response()->json(['status' => 'error', 'message' => 'Invalid response format', 'response_time' => number_format($responseTime, 2)], 400);
+            }
 
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
+            if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $responseBody['metadata']['message'] ?? 'BPJS request failed',
+                    'response_time' => number_format($responseTime, 2)
+                ], 400);
+            }
 
-                // Decrypt the base64-encoded encrypted string
+            if (!isset($responseBody['response'])) {
+                return response()->json(['status' => 'error', 'message' => 'Field "response" not found', 'response_time' => number_format($responseTime, 2)], 400);
+            }
+
+            $encryptedString = $responseBody['response'];
+
+            // Dekripsi dengan retry
+            $encrypt_method = 'AES-256-CBC';
+            $key_hash = hash('sha256', $key, true);
+            $iv = substr($key_hash, 0, 16);
+
+            for ($i = 0; $i < $maxDecryptRetries; $i++) {
                 $decryptedString = openssl_decrypt(
                     base64_decode($encryptedString),
                     $encrypt_method,
                     $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
+                    OPENSSL_RAW_DATA,
                     $iv
                 );
 
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if ($decryptedString) {
+                    $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                    if ($jsonString) {
+                        $data = json_decode($jsonString, true);
+                        if ($data !== null) {
+                            break;
+                        }
+                    }
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                Log::warning("Dekripsi subspesialis gagal percobaan ke-" . ($i + 1));
+            }
 
-                if ($data !== null) {
-                    break;
-                }
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
+            // Fallback jika semua dekripsi gagal
+            if ($data === null) {
+                Log::warning("Fallback ke bpjs_dekrip_internal");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                 }
             }
-            $attempt++;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-        // Check if data is null or empty
+        // Validasi hasil akhir
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function get_diagnosis_bpjs($nama)
     {
         $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
         $BASE_URL = $config->BASE_URL;
-        $SERVICE_NAME =  $config->SERVICE;
-        $feature = 'diagnosa';
-        $params = $nama;
-        $params1 = '0';
-        $params2 = '500';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+        $SERVICE_NAME = $config->SERVICE;
+        $endpoint = "diagnosa/{$nama}/0/500";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
-            try {
+        try {
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
+
+            for ($i = 0; $i < $maxRequest; $i++) {
                 $startTime = microtime(true);
-                // Assuming $this->generateHeaders() returns an array of headers
-                $headers = array_merge([
-                    'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$endpoint}");
+                $responseTime = microtime(true) - $startTime;
 
-                // Make the API request
-                $response = Http::withHeaders($headers)
-                    ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$params}/{$params1}/{$params2}");
-
-                // Decode the response body
                 $responseBody = json_decode($response->body(), true);
-
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'BPJS request failed',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // keluar dari kedua loop
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi diagnosis gagal attempt {$j} (request {$i})");
+                }
+
+                // fallback dekrip internal
+                Log::warning("Fallback dekrip internal - Diagnosis (request {$i})");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
-                }
             }
-            $attempt++;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function get_statpul_bpjs($nama)
     {
         $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
-        $feature = 'statuspulang/rawatInap';
-        $params = $nama;
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+        $endpoint = "statuspulang/rawatInap/{$nama}";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
-            try {
+        try {
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
+
+            for ($i = 0; $i < $maxRequest; $i++) {
                 $startTime = microtime(true);
-                // Assuming $this->generateHeaders() returns an array of headers
-                $headers = array_merge([
-                    'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$endpoint}");
+                $responseTime = microtime(true) - $startTime;
 
-                // Make the API request
-                $response = Http::withHeaders($headers)
-                    ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$params}");
-                // Decode the response body
                 $responseBody = json_decode($response->body(), true);
-
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'BPJS request failed',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2;
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi status pulang gagal attempt {$j} (request {$i})");
+                }
+
+                // fallback dekrip internal
+                Log::warning("Fallback dekrip internal - Status Pulang (request {$i})");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
-                }
             }
-            $attempt++;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function get_kesadaran_bpjs()
     {
@@ -859,94 +953,108 @@ class PcareController extends Controller
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
         $feature = 'kesadaran';
-        $maxRetries = 3;
-        $attempt = 0;
+        $maxRequestRetries = 3;
+        $maxDecryptRetries = 3;
         $data = null;
         $responseTime = 0;
 
-        while ($attempt < $maxRetries && $data === null) {
+        for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
-                // Assuming $this->generateHeaders() returns an array of headers
+
+                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                ], $token['headers']);
+                $timestamp = $token['headers']['X-Timestamp'];
+                $key = $token['key_decrypt'];
 
-                // Make the API request
                 $response = Http::withHeaders($headers)
                     ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}");
-                // Decode the response body
+
                 $responseBody = json_decode($response->body(), true);
+                $responseTime = microtime(true) - $startTime;
 
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    Log::warning("BPJS response bukan array", ['body' => $response->body()]);
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'Permintaan BPJS gagal',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    Log::warning("BPJS response tidak mengandung 'response'", ['responseBody' => $responseBody]);
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // Berhasil, keluar dari kedua loop
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi ke-{$decAttempt} gagal");
+                }
+
+                // Fallback jika 3x dekripsi gagal
+                Log::warning("Dekripsi gagal total, fallback ke bpjs_dekrip_internal");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
             } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
+                Log::error("Error: " . $e->getMessage());
+                if ($reqAttempt >= $maxRequestRetries - 1) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $e->getMessage(),
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
                 }
             }
-            $attempt++;
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function get_provider_bpjs()
     {
@@ -956,94 +1064,76 @@ class PcareController extends Controller
         $feature = 'provider';
         $params1 = '0';
         $params2 = '50';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+
+        $maxRequestRetries = 3;
+        $maxDecryptRetries = 3;
         $responseTime = 0;
 
-        while ($attempt < $maxRetries && $data === null) {
+        for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
-                // Assuming $this->generateHeaders() returns an array of headers
+
+                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                ], $token['headers']);
+                $timestamp = $token['headers']['X-Timestamp'];
 
-                // Make the API request
-                $response = Http::withHeaders($headers)
-                    ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$params1}/{$params2}");
-                // Decode the response body
-                $responseBody = json_decode($response->body(), true);
-
+                $url = "{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$params1}/{$params2}";
+                $response = Http::withHeaders($headers)->get($url);
                 $endTime = microtime(true);
                 $responseTime = $endTime - $startTime;
 
-                // Fetch the encrypted response data
+                Log::info("Request BPJS", ['url' => $url, 'headers' => $headers]);
+                Log::info("BPJS Response", ['body' => $response->body()]);
+
+                $responseBody = json_decode($response->body(), true);
+
+                // Cek jika tidak JSON atau gagal decode
+                if (!is_array($responseBody)) {
+                    continue; // lanjut request ulang
+                }
+
+                // Cek metadata gagal
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'Permintaan gagal dari BPJS',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
+
+                if (!isset($responseBody['response'])) {
+                    Log::warning("BPJS response tidak mengandung 'response' terenkripsi", ['responseBody' => $responseBody]);
+                    continue;
+                }
+
                 $encryptedString = $responseBody['response'];
 
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
+                // Coba dekripsi maksimal 3x
+                for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                    $decrypted = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
 
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
-                }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
-
-                // Decompress the string
-                $data = json_decode($jsonString, true);
-
-                if ($data !== null) {
-                    break;
+                    if (isset($decrypted['data']) && !empty($decrypted['data']['list'])) {
+                        return response()->json([
+                            'data' => $decrypted['data'],
+                            'response_time' => number_format($responseTime, 2)
+                        ]);
+                    }
                 }
             } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
-                }
+                Log::error("Exception BPJS provider", ['message' => $e->getMessage()]);
+                continue;
             }
-            $attempt++;
         }
 
-        // Check if data is null or empty
-        if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
-        }
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
-        ]);
+            'status' => 'error',
+            'message' => 'Gagal memproses data dari BPJS setelah beberapa kali percobaan.',
+            'response_time' => number_format($responseTime, 2)
+        ], 400);
     }
+
 
     public function get_khusus_bpjs()
     {
@@ -1051,483 +1141,644 @@ class PcareController extends Controller
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
         $feature = 'spesialis/khusus';
-        $maxRetries = 3;
-        $attempt = 0;
+        $maxRequestRetries = 3;
+        $maxDecryptRetries = 3;
         $data = null;
         $responseTime = 0;
 
-        while ($attempt < $maxRetries && $data === null) {
+        for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
-                // Assuming $this->generateHeaders() returns an array of headers
+
+                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                ], $token['headers']);
+                $timestamp = $token['headers']['X-Timestamp'];
+                $key = $token['key_decrypt'];
 
                 $response = Http::withHeaders($headers)
                     ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}");
 
-                // Decode the response body
                 $responseBody = json_decode($response->body(), true);
+                $responseTime = microtime(true) - $startTime;
 
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    Log::warning("BPJS response bukan array", ['body' => $response->body()]);
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'Permintaan BPJS gagal',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    Log::warning("BPJS response tidak mengandung 'response'", ['responseBody' => $responseBody]);
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // sukses, keluar dari loop request dan dekripsi
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi ke-{$decAttempt} gagal");
+                }
+
+                // Fallback jika semua dekripsi gagal
+                Log::warning("Fallback ke bpjs_dekrip_internal");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
             } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
+                Log::error("Error: " . $e->getMessage());
+                if ($reqAttempt >= $maxRequestRetries - 1) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $e->getMessage(),
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
                 }
             }
-            $attempt++;
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function get_dphoobat_bpjs($nama)
     {
         $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
-        $feature = 'obat/dpho';
-        $feature1 = '1';
-        $feature2 = '50';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+        $feature = "obat/dpho/{$nama}/1/50";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
-            try {
+        try {
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
+
+            for ($i = 0; $i < $maxRequest; $i++) {
                 $startTime = microtime(true);
-                // Assuming $this->generateHeaders() returns an array of headers
-                $headers = array_merge([
-                    'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}");
+                $responseTime = microtime(true) - $startTime;
 
-                $response = Http::withHeaders($headers)
-                    ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$nama}/{$feature1}/{$feature2}");
-
-                // Decode response
                 $responseBody = json_decode($response->body(), true);
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'BPJS request failed',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // Berhasil, keluar dari kedua loop
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi DPHO gagal attempt {$j} (request {$i})");
+                }
+
+                // fallback ke internal dekrip
+                Log::warning("Fallback dekrip internal - DPHO (request {$i})");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
-                }
             }
-            $attempt++;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
     public function get_prognosa_bpjs()
     {
         $config = set_bpjs::find(1);
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
         $feature = 'prognosa';
-        $maxRetries = 3;
-        $attempt = 0;
+        $maxRequestRetries = 3;
+        $maxDecryptRetries = 3;
         $data = null;
         $responseTime = 0;
 
-        while ($attempt < $maxRetries && $data === null) {
+        for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
-                // Assuming $this->generateHeaders() returns an array of headers
+
+                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                ], $token['headers']);
+                $timestamp = $token['headers']['X-Timestamp'];
+                $key = $token['key_decrypt'];
 
                 $response = Http::withHeaders($headers)
                     ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}");
 
-                // Decode response
                 $responseBody = json_decode($response->body(), true);
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
+                $responseTime = microtime(true) - $startTime;
 
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    Log::warning("BPJS response bukan array", ['body' => $response->body()]);
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'Permintaan BPJS gagal',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    Log::warning("BPJS response tidak mengandung 'response'", ['responseBody' => $responseBody]);
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // Berhasil, keluar dari kedua loop
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi ke-{$decAttempt} gagal");
+                }
+
+                // Fallback jika dekripsi gagal
+                Log::warning("Fallback ke bpjs_dekrip_internal");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
             } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
+                Log::error("Error: " . $e->getMessage());
+                if ($reqAttempt >= $maxRequestRetries - 1) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $e->getMessage(),
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
                 }
             }
-            $attempt++;
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
     public function get_alergi_bpjs($kode)
     {
         $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
-        $feature = 'alergi/jenis';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+        $feature = "alergi/jenis/{$kode}";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
-            try {
+        try {
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
+
+            for ($i = 0; $i < $maxRequest; $i++) {
                 $startTime = microtime(true);
-                // Assuming $this->generateHeaders() returns an array of headers
-                $headers = array_merge([
-                    'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}");
+                $responseTime = microtime(true) - $startTime;
 
-                $response = Http::withHeaders($headers)
-                    ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$kode}");
-
-                // Decode response
                 $responseBody = json_decode($response->body(), true);
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'BPJS request failed',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // keluar dari kedua loop
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi alergi gagal attempt {$j} (request {$i})");
+                }
+
+                // fallback ke internal dekrip
+                Log::warning("Fallback dekrip internal - alergi (request {$i})");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
-                }
             }
-            $attempt++;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function get_ws_poli_bpjs()
     {
         $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE_ANTREAN;
         $feature = 'ref/poli/tanggal';
         $params = date('Y-m-d');
 
+        $maxDecryptRetries = 3;
+        $data = null;
+        $responseTime = 0;
+
         try {
-            // Assuming $this->generateHeaders() returns an array of headers
+            $startTime = microtime(true);
+
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
             $headers = array_merge([
                 'Content-Type' => 'application/json; charset=utf-8'
-            ], $this->get_token()['headers']);
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
 
-            // Make the API request
             $response = Http::withHeaders($headers)
                 ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$params}");
 
-            // Decode the response body
+            $responseTime = microtime(true) - $startTime;
+
             $responseBody = json_decode($response->body(), true);
+
+            if (!is_array($responseBody)) {
+                return response()->json(['status' => 'error', 'message' => 'Invalid response format', 'response_time' => number_format($responseTime, 2)], 400);
+            }
+
+            if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $responseBody['metadata']['message'] ?? 'BPJS request failed',
+                    'response_time' => number_format($responseTime, 2)
+                ], 400);
+            }
+
+            if (!isset($responseBody['response'])) {
+                return response()->json(['status' => 'error', 'message' => 'Field "response" not found', 'response_time' => number_format($responseTime, 2)], 400);
+            }
+
+            $encryptedString = $responseBody['response'];
+            $encrypt_method = 'AES-256-CBC';
+            $key_hash = hash('sha256', $key, true);
+            $iv = substr($key_hash, 0, 16);
+
+            for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                $decryptedString = openssl_decrypt(
+                    base64_decode($encryptedString),
+                    $encrypt_method,
+                    $key_hash,
+                    OPENSSL_RAW_DATA,
+                    $iv
+                );
+
+                if ($decryptedString) {
+                    $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                    if ($jsonString) {
+                        $data = json_decode($jsonString, true);
+                        if ($data !== null) {
+                            break;
+                        }
+                    }
+                }
+
+                Log::warning("Dekripsi WS Poli gagal percobaan ke-{$decAttempt}");
+            }
+
+            // Fallback jika dekripsi gagal
+            if ($data === null) {
+                Log::warning("Fallback ke bpjs_dekrip_internal");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
+                }
+            }
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
         }
 
-        // Fetch the encrypted response data
-        if (is_array($responseBody) ) {
-            $encryptedString = $responseBody['response'];
-        } else {
-            return response()->json($responseBody);
+        if (empty($data)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak ditemukan atau kosong',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-
-
-        // Decrypt the string using AES-256-CBC
-        $key = $this->get_token()['key_decrypt'];
-        $encrypt_method = 'AES-256-CBC';
-        $key_hash = hex2bin(hash('sha256', $key));  // Get key hash
-        $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-        // Decrypt the base64-encoded encrypted string
-        $decryptedString = openssl_decrypt(base64_decode($encryptedString), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
-
-        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-        // Decompress the string
-        $data = json_decode($jsonString, true);
-
-
-
-
-        return response()->json( $data );
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
+        ]);
     }
+
 
     public function get_ws_dokter_bpjs($kode)
     {
         $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE_ANTREAN;
-        $feature = 'ref/dokter/kodepoli';
-        $feature1 = 'tanggal';
-        $params = date('Y-m-d');
+        $tanggal = date('Y-m-d');
+        $endpoint = "ref/dokter/kodepoli/{$kode}/tanggal/{$tanggal}";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
+        $responseTime = 0;
+        $data = null;
 
         try {
-            // Assuming $this->generateHeaders() returns an array of headers
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
             $headers = array_merge([
                 'Content-Type' => 'application/json; charset=utf-8'
-            ], $this->get_token()['headers']);
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
 
-            // Make the API request
-            $response = Http::withHeaders($headers)
-                ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$kode}/{$feature1}/{$params}");
+            for ($i = 0; $i < $maxRequest; $i++) {
+                $startTime = microtime(true);
+                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$endpoint}");
+                $responseTime = microtime(true) - $startTime;
 
-            // Decode the response body
-            $responseBody = json_decode($response->body(), true);
+                $responseBody = json_decode($response->body(), true);
+                if (!is_array($responseBody)) continue;
+
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'BPJS error',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
+
+                if (!isset($responseBody['response'])) continue;
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2;
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi gagal attempt {$j} (request {$i})");
+                }
+
+                // Fallback dekrip internal
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
+                    break;
+                }
+            }
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-        // Fetch the encrypted response data
-        if (is_array($responseBody) ) {
-            $encryptedString = $responseBody['response'];
-        } else {
-            return response()->json($responseBody);
+        if (empty($data) || !isset($data['list']) || empty($data['list'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-
-
-        // Decrypt the string using AES-256-CBC
-        $key = $this->get_token()['key_decrypt'];
-        $encrypt_method = 'AES-256-CBC';
-        $key_hash = hex2bin(hash('sha256', $key));  // Get key hash
-        $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-        // Decrypt the base64-encoded encrypted string
-        $decryptedString = openssl_decrypt(base64_decode($encryptedString), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
-
-        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-        // Decompress the string
-        $data = json_decode($jsonString, true);
-
-
-
-
-        return response()->json( $data );
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
+        ]);
     }
+
 
     public function post_ws_antria_bpjs($data)
     {
@@ -1544,7 +1795,7 @@ class PcareController extends Controller
 
             // Make the API request
             $response = Http::withHeaders($headers)
-                ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $data );
+                ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $data);
 
             // Decode the response body
             $responseBody = json_decode($response->body(), true);
@@ -1579,7 +1830,7 @@ class PcareController extends Controller
         $data = json_decode($jsonString, true);
 
 
-        return response()->json( $data );
+        return response()->json($data);
     }
 
     public function delete_ws_antria_bpjs($data)
@@ -1597,7 +1848,7 @@ class PcareController extends Controller
 
             // Make the API request
             $response = Http::withHeaders($headers)
-                ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $data );
+                ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $data);
 
             // Decode the response body
             $responseBody = json_decode($response->body(), true);
@@ -1632,7 +1883,7 @@ class PcareController extends Controller
         $data = json_decode($jsonString, true);
 
 
-        return response()->json( $data );
+        return response()->json($data);
     }
 
     public function update_ws_antria_bpjs($data)
@@ -1650,7 +1901,7 @@ class PcareController extends Controller
 
             // Make the API request
             $response = Http::withHeaders($headers)
-                ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $data );
+                ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $data);
 
             // Decode the response body
             $responseBody = json_decode($response->body(), true);
@@ -1685,7 +1936,7 @@ class PcareController extends Controller
         $data = json_decode($jsonString, true);
 
 
-        return response()->json( $data );
+        return response()->json($data);
     }
 
     public function post_pendaftaran_bpjs($datapost)
@@ -1698,72 +1949,71 @@ class PcareController extends Controller
         $attempt = 0;
         $data = null;
         $responseTime = 0;
-            try {
-                $startTime = microtime(true);
-                // Assuming $this->generateHeaders() returns an array of headers
-                $headers = array_merge([
-                    'Content-Type' => 'text/plain; charset=utf-8'
-                ], $this->get_token()['headers']);
+        try {
+            $startTime = microtime(true);
+            // Assuming $this->generateHeaders() returns an array of headers
+            $headers = array_merge([
+                'Content-Type' => 'text/plain; charset=utf-8'
+            ], $this->get_token()['headers']);
 
-                $response = Http::withHeaders($headers)
-                    ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $datapost);
+            $response = Http::withHeaders($headers)
+                ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $datapost);
 
-                // Decode response
-                $responseBody = json_decode($response->body(), true);
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
+            // Decode response
+            $responseBody = json_decode($response->body(), true);
+            $endTime = microtime(true);
+            $responseTime = $endTime - $startTime;
 
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
+            // Fetch the encrypted response data
+            $encryptedString = $responseBody['response'];
 
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
+            // Decrypt the string using AES-256-CBC
+            $key = $this->get_token()['key_decrypt'];
+            $encrypt_method = 'AES-256-CBC';
+            $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
+            $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
 
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
+            // Log sebelum dekripsi
+            Log::info("Mulai proses dekripsi", [
+                'encryptedString' => $encryptedString,
+                'key' => $key,
+                'key_hash' => bin2hex($key_hash),
+                'iv' => bin2hex($iv)
+            ]);
 
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
+            // Decrypt the base64-encoded encrypted string
+            $decryptedString = openssl_decrypt(
+                base64_decode($encryptedString),
+                $encrypt_method,
+                $key_hash,
+                OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
+                $iv
+            );
 
-                Log::info("Hasil dekripsi", [
+            Log::info("Hasil dekripsi", [
+                'decryptedString' => $decryptedString
+            ]);
+
+            $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+
+            // Jika gagal decompress, log error dan beri respons error
+            if ($jsonString === false || $jsonString === null) {
+                Log::error("Gagal decompress", [
                     'decryptedString' => $decryptedString
                 ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
-                }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
-
-                // Decompress the string
-                $data = json_decode($jsonString, true);
-
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
-                }
+                return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
             }
+            Log::info("Hasil decompressed", [
+                'jsonString' => $jsonString
+            ]);
+
+            // Decompress the string
+            $data = json_decode($jsonString, true);
+        } catch (\Exception $e) {
+            if ($attempt >= $maxRetries - 1) {
+                return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
+            }
+        }
         // Check if data is null or empty
         if (empty($data)) {
             return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
@@ -1780,387 +2030,430 @@ class PcareController extends Controller
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
         $feature = 'spesialis/sarana';
-        $maxRetries = 3;
-        $attempt = 0;
+        $maxRequestRetries = 3;
+        $maxDecryptRetries = 3;
         $data = null;
         $responseTime = 0;
 
-        while ($attempt < $maxRetries && $data === null) {
+        for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
 
-                // Assuming $this->generateHeaders() returns an array of headers
+                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
+                ], $token['headers']);
+                $timestamp = $token['headers']['X-Timestamp'];
+                $key = $token['key_decrypt'];
 
-                // Make the API request
                 $response = Http::withHeaders($headers)
                     ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}");
 
-                // Decode the response body
                 $responseBody = json_decode($response->body(), true);
+                $responseTime = microtime(true) - $startTime;
 
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    Log::warning("BPJS response bukan array", ['body' => $response->body()]);
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'Permintaan BPJS gagal',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    Log::warning("BPJS response tidak mengandung 'response'", ['responseBody' => $responseBody]);
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // Sukses keluar dari kedua loop
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi ke-{$decAttempt} gagal");
+                }
+
+                // Fallback jika dekripsi gagal
+                Log::warning("Fallback ke bpjs_dekrip_internal");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
             } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
+                Log::error("Error: " . $e->getMessage());
+                if ($reqAttempt >= $maxRequestRetries - 1) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $e->getMessage(),
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
                 }
             }
-            $attempt++;
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
 
-    public function get_rujukan_spesialis_bpjs($spesialis,$sarana,$tanggal)
+
+    public function get_rujukan_spesialis_bpjs($spesialis, $sarana, $tanggal)
     {
         $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
-        $feature = 'spesialis/rujuk/subspesialis';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+        $endpoint = "spesialis/rujuk/subspesialis/{$spesialis}/sarana/{$sarana}/tglEstRujuk/{$tanggal}";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
-            try {
+        try {
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
+
+            for ($i = 0; $i < $maxRequest; $i++) {
                 $startTime = microtime(true);
+                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$endpoint}");
+                $responseTime = microtime(true) - $startTime;
 
-                // Assuming $this->generateHeaders() returns an array of headers
-                $headers = array_merge([
-                    'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
-
-                // Make the API request
-                $response = Http::withHeaders($headers)
-                    ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$spesialis}/sarana/{$sarana}/tglEstRujuk/{$tanggal}");
-
-                // Decode the response body
                 $responseBody = json_decode($response->body(), true);
-
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                // Tangani metadata error (langsung return)
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'BPJS request failed',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2;
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi rujukan spesialis gagal attempt {$j} (request {$i})");
+                }
+
+                // fallback dekrip internal jika tersedia
+                Log::warning("Fallback dekrip internal - Rujukan Spesialis (request {$i})");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
-                }
             }
-            $attempt++;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
 
-    public function get_rujukan_husus_bpjs($spesialis,$noKartu,$tanggal)
+
+    public function get_rujukan_husus_bpjs($spesialis, $noKartu, $tanggal)
     {
         $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
-        $feature = 'spesialis/rujuk/khusus';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+        $endpoint = "spesialis/rujuk/khusus/{$spesialis}/noKartu/{$noKartu}/tglEstRujuk/{$tanggal}";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
-            try {
+        try {
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
+
+            for ($i = 0; $i < $maxRequest; $i++) {
                 $startTime = microtime(true);
+                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$endpoint}");
+                $responseTime = microtime(true) - $startTime;
 
-                // Assuming $this->generateHeaders() returns an array of headers
-                $headers = array_merge([
-                    'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
-
-                // Make the API request
-                $response = Http::withHeaders($headers)
-                    ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$spesialis}/noKartu/{$noKartu}/tglEstRujuk/{$tanggal}");
-
-                // Decode the response body
                 $responseBody = json_decode($response->body(), true);
-
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (!is_array($responseBody)) {
+                    continue;
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                // Handle metadata jika error
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'BPJS error',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
-                if ($data !== null) {
+                if (!isset($responseBody['response'])) {
+                    continue;
+                }
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // sukses, keluar dari 2 loop sekaligus
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi gagal attempt {$j} (request {$i})");
+                }
+
+                // Coba fallback internal jika ada
+                Log::warning("Fallback dekrip internal - Rujukan Khusus (request {$i})");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
-                }
             }
-            $attempt++;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
 
-    public function get_rujukan_husus_subspesialis_bpjs($husus,$spesialis,$noKartu,$tanggal)
+
+    public function get_rujukan_husus_subspesialis_bpjs($husus, $spesialis, $noKartu, $tanggal)
     {
         $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
-        $feature = 'spesialis/rujuk/khusus';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
+        $endpoint = "spesialis/rujuk/khusus/{$spesialis}/subspesialis/{$husus}/noKartu/{$noKartu}/tglEstRujuk/{$tanggal}";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
         $responseTime = 0;
+        $data = null;
 
-        while ($attempt < $maxRetries && $data === null) {
-            try {
+        try {
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
+
+            for ($i = 0; $i < $maxRequest; $i++) {
                 $startTime = microtime(true);
+                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$endpoint}");
+                $responseTime = microtime(true) - $startTime;
 
-                // Assuming $this->generateHeaders() returns an array of headers
-                $headers = array_merge([
-                    'Content-Type' => 'application/json; charset=utf-8'
-                ], $this->get_token()['headers']);
-
-                // Make the API request
-                $response = Http::withHeaders($headers)
-                    ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$spesialis}/subspesialis/{$husus}/noKartu/{$noKartu}/tglEstRujuk/{$tanggal}");
-
-                // Decode the response body
                 $responseBody = json_decode($response->body(), true);
+                if (!is_array($responseBody)) continue;
 
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
-
-                // Fetch the encrypted response data
-                $encryptedString = $responseBody['response'];
-
-                // Decrypt the string using AES-256-CBC
-                $key = $this->get_token()['key_decrypt'];
-                $encrypt_method = 'AES-256-CBC';
-                $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
-                $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
-
-                // Log sebelum dekripsi
-                Log::info("Mulai proses dekripsi", [
-                    'encryptedString' => $encryptedString,
-                    'key' => $key,
-                    'key_hash' => bin2hex($key_hash),
-                    'iv' => bin2hex($iv)
-                ]);
-
-                // Decrypt the base64-encoded encrypted string
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
-                    $iv
-                );
-
-                Log::info("Hasil dekripsi", [
-                    'decryptedString' => $decryptedString
-                ]);
-
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                // Jika gagal decompress, log error dan beri respons error
-                if ($jsonString === false || $jsonString === null) {
-                    Log::error("Gagal decompress", [
-                        'decryptedString' => $decryptedString
-                    ]);
-                    return response()->json(['status' => 'error', 'message' => 'Decompress failed'], 400);
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'BPJS error',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
                 }
-                Log::info("Hasil decompressed", [
-                    'jsonString' => $jsonString
-                ]);
 
-                // Decompress the string
-                $data = json_decode($jsonString, true);
+                if (!isset($responseBody['response'])) continue;
 
-                if ($data !== null) {
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2;
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi gagal attempt {$j} (request {$i})");
+                }
+
+                Log::warning("Fallback dekrip internal - Rujukan Khusus Subspesialis (request {$i})");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
-            } catch (\Exception $e) {
-                if ($attempt >= $maxRetries - 1) {
-                    return response()->json(['status' => 'error', 'message' => $e->getMessage(), 'response_time' => number_format($responseTime, 2)], 400);
-                }
             }
-            $attempt++;
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
-        // Check if data is null or empty
         if (empty($data) || !isset($data['list']) || empty($data['list'])) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'response_time' => number_format($responseTime, 2)], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
+
         return response()->json([
-            "data" => $data,
-            "response_time" => number_format($responseTime, 2)
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function post_kunjungan_bpjs($data)
     {
@@ -2177,7 +2470,7 @@ class PcareController extends Controller
 
             // Make the API request
             $response = Http::withHeaders($headers)
-                ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $data );
+                ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $data);
 
             // Decode the response body
             $responseBody = json_decode($response->body(), true);
@@ -2212,7 +2505,7 @@ class PcareController extends Controller
         $data = json_decode($jsonString, true);
 
 
-        return response()->json( $data );
+        return response()->json($data);
     }
 
     public function get_jadwal_dokter_bpjs($kodepoli, $tanggal)
@@ -2221,81 +2514,87 @@ class PcareController extends Controller
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE_ANTREAN;
         $feature = 'ref/dokter/kodepoli';
-        $maxRetries = 3;
-        $attempt = 0;
-        $data = null;
-        $responseTime = 0;
 
-        while ($attempt < $maxRetries && $data === null) {
+        $maxRequestRetries = 3;
+        $maxDecryptRetries = 3;
+        $responseTime = 0;
+        $data = null;
+
+        for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
 
-                $token = $this->get_token(); // Ambil token + headers + key_decrypt
+                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
                 ], $token['headers']);
+                $timestamp = $token['headers']['X-Timestamp'];
 
-                $response = Http::withHeaders($headers)
-                    ->get("{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$kodepoli}/tanggal/{$tanggal}");
+                $url = "{$BASE_URL}/{$SERVICE_NAME}/{$feature}/{$kodepoli}/tanggal/{$tanggal}";
+                Log::info("Request BPJS", ['url' => $url, 'headers' => $headers]);
 
+                $response = Http::withHeaders($headers)->get($url);
                 $responseBody = json_decode($response->body(), true);
-                $endTime = microtime(true);
-                $responseTime = $endTime - $startTime;
+                $responseTime = microtime(true) - $startTime;
+
+                if (!is_array($responseBody)) {
+                    Log::warning("BPJS response bukan JSON", ['body' => $response->body()]);
+                    continue;
+                }
+
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'Permintaan BPJS gagal',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
 
                 if (!isset($responseBody['response'])) {
-                    return response()->json(['status' => 'error', 'message' => 'No response field found'], 400);
+                    Log::warning("BPJS response tidak mengandung 'response'", ['responseBody' => $responseBody]);
+                    continue;
                 }
 
                 $encryptedString = $responseBody['response'];
                 $key = $token['key_decrypt'];
                 $encrypt_method = 'AES-256-CBC';
                 $key_hash = hash('sha256', $key, true);
-                $iv = substr($key_hash, 0, 16); // sesuai standar AES CBC
+                $iv = substr($key_hash, 0, 16);
 
-                // Proses dekripsi
-                $decryptedString = openssl_decrypt(
-                    base64_decode($encryptedString),
-                    $encrypt_method,
-                    $key_hash,
-                    OPENSSL_RAW_DATA,
-                    $iv
-                );
+                // Coba dekripsi maksimal 3 kali
+                for ($decAttempt = 0; $decAttempt < $maxDecryptRetries; $decAttempt++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
 
-                // Jika gagal dekripsi, fallback
-                if (!$decryptedString) {
-                    Log::warning('Dekripsi gagal, fallback ke bpjs_dekrip');
-                    $fallback = $this->bpjs_dekrip_internal($token['timestamp'], $encryptedString);
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
 
-                    if (isset($fallback['data'])) {
-                        $data = $fallback['data'];
-                        break;
-                    } else {
-                        return response()->json(['status' => 'error', 'message' => 'Fallback dekripsi gagal'], 400);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // keluar dari kedua loop (request & dekripsi)
+                            }
+                        }
                     }
+
+                    Log::warning("Percobaan dekripsi ke-{$decAttempt} gagal");
                 }
 
-                // Proses decompress
-                $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
-
-                if (!$jsonString) {
-                    Log::warning('Decompress gagal, fallback ke bpjs_dekrip');
-                    $fallback = $this->bpjs_dekrip_internal($token['timestamp'], $encryptedString);
-
-                    if (isset($fallback['data'])) {
-                        $data = $fallback['data'];
-                        break;
-                    } else {
-                        return response()->json(['status' => 'error', 'message' => 'Fallback decompress gagal'], 400);
-                    }
-                }
-
-                $data = json_decode($jsonString, true);
-                if ($data !== null) {
+                // Jika gagal semua percobaan dekripsi, coba fallback
+                Log::warning("Gagal dekripsi 3x, coba fallback internal");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
                     break;
                 }
             } catch (\Exception $e) {
                 Log::error("Error: " . $e->getMessage());
-                if ($attempt >= $maxRetries - 1) {
+                if ($reqAttempt >= $maxRequestRetries - 1) {
                     return response()->json([
                         'status' => 'error',
                         'message' => $e->getMessage(),
@@ -2303,8 +2602,14 @@ class PcareController extends Controller
                     ], 400);
                 }
             }
+        }
 
-            $attempt++;
+        if (empty($data)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memproses data dari BPJS',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
         }
 
         return response()->json([
@@ -2312,6 +2617,7 @@ class PcareController extends Controller
             'response_time' => number_format($responseTime, 2)
         ]);
     }
+
 
     public function bpjs_dekrip(Request $request)
     {
@@ -2362,7 +2668,7 @@ class PcareController extends Controller
         ]);
     }
 
-        // Fungsi fallback internal
+    // Fungsi fallback internal
     private function bpjs_dekrip_internal($timestamp, $encryptedString)
     {
         $request = new Request([
@@ -2378,7 +2684,4 @@ class PcareController extends Controller
 
         return null;
     }
-
-
-
 }
