@@ -314,12 +314,15 @@ $subMenuObatAllkes = [
         'icon' => 'pills',
         'order' => 1,
     ],
+
+    ['name' => 'Stok Obat', 'url' => '/data-master-gudang/stok-obat-alkes', 'icon' => 'boxes', 'order' => 2],
     [
         'name' => 'Gudang utama (obat)',
         'url' => '/data-master-gudang/gudang-utama',
         'icon' => 'fas fa-boxes',
         'order' => 3,
     ],
+    
     [
         'name' => 'Permintaan Obat',
         'url' => '/data-master-gudang/gudang-request',
