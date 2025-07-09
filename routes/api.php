@@ -15,6 +15,7 @@ use App\Http\Controllers\SuperAdmin\PendaftaranController;
 use App\Http\Controllers\SuperAdmin\StaffController;
 use App\Http\Controllers\DataMaster\gudang\GudangRequestController;
 use App\Http\Controllers\DataMaster\gudang\GudangUtamaController;
+use App\Http\Controllers\DataMaster\gudang\StokBarangController;
 use App\Http\Controllers\DataMaster\gudang\SupplierController;
 use App\Http\Controllers\DataMaster\inventaris\InventarisRequestController;
 use App\Http\Controllers\DataMaster\inventaris\InventarisUtamaController;
@@ -122,7 +123,12 @@ Route::prefix('data-master-gudang')->group(function () {
     Route::get('/utama/getDetails/{kode_request}', [GudangUtamaController::class, 'utamaGetDetails'])->name('utama.getDetails');
     Route::post('/utama/proses-permintaan', [GudangUtamaController::class, 'prosesPermintaan'])->name('utama.prosesPermintaan');
     Route::get('/pdf/{kodeRequest}', [GudangUtamaController::class, 'generatePdf'])->name('utama.pdf');
+
+
+    Route::get('/kartu-stok-masuk', [StokBarangController::class, 'getKartuStokMasuk'])->name('getKartuStokMasuk');
+    Route::get('/kartu-stok-keluar', [StokBarangController::class, 'getKartuStokKeluar'])->name('getKartuStokKeluar');
 });
+
 
 //Apotek
 Route::prefix('apotek')->group(function () {

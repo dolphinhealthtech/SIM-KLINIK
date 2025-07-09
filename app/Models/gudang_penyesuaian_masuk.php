@@ -18,6 +18,8 @@ class gudang_penyesuaian_masuk extends Model
         'alasan',
         'tanggal',
         'jam',
+        'harga',
+        'expired',
         'user_input_id',
         'user_input_name',
     ];

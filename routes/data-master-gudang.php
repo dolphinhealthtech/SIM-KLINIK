@@ -88,4 +88,7 @@ Route::prefix('data-master-gudang')->group(function () {
     // Menu Utama Klinik Omega
     Route::get('/gudang-utama', [GudangUtamaController::class, 'gudangutama'])->name('gudangutama.get');
     Route::post('/gudang-utama/konfirmasi', [GudangUtamaController::class, 'gudangutamakonfirmasi'])->name('gudangutama.konfirmasi');
+
+    Route::get('/kartu-stok', [StokBarangController::class, 'kartu_stok'])->name('kartu_stok.get');
+
 });

@@ -10,9 +10,12 @@ use App\Models\gudang_penyesuaian_masuk;
 use App\Models\gudang_penyesuaian_keluar;
 use App\Models\gudang_stok_opname;
 use App\Models\apotek_prebayar;
+use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\pembelian_details;
+
 
 
 class StokBarangController extends Controller
@@ -55,23 +58,23 @@ class StokBarangController extends Controller
             // Total semua qty untuk kode obat yang sama (tanpa mempedulikan expired)
             $stokSebelumnyaQty = gudang_barang_stok::where('kode_obat_alkes', $request->kode_obat)->sum('qty');
 
+            $tipeHarga = $request->harga_penyesuaian; // 'harga_jual_1', 'harga_jual_2', atau 'harga_jual_3'
+
+            // Validasi agar aman
+            if (!in_array($tipeHarga, ['harga_jual_1', 'harga_jual_2', 'harga_jual_3'])) {
+                return response()->json(['error' => 'Tipe harga tidak valid'], 400);
+            }
+
+            // Ambil harga tertinggi dari field sesuai tipe yang dipilih
+            $hargaTertinggi = gudang_barang_harga::where('kode_obat_alkes', $request->kode_obat)
+                ->max($tipeHarga);
+
             if ($request->aktifitas_penyesuaian === 'stok_opname') {
                 $selisih = $request->qty_penyesuaian - $stokSebelumnyaQty;
 
                 $stokKeluarApotek = apotek_prebayar::where('kode_obat_alkes', $request->kode_obat)->sum('qty');
 
                 $selisih_kedua = $selisih - $stokKeluarApotek;
-
-                $tipeHarga = $request->harga_penyesuaian; // 'harga_jual_1', 'harga_jual_2', atau 'harga_jual_3'
-
-                // Validasi agar aman
-                if (!in_array($tipeHarga, ['harga_jual_1', 'harga_jual_2', 'harga_jual_3'])) {
-                    return response()->json(['error' => 'Tipe harga tidak valid'], 400);
-                }
-
-                // Ambil harga tertinggi dari field sesuai tipe yang dipilih
-                $hargaTertinggi = gudang_barang_harga::where('kode_obat_alkes', $request->kode_obat)
-                    ->max($tipeHarga);
 
                 if ($selisih > 0) {
                     // Tambahkan stok baru sesuai yang diinput user
@@ -96,6 +99,8 @@ class StokBarangController extends Controller
                         'alasan' => $request->alasan_penyesuaian,
                         'tanggal' => now()->toDateString(),
                         'jam' => now()->toTimeString(),
+                        'harga' => $hargaTertinggi,
+                        'expired' => $request->expired_penyesuaian,
                         'user_input_id' => Auth::user()->id,
                         'user_input_name' => Auth::user()->name,
                     ]);
@@ -133,6 +138,8 @@ class StokBarangController extends Controller
                         'alasan' => $request->alasan_penyesuaian,
                         'tanggal' => now()->toDateString(),
                         'jam' => now()->toTimeString(),
+                        'harga' => $hargaTertinggi,
+                        'expired' => $request->expired_penyesuaian,
                         'user_input_id' => Auth::user()->id,
                         'user_input_name' => Auth::user()->name,
                     ]);
@@ -177,6 +184,8 @@ class StokBarangController extends Controller
                         'alasan' => $request->alasan_penyesuaian,
                         'tanggal' => now()->toDateString(),
                         'jam' => now()->toTimeString(),
+                        'harga' => $hargaTertinggi,
+                        'expired' => $request->expired_penyesuaian,
                         'user_input_id' => Auth::user()->id,
                         'user_input_name' => Auth::user()->name,
                     ]);
@@ -216,6 +225,8 @@ class StokBarangController extends Controller
                         'alasan' => $request->alasan_penyesuaian,
                         'tanggal' => now()->toDateString(),
                         'jam' => now()->toTimeString(),
+                        'harga' => $hargaTertinggi,
+                        'expired' => $request->expired_penyesuaian,
                         'user_input_id' => Auth::user()->id,
                         'user_input_name' => Auth::user()->name,
                     ]);
@@ -241,5 +252,124 @@ class StokBarangController extends Controller
             ], 500);
         }
 
+    }
+
+    public function kartu_stok()
+    {
+        $title = "Kartu Stok";
+
+        $data = gudang_barang::all();
+
+        return view('module.master-data-gudang.kartu_stok', compact('title', 'data'));
+    }
+
+    public function getKartuStokMasuk(Request $request)
+    {
+        $tanggalAwal = $request->tanggal_awal;
+        $tanggalAkhir = $request->tanggal_akhir;
+        $kodeObat = $request->kode_obat;
+        $start = Carbon::parse($tanggalAwal)->startOfDay();
+        $end = Carbon::parse($tanggalAkhir)->endOfDay();
+
+        try {
+            $satuan = gudang_barang::where('kode_barang', $kodeObat)->value('satuan_kecil');
+
+            $stok = gudang_barang_stok::where('kode_obat_alkes', $kodeObat)->sum('qty');
+
+            $dataPrebayar = pembelian_details::when($kodeObat !== 'all', fn($q) => $q->where('kode_obat_alkes', $kodeObat))
+                ->whereBetween('created_at', [$start, $end])
+                ->with('pembelian')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'tanggal' => 'Saldo Masuk ' . $item->created_at->format('Y-m-d'),
+                        'qty' => $item->qty,
+                        'harga' => $item->harga_satuan,
+                        'keterangan' => 'Pembelian (Faktur: ' . $item->nomor_faktur . ')',
+                        'expired' => $item->batch . ' / ' . $item->exp,
+                        'user' => $item->pembelian->user_input_nama,
+                    ];
+                })->toArray();
+
+            $dataPenyesuaian = gudang_penyesuaian_masuk::when($kodeObat !== 'all', fn($q) => $q->where('kode_obat', $kodeObat))
+                ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir])
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'tanggal' => $item->tanggal . ' / ' . $item->jam,
+                        'qty' => $item->qty_mutasi,
+                        'harga' => $item->harga,
+                        'keterangan' => 'Penyesuaian (' . $item->jenis_penyesuaian . ') - ' . $item->alasan,
+                        'expired' => $item->expired,
+                        'user' => $item->user_input_name,
+                    ];
+                })->toArray();
+
+            // Gabungkan data
+            $dataGabung = array_merge($dataPrebayar, $dataPenyesuaian);
+
+            return response()->json([
+                'data' => $dataGabung,
+                'satuan_kecil' => $satuan,
+                'stok' => $stok,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+    public function getKartuStokKeluar(Request $request)
+    {
+        $tanggalAwal = $request->tanggal_awal;
+        $tanggalAkhir = $request->tanggal_akhir;
+        $kodeObat = $request->kode_obat;
+
+        try {
+            $satuan = gudang_barang::where('kode_barang', $kodeObat)->value('satuan_kecil');
+
+            $dataPenjualan = apotek_prebayar::when($kodeObat !== 'all', fn($q) => $q->where('kode_obat_alkes', $kodeObat))
+                ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir])
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'tanggal' => 'Saldo Keluar ' . $item->tanggal,
+                        'qty' => $item->qty,
+                        'harga' => $item->harga,
+                        'keterangan' => 'Penjualan (Faktur: ' . $item->kode_faktur . ')',
+                        'user' => $item->user_input_name,
+                    ];
+                })->toArray();
+
+            $dataPenyesuaian = gudang_penyesuaian_keluar::when($kodeObat !== 'all', fn($q) => $q->where('kode_obat', $kodeObat))
+                ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir])
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'tanggal' => $item->tanggal . ' / ' . $item->jam,
+                        'qty' => $item->qty_mutasi,
+                        'harga' => '0',
+                        'keterangan' => 'Penyesuaian (' . $item->jenis_penyesuaian . ') - ' . $item->alasan,
+                        'user' => $item->user_input_name,
+                    ];
+                })->toArray();
+
+            // Gabungkan data
+            $dataGabung = array_merge($dataPenjualan, $dataPenyesuaian);
+
+            return response()->json([
+                'data' => $dataGabung,
+                'satuan_kecil' => $satuan
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
     }
 }

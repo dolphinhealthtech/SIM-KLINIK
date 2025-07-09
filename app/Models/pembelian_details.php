@@ -20,4 +20,10 @@ class pembelian_details extends Model
         'batch',
         'sub_total'
     ];
+
+    public function pembelian()
+    {
+        return $this->belongsTo(pembelian::class, 'nomor_faktur', 'nomor_faktur');
+    }
+
 }

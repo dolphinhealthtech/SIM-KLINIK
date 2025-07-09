@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class HargaJualController extends Controller
 {
-        public function hargajual()
+    public function hargajual()
     {
         $title = "Master Harga Jual Obat / Alkes";
         $harga_jual = gudang_barang_harga::all();
