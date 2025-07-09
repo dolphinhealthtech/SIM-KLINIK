@@ -13,6 +13,7 @@ class WebSetting extends Model
     [
         'nama',
         'alamat',
-        'profile_image'
+        'profile_image',
+        'kode_klinik'
     ];
 }
