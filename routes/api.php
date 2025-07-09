@@ -23,6 +23,7 @@ use App\Http\Controllers\DataMaster\medis\PerawatanTindakanController;
 use App\Http\Controllers\Soap\OdoController;
 use App\Http\Controllers\Soap\PelayananController;
 use App\Http\Controllers\Soap\RujukanController;
+use App\Http\Controllers\Mobile_JknController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -155,3 +156,11 @@ Route::get('/kunjungan-per-poli', [dashboard::class, 'kunjunganPerPoli']);
 Route::get('/pendapatan-hari-ini', [dashboard::class, 'getPendapatanHariIni']);
 Route::get('/pendapatan-bulanan', [dashboard::class, 'getPendapatanBulanan']);
 Route::get('/pendapatan-detail', [dashboard::class, 'getPendapatanDetail']);
+
+Route::prefix('m_jkn')->group(function () {
+    Route::get('/token', [Mobile_JknController::class, 'get_token'])->name('get_token.m_jkn');
+    Route::post('/get_antrian', [Mobile_JknController::class, 'get_antrian'])->name('get_antrian.m_jkn');
+    Route::get('/status_antrian/{kode_poli}/{tgl}', [Mobile_JknController::class, 'get_status_antrian'])->name('get_status_antrian.m_jkn');
+    Route::get('/sisa_antrian/{noka}/{kode_poli}/{tgl_periksa}', [Mobile_JknController::class, 'get_sisa_antrian'])->name('get_sisa_antrian.m_jkn');
+    Route::put('/batalkan_antrian', [Mobile_JknController::class, 'batalkan_antrian'])->name('batalkan_antrian.m_jkn');
+});
