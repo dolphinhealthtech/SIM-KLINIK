@@ -5,7 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Dokter;
 use App\Models\Loket;
-use App\Models\Pasien;
+use App\Models\pasien;
 use App\Models\Pendaftaran_rawat_jalan;
 use App\Models\Pendaftaran_rawat_jalan_status;
 use App\Models\penjamin;
@@ -29,7 +29,7 @@ class PendaftaranController extends Controller
     public function pendaftaran()
     {
         $title = "Pasien";
-        $pasiens = pasien::all();
+        $pasiens = Pasien::all();
         $poli = poli::all();
 
         $today = Carbon::today(); // atau now()->startOfDay()

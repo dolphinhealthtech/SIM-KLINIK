@@ -41,68 +41,126 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <!-- Barang Masuk -->
-                        <div class="col-md-6">
-                            <div class="card border-success mb-3">
-                                <div class="card-header bg-success text-white fw-bold">Barang Masuk</div>
-                                <div class="card-body p-2">
-                                    <table id="tabelMasuk" class="table table-sm table-bordered table-hover mb-0 kasir-table">
-                                        <thead class="table-success text-center">
-                                            <tr>
-                                                <th>Tanggal</th>
-                                                <th>Masuk</th>
-                                                <th>Harga (Rp)</th>
-                                                <th>Keterangan</th>
-                                                <th>Batch / Expired</th>
-                                                <th>User</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                    <div class="mt-2 fw-semibold text-success">
-                                        Total Masuk:
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <style>
+.table-container {
+    height: 270px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
 
-                        <!-- Barang Keluar -->
-                        <div class="col-md-6">
-                            <div class="card border-danger mb-3">
-                                <div class="card-header bg-danger text-white fw-bold">Barang Keluar</div>
-                                <div class="card-body p-2">
-                                    <table id="tabelKeluar" class="table table-sm table-bordered table-hover mb-0 kasir-table">
-                                        <thead class="table-danger text-center">
-                                            <tr>
-                                                <th>Tanggal</th>
-                                                <th>Keluar</th>
-                                                <th>Harga (Rp)</th>
-                                                <th>Keterangan</th>
-                                                <th>User</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                    <div class="mt-2 fw-semibold text-danger">
-                                        Total Keluar:
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+.table-container table {
+    margin-bottom: 0;
+}
 
-                    <!-- Saldo -->
-                    <div class="alert alert-secondary text-center fw-bold">
-                        Saldo Stok:
-                    </div>
+.table-container thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table-container .table-success th {
+    background-color: #d3ffea !important;
+}
+
+.table-container .table-danger th {
+    background-color: hsl(354, 100%, 81%) !important;
+}
+
+.card-body-fixed {
+    height: 320px;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-container {
+    flex: 1;
+}
+
+.table-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+</style>
+
+<div class="row">
+    <!-- Barang Masuk -->
+    <div class="col-md-6">
+        <div class="card border-success mb-3">
+            <div class="card-header bg-success text-white fw-bold">Barang Masuk</div>
+            <div class="card-body p-2 card-body-fixed">
+                <div class="table-container">
+                    <table id="tabelMasuk" class="table table-sm table-bordered table-hover mb-0 kasir-table">
+                        <thead class="table-success text-center">
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Masuk</th>
+                                <th>Harga (Rp)</th>
+                                <th>Keterangan</th>
+                                <th>Batch / Expired</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-2 fw-semibold text-success">
+                    Total Masuk:
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barang Keluar -->
+    <div class="col-md-6">
+        <div class="card border-danger mb-3">
+            <div class="card-header bg-danger text-white fw-bold">Barang Keluar</div>
+            <div class="card-body p-2 card-body-fixed">
+                <div class="table-container">
+                    <table id="tabelKeluar" class="table table-sm table-bordered table-hover mb-0 kasir-table">
+                        <thead class="table-danger text-center">
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Keluar</th>
+                                <th>Harga (Rp)</th>
+                                <th>Keterangan</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-2 fw-semibold text-danger">
+                    Total Keluar:
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    
                 </div>
                 <div class="card-footer">
-                    <div class="d-flex justify-content-end align-items-center">
-                        <button id="btnReset" class="btn btn-secondary mr-2">Reset</button>
-                        <button id="btnPrint" class="btn btn-primary">Save & Print</button>
+                    <div class="d-flex align-items-stretch gap-3">
+                        <div class="alert alert-secondary text-center fw-bold mb-0 d-flex align-items-center justify-content-center" style="width: 100%; ">
+                            Saldo Stok:
+                        </div>
                     </div>
                 </div>
             </div>
