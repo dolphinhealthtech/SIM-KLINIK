@@ -64,11 +64,17 @@ use App\Http\Controllers\SuperAdmin\PendaftaranController;
 use App\Http\Controllers\SuperAdmin\PendataanController;
 use App\Http\Controllers\SuperAdmin\StaffController;
 use App\Http\Controllers\SuperAdmin\UserController;
+use App\Http\Controllers\UserActivityLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+
+//
+Route::get('/logs', [UserActivityLogController::class, 'index'])->name('logs.index');
+
 
 // Menu Apotek
 Route::get('/apotek', [ApotekController::class, 'apotek'])->middleware(['auth'])->name('apotek.index');
