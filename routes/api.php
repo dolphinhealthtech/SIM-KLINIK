@@ -163,4 +163,5 @@ Route::prefix('m_jkn')->group(function () {
     Route::get('/status_antrian/{kode_poli}/{tgl}', [Mobile_JknController::class, 'get_status_antrian'])->name('get_status_antrian.m_jkn');
     Route::get('/sisa_antrian/{noka}/{kode_poli}/{tgl_periksa}', [Mobile_JknController::class, 'get_sisa_antrian'])->name('get_sisa_antrian.m_jkn');
     Route::put('/batalkan_antrian', [Mobile_JknController::class, 'batalkan_antrian'])->name('batalkan_antrian.m_jkn');
+    Route::post('/set_pasien_baru', [Mobile_JknController::class, 'set_pasien_baru'])->name('pasien_baru.m_jkn');
 });

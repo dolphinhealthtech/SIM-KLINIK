@@ -14,6 +14,8 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class Mobile_JknController extends Controller
 {
@@ -126,7 +128,15 @@ class Mobile_JknController extends Controller
         $jam_now = now()->format('H');
         if ( $jam_now >= $jam_tutup) {
             return response()->json([
-                'metadata' => ['message' => 'Pendaftaran ke poli sudah tutup', 'code' => 201]
+                'metadata' => ['message' => 'Format tanggal tidak boleh mundur', 'code' => 201]
+            ]);
+        }
+        $tglcek = Carbon::parse($data['tanggalperiksa']);
+        $hariIni = now()->startOfDay();
+
+        if ($tglcek->lt($hariIni)) {
+            return response()->json([
+                'metadata' => ['message' => 'Tanggal tidak boleh mundur ke belakang', 'code' => 201]
             ]);
         }
 
@@ -376,7 +386,7 @@ class Mobile_JknController extends Controller
 
     public function get_sisa_antrian(Request $request, $nomorkartu, $kodepoli, $tanggal)
     {
-                // === 1. Validasi Token ===
+        // === 1. Validasi Token ===
         $token = $request->header('x-token');
         $user = $request->header('x-user');
 
@@ -466,6 +476,8 @@ class Mobile_JknController extends Controller
     }
 
     public function batalkan_antrian(Request $request)
+
+
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
@@ -554,6 +566,120 @@ class Mobile_JknController extends Controller
 
         return response()->json([
             'metadata' => ['message' => 'Ok', 'code' => 200]
+        ]);
+    }
+
+    public function set_pasien_baru(Request $request)
+    {
+        // === 1. Validasi Token ===
+        $token = $request->header('x-token');
+        $user = $request->header('x-user');
+
+        if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
+            return response()->json([
+                'metadata' => ['message' => 'Token Expired', 'code' => 201]
+            ], 401);
+        }
+
+        if (!$user || $user !== 'jkn_mobile') {
+            return response()->json([
+                'metadata' => ['message' => 'User tidak diizinkan', 'code' => 201]
+            ], 403);
+        }
+
+        $data = $request->all();
+
+        // === Validasi Data Dasar ===
+        $validator = Validator::make($data, [
+            'nomorkartu'    => 'required|digits:13|numeric',
+            'nik'           => 'required|digits:16|numeric',
+            'nomorkk'       => 'required',
+            'nama'          => 'required|string',
+            'jeniskelamin'  => 'required|in:L,P',
+            'tanggallahir'  => 'required|date_format:Y-m-d',
+            'alamat'        => 'required|string',
+            'kodeprop'      => 'required',
+            'namaprop'      => 'required',
+            'kodedati2'     => 'required',
+            'namadati2'     => 'required',
+            'kodekec'       => 'required',
+            'namakec'       => 'required',
+            'kodekel'       => 'required',
+            'namakel'       => 'required',
+            'rw'            => 'required',
+            'rt'            => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'metadata' => [
+                    'message' => $validator->errors()->first(),
+                    'code' => 201
+                ]
+            ]);
+        }
+
+        // === Normalisasi Jenis Kelamin ===
+        $jenis_kelamin = $data['jeniskelamin'] === 'L' ? 'Laki-laki' : 'Perempuan';
+
+        // === Cek Pasien Sudah Terdaftar ===
+        if (pasien::where('id_number', $data['nik'])->exists()) {
+            return response()->json([
+                'metadata' => [
+                    'message' => 'NIK ' . $data['nik'] . ' sudah terdaftar',
+                    'code' => 201
+                ]
+            ]);
+        }
+
+        if (pasien::where(function ($query) use ($data) {
+            $query->where('no_jaminan_1', $data['nomorkartu'])
+                ->orWhere('no_jaminan_2', $data['nomorkartu'])
+                ->orWhere('no_jaminan_3', $data['nomorkartu']);
+        })->exists()) {
+            return response()->json([
+                'metadata' => [
+                    'message' => 'No Kartu ' . $data['nomorkartu'] . ' sudah terdaftar',
+                    'code' => 201
+                ]
+            ]);
+        }
+
+        if (pasien::where('no_bpjs', $data['nomorkartu'])->orWhere('no_ktp', $data['nik'])->exists()) {
+            return response()->json([
+                'metadata' => [
+                    'message' => 'No Kartu dan NIK sudah terdaftar sebagai Pasien Baru',
+                    'code' => 201
+                ]
+            ]);
+        }
+
+        // === Generate ID Baru (otomatis manual karena tidak autoincrement) ===
+        $last = pasien::where('id', 'not like', '100%')->orderByDesc('id')->first();
+        $newId = $last ? $last->id + 1 : 1;
+
+        // === Simpan ke Database ===
+        pasien::create([
+            'id'         => $newId,
+            'nama'       => $data['nama'],
+            'alamat'     => $data['alamat'],
+            'kelurahan'  => $data['namakel'],
+            'kecamatan'  => $data['namakec'],
+            'tgl_lahir'  => $data['tanggallahir'],
+            'jk'         => $jenis_kelamin,
+            'no_ktp'     => $data['nik'],
+            'no_bpjs'    => $data['nomorkartu'],
+            'kabupaten'  => $data['namadati2'],
+            'no_hp'      => $data['nohp'] ?? '-',
+            'tgl_input'  => now(),
+        ]);
+
+        return response()->json([
+            'response' => ['norm' => (string) $newId],
+            'metadata' => [
+                'message' => 'Harap datang ke admisi untuk melengkapi data rekam medis',
+                'code' => 200
+            ]
         ]);
     }
 }
