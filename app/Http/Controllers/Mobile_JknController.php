@@ -10,7 +10,9 @@ use App\Models\Pendaftaran_rawat_jalan_status;
 use App\Models\poli;
 use App\Models\token_mjkn;
 use Carbon\Carbon;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class Mobile_JknController extends Controller
@@ -107,11 +109,26 @@ class Mobile_JknController extends Controller
         ]);
 
         // === 3. Validasi jam praktek dan tanggal ===
+
         $jampraktek = $data['jampraktek'];
         $tgl = $data['tanggalperiksa'];
+        if ($tgl == now()->format('Y-m-d')) {
+            return response()->json([
+                'metadata' => ['message' => 'Format tanggal tidak boleh mundur', 'code' => 201]
+            ]);
+        }
+        $tglcek = Carbon::parse($data['tanggalperiksa']);
+        $hariIni = now()->startOfDay();
+
+        if ($tglcek->lt($hariIni)) {
+            return response()->json([
+                'metadata' => ['message' => 'Tanggal tidak boleh mundur ke belakang', 'code' => 201]
+            ]);
+        }
+
         $jam_tutup = explode(':', explode('-', $jampraktek)[1])[0];
         $jam_now = now()->format('H');
-        if ($tgl == now()->format('Y-m-d') && $jam_now >= $jam_tutup) {
+        if ( $jam_now >= $jam_tutup) {
             return response()->json([
                 'metadata' => ['message' => 'Pendaftaran ke poli sudah tutup', 'code' => 201]
             ]);
@@ -500,27 +517,33 @@ class Mobile_JknController extends Controller
         $antrian = Pendaftaran_rawat_jalan::where('pasien_id', $pasien->id)
             ->where('poli_id', $poli->id)
             ->whereDate('tanggal_kujungan', $tanggal)
-            ->whereHas('status', function ($query) {
-                $query->where('status_panggil', 0);
-            })
-            ->with('status') // jika kamu ingin ambil data status juga
+            ->with('status') // tetap ambil relasi status
             ->first();
 
 
         if (!$antrian) {
             return response()->json([
                 'metadata' => [
-                    'message' => 'Antrian tidak ditemukan, sudah dibatalkan, atau pasien sudah check-in',
+                    'message' => 'Antrian tidak ditemukan',
                     'code' => 201
                 ]
             ]);
         }
 
         $status = Pendaftaran_rawat_jalan_status::where('nomor_register', $antrian->nomor_register)->first();
+
+        if (!$antrian->status || $antrian->status->status_pendaftaran == 0) {
+            return response()->json([
+                'metadata' => [
+                    'message' => 'Antrian tidak ditemukan (sudah dibatalkan)',
+                    'code' => 201
+                ]
+            ]);
+        }
         if ($status->status_panggil != 0) {
             return response()->json([
                 'metadata' => [
-                    'message' => 'Pasien sudah check-in atau sudah dilayani tidak dapat dibatalkan',
+                    'message' => 'Pasien sudah check-in atau sudah dilayani, tidak dapat dibatalkan',
                     'code' => 201
                 ]
             ]);
