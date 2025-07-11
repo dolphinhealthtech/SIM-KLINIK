@@ -356,6 +356,9 @@ class PendaftaranController extends Controller
                         if ($pendaftaran_nourut) {
                             $pendaftaran_nourut->no_urut = $no_urut;
                             $pendaftaran_nourut->save();
+
+                            $pendaftaran->status_pendaftaran = 2;
+                            $pendaftaran->save();
                         }
                     } else {
                         // log jika tidak ada message
