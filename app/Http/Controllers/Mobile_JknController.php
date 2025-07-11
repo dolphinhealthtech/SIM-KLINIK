@@ -112,11 +112,7 @@ class Mobile_JknController extends Controller
 
         $jampraktek = $data['jampraktek'];
         $tgl = $data['tanggalperiksa'];
-        if ($tgl == now()->format('Y-m-d')) {
-            return response()->json([
-                'metadata' => ['message' => 'Format tanggal tidak boleh mundur', 'code' => 201]
-            ]);
-        }
+
         $tglcek = Carbon::parse($data['tanggalperiksa']);
         $hariIni = now()->startOfDay();
 

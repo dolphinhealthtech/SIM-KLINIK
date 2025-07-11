@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\goldar;
 use App\Models\kelamin;
 use App\Models\pernikahan;
-use App\Models\Loket;
-use App\Models\Pasien;
+use App\Models\loket;
+use App\Models\pasien;
 use App\Models\Pendaftaran_rawat_jalan;
 use App\Models\Pendaftaran_rawat_jalan_status;
 use App\Models\penjamin;
@@ -15,7 +15,7 @@ use App\Models\poli;
 use App\Models\Set_Bpjs;
 use App\Models\Set_Sehat;
 use App\Models\WebSetting;
-use App\Models\Dokter;
+use App\Models\dokter;
 use App\Http\Controllers\PcareController;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -64,10 +64,10 @@ class MonitorController extends Controller
                 'dokter_id' => 'required'
             ]);
 
-            $antrian = Loket::where('poli_id', $request->poli_id)->first();
+            $antrian = loket::where('poli_id', $request->poli_id)->first();
 
 
-            $pasien = Pasien::where('nik', $request->nikNokaInput)
+            $pasien = pasien::where('nik', $request->nikNokaInput)
                 ->orWhere('no_bpjs', $request->nikNokaInput)
                 ->first();
 
@@ -130,7 +130,7 @@ class MonitorController extends Controller
             // Ambil info dokter dan jadwal berdasarkan tanggal kunjungan
             $tanggalKunjungan = Carbon::parse($request->tanggal_kunjungan)->format('Y-m-d');
 
-            $dokter = Dokter::with(['namauser', 'jadwal' => function ($query) use ($tanggalKunjungan) {
+            $dokter = dokter::with(['namauser', 'jadwal' => function ($query) use ($tanggalKunjungan) {
                 $query->whereDate('start', $tanggalKunjungan);
             }])->find($request->dokter_id);
 
@@ -181,10 +181,10 @@ class MonitorController extends Controller
                 'dokter_id_no' => 'required'
             ]);
 
-            $antrian = Loket::where('poli_id', $request->poli_id_no)->first();
+            $antrian = loket::where('poli_id', $request->poli_id_no)->first();
 
 
-            $pasien = Pasien::where('nik', $request->nikNnamaInput)
+            $pasien = pasien::where('nik', $request->nikNnamaInput)
                 ->orWhere('nama', $request->nikNnamaInput)
                 ->first();
 

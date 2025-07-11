@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Dokter;
-use App\Models\Loket;
+use App\Models\dokter;
+use App\Models\loket;
 use App\Models\pasien;
 use App\Models\Pendaftaran_rawat_jalan;
 use App\Models\Pendaftaran_rawat_jalan_status;
@@ -15,7 +15,7 @@ use App\Http\Controllers\PcareController;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 
 class PendaftaranController extends Controller
 {
@@ -74,7 +74,7 @@ class PendaftaranController extends Controller
     {
         $datetime = $request->input('datetime'); // ex: 2025-04-16 00:30:00
 
-        $dokter = Dokter::where('poli', $id)
+        $dokter = dokter::where('poli', $id)
             ->whereHas('jadwal', function ($query) use ($datetime) {
                 $query->where('start', '<=', $datetime)
                     ->where('end', '>=', $datetime);
@@ -342,19 +342,34 @@ class PendaftaranController extends Controller
                     "kdTkp" => "10",
                 ];
 
-                $nourut = $this->PcareController->post_pendaftaran_bpjs($pendaftaranpcare);
-                $data = json_decode($nourut->getContent(), true);
-                $pendaftaran_nourut = Pendaftaran_rawat_jalan::where('nomor_register', $pendaftaran->nomor_register)
-                    ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
-                    ->first();
-                if ($pendaftaran_nourut) {
-                    $pendaftaran_nourut->no_urut = $data['data']['message'];
-                    $pendaftaran_nourut->save();
+                try {
+                    $nourut = $this->PcareController->post_pendaftaran_bpjs($pendaftaranpcare);
+                    $data = json_decode($nourut->getContent(), true);
+
+                    if (isset($data['data']['response']['message'])) {
+                        $no_urut = $data['data']['response']['message'];
+
+                        $pendaftaran_nourut = Pendaftaran_rawat_jalan::where('nomor_register', $pendaftaran->nomor_register)
+                            ->where('tanggal_kujungan', $pendaftaran->tanggal_kunjungan)
+                            ->first();
+
+                        if ($pendaftaran_nourut) {
+                            $pendaftaran_nourut->no_urut = $no_urut;
+                            $pendaftaran_nourut->save();
+                        }
+                    } else {
+                        // log jika tidak ada message
+                        Log::warning('Pcare response tidak memiliki message.', $data);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Gagal post_pendaftaran_bpjs: ' . $e->getMessage());
                 }
+
+            } else {
+                // Perbarui status_pendaftaran menjadi 0 (batal)
+                $pendaftaran->status_pendaftaran = 2;
+                $pendaftaran->save();
             }
-            // Perbarui status_pendaftaran menjadi 0 (batal)
-            $pendaftaran->status_pendaftaran = 2;
-            $pendaftaran->save();
 
             return response()->json([
                 'success' => true,
