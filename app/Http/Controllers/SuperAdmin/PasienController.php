@@ -257,7 +257,7 @@ class PasienController extends Controller
             "kode_pos" => 'required',
             "alamat" => 'required|string|max:255',
             "noka" => 'nullable',
-            "noihs" => 'required',
+            "noihs" => 'nullable',
 
             "jenis_kartu" => 'nullable|string',
 
@@ -409,7 +409,7 @@ class PasienController extends Controller
             "kode_pos_edit" => 'required',
             "alamat_edit" => 'required|string|max:255',
             "noka_edit" => 'nullable',
-            "noihs_edit" => 'required',
+            "noihs_edit" => 'nullable',
             "jenis_kartu_edit" => 'nullable|string',
             "kelas_edit" => 'nullable|string',
             "provide_edit" => 'nullable|string',

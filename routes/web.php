@@ -460,8 +460,7 @@ Route::get('/monitor/loket-antrian', [MonitorController::class, 'loketAntrian'])
 
 // Menu Panggil Pasien
 Route::middleware('auth')->prefix('pasien-selesai')->group(function () {
-    Route::get('/', [PelayananController::class, 'pelayana_selesai'])->name('list_pasien.get');
-    Route::get('/rme/{norawat}', [PelayananController::class, 'pelayana_rme_selesai'])->name('list_pasien_rme.get');
+    Route::get('/', [PelayananController::class, 'pelayana_selesai'])->name('pelayana_selesai.get');
 });
 
 Route::get('/list_pasien', [PelayananController::class, 'list_pasien'])->name('list_pasien.get');
@@ -491,7 +490,6 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::get('/rujuk/{norawat}', [RujukanController::class, 'pelayana_rujukan'])->name('pelayana_rujuk.get');
     Route::post('/rujuk/add', [RujukanController::class, 'pelayana_rujukan_add'])->name('pelayana_rujuk.add');
 
-    Route::post('/rujuk', [RujukanController::class, 'pelayana_rujukanadd'])->name('pelayana_rujuk.add');
     Route::get('/rme/{norawat}', [PelayananController::class, 'pelayana_rme'])->name('pelayana_rme.get');
     Route::get('/permintaan/{norawat}', [PelayananController::class, 'pelayana_permintaan'])->name('pelayana_permintaan.get');
     Route::post('/resep/print', [PelayananController::class, 'print'])->name('resep.print');
