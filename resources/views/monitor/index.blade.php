@@ -16,9 +16,6 @@
                     <div class="card text-center">
                         <div class="card-body">
                             <h5 class=" text-success">Antrian BPJS</h5>
-                            <hr>
-                            <p class="card-text">Klik tombol di bawah untuk mengambil antrian BPJS dan mendapatkan pelayanan
-                                kesehatan terbaik.</p>
                             <button class="btn btn-success btn-lg btn-block" style="font-size: 2rem; padding: 20px;"
                                 data-toggle="modal" data-target="#bpjsModal">
                                 Antrian BPJS
@@ -30,9 +27,6 @@
                     <div class="card text-center">
                         <div class="card-body">
                             <h5 class=" text-primary">Antrian Non-BPJS</h5>
-                            <hr>
-                            <p class="card-text">Klik tombol di bawah untuk mengambil antrian Non-BPJS dan mendapatkan
-                                pelayanan kesehatan terbaik.</p>
                             <button class="btn btn-primary btn-lg btn-block" style="font-size: 2rem; padding: 20px;"
                                 data-toggle="modal" data-target="#nonBpjsModal">
                                 Antrian Non-BPJS
@@ -47,8 +41,6 @@
                                 <h5 class="text-info">Daftar Pasien Baru</h5>
                             </div>
                             <div class="card-body">
-                                <p class="card-text">Klik tombol di bawah untuk mendaftar sebagai pasien baru dan
-                                    mendapatkan pelayanan kesehatan terbaik.</p>
                                 <button class="btn btn-info btn-lg btn-block" style="font-size: 2rem; padding: 20px;"
                                     data-toggle="modal" data-target="#ddaftarModal">
                                     Daftar Pasien Baru
