@@ -7,11 +7,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
+use App\Models\WebSetting;
 
 class SatusehatController extends Controller
 {
+    private function checkSatusehatActive()
+    {
+        $webSetting = WebSetting::first();
+        if (!$webSetting || !$webSetting->is_satusehat_active) {
+            abort(response()->json([
+                'status' => 'error',
+                'message' => 'Fitur SATUSEHAT tidak aktif'
+            ], 403));
+        }
+    }
+
     public function get_token()
     {
+        $this->checkSatusehatActive();
         $config = Set_Sehat::find(1);
 
         if (!$config) {
@@ -33,6 +46,7 @@ class SatusehatController extends Controller
 
     public function get_nik_satusehat($nik)
     {
+        $this->checkSatusehatActive();
         $config = Set_Sehat::find(1);
         $BASE_URL = $config->SATUSEHAT_BASE_URL;
         $feature = 'fhir-r4/v1/Patient?identifier=';
@@ -91,6 +105,7 @@ class SatusehatController extends Controller
     }
     public function get_nik_practitioner_satusehat($nik)
     {
+        $this->checkSatusehatActive();
         $config = Set_Sehat::find(1);
         $BASE_URL = $config->SATUSEHAT_BASE_URL;
         $feature = 'fhir-r4/v1/Practitioner?identifier=';
@@ -148,6 +163,7 @@ class SatusehatController extends Controller
 
     public function get_kfa_satusehat($nama)
     {
+        $this->checkSatusehatActive();
 
         $config = Set_Sehat::find(1);
         $BASE_URL = $config->SATUSEHAT_BASE_URL;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\dokter;
 use App\Models\dokter_jadwal;
 use App\Models\Set_Bpjs;
+use App\Models\WebSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use LZCompressor\LZString;
@@ -14,6 +15,7 @@ class PcareController extends Controller
 {
     public function get_token()
     {
+        $this->checkBpjsActive();
         $config = Set_Bpjs::find(1);
 
         $cons_id = $config->CONSID;
@@ -56,6 +58,7 @@ class PcareController extends Controller
 
     public function get_noka_bpjs($noka)
     {
+        $this->checkBpjsActive();
         $config = set_bpjs::find(1);
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
@@ -164,6 +167,7 @@ class PcareController extends Controller
 
     public function get_nik_bpjs($nik)
     {
+        $this->checkBpjsActive();
         $config = set_bpjs::find(1);
         if (!$config) {
             return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
@@ -2683,5 +2687,16 @@ class PcareController extends Controller
         }
 
         return null;
+    }
+
+    private function checkBpjsActive()
+    {
+        $webSetting = WebSetting::first();
+        if (!$webSetting || !$webSetting->is_bpjs_active) {
+            abort(response()->json([
+                'status' => 'error',
+                'message' => 'Fitur BPJS tidak aktif'
+            ], 403));
+        }
     }
 }

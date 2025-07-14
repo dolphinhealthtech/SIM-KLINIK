@@ -534,6 +534,8 @@ Route::middleware('auth')->prefix('setting')->group(function () {
     Route::post('/web/update', [WebSettingController::class, 'update'])->name('web.update');
     Route::post('/web/satusehat', [WebSettingController::class, 'set_satusehat'])->name('web.update.satusehat');
     Route::post('/web/bpjs', [WebSettingController::class, 'set_bpjs'])->name('web.update.bpjs');
+    Route::post('/web/toggle', [WebSettingController::class, 'updateToggle'])->name('web.update.toggle');
+    Route::get('/web/toggle/states', [WebSettingController::class, 'getToggleStates'])->name('web.get.toggle.states');
 });
 
 // Menu Staff

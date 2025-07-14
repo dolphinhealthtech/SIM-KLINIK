@@ -110,11 +110,13 @@
                                                         <i class="far fa-clock"></i> Jadwal
                                                     </a>
 
+                                                    @if(isset($is_bpjs_active) && $is_bpjs_active)
                                                     <a href="{{ route('jadwal.sinkron', ['id' => $dokterdata->id]) }}"
                                                         class="btn btn-info rounded-pill"
                                                         onclick="return confirm('Yakin ingin singkronisasi jadwal dokter ini?')">
                                                             <i class="far fa-clock"></i> Singkron Jadwal
                                                     </a>
+                                                    @endif
 
                                                 </td>
                                             </tr>

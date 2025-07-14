@@ -11,6 +11,7 @@
             <!-- Centered Queue Buttons Section -->
             <div class="mt-4"></div>
             <div class="row justify-content-center align-items-center" style="height: 25vh;">
+                @if($is_bpjs_active)
                 <div class="col-md-6">
                     <div class="card text-center">
                         <div class="card-body">
@@ -56,6 +57,39 @@
                         </div>
                     </div>
                 </div>
+                @else
+                <div class="col-md-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class=" text-primary">Antrian Non-BPJS</h5>
+                            <hr>
+                            <p class="card-text">Klik tombol di bawah untuk mengambil antrian Non-BPJS dan mendapatkan
+                                pelayanan kesehatan terbaik.</p>
+                            <button class="btn btn-primary btn-lg btn-block" style="font-size: 2rem; padding: 20px;"
+                                data-toggle="modal" data-target="#nonBpjsModal">
+                                Antrian Non-BPJS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="text-center">
+                        <div class="card">
+                            <div class="card-header text-center">
+                                <h5 class="text-info">Daftar Pasien Baru</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">Klik tombol di bawah untuk mendaftar sebagai pasien baru dan
+                                    mendapatkan pelayanan kesehatan terbaik.</p>
+                                <button class="btn btn-info btn-lg btn-block" style="font-size: 2rem; padding: 20px;"
+                                    data-toggle="modal" data-target="#ddaftarModal">
+                                    Daftar Pasien Baru
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
                 <div class="mt-5"></div>
             </div><!-- /.container-fluid -->
         </div>
@@ -307,6 +341,7 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            @if($is_bpjs_active)
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="nik">Nomor induk kependudukan</label>
@@ -319,6 +354,14 @@
                                                     <input type="text" class="form-control" id="noka" name="noka" placeholder="nomor noka">
                                                 </div>
                                             </div>
+                                            @else
+                                            <div class="col-md-12 d-flex justify-content-center">
+                                                <div class="form-group w-50">
+                                                    <label for="nik">Nomor induk kependudukan</label>
+                                                    <input type="text" class="form-control" id="nik" name="nik" placeholder="nomor nik">
+                                                </div>
+                                            </div>
+                                            @endif
                                         </div>
                                         <button type="button" class="btn btn-primary" onclick="stepper.previous()">Kembali</button>
                                         <button type="button" class="btn btn-primary" onclick="stepper.next()">Selanjutnya</button>

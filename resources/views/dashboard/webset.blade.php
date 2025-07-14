@@ -279,4 +279,84 @@
         setInterval(updateTime, 1000);
         updateTime(); // Initialize immediately
     </script>
+
+    <!-- AJAX Script untuk Toggle Switch -->
+    <script>
+    $(document).ready(function() {
+        // Load current toggle states saat halaman dibuka
+        loadToggleStates();
+
+        // Handle toggle switches
+        $('.custom-control-input').on('change', function() {
+            const toggleId = $(this).attr('id');
+            const isChecked = $(this).is(':checked');
+            const value = isChecked ? 1 : 0;
+
+            // Show loading state
+            $(this).prop('disabled', true);
+
+            // AJAX request untuk update toggle
+            $.ajax({
+                url: "{{ route('web.update.toggle') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    toggle_type: toggleId,
+                    value: value
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        // Show error message
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    console.error('AJAX Error:', xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat mengupdate pengaturan'
+                    });
+                },
+                complete: function() {
+                    // Re-enable toggle
+                    $('.custom-control-input').prop('disabled', false);
+                }
+            });
+        });
+    });
+
+    function loadToggleStates() {
+        $.ajax({
+            url: "{{ route('web.get.toggle.states') }}",
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    const states = response.data;
+
+                    // Update toggle states
+                    $('#toggleBPJS').prop('checked', states.is_bpjs_active == 1);
+                    $('#toggleSatusehat').prop('checked', states.is_satusehat_active == 1);
+                    $('#toggleGudangutama').prop('checked', states.is_gudangutama_active == 1);
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading toggle states:', xhr);
+            }
+        });
+    }
+    </script>
 @endsection

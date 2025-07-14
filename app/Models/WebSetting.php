@@ -14,6 +14,9 @@ class WebSetting extends Model
         'nama',
         'alamat',
         'profile_image',
-        'kode_klinik'
+        'kode_klinik',
+        'is_bpjs_active',
+        'is_satusehat_active',
+        'is_gudangutama_active'
     ];
 }
