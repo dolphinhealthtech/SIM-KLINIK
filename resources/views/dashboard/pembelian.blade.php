@@ -630,7 +630,12 @@
                     confirmButtonText: 'OK'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = "{{ route('setharga.get') }}";
+                        var isGudangAktif = {{ $gudang }};
+                        if (isGudangAktif === 1) {
+                            window.location.href = "{{ route('setharga_utama.get') }}";
+                        } else {
+                            window.location.href = "{{ route('setharga.get') }}";
+                        }
                     }
                 });
             @endif

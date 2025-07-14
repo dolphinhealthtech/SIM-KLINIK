@@ -10,6 +10,7 @@ use App\Models\gudang_penyesuaian_masuk;
 use App\Models\gudang_penyesuaian_keluar;
 use App\Models\gudang_stok_opname;
 use App\Models\apotek_prebayar;
+use App\Models\gudang_barang_stok_utama;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,13 @@ class StokBarangController extends Controller
         return view('module.master-data-gudang.stok', compact('title','stok'));
     }
 
+    public function stokobatalkes_utama()
+    {
+        $title = "Master Stok Obat / Alkes Utama";
+        $stok = gudang_barang_stok_utama::all();
+
+        return view('module.master-data-gudang.stok_utama', compact('title','stok'));
+    }
     // Penyesuaian / Stok Opname
 
     public function stok_penyesuaian()
