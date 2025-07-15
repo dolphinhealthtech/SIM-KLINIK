@@ -17,6 +17,7 @@ use App\Models\Set_Sehat;
 use App\Models\WebSetting;
 use App\Models\dokter;
 use App\Http\Controllers\PcareController;
+use App\Models\external_database;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -36,9 +37,8 @@ class MonitorController extends Controller
         $setting = WebSetting::first(); // Ambil data pertama jika ada
         $set_bpjs = Set_Bpjs::all(); // Ambil data pertama jika ada
         $set_Sehat = Set_Sehat::all(); // Ambil data pertama jika ada
-
-
-        return view('dashboard.webset', compact('title', 'setting', 'set_bpjs', 'set_Sehat'));
+        $singkron = external_database::all(); // Tambahkan baris ini
+        return view('dashboard.webset', compact('title', 'setting', 'set_bpjs', 'set_Sehat', 'singkron'));
     }
 
     public function monitor()
