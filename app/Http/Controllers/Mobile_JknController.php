@@ -81,7 +81,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -273,7 +273,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -387,7 +387,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -480,7 +480,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -572,7 +572,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
