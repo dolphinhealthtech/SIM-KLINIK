@@ -81,7 +81,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -273,7 +273,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -387,7 +387,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -480,7 +480,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -572,7 +572,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -590,13 +590,13 @@ class Mobile_JknController extends Controller
 
         // === Validasi Data Dasar ===
         $validator = Validator::make($data, [
-            'nomorkartu'    => 'required|digits:13|numeric',
-            'nik'           => 'required|digits:16|numeric',
+            'nomorkartu'    => 'required',
+            'nik'           => 'required',
             'nomorkk'       => 'required',
-            'nama'          => 'required|string',
-            'jeniskelamin'  => 'required|in:L,P',
-            'tanggallahir'  => 'required|date_format:Y-m-d',
-            'alamat'        => 'required|string',
+            'nama'          => 'required',
+            'jeniskelamin'  => 'required',
+            'tanggallahir'  => 'required',
+            'alamat'        => 'required',
             'kodeprop'      => 'required',
             'namaprop'      => 'required',
             'kodedati2'     => 'required',
@@ -618,11 +618,8 @@ class Mobile_JknController extends Controller
             ]);
         }
 
-        // === Normalisasi Jenis Kelamin ===
-        $jenis_kelamin = $data['jeniskelamin'] === 'L' ? 'Laki-laki' : 'Perempuan';
-
         // === Cek Pasien Sudah Terdaftar ===
-        if (pasien::where('id_number', $data['nik'])->exists()) {
+        if (pasien::where('nik', $data['nik'])->exists()) {
             return response()->json([
                 'metadata' => [
                     'message' => 'NIK ' . $data['nik'] . ' sudah terdaftar',
@@ -631,20 +628,8 @@ class Mobile_JknController extends Controller
             ]);
         }
 
-        if (pasien::where(function ($query) use ($data) {
-            $query->where('no_jaminan_1', $data['nomorkartu'])
-                ->orWhere('no_jaminan_2', $data['nomorkartu'])
-                ->orWhere('no_jaminan_3', $data['nomorkartu']);
-        })->exists()) {
-            return response()->json([
-                'metadata' => [
-                    'message' => 'No Kartu ' . $data['nomorkartu'] . ' sudah terdaftar',
-                    'code' => 201
-                ]
-            ]);
-        }
 
-        if (pasien::where('no_bpjs', $data['nomorkartu'])->orWhere('no_ktp', $data['nik'])->exists()) {
+        if (pasien::where('no_bpjs', $data['nomorkartu'])->orWhere('nik', $data['nik'])->exists()) {
             return response()->json([
                 'metadata' => [
                     'message' => 'No Kartu dan NIK sudah terdaftar sebagai Pasien Baru',
@@ -659,18 +644,14 @@ class Mobile_JknController extends Controller
 
         // === Simpan ke Database ===
         pasien::create([
-            'id'         => $newId,
-            'nama'       => $data['nama'],
-            'alamat'     => $data['alamat'],
-            'kelurahan'  => $data['namakel'],
-            'kecamatan'  => $data['namakec'],
-            'tgl_lahir'  => $data['tanggallahir'],
-            'jk'         => $jenis_kelamin,
-            'no_ktp'     => $data['nik'],
-            'no_bpjs'    => $data['nomorkartu'],
-            'kabupaten'  => $data['namadati2'],
-            'no_hp'      => $data['nohp'] ?? '-',
-            'tgl_input'  => now(),
+            'no_rm'         => str_pad($newId, 6, '0', STR_PAD_LEFT),
+            'nama'          => $data['nama'],
+            'alamat'        => $data['alamat'],
+            'tanggal_lahir' => $data['tanggallahir'],
+            'seks'          => $data['jeniskelamin'],
+            'nik'           => $data['nik'],
+            'no_bpjs'       => $data['nomorkartu'],
+            'telepon'       => $data['nohp'] ?? '-',
         ]);
 
         return response()->json([
