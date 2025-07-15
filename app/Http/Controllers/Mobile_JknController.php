@@ -170,11 +170,22 @@ class Mobile_JknController extends Controller
 
         // === 6. Cek antrian ganda ===
         $tglLike = $tgl . '%';
-        if (Pendaftaran_rawat_jalan::where('nomor_rm', $pasien->no_rm)->whereDate('tanggal_kujungan', $tgl)->exists()) {
+        $adaDaftarAktif = Pendaftaran_rawat_jalan::where('nomor_rm', $pasien->no_rm)
+            ->whereDate('tanggal_kujungan', $tgl)
+            ->whereHas('status', function ($query) {
+                $query->where('status_pendaftaran', '!=', 0);
+            })
+            ->exists();
+
+        if ($adaDaftarAktif) {
             return response()->json([
-                'metadata' => ['message' => 'Anda sudah ambil antrian di tanggal ini', 'code' => 201]
+                'metadata' => [
+                    'message' => 'Anda sudah ambil antrian di tanggal ini',
+                    'code' => 201
+                ]
             ]);
         }
+
 
         // === 8. Hitung kuota ===
         $kuotajkn = 30;
@@ -194,10 +205,10 @@ class Mobile_JknController extends Controller
 
         // === 9. Simpan antrian ===
         $antrian = loket::where('poli_id', $poli->id)->first();
-        $tanggalHariIni = Carbon::today();
 
+        $tglcek = Carbon::parse($data['tanggalperiksa']);
         $last = Pendaftaran_rawat_jalan::where('antrian', 'like', $antrian->nama . '-%')
-            ->whereDate('created_at', $tanggalHariIni)
+            ->whereDate('created_at', $tglcek)
             ->orderBy('created_at', 'desc')
             ->first();
 
@@ -246,6 +257,28 @@ class Mobile_JknController extends Controller
 
         $data = Pendaftaran_rawat_jalan_status::with('pendaftaran')->where('status_panggil', 1)->first();
 
+        $antrianTerbaru = Pendaftaran_rawat_jalan::whereHas('status', function ($query) {
+                $query->where('status_pendaftaran', 2);
+            })
+            ->whereDate('created_at', $tanggal) // filter sesuai tanggal
+            ->orderBy('antrian', 'desc')
+            ->pluck('antrian')
+            ->first(); // ambil 1 data paling atas
+
+        $angkaAntrean = 0;
+        $angkaPanggil = 0;
+
+        if (preg_match('/\d+/', $antrianBaru, $matchAntrean)) {
+            $angkaAntrean = intval($matchAntrean[0]);
+        }
+
+        if (preg_match('/\d+/', $antrianTerbaru, $matchPanggil)) {
+            $angkaPanggil = intval($matchPanggil[0]);
+        }
+
+       $sisaAntrean = max(0, $angkaPanggil - $angkaAntrean);
+
+
         // === 11. Response ===
         return response()->json([
             'response' => [
@@ -259,6 +292,8 @@ class Mobile_JknController extends Controller
                 'kuotanonjkn' => $kuotanonjkn,
                 'nomorantrean' => $antrianBaru,
                 'angkaantrean' => $nextNumber,
+                'sisaantrean' => $sisaAntrean,
+                'antreanpanggil' => $antrianTerbaru,
                 'status_panggil' => $data->pendaftaran->antrian ?? null,
                 'keterangan' => 'Apabila antiran terlewat harap ambil antrian kembali.'
             ],
@@ -525,6 +560,7 @@ class Mobile_JknController extends Controller
             ->where('poli_id', $poli->id)
             ->whereDate('tanggal_kujungan', $tanggal)
             ->with('status') // tetap ambil relasi status
+            ->orderBy('created_at', 'desc')
             ->first();
 
 
@@ -537,7 +573,10 @@ class Mobile_JknController extends Controller
             ]);
         }
 
-        $status = Pendaftaran_rawat_jalan_status::where('nomor_register', $antrian->nomor_register)->first();
+        $status = Pendaftaran_rawat_jalan_status::where('nomor_register', $antrian->nomor_register)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
 
         if (!$antrian->status || $antrian->status->status_pendaftaran == 0) {
             return response()->json([
