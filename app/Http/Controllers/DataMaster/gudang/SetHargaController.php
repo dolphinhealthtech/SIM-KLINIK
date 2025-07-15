@@ -110,15 +110,12 @@ class SetHargaController extends Controller
         try {
             $request->validate([
                 'harga_jual'  => 'required|string',
-                'embalase_poin' => 'required|string',
             ], [
                 'harga_jual'  => 'Harga Jual',
-                'embalase_poin' => 'Embalase Poin',
             ]);
 
             // Bersihkan prefix atau simbol dari input agar hanya angka saja
             $harga_jual  = preg_replace('/[^\d]/', '', $request->input('harga_jual'));
-            $embalase_poin = preg_replace('/[^\d]/', '', $request->input('embalase_poin'));
 
             // Simpan data ke database
             $setharga = gudang_setting_harga_utama::first();
@@ -126,14 +123,12 @@ class SetHargaController extends Controller
             if ($setharga) {
                 $setharga->update([
                     'harga_jual' => $harga_jual,
-                    'embalase_poin' => $embalase_poin,
                     'user_input_id' => Auth::user()->id,
                     'user_input_name' => Auth::user()->name,
                 ]);
             } else {
                 $setharga = gudang_setting_harga_utama::create([
                     'harga_jual' => $harga_jual,
-                    'embalase_poin' => $embalase_poin,
                     'user_input_id' => Auth::user()->id,
                     'user_input_name' => Auth::user()->name,
                 ]);
