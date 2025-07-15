@@ -10,7 +10,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12 col-md-12 col-lg-4 order-1 order-md-1">
+                        <div class="col-lg-4">
                             <div class="col-md-12">
                                 <div class="card card-primary card-outline">
                                     <div class="card-header d-flex justify-content-center align-items-center">
@@ -54,8 +54,38 @@
                                     </form>
                                 </div>
                             </div>
+                            <div class="col-md-12">
+                                <div class="card card-primary card-outline">
+                                    <div class="card-header d-flex justify-content-center align-items-center">
+                                        <h3 class="card-title">Menu Setting</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="toggleBPJS" name="toggleBPJS" checked>
+                                                <label class="custom-control-label" for="toggleBPJS">Aktifkan Fitur BPJS</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="toggleSatusehat" name="toggleSatusehat" checked>
+                                                <label class="custom-control-label" for="toggleSatusehat">Aktifkan Fitur SATUSEHAT</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="toggleGudangutama" name="toggleGudangutama" checked>
+                                                <label class="custom-control-label" for="toggleGudangutama">Aktifkan Fitur Gudang Utama</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-12 col-md-12 col-lg-8 order-2 order-md-2">
+
+                        <div class="col-lg-8">
                             <div class="row">
                                 <div class="col-12">
                                     <div class="info-box bg-light">
@@ -70,48 +100,61 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="row col-md-6">
+                                <div class="col-md-6">
                                     <!-- SATUSEHAT Form -->
-                                    <div class="col-md-12">
-                                        <div class="card card-primary card-outline">
-                                            <div class="card-header d-flex justify-content-center align-items-center">
-                                                <h3 class="card-title">Satu Sehat</h3>
-                                            </div>
-                                            <form action="{{ route('web.update.satusehat') }}" method="POST"
-                                                enctype="multipart/form-data">
-                                                @csrf
-                                                <div class="card-body">
-                                                    @foreach ($set_Sehat as $setsatusehat)
-                                                        <div class="row">
-                                                            @foreach ([
-                                                                'org_id' => 'ID',
-                                                                'client_id' => 'Client ID',
-                                                                'client_secret' => 'Client Secret',
-                                                                'SATUSEHAT_BASE_URL' => 'SATUSEHAT BASE URL',
-                                                            ] as $name => $label)
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label
-                                                                            for="{{ $name }}">{{ $label }}</label>
-                                                                        <input type="text"
-                                                                            value="{{ $setsatusehat->$name }}"
-                                                                            name="{{ $name }}" class="form-control"
-                                                                            id="{{ $name }}"
-                                                                            placeholder="Enter {{ $label }}"
-                                                                            required>
-                                                                    </div>
+                                    <div class="card card-primary card-outline mb-3">
+                                        <div class="card-header d-flex justify-content-center align-items-center">
+                                            <h3 class="card-title">Satu Sehat</h3>
+                                        </div>
+                                        <form action="{{ route('web.update.satusehat') }}" method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="card-body">
+                                                @foreach ($set_Sehat as $setsatusehat)
+                                                    <div class="row">
+                                                        @foreach ([
+                                                            'org_id' => 'ID',
+                                                            'client_id' => 'Client ID',
+                                                            'client_secret' => 'Client Secret',
+                                                            'SATUSEHAT_BASE_URL' => 'SATUSEHAT BASE URL',
+                                                        ] as $name => $label)
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="{{ $name }}">{{ $label }}</label>
+                                                                    <input type="text"
+                                                                        value="{{ $setsatusehat->$name }}"
+                                                                        name="{{ $name }}"
+                                                                        class="form-control"
+                                                                        id="{{ $name }}"
+                                                                        placeholder="Enter {{ $label }}"
+                                                                        required>
                                                                 </div>
-                                                            @endforeach
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                                <div class="card-footer">
-                                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                                </div>
-                                            </form>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <div class="card-footer">
+                                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- Tambahan Card Baru di bawahnya -->
+                                    <div class="card card-primary card-outline">
+                                        <div class="card-header d-flex justify-content-center align-items-center">
+                                            <h3 class="card-title">Menu Setting</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Tombol untuk membuka modal -->
+                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#paymentModal">
+                                                Atur Pembayaran Bank
+                                            </button>
                                         </div>
                                     </div>
+
                                 </div>
+
+
                                 <div class="row col-md-6">
                                     <!-- BPJS Form -->
                                     <div class="col-md-12">
@@ -168,6 +211,48 @@
     </div>
 
 
+<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentModalLabel">Pengaturan Pembayaran Bank</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form action="#" method="POST">
+        @csrf
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="bank">Pilih Bank</label>
+            <select name="bank" id="bank" class="form-control" required>
+              <option value="">-- Pilih Bank --</option>
+              <option value="BCA">BCA</option>
+              <option value="BRI">BRI</option>
+              <option value="Mandiri">Mandiri</option>
+              <option value="BNI">BNI</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="nominal">Nomor rekning</label>
+            <input type="number" name="nominal" id="nominal" class="form-control" placeholder="Masukkan nominal" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
     <script>
         document.getElementById('profileImageInput').addEventListener('change', function(event) {
             let reader = new FileReader();
@@ -193,5 +278,85 @@
         }
         setInterval(updateTime, 1000);
         updateTime(); // Initialize immediately
+    </script>
+
+    <!-- AJAX Script untuk Toggle Switch -->
+    <script>
+    $(document).ready(function() {
+        // Load current toggle states saat halaman dibuka
+        loadToggleStates();
+
+        // Handle toggle switches
+        $('.custom-control-input').on('change', function() {
+            const toggleId = $(this).attr('id');
+            const isChecked = $(this).is(':checked');
+            const value = isChecked ? 1 : 0;
+
+            // Show loading state
+            $(this).prop('disabled', true);
+
+            // AJAX request untuk update toggle
+            $.ajax({
+                url: "{{ route('web.update.toggle') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    toggle_type: toggleId,
+                    value: value
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        // Show error message
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    console.error('AJAX Error:', xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat mengupdate pengaturan'
+                    });
+                },
+                complete: function() {
+                    // Re-enable toggle
+                    $('.custom-control-input').prop('disabled', false);
+                }
+            });
+        });
+    });
+
+    function loadToggleStates() {
+        $.ajax({
+            url: "{{ route('web.get.toggle.states') }}",
+            method: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    const states = response.data;
+
+                    // Update toggle states
+                    $('#toggleBPJS').prop('checked', states.is_bpjs_active == 1);
+                    $('#toggleSatusehat').prop('checked', states.is_satusehat_active == 1);
+                    $('#toggleGudangutama').prop('checked', states.is_gudangutama_active == 1);
+                }
+            },
+            error: function(xhr) {
+                console.error('Error loading toggle states:', xhr);
+            }
+        });
+    }
     </script>
 @endsection

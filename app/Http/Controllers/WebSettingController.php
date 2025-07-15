@@ -52,6 +52,61 @@ class WebSettingController extends Controller
         }
     }
 
+    public function updateToggle(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'toggle_type' => 'required|string|in:toggleBPJS,toggleSatusehat,toggleGudangutama',
+                'value' => 'required|boolean'
+            ]);
+
+            $setting = WebSetting::first() ?? new WebSetting();
+
+            // Map toggle type ke field database
+            $fieldMap = [
+                'toggleBPJS' => 'is_bpjs_active',
+                'toggleSatusehat' => 'is_satusehat_active',
+                'toggleGudangutama' => 'is_gudangutama_active'
+            ];
+
+            $field = $fieldMap[$validated['toggle_type']];
+            $setting->$field = $validated['value'];
+            $setting->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pengaturan berhasil diperbarui!'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getToggleStates()
+    {
+        try {
+            $setting = WebSetting::first();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'is_bpjs_active' => $setting->is_bpjs_active ?? true,
+                    'is_satusehat_active' => $setting->is_satusehat_active ?? true,
+                    'is_gudangutama_active' => $setting->is_gudangutama_active ?? true
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function set_satusehat(Request $request)
     {

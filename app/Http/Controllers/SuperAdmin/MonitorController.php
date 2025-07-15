@@ -48,8 +48,10 @@ class MonitorController extends Controller
         $kelamin = kelamin::all();
         $poli = poli::all();
         $pernikaha = pernikahan::all();
+        $webSetting = WebSetting::first();
+        $is_bpjs_active = $webSetting ? $webSetting->is_bpjs_active : false;
 
-        return view('monitor.index', compact('title', 'poli', 'goldar', 'kelamin', 'pernikaha'));
+        return view('monitor.index', compact('title', 'poli', 'goldar', 'kelamin', 'pernikaha', 'is_bpjs_active'));
     }
 
     public function monitor_bpjs(Request $request)

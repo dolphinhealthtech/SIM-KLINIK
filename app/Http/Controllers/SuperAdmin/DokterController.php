@@ -22,6 +22,7 @@ use App\Models\User;
 use App\Models\goldar;
 use App\Models\pernikahan;
 use App\Models\pendidikan;
+use App\Models\WebSetting;
 use App\Http\Controllers\PcareController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -59,8 +60,9 @@ class DokterController extends Controller
         $bank = bank::all();
         $dokternoverif = dokter::where('verifikasi', 1)->count();
         $dokterall = dokter::count();
-
-        return view('module.staff-manajemen.dokter', compact('title', 'user', 'poli', 'posker', 'dokter', 'provinsi', 'kelamin', 'goldar', 'agama', 'pernikahan', 'suku', 'bangsa', 'bahasa', 'pendidikan', 'bank', 'dokternoverif', 'dokterall'));
+        $webSetting = WebSetting::first();
+        $is_bpjs_active = $webSetting ? $webSetting->is_bpjs_active : false;
+        return view('module.staff-manajemen.dokter', compact('title', 'user', 'poli', 'posker', 'dokter', 'provinsi', 'kelamin', 'goldar', 'agama', 'pernikahan', 'suku', 'bangsa', 'bahasa', 'pendidikan', 'bank', 'dokternoverif', 'dokterall', 'is_bpjs_active'));
     }
 
     public function dokteradd(Request $request)

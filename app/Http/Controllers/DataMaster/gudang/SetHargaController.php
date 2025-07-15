@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\Gudang_setting_hargaExport;
 use App\Imports\Gudang_setting_hargaImport;
+use App\Models\gudang_setting_harga_utama;
 use Illuminate\Http\Request;
 
 
@@ -26,6 +27,17 @@ class SetHargaController extends Controller
         $singkron = external_database::all();
 
         return view('module.master-data-gudang.setting_harga_jual', compact('title','setharga','lastUpdated','singkron'));
+    }
+
+    public function setharga_utama()
+    {
+        $title = "Master Setting Harga Jual Utama";
+        $setharga = gudang_setting_harga_utama::first();
+        Carbon::setLocale('id');
+        $lastUpdated = $setharga ? Carbon::parse($setharga->updated_at)->diffForHumans() : 'belum ada update';
+        $singkron = external_database::all();
+
+        return view('module.master-data-gudang.setting_harga_jual_utama', compact('title','setharga','lastUpdated','singkron'));
     }
 
     public function sethargaadd(Request $request)
@@ -93,6 +105,60 @@ class SetHargaController extends Controller
 
     }
 
+    public function sethargaadd_utama(Request $request)
+    {
+        try {
+            $request->validate([
+                'harga_jual'  => 'required|string',
+                'embalase_poin' => 'required|string',
+            ], [
+                'harga_jual'  => 'Harga Jual',
+                'embalase_poin' => 'Embalase Poin',
+            ]);
+
+            // Bersihkan prefix atau simbol dari input agar hanya angka saja
+            $harga_jual  = preg_replace('/[^\d]/', '', $request->input('harga_jual'));
+            $embalase_poin = preg_replace('/[^\d]/', '', $request->input('embalase_poin'));
+
+            // Simpan data ke database
+            $setharga = gudang_setting_harga_utama::first();
+
+            if ($setharga) {
+                $setharga->update([
+                    'harga_jual' => $harga_jual,
+                    'embalase_poin' => $embalase_poin,
+                    'user_input_id' => Auth::user()->id,
+                    'user_input_name' => Auth::user()->name,
+                ]);
+            } else {
+                $setharga = gudang_setting_harga_utama::create([
+                    'harga_jual' => $harga_jual,
+                    'embalase_poin' => $embalase_poin,
+                    'user_input_id' => Auth::user()->id,
+                    'user_input_name' => Auth::user()->name,
+                ]);
+            }
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Setting harga jual berhasil ditambahkan!',
+                'data' => $setharga
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Setting harga jual sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan setting harga jual!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
     // Koneksi antar database
     public function sethargasingkron($id)
     {

@@ -86,11 +86,17 @@ Route::post('/apotek/print-resep/revisi', [ApotekController::class, 'resep_revis
 
 // Menu Data Barang (obat)
 Route::get('/data-barang', [DabarController::class, 'dabar'])->name('dabar.get');
+Route::get('/data-barang-utama', [DabarController::class, 'dabar_utama'])->name('dabar_utama.get');
 Route::post('/data-barang/add', [DabarController::class, 'dabaradd'])->name('dabar.store');
+Route::post('/data-barang-utama/add', [DabarController::class, 'dabaradd_utama'])->name('dabar_utama.store');
 Route::post('/data-barang/update', [DabarController::class, 'dabaredit'])->name('dabar.update');
+Route::post('/data-barang-utama/update', [DabarController::class, 'dabaredit_utama'])->name('dabar_utama.update');
 Route::post('/data-barang/delete', [DabarController::class, 'dabardelete'])->name('dabar.destroy');
+Route::post('/data-barang-utama/delete', [DabarController::class, 'dabardelete_utama'])->name('dabar_utama.destroy');
 Route::get('/data-barang/export', [DabarController::class, 'dabarexport'])->name('dabar.export');
+Route::get('/data-barang-utama/export', [DabarController::class, 'dabarexport_utama'])->name('dabar_utama.export');
 Route::post('/data-barang/import', [DabarController::class, 'dabarimport'])->name('dabar.import');
+Route::post('/data-barang-utama/import', [DabarController::class, 'dabarimport_utama'])->name('dabar_utama.import');
 //Koneksi antar database
 Route::get('/data-barang/singkron/{id}', [DabarController::class, 'dabarsingkron'])->name('dabar.singkron');
 
@@ -135,10 +141,13 @@ Route::prefix('data-master-gudang')->group(function () {
 
     // Menu Setting Harga
     Route::get('/setting-harga-jual', [SetHargaController::class, 'setharga'])->name('setharga.get');
+    Route::get('/setting-harga-jual-utama', [SetHargaController::class, 'setharga_utama'])->name('setharga_utama.get');
     Route::post('/setting-harga-jual/add', [SetHargaController::class, 'sethargaadd'])->name('setharga.store');
+    Route::post('/setting-harga-jual-utama/add', [SetHargaController::class, 'sethargaadd_utama'])->name('setharga_utama.store');
     Route::get('/setting-harga-jual/singkron/{id}', [SetHargaController::class, 'sethargasingkron'])->name('setharga.singkron');
     Route::get('/harga-barang-jual', [HargaJualController::class, 'hargajual'])->name('hargajual.get');
     Route::get('/stok-obat-alkes', [StokBarangController::class, 'stokobatalkes'])->name('stokobatalkes.get');
+    Route::get('/stok-obat-alkes-utama', [StokBarangController::class, 'stokobatalkes_utama'])->name('stokobatalkes_utama.get');
 
     Route::get('/stok-penyesuaian-opname', [StokBarangController::class, 'stok_penyesuaian'])->name('stok_penyesuaian.get');
     Route::post('/stok-penyesuaian-opname/add', [StokBarangController::class, 'stok_penyesuaianadd'])->name('stok_penyesuaian.store');
@@ -451,8 +460,7 @@ Route::get('/monitor/loket-antrian', [MonitorController::class, 'loketAntrian'])
 
 // Menu Panggil Pasien
 Route::middleware('auth')->prefix('pasien-selesai')->group(function () {
-    Route::get('/', [PelayananController::class, 'pelayana_selesai'])->name('list_pasien.get');
-    Route::get('/rme/{norawat}', [PelayananController::class, 'pelayana_rme_selesai'])->name('list_pasien_rme.get');
+    Route::get('/', [PelayananController::class, 'pelayana_selesai'])->name('pelayana_selesai.get');
 });
 
 Route::get('/list_pasien', [PelayananController::class, 'list_pasien'])->name('list_pasien.get');
@@ -482,7 +490,6 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::get('/rujuk/{norawat}', [RujukanController::class, 'pelayana_rujukan'])->name('pelayana_rujuk.get');
     Route::post('/rujuk/add', [RujukanController::class, 'pelayana_rujukan_add'])->name('pelayana_rujuk.add');
 
-    Route::post('/rujuk', [RujukanController::class, 'pelayana_rujukanadd'])->name('pelayana_rujuk.add');
     Route::get('/rme/{norawat}', [PelayananController::class, 'pelayana_rme'])->name('pelayana_rme.get');
     Route::get('/permintaan/{norawat}', [PelayananController::class, 'pelayana_permintaan'])->name('pelayana_permintaan.get');
     Route::post('/resep/print', [PelayananController::class, 'print'])->name('resep.print');
@@ -534,6 +541,8 @@ Route::middleware('auth')->prefix('setting')->group(function () {
     Route::post('/web/update', [WebSettingController::class, 'update'])->name('web.update');
     Route::post('/web/satusehat', [WebSettingController::class, 'set_satusehat'])->name('web.update.satusehat');
     Route::post('/web/bpjs', [WebSettingController::class, 'set_bpjs'])->name('web.update.bpjs');
+    Route::post('/web/toggle', [WebSettingController::class, 'updateToggle'])->name('web.update.toggle');
+    Route::get('/web/toggle/states', [WebSettingController::class, 'getToggleStates'])->name('web.get.toggle.states');
 });
 
 // Menu Staff
