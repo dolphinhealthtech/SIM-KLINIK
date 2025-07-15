@@ -543,6 +543,8 @@ Route::middleware('auth')->prefix('setting')->group(function () {
     Route::post('/web/bpjs', [WebSettingController::class, 'set_bpjs'])->name('web.update.bpjs');
     Route::post('/web/toggle', [WebSettingController::class, 'updateToggle'])->name('web.update.toggle');
     Route::get('/web/toggle/states', [WebSettingController::class, 'getToggleStates'])->name('web.get.toggle.states');
+    Route::post('/web/set-gudang-utama', [WebSettingController::class, 'setActiveGudangUtama'])->name('web.set.gudang.utama');
+    Route::post('/web/reset-gudang-utama', [WebSettingController::class, 'resetActiveGudangUtama'])->name('web.reset.gudang.utama');
 });
 
 // Menu Staff

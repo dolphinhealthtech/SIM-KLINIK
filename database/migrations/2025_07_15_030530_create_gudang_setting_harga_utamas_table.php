@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('gudang_setting_harga_utamas', function (Blueprint $table) {
             $table->id();
             $table->string('harga_jual');
-            $table->string('embalase_poin');
             $table->string('user_input_id');
             $table->string('user_input_name');
             $table->timestamps();

@@ -31,12 +31,6 @@
                                 @csrf
                                 <div class="card-header">
                                     <h3 class="card-title">Setting Harga Jual</h3>
-                                    <div class="card-tools">
-                                        <!-- Tombol Sinkron (Memunculkan Modal) -->
-                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
-                                            <i class="fas fa-file-upload"></i> Sinkron
-                                        </button>
-                                    </div>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -57,7 +51,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        {{-- <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Mode Embalase (Untuk Resep)</label>
                                             </div>
@@ -68,7 +62,7 @@
                                                     <input type="text" class="form-control" id="embalase_poin" name="embalase_poin" placeholder="Masukan Nominal Embalase" value="{{ $setharga ? $setharga->embalase_poin : '' }}">
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                                 <!-- /.card-body -->

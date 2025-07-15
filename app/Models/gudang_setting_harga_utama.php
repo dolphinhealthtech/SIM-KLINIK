@@ -11,7 +11,6 @@ class gudang_setting_harga_utama extends Model
 
     protected $fillable = [
         'harga_jual',
-        'embalase_poin',
         'user_input_id',
         'user_input_name'
     ];
