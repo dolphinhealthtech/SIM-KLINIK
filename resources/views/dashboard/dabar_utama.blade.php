@@ -32,7 +32,7 @@
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                         data-target="#adddabarModal" >
-                                        <i class="fas fa-plus"></i> Tambah Obat Utama
+                                        <i class="fas fa-plus"></i> Tambah
                                     </button>
                                     <!-- Tombol Export -->
                                     <a href="{{ route('dabar_utama.export') }}" class="btn btn-success">
@@ -42,11 +42,6 @@
                                     <!-- Tombol Import (Memunculkan Modal) -->
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importdabarModal">
                                         <i class="fas fa-file-upload"></i> Import
-                                    </button>
-
-                                    <!-- Tombol Sinkron (Memunculkan Modal) -->
-                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
-                                        <i class="fas fa-file-upload"></i> Sinkron
                                     </button>
 
                                 </div>
