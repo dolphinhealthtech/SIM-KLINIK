@@ -150,7 +150,9 @@ Route::prefix('data-master-gudang')->group(function () {
     Route::get('/stok-obat-alkes-utama', [StokBarangController::class, 'stokobatalkes_utama'])->name('stokobatalkes_utama.get');
 
     Route::get('/stok-penyesuaian-opname', [StokBarangController::class, 'stok_penyesuaian'])->name('stok_penyesuaian.get');
+    Route::get('/stok-penyesuaian-opname-utama', [StokBarangController::class, 'stok_penyesuaian_utama'])->name('stok_penyesuaian_utama.get');
     Route::post('/stok-penyesuaian-opname/add', [StokBarangController::class, 'stok_penyesuaianadd'])->name('stok_penyesuaian.store');
+    Route::post('/stok-penyesuaian-opname-utama/add', [StokBarangController::class, 'stok_penyesuaianadd_utama'])->name('stok_penyesuaian_utama.store');
 
     // Menu Satuan Inventaris
     Route::get('/satuan-inventaris', [SatuanInventarisController::class, 'satuan_inventaris'])->name('satuan_inventaris.get');
@@ -191,6 +193,7 @@ Route::prefix('data-master-gudang')->group(function () {
     Route::post('/gudang-utama/konfirmasi', [GudangUtamaController::class, 'gudangutamakonfirmasi'])->name('gudangutama.konfirmasi');
 
     Route::get('/kartu-stok', [StokBarangController::class, 'kartu_stok'])->name('kartu_stok.get');
+    Route::get('/kartu-stok-utama', [StokBarangController::class, 'kartu_stok_utama'])->name('kartu_stok_utama.get');
 });
 
 // Menu Data Master Manajemen
