@@ -113,6 +113,17 @@ Route::get('/data-inventaris/singkron/{id}', [InventarisController::class, 'inve
 Route::get('/inventaris-pembelian', [InventarisController::class, 'inventaris_pembelian'])->name('inventaris_pembelian.get');
 Route::post('/inventaris-pembelian/add', [InventarisController::class, 'inventaris_pembelianadd'])->name('inventaris_pembelian.add');
 
+// Menu Inventari Utama
+Route::get('/data-inventaris-utama', [InventarisController::class, 'inventaris_utama'])->name('inventaris_utama.get');
+Route::post('/data-inventaris-utama/add', [InventarisController::class, 'inventarisadd_utama'])->name('inventaris_utama.store');
+Route::post('/data-inventaris-utama/update', [InventarisController::class, 'inventarisedit_utama'])->name('inventaris_utama.update');
+Route::post('/data-inventaris-utama/delete', [InventarisController::class, 'inventarisdelete_utama'])->name('inventaris_utama.destroy');
+Route::get('/data-inventaris-utama/export', [InventarisController::class, 'inventarisexport_utama'])->name('inventaris_utama.export');
+Route::post('/data-inventaris-utama/import', [InventarisController::class, 'inventarisimport_utama'])->name('inventaris_utama.import');
+
+Route::get('/inventaris-pembelian-utama', [InventarisController::class, 'inventaris_pembelian_utama'])->name('inventaris_pembelian_utama.get');
+Route::post('/inventaris-pembelian-utama/add', [InventarisController::class, 'inventaris_pembelianadd_utama'])->name('inventaris_pembelian_utama.add');
+
 // Menu Data Master Gudang
 Route::prefix('data-master-gudang')->group(function () {
     // Menu Jenis Satuan
@@ -173,6 +184,13 @@ Route::prefix('data-master-gudang')->group(function () {
     Route::get('/stok-inventaris/data/{id}', [StokInventarisController::class, 'stokin_data'])->name('stokin_data.get');
     Route::post('/stok-inventaris/data/update', [StokInventarisController::class, 'stokin_dataedit'])->name('stokin_data.update');
     Route::post('/stok-inventaris/data/delete', [StokInventarisController::class, 'stokin_datadelete'])->name('stokin_data.destroy');
+
+    // Menu Stok Inventaris Utama
+    Route::get('/stok-inventaris-utama', [StokInventarisController::class, 'stokin_utama'])->name('stokin_utama.get');
+    Route::get('/stok-inventaris-utama/data/{id}', [StokInventarisController::class, 'stokin_data_utama'])->name('stokin_data_utama.get');
+    Route::post('/stok-inventaris-utama/data/update', [StokInventarisController::class, 'stokin_dataedit_utama'])->name('stokin_data_utama.update');
+    Route::post('/stok-inventaris-utama/data/delete', [StokInventarisController::class, 'stokin_datadelete_utama'])->name('stokin_data_utama.destroy');
+
 
     // Menu Request Obat Klinik Omega
     Route::get('/inventaris-request', [InventarisRequestController::class, 'inventarisrequest'])->name('inventarisrequest.get');

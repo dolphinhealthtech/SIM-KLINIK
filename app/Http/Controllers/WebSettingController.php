@@ -79,7 +79,7 @@ class WebSettingController extends Controller
 
             // Jika is_gudangutama_active diubah dari 0 ke 1, set semua active di external_database ke 0
             if ($field === 'is_gudangutama_active' && $oldValue == 0 && $validated['value'] == 1) {
-                \App\Models\external_database::query()->update(['active' => 0]);
+                external_database::query()->update(['active' => 0]);
             }
 
             return response()->json([
