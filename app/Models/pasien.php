@@ -61,4 +61,9 @@ class pasien extends Model
     {
         return $this->hasOne(pasien_antrian::class, 'pasien_id', 'id');
     }
+
+    public function getnama()
+    {
+        return $this->hasOne(User::class, 'id', 'users');
+    }
 }

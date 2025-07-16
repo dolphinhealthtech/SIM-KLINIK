@@ -1,10 +1,7 @@
 <?php
 
 use App\Http\Controllers\dashboard;
-use App\Http\Controllers\DataMasterController;
 use App\Http\Controllers\DataMasterManajemenController;
-use App\Http\Controllers\DataMasterMedisController;
-use App\Http\Controllers\DataMasterGudangController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\DataMaster\gudang\GudangRequestController;
 use App\Http\Controllers\DataMaster\gudang\GudangUtamaController;
