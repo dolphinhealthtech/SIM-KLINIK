@@ -24,7 +24,7 @@ class SetHargaController extends Controller
         $setharga = gudang_setting_harga::first();
         Carbon::setLocale('id');
         $lastUpdated = $setharga ? Carbon::parse($setharga->updated_at)->diffForHumans() : 'belum ada update';
-        $singkron = external_database::all();
+        $singkron = external_database::where('active', 1)->get();
 
         return view('module.master-data-gudang.setting_harga_jual', compact('title','setharga','lastUpdated','singkron'));
     }

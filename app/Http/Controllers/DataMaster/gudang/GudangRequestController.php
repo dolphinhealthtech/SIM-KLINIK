@@ -11,6 +11,9 @@ use App\Models\gudang_setting_harga;
 use App\Models\WebSetting;
 use App\Models\gudang_klinik_request;
 use App\Models\gudang_utama_keluar;
+use App\Models\gudang_penyesuaian_masuk_utama;
+use App\Models\gudang_barang_stok_utama;
+use App\Models\gudang_klinik_request_details;
 use Carbon\Carbon;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Http\Request;
@@ -515,6 +518,24 @@ class GudangRequestController extends Controller
                         'updated_at' => now(),
                     ]);
 
+                    $connection->table('gudang_penyesuaian_masuk_utamas')->insert([
+                        'kode_obat' => $data->kode_obat_alkes,
+                        'nama_obat' => $data->nama_obat_alkes,
+                        'qty_sebelum' => '0',
+                        'qty_mutasi' => $data->qty,
+                        'qty_sesudah' => '0',
+                        'jenis_penyesuaian' => 'BARANG DITOLAK',
+                        'alasan' => "Kesalahan Pengiriman Barang Pada {$data->nama_klinik}",
+                        'tanggal' => now()->toDateString(),
+                        'jam' => now()->toTimeString(),
+                        'harga' => $data->harga_dasar,
+                        'expired' => $data->expired,
+                        'user_input_id' => $request->input('user_id'),
+                        'user_input_name' => $request->input('user_name'),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
                     // Hapus data dari keluar
                     $connection->table('gudang_utama_keluars')->where('id', $id)->delete();
 
@@ -539,6 +560,22 @@ class GudangRequestController extends Controller
                         'user_input_name' => $request->input('user_name'),
                         'created_at' => now(),
                         'updated_at' => now(),
+                    ]);
+
+                    gudang_penyesuaian_masuk_utama::create([
+                        'kode_obat' => $data->kode_obat_alkes,
+                        'nama_obat' => $data->nama_obat_alkes,
+                        'qty_sebelum' => '0',
+                        'qty_mutasi' => $data->qty,
+                        'qty_sesudah' => '0',
+                        'jenis_penyesuaian' => 'BARANG DITOLAK',
+                        'alasan' => "Kesalahan Pengiriman Barang Pada {$data->nama_klinik}",
+                        'tanggal' => now()->toDateString(),
+                        'jam' => now()->toTimeString(),
+                        'harga' => $data->harga_dasar,
+                        'expired' => $data->expired,
+                        'user_input_id' => $request->input('user_id'),
+                        'user_input_name' => $request->input('user_name'),
                     ]);
 
                     // Hapus data dari keluar

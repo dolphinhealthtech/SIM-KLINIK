@@ -49,7 +49,7 @@
                                                 <label for="harga_jual_1" class="col-md-3 col-form-label">Setting Harga Jual 1 :</label>
 
                                                 <div class="col-md-6">
-                                                    <input type="text" class="form-control" id="harga_jual_1" name="harga_jual_1" placeholder="Harga Jual 1" value="{{ $setharga ? $setharga->harga_jual_1 : '' }}">
+                                                    <input type="text" class="form-control" id="harga_jual_1" name="harga_jual_1" placeholder="Harga Jual 1" value="{{ $setharga ? $setharga->harga_jual_1 : '' }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-3">
@@ -61,7 +61,7 @@
                                                 <label for="harga_jual_2" class="col-md-3 col-form-label">Setting Harga Jual 2 :</label>
 
                                                 <div class="col-md-6">
-                                                    <input type="text" class="form-control" id="harga_jual_2" name="harga_jual_2" placeholder="Harga Jual 2" value="{{ $setharga ? $setharga->harga_jual_2 : '' }}">
+                                                    <input type="text" class="form-control" id="harga_jual_2" name="harga_jual_2" placeholder="Harga Jual 2" value="{{ $setharga ? $setharga->harga_jual_2 : '' }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-3">
@@ -73,7 +73,7 @@
                                                 <label for="harga_jual_3" class="col-md-3 col-form-label">Setting Harga Jual 3 :</label>
 
                                                 <div class="col-md-6">
-                                                    <input type="text" class="form-control" id="harga_jual_3" name="harga_jual_3" placeholder="Harga Jual 3" value="{{ $setharga ? $setharga->harga_jual_3 : '' }}">
+                                                    <input type="text" class="form-control" id="harga_jual_3" name="harga_jual_3" placeholder="Harga Jual 3" value="{{ $setharga ? $setharga->harga_jual_3 : '' }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-3">
