@@ -8,6 +8,8 @@ use App\Models\inventaris_request;
 use App\Models\inventaris_request_detail;
 use App\Models\inventaris_stok;
 use App\Models\inventaris_utama_keluar;
+use App\Models\inventaris_data_barang_utama;
+use App\Models\inventaris_stok_utama;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
@@ -18,7 +20,7 @@ class InventarisUtamaController extends Controller
     {
         $title = "Inventaris Gudang Utama";
         $request = inventaris_request::with('details')->get();
-        $inventaris = inventaris_data_barang::all();
+        $inventaris = inventaris_data_barang_utama::all();
 
         return view('module.master-data-gudang.utama_inventaris', compact('title','request','inventaris'));
     }
@@ -65,7 +67,7 @@ class InventarisUtamaController extends Controller
     public function inventaris_getData($kode_barang)
     {
         try {
-            $harga = inventaris_data_barang::where('kode_barang', $kode_barang)->first();
+            $harga = inventaris_data_barang_utama::where('kode_barang', $kode_barang)->first();
 
             return response()->json([
                 'success' => true,
@@ -131,7 +133,7 @@ class InventarisUtamaController extends Controller
                 // Ambil info jenis barang (anggap field-nya 'jenis')
                 $jenisBarang = $item['jenis'];
 
-                $stokList = inventaris_stok::where('kode_barang', $kodeBarang)
+                $stokList = inventaris_stok_utama::where('kode_barang', $kodeBarang)
                     ->where('qty_barang', '>', 0)
                     ->orderBy('tanggal_pembelian', 'asc')
                     ->orderBy('masa_akhir_penggunaan', 'desc')
