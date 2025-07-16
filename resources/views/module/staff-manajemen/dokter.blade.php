@@ -1165,7 +1165,7 @@
                     </div>
                     <div class="modal-body">
                         @csrf
-                        <div id="calendarDokter" style="height:600px; min-width: 100%;"></div>
+                        <div id="calendarDokter" style="height:500px; min-width: 100%;"></div>
 
                     </div>
                     <div class="modal-footer">
@@ -1194,7 +1194,7 @@
                     center: 'title',
                     right: ''
                 },
-                height: 800,
+                height: 450,
                 slotMinTime: "00:00:00",
                 slotMaxTime: "24:00:00",
                 selectable: true,
@@ -1922,6 +1922,45 @@
             });
         });
 
+        $('#updatedokterForm').on('submit', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+            let url = form.attr('action');
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        $('#editdokterModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: true
+                        }).then(() => {
+                            $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
+                            location.reload(); // Reload halaman untuk update data
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat menghapus Dokter!',
+                    });
+                }
+            });
+        });
         $('#updatedokterForm').on('submit', function(e) {
             e.preventDefault();
 
