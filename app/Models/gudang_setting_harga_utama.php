@@ -10,7 +10,9 @@ class gudang_setting_harga_utama extends Model
     use HasFactory;
 
     protected $fillable = [
-        'harga_jual',
+        'harga_jual_1',
+        'harga_jual_2',
+        'harga_jual_3',
         'user_input_id',
         'user_input_name'
     ];

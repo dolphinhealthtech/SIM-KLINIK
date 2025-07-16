@@ -40,29 +40,41 @@
                                                 <label>Setup % Untuk Auto Import dari Faktur ke Harga Jual Netto :</label>
                                             </div>
                                             <div class="form-group row align-items-center">
-                                                <label for="harga_jual_1" class="col-md-3 col-form-label">Setting Harga Jual:</label>
+                                                <label for="harga_jual_1" class="col-md-3 col-form-label">Setting Harga Jual 1 :</label>
 
                                                 <div class="col-md-6">
-                                                    <input type="text" class="form-control" id="harga_jual" name="harga_jual" placeholder="Harga Jual" value="{{ $setharga ? $setharga->harga_jual : '' }}">
+                                                    <input type="text" class="form-control" id="harga_jual_1" name="harga_jual_1" placeholder="Harga Jual 1" value="{{ $setharga ? $setharga->harga_jual_1 : '' }}" readonly>
                                                 </div>
 
                                                 <div class="col-md-3">
-                                                    <span class="form-text">Harga Jual</span>
+                                                    <span class="form-text">BPJS</span>
+                                                </div>
+                                            </div>
+                                            {{-- HARGA JUAL 2 --}}
+                                            <div class="form-group row align-items-center">
+                                                <label for="harga_jual_2" class="col-md-3 col-form-label">Setting Harga Jual 2 :</label>
+
+                                                <div class="col-md-6">
+                                                    <input type="text" class="form-control" id="harga_jual_2" name="harga_jual_2" placeholder="Harga Jual 2" value="{{ $setharga ? $setharga->harga_jual_2 : '' }}" readonly>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <span class="form-text">Asuransi</span>
+                                                </div>
+                                            </div>
+                                            {{-- HARGA JUAL 3 --}}
+                                            <div class="form-group row align-items-center">
+                                                <label for="harga_jual_3" class="col-md-3 col-form-label">Setting Harga Jual 3 :</label>
+
+                                                <div class="col-md-6">
+                                                    <input type="text" class="form-control" id="harga_jual_3" name="harga_jual_3" placeholder="Harga Jual 3" value="{{ $setharga ? $setharga->harga_jual_3 : '' }}" readonly>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <span class="form-text">Pasien Umum</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Mode Embalase (Untuk Resep)</label>
-                                            </div>
-                                            <div class="form-group row align-items-center">
-                                                <label for="" class="col-md-4 col-form-label">Embalase Kelipatan : 1 Poin = </label>
-
-                                                <div class="col-md-6">
-                                                    <input type="text" class="form-control" id="embalase_poin" name="embalase_poin" placeholder="Masukan Nominal Embalase" value="{{ $setharga ? $setharga->embalase_poin : '' }}">
-                                                </div>
-                                            </div>
-                                        </div> --}}
                                     </div>
                                 </div>
                                 <!-- /.card-body -->

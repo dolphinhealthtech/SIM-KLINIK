@@ -202,7 +202,9 @@ class PembelianController extends Controller
                 }
                 if (WebSetting::first()->is_gudangutama_active == 1) {
                     $setting = gudang_setting_harga_utama::first(); // atau where('some_column', ...)
-                    $hargaJual = $hargaDasar * (1 + ($setting->harga_jual / 100));
+                    $hargaJual1 = $hargaDasar * (1 + ($setting->harga_jual_1 / 100));
+                    $hargaJual2 = $hargaDasar * (1 + ($setting->harga_jual_2 / 100));
+                    $hargaJual3 = $hargaDasar * (1 + ($setting->harga_jual_3 / 100));
                 } else {
                     $setting = gudang_setting_harga::first(); // atau where('some_column', ...)
                     $hargaJual1 = $hargaDasar * (1 + ($setting->harga_jual_1 / 100));
@@ -220,7 +222,9 @@ class PembelianController extends Controller
                         'kode_obat_alkes' => $detail['kodeBarang'],
                         'nama_obat_alkes' => $detail['nama'],
                         'harga_dasar' => $hargaDasar,
-                        'harga_jual_1' => $hargaJual,
+                        'harga_jual_1' => $hargaJual1,
+                        'harga_jual_2' => $hargaJual2,
+                        'harga_jual_3' => $hargaJual3,
                         'diskon' => $Diskonbarang,
                         'ppn' => $PPNbarang,
                         'tanggal_obat_masuk' => $request->input('tanggal_terima_barang'),

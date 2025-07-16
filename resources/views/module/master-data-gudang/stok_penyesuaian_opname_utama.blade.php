@@ -49,8 +49,8 @@
                                         <label for="harga_penyesuaian" class="col-md-1 col-form-label">Harga Acuan</label>
                                         <label for="harga_penyesuaian" class="col-md-1 col-form-label">:</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" value="Harga Jual" readonly>
-                                            <input type="hidden" name="harga_penyesuaian" id="harga_penyesuaian" value="harga_jual_1">
+                                            <input type="text" class="form-control" value="Harga Dasar" readonly>
+                                            <input type="hidden" name="harga_penyesuaian" id="harga_penyesuaian" value="harga_dasar">
                                         </div>
                                     </div>
                                     <div class="form-group row align-items-center">

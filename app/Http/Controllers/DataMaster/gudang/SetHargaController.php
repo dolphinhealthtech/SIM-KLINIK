@@ -109,26 +109,37 @@ class SetHargaController extends Controller
     {
         try {
             $request->validate([
-                'harga_jual'  => 'required|string',
+                'harga_jual_1'  => 'required|string',
+                'harga_jual_2'  => 'required|string',
+                'harga_jual_3'  => 'required|string',
+
             ], [
-                'harga_jual'  => 'Harga Jual',
+                'harga_jual_1'  => 'Harga Jual 1',
+                'harga_jual_2'  => 'Harga Jual 2',
+                'harga_jual_3'  => 'Harga Jual 3'
             ]);
 
             // Bersihkan prefix atau simbol dari input agar hanya angka saja
-            $harga_jual  = preg_replace('/[^\d]/', '', $request->input('harga_jual'));
+            $harga_jual_1  = preg_replace('/[^\d]/', '', $request->input('harga_jual_1'));
+            $harga_jual_2  = preg_replace('/[^\d]/', '', $request->input('harga_jual_2'));
+            $harga_jual_3  = preg_replace('/[^\d]/', '', $request->input('harga_jual_3'));
 
             // Simpan data ke database
             $setharga = gudang_setting_harga_utama::first();
 
             if ($setharga) {
                 $setharga->update([
-                    'harga_jual' => $harga_jual,
+                    'harga_jual_1' => $harga_jual_1,
+                    'harga_jual_2' => $harga_jual_2,
+                    'harga_jual_3' => $harga_jual_3,
                     'user_input_id' => Auth::user()->id,
                     'user_input_name' => Auth::user()->name,
                 ]);
             } else {
                 $setharga = gudang_setting_harga_utama::create([
-                    'harga_jual' => $harga_jual,
+                    'harga_jual_1' => $harga_jual_1,
+                    'harga_jual_2' => $harga_jual_2,
+                    'harga_jual_3' => $harga_jual_3,
                     'user_input_id' => Auth::user()->id,
                     'user_input_name' => Auth::user()->name,
                 ]);

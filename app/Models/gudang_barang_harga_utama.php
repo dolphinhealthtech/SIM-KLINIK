@@ -11,6 +11,8 @@ class gudang_barang_harga_utama extends Model
         'nama_obat_alkes',
         'harga_dasar',
         'harga_jual_1',
+        'harga_jual_2',
+        'harga_jual_3',
         'diskon',
         'ppn',
         'tanggal_obat_masuk',

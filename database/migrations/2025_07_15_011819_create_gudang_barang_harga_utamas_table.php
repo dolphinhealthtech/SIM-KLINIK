@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('nama_obat_alkes');
             $table->string('harga_dasar');
             $table->string('harga_jual_1')->nullable();
+            $table->string('harga_jual_2')->nullable();
+            $table->string('harga_jual_3')->nullable();
             $table->string('diskon');
             $table->string('ppn');
             $table->string('tanggal_obat_masuk');

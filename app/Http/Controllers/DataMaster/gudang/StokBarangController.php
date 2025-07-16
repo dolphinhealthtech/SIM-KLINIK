@@ -11,6 +11,7 @@ use App\Models\gudang_penyesuaian_keluar;
 use App\Models\gudang_stok_opname;
 use App\Models\apotek_prebayar;
 use App\Models\gudang_barang_harga_utama;
+use App\Models\gudang_barang_keluar_utama;
 use App\Models\gudang_barang_stok_utama;
 use App\Models\gudang_barang_utama;
 use App\Models\gudang_penyesuaian_keluar_utama;
@@ -96,9 +97,6 @@ class StokBarangController extends Controller
             if ($request->aktifitas_penyesuaian === 'stok_opname') {
                 $selisih = $request->qty_penyesuaian - $stokSebelumnyaQty;
 
-                $stokKeluarApotek = apotek_prebayar::where('kode_obat_alkes', $request->kode_obat)->sum('qty');
-
-                $selisih_kedua = $selisih - $stokKeluarApotek;
 
                 if ($selisih > 0) {
                     // Tambahkan stok baru sesuai yang diinput user
@@ -300,20 +298,16 @@ class StokBarangController extends Controller
             $tipeHarga = $request->harga_penyesuaian;
 
             // Validasi agar aman
-            if (!in_array($tipeHarga, ['harga_jual_1'])) {
+            if (!in_array($tipeHarga, ['harga_dasar'])) {
                 return response()->json(['error' => 'Tipe harga tidak valid'], 400);
             }
 
             // Ambil harga tertinggi dari field sesuai tipe yang dipilih
             $hargaTertinggi = gudang_barang_harga_utama::where('kode_obat_alkes', $request->kode_obat)
-                ->max('harga_jual_1');
+                ->max('harga_dasar');
 
             if ($request->aktifitas_penyesuaian === 'stok_opname') {
                 $selisih = $request->qty_penyesuaian - $stokSebelumnyaQty;
-
-                $stokKeluarApotek = apotek_prebayar::where('kode_obat_alkes', $request->kode_obat)->sum('qty');
-
-                $selisih_kedua = $selisih - $stokKeluarApotek;
 
                 if ($selisih > 0) {
                     // Tambahkan stok baru sesuai yang diinput user
@@ -694,15 +688,15 @@ class StokBarangController extends Controller
         try {
             $satuan = gudang_barang_utama::where('kode_barang', $kodeObat)->value('satuan_kecil');
 
-            $dataPenjualan = apotek_prebayar::when($kodeObat !== 'all', fn($q) => $q->where('kode_obat_alkes', $kodeObat))
-                ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir])
+            $dataPenjualan = gudang_barang_keluar_utama::when($kodeObat !== 'all', fn($q) => $q->where('kode_obat_alkes', $kodeObat))
+                ->whereBetween('tanggal_request', [$tanggalAwal, $tanggalAkhir])
                 ->get()
                 ->map(function ($item) {
                     return [
-                        'tanggal' => 'Saldo Keluar ' . $item->tanggal,
+                        'tanggal' => 'Saldo Keluar ' . $item->tangga_request,
                         'qty' => $item->qty,
-                        'harga' => $item->harga,
-                        'keterangan' => 'Penjualan (Faktur: ' . $item->kode_faktur . ')',
+                        'harga' => $item->harga_dasar,
+                        'keterangan' => 'Pengiriman (Request: ' . $item->kode_request . ')',
                         'user' => $item->user_input_name,
                     ];
                 })->toArray();
