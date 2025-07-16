@@ -41,7 +41,7 @@
                                             <div class="form-group row mt-3">
                                                 <label for="kode_klinik" class="col-sm-4 col-form-label text-left font-weight-bold">Kode Klinik:</label>
                                                 <div class="col-sm-8">
-                                                    <input type="number" class="form-control" id="kode_klinik"
+                                                    <input type="text" class="form-control" id="kode_klinik"
                                                         name="kode_klinik" value="{{ $setting->kode_klinik ?? '' }}"
                                                         placeholder="Masukkan Kode">
                                                 </div>
@@ -70,7 +70,7 @@
                                     <div class="card-body d-flex flex-wrap gap-2" style="gap: 10px;">
                                         <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
                                             data-target="#paymentModal">
-                                            Atur Pembayaran Bank
+                                            Atur Pembayaran Bank Klinik
                                         </button>
                                         <button type="button" class="btn btn-sm btn-primary"
                                             id="btnPilihGudangUtama" style="display:none;" data-toggle="modal"
