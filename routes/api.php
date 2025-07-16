@@ -127,7 +127,9 @@ Route::prefix('data-master-gudang')->group(function () {
 
 
     Route::get('/kartu-stok-masuk', [StokBarangController::class, 'getKartuStokMasuk'])->name('getKartuStokMasuk');
+    Route::get('/kartu-stok-masuk-utama', [StokBarangController::class, 'getKartuStokMasukUtama'])->name('getKartuStokMasukUtama');
     Route::get('/kartu-stok-keluar', [StokBarangController::class, 'getKartuStokKeluar'])->name('getKartuStokKeluar');
+    Route::get('/kartu-stok-keluar-utama', [StokBarangController::class, 'getKartuStokKeluarUtama'])->name('getKartuStokKeluarUtama');
 });
 
 
