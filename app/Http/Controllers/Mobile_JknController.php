@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\dokter;
 use App\Models\loket;
 use App\Models\pasien;
+use App\Models\pasien_antrian;
 use App\Models\Pendaftaran_rawat_jalan;
 use App\Models\Pendaftaran_rawat_jalan_status;
 use App\Models\poli;
@@ -682,7 +683,7 @@ class Mobile_JknController extends Controller
         $newId = $last ? $last->id + 1 : 1;
 
         // === Simpan ke Database ===
-        pasien::create([
+        $pasien = pasien::create([
             'no_rm'         => str_pad($newId, 6, '0', STR_PAD_LEFT),
             'nama'          => $data['nama'],
             'alamat'        => $data['alamat'],
@@ -692,6 +693,21 @@ class Mobile_JknController extends Controller
             'no_bpjs'       => $data['nomorkartu'],
             'telepon'       => $data['nohp'] ?? '-',
         ]);
+
+        // === Buat Nomor Antrian ===
+        $tanggalHariIni = Carbon::now()->toDateString();
+
+        $jumlahAntrianHariIni = pasien_antrian::whereDate('created_at', $tanggalHariIni)->count();
+
+        $nomorAntrian = 'A-' . ($jumlahAntrianHariIni + 1);
+
+        // Simpan ke antrean
+        pasien_antrian::create([
+            'pasien_id'     => $pasien->id,
+            'nomor_antrian' => $nomorAntrian,
+            'status_panggil'=> 0,
+        ]);
+
 
         return response()->json([
             'response' => ['norm' => (string) $newId],
