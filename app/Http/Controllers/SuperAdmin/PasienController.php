@@ -258,9 +258,7 @@ class PasienController extends Controller
             "alamat" => 'required|string|max:255',
             "noka" => 'nullable',
             "noihs" => 'nullable',
-
             "jenis_kartu" => 'nullable|string',
-
             "kelas" => 'nullable|string',
             "provide" => 'nullable|string',
             "tgl_exp_bpjs" => 'nullable|date',
