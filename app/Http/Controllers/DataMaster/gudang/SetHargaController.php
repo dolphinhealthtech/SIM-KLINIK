@@ -191,17 +191,18 @@ class SetHargaController extends Controller
 
         try {
             // Simpan data ke database
-            foreach ($response  as $item) {
-                gudang_setting_harga::updateOrCreate(
-                    [
+            foreach ($response as $item) {
+                // Temukan data di lokal berdasarkan ID
+                $model = gudang_setting_harga::find($item->id);  // ID Row Data harus sama
+
+                if ($model) {
+                    // Update hanya kolom harga
+                    $model->update([
                         'harga_jual_1' => $item->harga_jual_1,
                         'harga_jual_2' => $item->harga_jual_2,
                         'harga_jual_3' => $item->harga_jual_3,
-                        'embalase_poin' => $item->embalase_poin,
-                        'user_input_id' => Auth::user()->id,
-                        'user_input_name' => Auth::user()->name,
-                    ]
-                );
+                    ]);
+                }
             }
 
 
