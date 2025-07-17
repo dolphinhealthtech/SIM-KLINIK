@@ -410,6 +410,65 @@
             <div class="modal-body">
                 <!-- Isi modal akan ditambahkan nanti -->
                 {{-- <p class="text-center">Fitur pencarian pasien akan ditambahkan nanti.</p> --}}
+                <table id="tableCariPasien" class="table table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">No</th>
+                            <th class="text-center">No RM</th>
+                            <th class="text-center">No Rawat</th>
+                            <th class="text-center">Nama</th>
+                            <th class="text-center">J. Kelamin</th>
+                            <th class="text-center">Penjamin</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($data_soap as $index => $data_soap)
+                            <tr>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="text-center">{{ $data_soap->nomor_rm }}</td>
+                                <td class="text-center">{{ $data_soap->no_rawat }}</td>
+                                <td class="text-center">{{ $data_soap->nama }}</td>
+                                <td class="text-center">{{ $data_soap->sex }}</td>
+                                <td class="text-center">{{ $data_soap->penjamin }}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-success" onclick="cariResepObat(this)"
+                                        data-no_rawat="{{ $data_soap->no_rawat }}"
+                                        data-no_rm="{{ $data_soap->nomor_rm }}"
+                                        data-nama="{{ $data_soap->nama }}"
+                                        data-alamat="{{ $data_soap->pasien->alamat }}"
+                                        data-dokter="{{ $data_soap->pendaftaran->dokter->namauser->name }}"
+                                        data-poli="{{ $data_soap->pendaftaran->poli->nama }}"
+                                        data-penjamin="{{ $data_soap->penjamin }}"
+                                        data-resep_obat='@json($data_soap->resep->Resep_obat)'
+                                    >Pilih</button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                {{-- DataTables CDN (jika belum ada) --}}
+                <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+                <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+                <script>
+                    $(document).ready(function() {
+                        $('#tableCariPasien').DataTable({
+                            language: {
+                                search: "Cari:",
+                                lengthMenu: "Tampilkan _MENU_ data",
+                                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                                paginate: {
+                                    first: "Pertama",
+                                    last: "Terakhir",
+                                    next: ">",
+                                    previous: "<"
+                                },
+                                zeroRecords: "Data tidak ditemukan",
+                            }
+                        });
+                    });
+                </script>
+
                 <table class="table table-bordered mb-0">
                     <thead>
                         <tr>
