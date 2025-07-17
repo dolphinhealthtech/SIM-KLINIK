@@ -185,7 +185,7 @@ class SetHargaController extends Controller
         $connection = $factory->make($config, $externalDb->name);
 
         // Gunakan koneksi ini untuk query
-        $data = $connection->table('gudang_setting_hargas')->get();
+        $data = $connection->table('gudang_setting_harga_utamas')->get();
 
         $response = response()->json($data)->getData();
 
@@ -208,18 +208,18 @@ class SetHargaController extends Controller
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Data barang berhasil ditambahkan!'
+                'message' => 'Sinkron setting harga jual berhasil dilakukan!'
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data barang Sudah ada!',
+                'message' => 'Sinkron setting harga jual sudah dilakukan!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Data barang!',
+                'message' => 'Terjadi kesalahan saat menyimpan sinkron setting harga jual!',
                 'error' => $e->getMessage()
             ], 500);
         }
