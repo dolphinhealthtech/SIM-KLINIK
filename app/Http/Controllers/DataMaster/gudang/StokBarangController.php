@@ -526,14 +526,15 @@ class StokBarangController extends Controller
                 ->get()
                 ->map(function ($item) {
                     return [
-                        'tanggal' => 'Saldo Masuk ' . $item->created_at->format('Y-m-d'),
-                        'qty' => $item->qty,
-                        'harga' => $item->harga_satuan,
+                        'tanggal'    => 'Saldo Masuk ' . $item->created_at->format('Y-m-d'),
+                        'qty'        => $item->qty,
+                        'harga'      => $item->harga_satuan,
                         'keterangan' => 'Pembelian (Faktur: ' . $item->nomor_faktur . ')',
-                        'expired' => $item->batch . ' / ' . $item->exp,
-                        'user' => $item->pembelian->user_input_nama,
+                        'expired'    => $item->batch . ' / ' . $item->exp,
+                        'user'       => optional($item->pembelian)->user_input_nama,
                     ];
                 })->toArray();
+
 
             $dataPenyesuaian = gudang_penyesuaian_masuk::when($kodeObat !== 'all', fn($q) => $q->where('kode_obat', $kodeObat))
                 ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir])

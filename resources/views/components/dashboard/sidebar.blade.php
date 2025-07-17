@@ -13,14 +13,10 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-
         <!-- SidebarSearch Form -->
         <div class="form-inline mt-3">
             <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar"
-                       type="search"
-                       placeholder="Search"
-                       aria-label="Search">
+                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
                 <div class="input-group-append">
                     <button class="btn btn-sidebar">
                         <i class="fas fa-search fa-fw"></i>
@@ -33,8 +29,23 @@
             use App\Models\WebSetting;
 
             $setting = WebSetting::first();
-            // Toggle Gudang Utama dari DB
             $isGudangUtamaActive = $setting->is_gudangutama_active ?? true;
+
+            // Semua URL yg dikontrol toggle
+            $gudangUtamaUrls = [
+                'data-master-gudang/gudang-utama',
+                'pendataan/gudang-utama',
+                'data-master-gudang/stok-penyesuaian-opname-utama',
+                'data-master-gudang/kartu-stok-utama',
+                'data-master-gudang/setting-harga-jual-utama',
+                'data-master-gudang/harga-barang-jual-utama',
+                'data-inventaris-utama',
+                'inventaris-pembelian-utama',
+                'data-master-gudang/inventaris-utama',
+                'data-master-gudang/stok-inventaris-utama',
+                'data-barang-utama',
+
+            ];
         @endphp
 
         <!-- Sidebar Menu -->
@@ -47,21 +58,21 @@
                 @foreach ($menus as $menu)
                     @php
                         $isActive = request()->is(trim($menu->url, '/')) ||
-                                    $menu->children->where(fn($child) =>
-                                        request()->is(trim($child->url, '/')) ||
-                                        $child->children->where(fn($grandchild) =>
-                                            request()->is(trim($grandchild->url, '/'))
-                                        )->isNotEmpty()
-                                    )->isNotEmpty();
+                            $menu->children->where(fn($child) =>
+                                request()->is(trim($child->url, '/')) ||
+                                $child->children->where(fn($grandchild) =>
+                                    request()->is(trim($grandchild->url, '/'))
+                                )->isNotEmpty()
+                            )->isNotEmpty();
                     @endphp
 
                     <li class="nav-item {{ $isActive ? 'menu-open' : '' }}">
                         <a href="{{ $menu->url ? url($menu->url) : '#' }}"
                            class="nav-link {{ $isActive ? 'active' : '' }}">
                             <i class="nav-icon fa fa-{{ $menu->icon }}"
-                               {{ $isActive ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
+                               {{ $isActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
                             </i>
-                            <p {{ $isActive ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
+                            <p {{ $isActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
                                 {{ $menu->name }}
                                 @if ($menu->children->isNotEmpty())
                                     <i class="right fa fa-angle-left"></i>
@@ -74,17 +85,12 @@
                                 @foreach ($menu->children as $child)
                                     @php
                                         $isChildActive = request()->is(trim($child->url, '/')) ||
-                                                         $child->children->where(fn($grandchild) =>
-                                                             request()->is(trim($grandchild->url, '/'))
-                                                         )->isNotEmpty();
+                                            $child->children->where(fn($grandchild) =>
+                                                request()->is(trim($grandchild->url, '/'))
+                                            )->isNotEmpty();
 
-                                        // Tentukan apakah child ini harus di-hide
-                                        $hideThisMenu =
-                                            !$isGudangUtamaActive &&
-                                            (
-                                                strtolower($child->name) === 'gudang utama (obat)' ||
-                                                trim($child->url, '/') === 'data-master-gudang/gudang-utama'
-                                            );
+                                        $childUrl = trim($child->url, '/');
+                                        $hideThisMenu = !$isGudangUtamaActive && in_array($childUrl, $gudangUtamaUrls);
                                     @endphp
 
                                     @if (!$hideThisMenu)
@@ -92,9 +98,9 @@
                                             <a href="{{ $child->url ? url($child->url) : '#' }}"
                                                class="nav-link {{ request()->is(trim($child->url, '/')) ? 'active' : '' }}">
                                                 <i class="fa fa-{{ $child->icon }} nav-icon"
-                                                   {{ $isChildActive ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
+                                                   {{ $isChildActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
                                                 </i>
-                                                <p {{ $isChildActive ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
+                                                <p {{ $isChildActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
                                                     {{ $child->name }}
                                                     @if ($child->children->isNotEmpty())
                                                         <i class="right fa fa-angle-left"></i>
@@ -105,17 +111,24 @@
                                             @if ($child->children->isNotEmpty())
                                                 <ul class="nav nav-treeview">
                                                     @foreach ($child->children as $grandchild)
-                                                        <li class="nav-item">
-                                                            <a href="{{ url($grandchild->url) }}"
-                                                               class="nav-link {{ request()->is(trim($grandchild->url, '/')) ? 'active' : '' }}">
-                                                                <i class="fa fa-{{ $grandchild->icon }} nav-icon"
-                                                                   {{ request()->is(trim($grandchild->url, '/')) ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
-                                                                </i>
-                                                                <p {{ request()->is(trim($grandchild->url, '/')) ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
-                                                                    {{ $grandchild->name }}
-                                                                </p>
-                                                            </a>
-                                                        </li>
+                                                        @php
+                                                            $grandchildUrl = trim($grandchild->url, '/');
+                                                            $hideThisGrand = !$isGudangUtamaActive && in_array($grandchildUrl, $gudangUtamaUrls);
+                                                        @endphp
+
+                                                        @if (!$hideThisGrand)
+                                                            <li class="nav-item">
+                                                                <a href="{{ url($grandchild->url) }}"
+                                                                   class="nav-link {{ request()->is($grandchildUrl) ? 'active' : '' }}">
+                                                                    <i class="fa fa-{{ $grandchild->icon }} nav-icon"
+                                                                       {{ request()->is($grandchildUrl) ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
+                                                                    </i>
+                                                                    <p {{ request()->is($grandchildUrl) ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
+                                                                        {{ $grandchild->name }}
+                                                                    </p>
+                                                                </a>
+                                                            </li>
+                                                        @endif
                                                     @endforeach
                                                 </ul>
                                             @endif
