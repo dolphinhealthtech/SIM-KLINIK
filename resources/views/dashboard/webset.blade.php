@@ -391,52 +391,6 @@
                 });
             });
         });
-            // AJAX request untuk update toggle
-            $.ajax({
-                url: "{{ route('web.update.toggle') }}",
-                method: 'POST',
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    toggle_type: toggleId,
-                    value: value
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Show success message
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: response.message,
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => {
-                            // Refresh halaman setelah notifikasi selesai
-                            window.location.reload();
-                        });
-                    } else {
-                        // Show error message
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: response.message
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    console.error('AJAX Error:', xhr);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat mengupdate pengaturan'
-                    });
-                },
-                complete: function() {
-                    // Re-enable toggle
-                    $('.custom-control-input').prop('disabled', false);
-                }
-            });
-        });
-    });
 
         function loadToggleStates() {
             $.ajax({
@@ -526,17 +480,4 @@
             });
         });
     </script>
-                    // Update toggle states
-                    $('#toggleBPJS').prop('checked', states.is_bpjs_active == 1);
-                    $('#toggleSatusehat').prop('checked', states.is_satusehat_active == 1);
-                    $('#toggleGudangutama').prop('checked', states.is_gudangutama_active == 1);
-                }
-            },
-            error: function(xhr) {
-                console.error('Error loading toggle states:', xhr);
-            }
-        });
-    }
-</script>
-
 @endsection

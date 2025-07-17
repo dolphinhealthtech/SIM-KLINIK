@@ -107,11 +107,8 @@ class MenuSeeder extends Seeder
             'order' => 9,
         ]);
 
-
-
-
         $obatdanallkes = menu::create([
-            'name' => 'Obat dan Allkes',
+            'name' => 'Obat dan Alkes',
             'url' => '#',
             'icon' => 'fas fa-boxes-stacked',
             'parent_id' => null,
@@ -313,26 +310,32 @@ $subMenuObatAllkes = [
         'icon' => 'pills',
         'order' => 1,
     ],
-
-    ['name' => 'Stok Obat', 'url' => '/data-master-gudang/stok-obat-alkes', 'icon' => 'boxes', 'order' => 2],
+    [
+        'name' => 'Daftar Barang Utama',
+        'url' => '/data-barang-utama',
+        'icon' => 'fas fa-list',
+        'order' => 2,
+    ],
+    
+    ['name' => 'Stok Obat', 'url' => '/data-master-gudang/stok-obat-alkes', 'icon' => 'boxes', 'order' => 3],
     [
         'name' => 'Gudang utama (obat)',
         'url' => '/data-master-gudang/gudang-utama',
         'icon' => 'fas fa-boxes',
-        'order' => 3,
+        'order' => 4,
     ],
     
     [
         'name' => 'Permintaan Obat',
         'url' => '/data-master-gudang/gudang-request',
         'icon' => 'fas fa-prescription-bottle',
-        'order' => 4,
+        'order' => 5,
     ],
     [
         'name' => 'Pembelian',
         'url' => '/pembelian',
         'icon' => 'shopping-cart',
-        'order' => 5,
+        'order' => 6,
     ],
 
 ];
@@ -416,10 +419,13 @@ foreach ($subMenuObatAllkes as $subMenu) {
         // Submenu inventaris
         $subMenusinventaris = [
             ['name' => 'Daftar Inventaris', 'url' => '/data-inventaris', 'icon' => 'fas fa-database', 'order' => 1],
-            ['name' => 'Pembelian Inventaris', 'url' => '/inventaris-pembelian', 'icon' => 'fas fa-cart-plus', 'order' => 2],
-            ['name' => 'Permintaan Inventaris', 'url' => '/data-master-gudang/inventaris-request', 'icon' => 'fas fa-paper-plane', 'order' => 3],
-            ['name' => 'Gudang Utama (Inventaris)', 'url' => '/data-master-gudang/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 4],
-            ['name' => 'Stok Inventaris', 'url' => '/data-master-gudang/stok-inventaris', 'icon' => 'fas fa-clipboard-list', 'order' => 5]
+            ['name' => 'Daftar Inventaris Utama','url' => '/data-inventaris-utama','icon' => 'fas fa-clipboard-list','order' => 2],
+            ['name' => 'Pembelian Inventaris', 'url' => '/inventaris-pembelian', 'icon' => 'fas fa-cart-plus', 'order' => 3],
+            ['name' => 'Pembelian Inventaris Utama','url' => '/inventaris-pembelian-utama','icon' => 'fas fa-cart-plus','order' => 4],
+            ['name' => 'Permintaan Inventaris', 'url' => '/data-master-gudang/inventaris-request', 'icon' => 'fas fa-paper-plane', 'order' => 5],
+            ['name' => 'Gudang Utama (Inventaris)', 'url' => '/data-master-gudang/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 6],
+            ['name' => 'Stok Inventaris', 'url' => '/data-master-gudang/stok-inventaris', 'icon' => 'fas fa-clipboard-list', 'order' => 7],
+            ['name' => 'Stok Inventaris Utama','url' => '/data-master-gudang/stok-inventaris-utama','icon' => 'fas fa-warehouse','order' => 8],
         ];
 
         foreach ($subMenusinventaris as $subMenu) {
@@ -451,6 +457,7 @@ foreach ($subMenuObatAllkes as $subMenu) {
             ['name' => 'Tindakan', 'url' => '/datakasir/tindakan', 'icon' => 'briefcase-medical', 'order' => 6],
             ['name' => 'Mutasi Penyesuaian', 'url' => '/pendataan/stok-penyesuaian', 'icon' => 'exchange-alt', 'order' => 7],
             ['name' => 'Stok Opname', 'url' => '/pendataan/stok-opname', 'icon' => 'clipboard-check', 'order' => 8],
+            ['name' => 'Gudang Utama','url' => '/pendataan/gudang-utama','icon' => 'fas fa-file-alt','order' => 9],
         ];
 
         foreach ($subMenuPendataan as $subMenu) {
@@ -677,11 +684,15 @@ foreach ($subMenuObatAllkes as $subMenu) {
             ['name' => 'Kategori Obat', 'url' => '/data-master-gudang/kategori', 'icon' => 'tags', 'order' => 2],
             ['name' => 'Supplier', 'url' => '/data-master-gudang/supplier-industri', 'icon' => 'industry', 'order' => 3],
             ['name' => 'Setting Harga Jual', 'url' => '/data-master-gudang/setting-harga-jual', 'icon' => 'money-bill-wave', 'order' => 4],
-            ['name' => 'Daftar Harga Jual', 'url' => '/data-master-gudang/harga-barang-jual', 'icon' => 'tag', 'order' => 5],
-            ['name' => 'Satuan Inventaris', 'url' => '/data-master-gudang/satuan-inventaris', 'icon' => 'fas fa-ruler-combined', 'order' => 6],
-            ['name' => 'Kategori Inventaris', 'url' => '/data-master-gudang/kategori-inventaris', 'icon' => 'fas fa-layer-group', 'order' =>  7],
-            ['name' => 'Mutasi Penyesuaian', 'url' => '/data-master-gudang/stok-penyesuaian-opname', 'icon' => 'fas fa-exchange-alt', 'order' => 8],
-            ['name' => 'Kartu Stok', 'url' => '/data-master-gudang/kartu-stok', 'icon' => 'fas fa-clipboard-list', 'order' => 9],
+            ['name' => 'Setting Harga Jual Utama','url' => '/data-master-gudang/setting-harga-jual-utama','icon' => 'fas fa-cogs','order' => 5],
+            ['name' => 'Daftar Harga Jual', 'url' => '/data-master-gudang/harga-barang-jual', 'icon' => 'tag', 'order' => 6],
+            ['name' => 'Daftar Harga Jual Utama','url' => '/data-master-gudang/harga-barang-jual-utama','icon' => 'fas fa-tags','order' => 7,],
+            ['name' => 'Satuan Inventaris', 'url' => '/data-master-gudang/satuan-inventaris', 'icon' => 'fas fa-ruler-combined', 'order' => 8],
+            ['name' => 'Kategori Inventaris', 'url' => '/data-master-gudang/kategori-inventaris', 'icon' => 'fas fa-layer-group', 'order' =>  9],
+            ['name' => 'Mutasi Penyesuaian', 'url' => '/data-master-gudang/stok-penyesuaian-opname', 'icon' => 'fas fa-exchange-alt', 'order' => 10],
+            ['name' => 'Mutasi Penyesuaian Utama','url' => '/data-master-gudang/stok-penyesuaian-opname-utama','icon' => 'fas fa-exchange-alt','order' => 11],
+            ['name' => 'Kartu Stok', 'url' => '/data-master-gudang/kartu-stok', 'icon' => 'fas fa-clipboard-list', 'order' => 12],
+            ['name' => 'Kartu Stok Utama','url' => '/data-master-gudang/kartu-stok-utama','icon' => 'fas fa-id-card','order' => 13],
         ];
 
         foreach ($subMenusDataMasterGudang as $subMenu) {
