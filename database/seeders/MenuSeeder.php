@@ -316,26 +316,27 @@ $subMenuObatAllkes = [
         'icon' => 'fas fa-list',
         'order' => 2,
     ],
-    
+
     ['name' => 'Stok Obat', 'url' => '/data-master-gudang/stok-obat-alkes', 'icon' => 'boxes', 'order' => 3],
+    ['name' => 'Stok Obat Utama', 'url' => '/data-master-gudang/stok-obat-alkes-utama', 'icon' => 'boxes', 'order' => 4],
     [
         'name' => 'Gudang utama (obat)',
         'url' => '/data-master-gudang/gudang-utama',
         'icon' => 'fas fa-boxes',
-        'order' => 4,
+        'order' => 5,
     ],
-    
+
     [
         'name' => 'Permintaan Obat',
         'url' => '/data-master-gudang/gudang-request',
         'icon' => 'fas fa-prescription-bottle',
-        'order' => 5,
+        'order' => 6,
     ],
     [
         'name' => 'Pembelian',
         'url' => '/pembelian',
         'icon' => 'shopping-cart',
-        'order' => 6,
+        'order' => 7,
     ],
 
 ];

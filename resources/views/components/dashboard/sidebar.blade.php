@@ -44,6 +44,8 @@
                 'data-master-gudang/inventaris-utama',
                 'data-master-gudang/stok-inventaris-utama',
                 'data-barang-utama',
+                'pembelian',
+                'inventaris-pembelian',
 
             ];
         @endphp
