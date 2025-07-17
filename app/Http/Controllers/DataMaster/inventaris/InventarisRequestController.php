@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\external_database;
 use App\Models\inventaris_data_barang;
 use App\Models\inventaris_stok;
+use App\Models\inventaris_stok_utama;
 use App\Models\inventaris_utama_keluar;
 use App\Models\inventaris_request_detail;
 use App\Models\inventaris_request;
