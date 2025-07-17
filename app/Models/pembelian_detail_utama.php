@@ -23,7 +23,7 @@ class pembelian_detail_utama extends Model
 
     public function pembelian()
     {
-        return $this->belongsTo(pembelian::class, 'nomor_faktur', 'nomor_faktur');
+        return $this->belongsTo(pembelian_utama::class, 'nomor_faktur', 'nomor_faktur');
     }
 
 }

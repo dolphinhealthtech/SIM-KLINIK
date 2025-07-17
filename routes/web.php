@@ -154,6 +154,7 @@ Route::prefix('data-master-gudang')->group(function () {
     Route::post('/setting-harga-jual-utama/add', [SetHargaController::class, 'sethargaadd_utama'])->name('setharga_utama.store');
     Route::get('/setting-harga-jual/singkron/{id}', [SetHargaController::class, 'sethargasingkron'])->name('setharga.singkron');
     Route::get('/harga-barang-jual', [HargaJualController::class, 'hargajual'])->name('hargajual.get');
+    Route::get('/harga-barang-jual-utama', [HargaJualController::class, 'hargajualutama'])->name('hargajualutama.get');
     Route::get('/stok-obat-alkes', [StokBarangController::class, 'stokobatalkes'])->name('stokobatalkes.get');
     Route::get('/stok-obat-alkes-utama', [StokBarangController::class, 'stokobatalkes_utama'])->name('stokobatalkes_utama.get');
 

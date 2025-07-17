@@ -35,7 +35,7 @@ class InventarisController extends Controller
         $inventaris = inventaris_data_barang::all();
         $satuan = inventaris_satuan::all();
         $kategori = inventaris_kategori::all();
-        $singkron = external_database::all();
+        $singkron = external_database::where('active', 1)->get();
         return view('dashboard.data_inventaris', compact('title', 'inventaris', 'satuan', 'kategori', 'singkron'));
     }
 
@@ -206,7 +206,7 @@ class InventarisController extends Controller
         $connection = $factory->make($config, $externalDb->name);
 
         // Gunakan koneksi ini untuk query
-        $data = $connection->table('inventaris_data_barangs')->get();
+        $data = $connection->table('inventaris_data_barang_utamas')->get();
 
         $response = response()->json($data)->getData();
 
@@ -219,6 +219,7 @@ class InventarisController extends Controller
                         'nama_barang' => $item->nama_barang,
                         'kategori_barang' => $item->kategori_barang,
                         'satuan_barang' => $item->satuan_barang,
+                        'jenis_barang' => $item->jenis_barang,
                         'masa_pakai_barang' => $item->masa_pakai_barang,
                         'masa_pakai_waktu_barang' => $item->masa_pakai_waktu_barang,
                         'deskripsi_barang' => $item->deskripsi_barang,

@@ -713,7 +713,7 @@
                 stepper = new Stepper(document.querySelector('#adddabarModal .bs-stepper'));
 
                 $.ajax({
-                    url: '/api/generate-kode-data-barang', // Pastikan sesuai dengan route API-mu
+                    url: '/api/generate-kode-data-barang-utama', // Pastikan sesuai dengan route API-mu
                     method: 'GET',
                     success: function(response) {
                         if (response.success) {

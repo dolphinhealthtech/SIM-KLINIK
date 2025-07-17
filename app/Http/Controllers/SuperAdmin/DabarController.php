@@ -27,7 +27,7 @@ class DabarController extends Controller
         $dabar = gudang_barang::all();
         $satuan = gudang_satuan::all();
         $kategori = gudang_kategori::all();
-        $singkron = external_database::all();
+        $singkron = external_database::where('active', 1)->get();
         return view('dashboard.dabar', compact('title', 'dabar', 'satuan', 'kategori', 'singkron'));
     }
 
@@ -449,7 +449,7 @@ class DabarController extends Controller
         $connection = $factory->make($config, $externalDb->name);
 
         // Gunakan koneksi ini untuk query
-        $data = $connection->table('gudang_barangs')->get();
+        $data = $connection->table('gudang_barang_utamas')->get();
 
         $response = response()->json($data)->getData();
 
@@ -504,6 +504,29 @@ class DabarController extends Controller
 
         //Generate Kode Barang Otomatis
         public function generateKodeDataBarang()
+        {
+            // Mengambil data barang terakhir dari tabel 'gudang_barang'
+            $last = gudang_barang::orderBy('id', 'desc')->first();
+
+            // Jika tidak ada data barang sebelumnya atau kode barang tidak sesuai format 'KBR-xxxx'
+            if (!$last || !preg_match('/^KBR-(\d{4})$/', $last->kode_barang, $match)) {
+                $nextNumber = 1;  // Mulai dengan nomor 1 jika tidak ada data atau format kode salah
+            } else {
+                // Jika ada data sebelumnya, ambil angka terakhir dan tambah 1
+                $nextNumber = (int)$match[1] + 1;
+            }
+
+            // Membuat kode barang baru dengan format 'KBR-xxxx' (dengan padding 0 di depan)
+            $kode = 'KBR-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+
+            // Mengembalikan response dalam format JSON
+            return response()->json([
+                'success' => true,
+                'kode_barang' => $kode
+            ]);
+        }
+
+        public function generateKodeDataBarangUtama()
         {
             // Mengambil data barang terakhir dari tabel 'gudang_barang'
             $last = gudang_barang::orderBy('id', 'desc')->first();

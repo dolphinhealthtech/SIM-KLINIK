@@ -32,6 +32,6 @@ class pembelian_utama extends Model
 
     public function details()
     {
-        return $this->hasMany(pembelian_details::class, 'nomor_faktur', 'nomor_faktur');
+        return $this->hasMany(pembelian_detail_utama::class, 'nomor_faktur', 'nomor_faktur');
     }
 }

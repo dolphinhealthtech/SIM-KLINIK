@@ -12,6 +12,7 @@ use App\Models\WebSetting;
 use App\Models\gudang_klinik_request;
 use App\Models\gudang_utama_keluar;
 use App\Models\gudang_penyesuaian_masuk_utama;
+use App\Models\gudang_penyesuaian_masuk;
 use App\Models\gudang_barang_stok_utama;
 use App\Models\gudang_klinik_request_details;
 use Carbon\Carbon;
@@ -405,6 +406,22 @@ class GudangRequestController extends Controller
                         'updated_at' => now(),
                     ]);
 
+                    gudang_penyesuaian_masuk::create([
+                        'kode_obat' => $data->kode_obat_alkes,
+                        'nama_obat' => $data->nama_obat_alkes,
+                        'qty_sebelum' => '0',
+                        'qty_mutasi' => $data->qty,
+                        'qty_sesudah' => '0',
+                        'jenis_penyesuaian' => 'PERMINTAAN OBAT',
+                        'alasan' => "Permintaan pada tanggal {$data->tanggal_request}",
+                        'tanggal' => now()->toDateString(),
+                        'jam' => now()->toTimeString(),
+                        'harga' => $data->harga_dasar,
+                        'expired' => $data->expired,
+                        'user_input_id' => $request->input('user_id'),
+                        'user_input_name' => $request->input('user_name'),
+                    ]);
+
                     // Hapus dari gudang_utama_keluars (opsional)
                     $connection->table('gudang_utama_keluars')->where('id', $id)->delete();
 
@@ -456,6 +473,22 @@ class GudangRequestController extends Controller
                         'user_input_name' => $request->input('user_name'),
                         'created_at' => now(),
                         'updated_at' => now(),
+                    ]);
+
+                    gudang_penyesuaian_masuk::create([
+                        'kode_obat' => $data->kode_obat_alkes,
+                        'nama_obat' => $data->nama_obat_alkes,
+                        'qty_sebelum' => '0',
+                        'qty_mutasi' => $data->qty,
+                        'qty_sesudah' => '0',
+                        'jenis_penyesuaian' => 'PERMINTAAN OBAT',
+                        'alasan' => "Permintaan pada tanggal {$data->tanggal_request}",
+                        'tanggal' => now()->toDateString(),
+                        'jam' => now()->toTimeString(),
+                        'harga' => $data->harga_dasar,
+                        'expired' => $data->expired,
+                        'user_input_id' => $request->input('user_id'),
+                        'user_input_name' => $request->input('user_name'),
                     ]);
 
                     // Hapus dari gudang_utama_keluars (opsional)

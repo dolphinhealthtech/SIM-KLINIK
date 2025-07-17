@@ -437,7 +437,7 @@ class InventarisRequestController extends Controller
                 }
 
                 // Tambahkan kembali qty ke gudang_barang
-                $connection->table('inventaris_stoks')->insert([
+                $connection->table('inventaris_stok_utamas')->insert([
                     'kode_pembelian' => $data->kode_request,
                     'kode_barang' => $data->kode_barang,
                     'nama_barang' => $data->nama_barang,
@@ -471,7 +471,7 @@ class InventarisRequestController extends Controller
                 }
 
                 // Tambahkan kembali qty ke gudang_barang
-                inventaris_stok::create([
+                inventaris_stok_utama::create([
                     'kode_pembelian' => $data->kode_request,
                     'kode_barang' => $data->kode_barang,
                     'nama_barang' => $data->nama_barang,
