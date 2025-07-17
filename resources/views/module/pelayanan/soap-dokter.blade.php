@@ -651,6 +651,8 @@
                                                             <input type="hidden" name="resep_data" id="resep-data">
 
                                                             </div>
+
+                                                            <button type="submit" class="btn btn-primary">Submit</button>
                                                     </div>
 
                                                     <div class="tab-pane fade" id="custom-tabs-four-odo" role="tabpanel" aria-labelledby="custom-tabs-four-odo-tab">
@@ -820,7 +822,6 @@
                                             </div>
                                             <!-- /.card -->
                                         </div>
-                                        <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
                                 </div>
                             </div>

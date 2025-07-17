@@ -53,7 +53,24 @@
                                                 <td class="text-center">{{ $apotekdata->no_rm }}</td>
                                                 <td class="text-center">{{ $apotekdata->nama }}</td>
                                                 <td class="text-center">{{ $apotekdata->poli }}</td>
-                                                <td class="text-center">{{ number_format($apotekdata->total, 0, ',', '.') }}</td>
+                                                @php
+                                                    $totalTindakan = 0;
+
+                                                    foreach ($apotekdata->detail_tindakan as $tindakans) {
+                                                        // Ambil nilai harga dalam string, pisah berdasarkan koma
+                                                        $hargaList = explode(',', $tindakans['harga']);
+
+                                                        foreach ($hargaList as $harga) {
+                                                            // Hilangkan spasi dan ubah ke integer
+                                                            $totalTindakan += (int)str_replace(' ', '', $harga);
+                                                        }
+                                                    }
+
+                                                    $grandTotal = $apotekdata->total + $totalTindakan;
+                                                @endphp
+                                                <td class="text-center">{{ number_format($grandTotal, 0, ',', '.') }}</td>
+
+                                                {{-- <td class="text-center">{{ number_format($apotekdata->total, 0, ',', '.') }}</td> --}}
                                                 <td class="text-center">{{ $apotekdata->tanggal }}</td>
                                                 <td class="text-center">
                                                     <a href="{{ route('kasir.pembayaran', ['kode_faktur' => $apotekdata->kode_faktur, 'no_rawat' => $apotekdata->no_rawat]) }}" class="btn btn-sm btn-info">Bayar</a>

@@ -30,7 +30,7 @@ use App\Http\Controllers\DataMaster\medis\RadiologiPemeriksaanController;
 use App\Http\Controllers\DataMaster\medis\RadiologiJenisController;
 use App\Http\Controllers\DataMaster\medis\SaranaController;
 use App\Http\Controllers\DataMaster\medis\SpesialisController;
-use App\Http\Controllers\DataMaster\medis\SubSpesialisController;
+use App\Http\Controllers\DataMaster\medis\SubspesialisController;
 use App\Http\Controllers\DataMaster\main\GoldarController;
 use App\Http\Controllers\DataMaster\main\SukuController;
 use App\Http\Controllers\DataMaster\main\BangsaController;
@@ -246,9 +246,9 @@ Route::middleware('auth')->prefix('data-master-medis')->group(function () {
     Route::post('/spesialis/import', [SpesialisController::class, 'spesialisimport'])->name('spesialis.import');
 
 
-    Route::get('/subspesialis/{kode}', [SubSpesialisController::class, 'subspesialis'])->name('subspesialis.get');
-    Route::get('/subspesialis/sync/{kode}', [SubSpesialisController::class, 'subspesialisadd'])->name('subspesialis.sync');
-    Route::post('/subspesialis/delete', [SubSpesialisController::class, 'subspesialisdelete'])->name('subspesialis.destroy');
+    Route::get('/subspesialis/{kode}', [SubspesialisController::class, 'subspesialis'])->name('subspesialis.get');
+    Route::get('/subspesialis/sync/{kode}', [SubspesialisController::class, 'subspesialisadd'])->name('subspesialis.sync');
+    Route::post('/subspesialis/delete', [SubspesialisController::class, 'subspesialisdelete'])->name('subspesialis.destroy');
 
     // Kategori Perawatan
     Route::get('/katper', [KategoriPerawatanController::class, 'kategori_perawatan'])->name('kategori_perawatan.get');
