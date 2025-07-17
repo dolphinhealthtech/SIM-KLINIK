@@ -15,7 +15,6 @@ class MenuSeeder extends Seeder
      */
     public function run(): void
     {
-        // Hapus semua menu yang ada terlebih dahulu
         // untuk mencegah duplikasi
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
         DB::table('menu_roles')->truncate();

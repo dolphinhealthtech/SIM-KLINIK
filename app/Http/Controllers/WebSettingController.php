@@ -76,6 +76,7 @@ class WebSettingController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Pengaturan berhasil diperbarui!'
+                
             ]);
 
         } catch (\Exception $e) {
@@ -84,6 +85,8 @@ class WebSettingController extends Controller
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
+
+        
     }
 
     public function getToggleStates()

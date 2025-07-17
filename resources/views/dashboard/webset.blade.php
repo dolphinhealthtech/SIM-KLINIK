@@ -311,8 +311,11 @@
                             icon: 'success',
                             title: 'Berhasil!',
                             text: response.message,
-                            timer: 2000,
+                            timer: 1500,
                             showConfirmButton: false
+                        }).then(() => {
+                            // Refresh halaman setelah notifikasi selesai
+                            window.location.reload();
                         });
                     } else {
                         // Show error message
@@ -358,5 +361,6 @@
             }
         });
     }
-    </script>
+</script>
+
 @endsection
