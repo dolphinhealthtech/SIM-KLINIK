@@ -366,7 +366,10 @@
                                 text: response.message,
                                 timer: 2000,
                                 showConfirmButton: false
-                            });
+                            }).then(() => {
+                            // Refresh halaman setelah notifikasi selesai
+                            window.location.reload();
+                        });
                         } else {
                             // Show error message
                             Swal.fire({
