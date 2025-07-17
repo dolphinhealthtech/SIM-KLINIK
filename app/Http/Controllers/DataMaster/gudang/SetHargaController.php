@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\Gudang_setting_hargaExport;
 use App\Imports\Gudang_setting_hargaImport;
+use App\Models\gudang_setting_harga_utama;
 use Illuminate\Http\Request;
 
 
@@ -23,9 +24,20 @@ class SetHargaController extends Controller
         $setharga = gudang_setting_harga::first();
         Carbon::setLocale('id');
         $lastUpdated = $setharga ? Carbon::parse($setharga->updated_at)->diffForHumans() : 'belum ada update';
-        $singkron = external_database::all();
+        $singkron = external_database::where('active', 1)->get();
 
         return view('module.master-data-gudang.setting_harga_jual', compact('title','setharga','lastUpdated','singkron'));
+    }
+
+    public function setharga_utama()
+    {
+        $title = "Master Setting Harga Jual Utama";
+        $setharga = gudang_setting_harga_utama::first();
+        Carbon::setLocale('id');
+        $lastUpdated = $setharga ? Carbon::parse($setharga->updated_at)->diffForHumans() : 'belum ada update';
+        $singkron = external_database::all();
+
+        return view('module.master-data-gudang.setting_harga_jual_utama', compact('title','setharga','lastUpdated','singkron'));
     }
 
     public function sethargaadd(Request $request)
@@ -93,6 +105,66 @@ class SetHargaController extends Controller
 
     }
 
+    public function sethargaadd_utama(Request $request)
+    {
+        try {
+            $request->validate([
+                'harga_jual_1'  => 'required|string',
+                'harga_jual_2'  => 'required|string',
+                'harga_jual_3'  => 'required|string',
+
+            ], [
+                'harga_jual_1'  => 'Harga Jual 1',
+                'harga_jual_2'  => 'Harga Jual 2',
+                'harga_jual_3'  => 'Harga Jual 3'
+            ]);
+
+            // Bersihkan prefix atau simbol dari input agar hanya angka saja
+            $harga_jual_1  = preg_replace('/[^\d]/', '', $request->input('harga_jual_1'));
+            $harga_jual_2  = preg_replace('/[^\d]/', '', $request->input('harga_jual_2'));
+            $harga_jual_3  = preg_replace('/[^\d]/', '', $request->input('harga_jual_3'));
+
+            // Simpan data ke database
+            $setharga = gudang_setting_harga_utama::first();
+
+            if ($setharga) {
+                $setharga->update([
+                    'harga_jual_1' => $harga_jual_1,
+                    'harga_jual_2' => $harga_jual_2,
+                    'harga_jual_3' => $harga_jual_3,
+                    'user_input_id' => Auth::user()->id,
+                    'user_input_name' => Auth::user()->name,
+                ]);
+            } else {
+                $setharga = gudang_setting_harga_utama::create([
+                    'harga_jual_1' => $harga_jual_1,
+                    'harga_jual_2' => $harga_jual_2,
+                    'harga_jual_3' => $harga_jual_3,
+                    'user_input_id' => Auth::user()->id,
+                    'user_input_name' => Auth::user()->name,
+                ]);
+            }
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Setting harga jual berhasil ditambahkan!',
+                'data' => $setharga
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Setting harga jual sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan setting harga jual!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
     // Koneksi antar database
     public function sethargasingkron($id)
     {
@@ -113,41 +185,42 @@ class SetHargaController extends Controller
         $connection = $factory->make($config, $externalDb->name);
 
         // Gunakan koneksi ini untuk query
-        $data = $connection->table('gudang_setting_hargas')->get();
+        $data = $connection->table('gudang_setting_harga_utamas')->get();
 
         $response = response()->json($data)->getData();
 
         try {
             // Simpan data ke database
-            foreach ($response  as $item) {
-                gudang_setting_harga::updateOrCreate(
-                    [
+            foreach ($response as $item) {
+                // Temukan data di lokal berdasarkan ID
+                $model = gudang_setting_harga::find($item->id);  // ID Row Data harus sama
+
+                if ($model) {
+                    // Update hanya kolom harga
+                    $model->update([
                         'harga_jual_1' => $item->harga_jual_1,
                         'harga_jual_2' => $item->harga_jual_2,
                         'harga_jual_3' => $item->harga_jual_3,
-                        'embalase_poin' => $item->embalase_poin,
-                        'user_input_id' => Auth::user()->id,
-                        'user_input_name' => Auth::user()->name,
-                    ]
-                );
+                    ]);
+                }
             }
 
 
             // Return response JSON untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Data barang berhasil ditambahkan!'
+                'message' => 'Sinkron setting harga jual berhasil dilakukan!'
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data barang Sudah ada!',
+                'message' => 'Sinkron setting harga jual sudah dilakukan!',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan Data barang!',
+                'message' => 'Terjadi kesalahan saat menyimpan sinkron setting harga jual!',
                 'error' => $e->getMessage()
             ], 500);
         }

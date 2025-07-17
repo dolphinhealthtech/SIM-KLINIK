@@ -14,7 +14,8 @@ class external_database extends Model
         'database',
         'username',
         'password',
-        'port'
+        'port',
+        'active'
     ];
 
 }

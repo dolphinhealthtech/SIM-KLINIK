@@ -9,6 +9,10 @@ use App\Models\gudang_barang_stok;
 use App\Models\gudang_klinik_request;
 use App\Models\gudang_klinik_request_details;
 use App\Models\gudang_utama_keluar;
+use App\Models\gudang_barang_utama;
+use App\Models\gudang_barang_harga_utama;
+use App\Models\gudang_barang_stok_utama;
+use App\Models\gudang_barang_keluar_utama;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,11 +20,11 @@ use Illuminate\Http\Request;
 
 class GudangUtamaController extends Controller
 {
-        public function gudangutama()
+    public function gudangutama()
     {
         $title = "Dashboard Gudang Utama";
         $request = gudang_klinik_request::with('details')->get();
-        $dabar = gudang_barang::all();
+        $dabar = gudang_barang_utama::all();
 
         return view('module.master-data-gudang.utama', compact('title','request','dabar'));
     }
@@ -70,9 +74,9 @@ class GudangUtamaController extends Controller
             $tanggalHariIni = Carbon::today();
             $tanggal3BulanLalu = $tanggalHariIni->copy()->subMonths(3);
 
-            $harga = gudang_barang_harga::where('kode_obat_alkes', $kode_obat)
+            $harga = gudang_barang_harga_utama::where('kode_obat_alkes', $kode_obat)
                 ->whereBetween('tanggal_obat_masuk', [$tanggal3BulanLalu, $tanggalHariIni])
-                ->max('harga_jual_1');
+                ->max('harga_dasar');
 
             return response()->json([
                 'success' => true,
@@ -139,7 +143,7 @@ class GudangUtamaController extends Controller
                     continue;
                 }
 
-                $stokList = gudang_barang_stok::where('kode_obat_alkes', $kodeObat)
+                $stokList = gudang_barang_stok_utama::where('kode_obat_alkes', $kodeObat)
                             ->where('qty', '>', 0)
                             ->orderBy('tanggal_terima_obat', 'asc')
                             ->get();
@@ -162,6 +166,20 @@ class GudangUtamaController extends Controller
                     $stok->save();
 
                     $jumlahDibutuhkan -= $ambil;
+
+                    gudang_barang_keluar_utama::create([
+                        'kode_request' => $kodeRequest,
+                        'nama_klinik' => $namaKlinik,
+                        'tanggal_request' => $tanggalRequest,
+                        'kode_obat_alkes' => $kodeObat,
+                        'nama_obat_alkes' => $stok->nama_obat_alkes,
+                        'harga_dasar' => $hargaDasar,
+                        'qty' => $ambil,
+                        'tanggal_terima_obat' => $stok->tanggal_terima_obat,
+                        'expired' => $stok->expired,
+                        'user_input_id' => $request->input('user_id'),
+                        'user_input_name' => $request->input('user_name'),
+                    ]);
 
                     gudang_utama_keluar::create([
                         'kode_request' => $kodeRequest,

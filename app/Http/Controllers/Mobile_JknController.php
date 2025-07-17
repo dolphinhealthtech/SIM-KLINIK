@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\dokter;
 use App\Models\loket;
 use App\Models\pasien;
+use App\Models\pasien_antrian;
 use App\Models\Pendaftaran_rawat_jalan;
 use App\Models\Pendaftaran_rawat_jalan_status;
 use App\Models\poli;
@@ -81,7 +82,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -170,11 +171,22 @@ class Mobile_JknController extends Controller
 
         // === 6. Cek antrian ganda ===
         $tglLike = $tgl . '%';
-        if (Pendaftaran_rawat_jalan::where('nomor_rm', $pasien->no_rm)->whereDate('tanggal_kujungan', $tgl)->exists()) {
+        $adaDaftarAktif = Pendaftaran_rawat_jalan::where('nomor_rm', $pasien->no_rm)
+            ->whereDate('tanggal_kujungan', $tgl)
+            ->whereHas('status', function ($query) {
+                $query->where('status_pendaftaran', '!=', 0);
+            })
+            ->exists();
+
+        if ($adaDaftarAktif) {
             return response()->json([
-                'metadata' => ['message' => 'Anda sudah ambil antrian di tanggal ini', 'code' => 201]
+                'metadata' => [
+                    'message' => 'Anda sudah ambil antrian di tanggal ini',
+                    'code' => 201
+                ]
             ]);
         }
+
 
         // === 8. Hitung kuota ===
         $kuotajkn = 30;
@@ -194,10 +206,10 @@ class Mobile_JknController extends Controller
 
         // === 9. Simpan antrian ===
         $antrian = loket::where('poli_id', $poli->id)->first();
-        $tanggalHariIni = Carbon::today();
 
+        $tglcek = Carbon::parse($data['tanggalperiksa']);
         $last = Pendaftaran_rawat_jalan::where('antrian', 'like', $antrian->nama . '-%')
-            ->whereDate('created_at', $tanggalHariIni)
+            ->whereDate('created_at', $tglcek)
             ->orderBy('created_at', 'desc')
             ->first();
 
@@ -246,6 +258,28 @@ class Mobile_JknController extends Controller
 
         $data = Pendaftaran_rawat_jalan_status::with('pendaftaran')->where('status_panggil', 1)->first();
 
+        $antrianTerbaru = Pendaftaran_rawat_jalan::whereHas('status', function ($query) {
+                $query->where('status_pendaftaran', 2);
+            })
+            ->whereDate('created_at', $tanggal) // filter sesuai tanggal
+            ->orderBy('antrian', 'desc')
+            ->pluck('antrian')
+            ->first(); // ambil 1 data paling atas
+
+        $angkaAntrean = 0;
+        $angkaPanggil = 0;
+
+        if (preg_match('/\d+/', $antrianBaru, $matchAntrean)) {
+            $angkaAntrean = intval($matchAntrean[0]);
+        }
+
+        if (preg_match('/\d+/', $antrianTerbaru, $matchPanggil)) {
+            $angkaPanggil = intval($matchPanggil[0]);
+        }
+
+       $sisaAntrean = max(0, $angkaPanggil - $angkaAntrean);
+
+
         // === 11. Response ===
         return response()->json([
             'response' => [
@@ -259,6 +293,8 @@ class Mobile_JknController extends Controller
                 'kuotanonjkn' => $kuotanonjkn,
                 'nomorantrean' => $antrianBaru,
                 'angkaantrean' => $nextNumber,
+                'sisaantrean' => $sisaAntrean,
+                'antreanpanggil' => $antrianTerbaru,
                 'status_panggil' => $data->pendaftaran->antrian ?? null,
                 'keterangan' => 'Apabila antiran terlewat harap ambil antrian kembali.'
             ],
@@ -273,7 +309,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -387,7 +423,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -480,7 +516,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -525,6 +561,7 @@ class Mobile_JknController extends Controller
             ->where('poli_id', $poli->id)
             ->whereDate('tanggal_kujungan', $tanggal)
             ->with('status') // tetap ambil relasi status
+            ->orderBy('created_at', 'desc')
             ->first();
 
 
@@ -537,7 +574,10 @@ class Mobile_JknController extends Controller
             ]);
         }
 
-        $status = Pendaftaran_rawat_jalan_status::where('nomor_register', $antrian->nomor_register)->first();
+        $status = Pendaftaran_rawat_jalan_status::where('nomor_register', $antrian->nomor_register)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
 
         if (!$antrian->status || $antrian->status->status_pendaftaran == 0) {
             return response()->json([
@@ -572,7 +612,7 @@ class Mobile_JknController extends Controller
     {
         // === 1. Validasi Token ===
         $token = $request->header('x-token');
-        $user = $request->header('x-user');
+        $user = $request->header('x-username');
 
         if (!$token || !token_mjkn::where('token', $token)->where('expired', '>=', now())->exists()) {
             return response()->json([
@@ -590,13 +630,13 @@ class Mobile_JknController extends Controller
 
         // === Validasi Data Dasar ===
         $validator = Validator::make($data, [
-            'nomorkartu'    => 'required|digits:13|numeric',
-            'nik'           => 'required|digits:16|numeric',
+            'nomorkartu'    => 'required',
+            'nik'           => 'required',
             'nomorkk'       => 'required',
-            'nama'          => 'required|string',
-            'jeniskelamin'  => 'required|in:L,P',
-            'tanggallahir'  => 'required|date_format:Y-m-d',
-            'alamat'        => 'required|string',
+            'nama'          => 'required',
+            'jeniskelamin'  => 'required',
+            'tanggallahir'  => 'required',
+            'alamat'        => 'required',
             'kodeprop'      => 'required',
             'namaprop'      => 'required',
             'kodedati2'     => 'required',
@@ -618,11 +658,8 @@ class Mobile_JknController extends Controller
             ]);
         }
 
-        // === Normalisasi Jenis Kelamin ===
-        $jenis_kelamin = $data['jeniskelamin'] === 'L' ? 'Laki-laki' : 'Perempuan';
-
         // === Cek Pasien Sudah Terdaftar ===
-        if (pasien::where('id_number', $data['nik'])->exists()) {
+        if (pasien::where('nik', $data['nik'])->exists()) {
             return response()->json([
                 'metadata' => [
                     'message' => 'NIK ' . $data['nik'] . ' sudah terdaftar',
@@ -631,20 +668,8 @@ class Mobile_JknController extends Controller
             ]);
         }
 
-        if (pasien::where(function ($query) use ($data) {
-            $query->where('no_jaminan_1', $data['nomorkartu'])
-                ->orWhere('no_jaminan_2', $data['nomorkartu'])
-                ->orWhere('no_jaminan_3', $data['nomorkartu']);
-        })->exists()) {
-            return response()->json([
-                'metadata' => [
-                    'message' => 'No Kartu ' . $data['nomorkartu'] . ' sudah terdaftar',
-                    'code' => 201
-                ]
-            ]);
-        }
 
-        if (pasien::where('no_bpjs', $data['nomorkartu'])->orWhere('no_ktp', $data['nik'])->exists()) {
+        if (pasien::where('no_bpjs', $data['nomorkartu'])->orWhere('nik', $data['nik'])->exists()) {
             return response()->json([
                 'metadata' => [
                     'message' => 'No Kartu dan NIK sudah terdaftar sebagai Pasien Baru',
@@ -658,20 +683,31 @@ class Mobile_JknController extends Controller
         $newId = $last ? $last->id + 1 : 1;
 
         // === Simpan ke Database ===
-        pasien::create([
-            'id'         => $newId,
-            'nama'       => $data['nama'],
-            'alamat'     => $data['alamat'],
-            'kelurahan'  => $data['namakel'],
-            'kecamatan'  => $data['namakec'],
-            'tgl_lahir'  => $data['tanggallahir'],
-            'jk'         => $jenis_kelamin,
-            'no_ktp'     => $data['nik'],
-            'no_bpjs'    => $data['nomorkartu'],
-            'kabupaten'  => $data['namadati2'],
-            'no_hp'      => $data['nohp'] ?? '-',
-            'tgl_input'  => now(),
+        $pasien = pasien::create([
+            'no_rm'         => str_pad($newId, 6, '0', STR_PAD_LEFT),
+            'nama'          => $data['nama'],
+            'alamat'        => $data['alamat'],
+            'tanggal_lahir' => $data['tanggallahir'],
+            'seks'          => $data['jeniskelamin'],
+            'nik'           => $data['nik'],
+            'no_bpjs'       => $data['nomorkartu'],
+            'telepon'       => $data['nohp'] ?? '-',
         ]);
+
+        // === Buat Nomor Antrian ===
+        $tanggalHariIni = Carbon::now()->toDateString();
+
+        $jumlahAntrianHariIni = pasien_antrian::whereDate('created_at', $tanggalHariIni)->count();
+
+        $nomorAntrian = 'A-' . ($jumlahAntrianHariIni + 1);
+
+        // Simpan ke antrean
+        pasien_antrian::create([
+            'pasien_id'     => $pasien->id,
+            'nomor_antrian' => $nomorAntrian,
+            'status_panggil'=> 0,
+        ]);
+
 
         return response()->json([
             'response' => ['norm' => (string) $newId],

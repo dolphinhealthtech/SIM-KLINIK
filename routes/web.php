@@ -1,10 +1,7 @@
 <?php
 
 use App\Http\Controllers\dashboard;
-use App\Http\Controllers\DataMasterController;
 use App\Http\Controllers\DataMasterManajemenController;
-use App\Http\Controllers\DataMasterMedisController;
-use App\Http\Controllers\DataMasterGudangController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\DataMaster\gudang\GudangRequestController;
 use App\Http\Controllers\DataMaster\gudang\GudangUtamaController;
@@ -86,11 +83,17 @@ Route::post('/apotek/print-resep/revisi', [ApotekController::class, 'resep_revis
 
 // Menu Data Barang (obat)
 Route::get('/data-barang', [DabarController::class, 'dabar'])->name('dabar.get');
+Route::get('/data-barang-utama', [DabarController::class, 'dabar_utama'])->name('dabar_utama.get');
 Route::post('/data-barang/add', [DabarController::class, 'dabaradd'])->name('dabar.store');
+Route::post('/data-barang-utama/add', [DabarController::class, 'dabaradd_utama'])->name('dabar_utama.store');
 Route::post('/data-barang/update', [DabarController::class, 'dabaredit'])->name('dabar.update');
+Route::post('/data-barang-utama/update', [DabarController::class, 'dabaredit_utama'])->name('dabar_utama.update');
 Route::post('/data-barang/delete', [DabarController::class, 'dabardelete'])->name('dabar.destroy');
+Route::post('/data-barang-utama/delete', [DabarController::class, 'dabardelete_utama'])->name('dabar_utama.destroy');
 Route::get('/data-barang/export', [DabarController::class, 'dabarexport'])->name('dabar.export');
+Route::get('/data-barang-utama/export', [DabarController::class, 'dabarexport_utama'])->name('dabar_utama.export');
 Route::post('/data-barang/import', [DabarController::class, 'dabarimport'])->name('dabar.import');
+Route::post('/data-barang-utama/import', [DabarController::class, 'dabarimport_utama'])->name('dabar_utama.import');
 //Koneksi antar database
 Route::get('/data-barang/singkron/{id}', [DabarController::class, 'dabarsingkron'])->name('dabar.singkron');
 
@@ -106,6 +109,17 @@ Route::get('/data-inventaris/singkron/{id}', [InventarisController::class, 'inve
 
 Route::get('/inventaris-pembelian', [InventarisController::class, 'inventaris_pembelian'])->name('inventaris_pembelian.get');
 Route::post('/inventaris-pembelian/add', [InventarisController::class, 'inventaris_pembelianadd'])->name('inventaris_pembelian.add');
+
+// Menu Inventari Utama
+Route::get('/data-inventaris-utama', [InventarisController::class, 'inventaris_utama'])->name('inventaris_utama.get');
+Route::post('/data-inventaris-utama/add', [InventarisController::class, 'inventarisadd_utama'])->name('inventaris_utama.store');
+Route::post('/data-inventaris-utama/update', [InventarisController::class, 'inventarisedit_utama'])->name('inventaris_utama.update');
+Route::post('/data-inventaris-utama/delete', [InventarisController::class, 'inventarisdelete_utama'])->name('inventaris_utama.destroy');
+Route::get('/data-inventaris-utama/export', [InventarisController::class, 'inventarisexport_utama'])->name('inventaris_utama.export');
+Route::post('/data-inventaris-utama/import', [InventarisController::class, 'inventarisimport_utama'])->name('inventaris_utama.import');
+
+Route::get('/inventaris-pembelian-utama', [InventarisController::class, 'inventaris_pembelian_utama'])->name('inventaris_pembelian_utama.get');
+Route::post('/inventaris-pembelian-utama/add', [InventarisController::class, 'inventaris_pembelianadd_utama'])->name('inventaris_pembelian_utama.add');
 
 // Menu Data Master Gudang
 Route::prefix('data-master-gudang')->group(function () {
@@ -135,13 +149,19 @@ Route::prefix('data-master-gudang')->group(function () {
 
     // Menu Setting Harga
     Route::get('/setting-harga-jual', [SetHargaController::class, 'setharga'])->name('setharga.get');
+    Route::get('/setting-harga-jual-utama', [SetHargaController::class, 'setharga_utama'])->name('setharga_utama.get');
     Route::post('/setting-harga-jual/add', [SetHargaController::class, 'sethargaadd'])->name('setharga.store');
+    Route::post('/setting-harga-jual-utama/add', [SetHargaController::class, 'sethargaadd_utama'])->name('setharga_utama.store');
     Route::get('/setting-harga-jual/singkron/{id}', [SetHargaController::class, 'sethargasingkron'])->name('setharga.singkron');
     Route::get('/harga-barang-jual', [HargaJualController::class, 'hargajual'])->name('hargajual.get');
+    Route::get('/harga-barang-jual-utama', [HargaJualController::class, 'hargajualutama'])->name('hargajualutama.get');
     Route::get('/stok-obat-alkes', [StokBarangController::class, 'stokobatalkes'])->name('stokobatalkes.get');
+    Route::get('/stok-obat-alkes-utama', [StokBarangController::class, 'stokobatalkes_utama'])->name('stokobatalkes_utama.get');
 
     Route::get('/stok-penyesuaian-opname', [StokBarangController::class, 'stok_penyesuaian'])->name('stok_penyesuaian.get');
+    Route::get('/stok-penyesuaian-opname-utama', [StokBarangController::class, 'stok_penyesuaian_utama'])->name('stok_penyesuaian_utama.get');
     Route::post('/stok-penyesuaian-opname/add', [StokBarangController::class, 'stok_penyesuaianadd'])->name('stok_penyesuaian.store');
+    Route::post('/stok-penyesuaian-opname-utama/add', [StokBarangController::class, 'stok_penyesuaianadd_utama'])->name('stok_penyesuaian_utama.store');
 
     // Menu Satuan Inventaris
     Route::get('/satuan-inventaris', [SatuanInventarisController::class, 'satuan_inventaris'])->name('satuan_inventaris.get');
@@ -165,6 +185,13 @@ Route::prefix('data-master-gudang')->group(function () {
     Route::post('/stok-inventaris/data/update', [StokInventarisController::class, 'stokin_dataedit'])->name('stokin_data.update');
     Route::post('/stok-inventaris/data/delete', [StokInventarisController::class, 'stokin_datadelete'])->name('stokin_data.destroy');
 
+    // Menu Stok Inventaris Utama
+    Route::get('/stok-inventaris-utama', [StokInventarisController::class, 'stokin_utama'])->name('stokin_utama.get');
+    Route::get('/stok-inventaris-utama/data/{id}', [StokInventarisController::class, 'stokin_data_utama'])->name('stokin_data_utama.get');
+    Route::post('/stok-inventaris-utama/data/update', [StokInventarisController::class, 'stokin_dataedit_utama'])->name('stokin_data_utama.update');
+    Route::post('/stok-inventaris-utama/data/delete', [StokInventarisController::class, 'stokin_datadelete_utama'])->name('stokin_data_utama.destroy');
+
+
     // Menu Request Obat Klinik Omega
     Route::get('/inventaris-request', [InventarisRequestController::class, 'inventarisrequest'])->name('inventarisrequest.get');
     Route::post('/inventaris-request/add', [InventarisRequestController::class, 'inventarisrequestadd'])->name('inventarisrequest.store');
@@ -182,6 +209,7 @@ Route::prefix('data-master-gudang')->group(function () {
     Route::post('/gudang-utama/konfirmasi', [GudangUtamaController::class, 'gudangutamakonfirmasi'])->name('gudangutama.konfirmasi');
 
     Route::get('/kartu-stok', [StokBarangController::class, 'kartu_stok'])->name('kartu_stok.get');
+    Route::get('/kartu-stok-utama', [StokBarangController::class, 'kartu_stok_utama'])->name('kartu_stok_utama.get');
 });
 
 // Menu Data Master Manajemen
@@ -534,6 +562,8 @@ Route::middleware('auth')->prefix('setting')->group(function () {
     Route::post('/web/bpjs', [WebSettingController::class, 'set_bpjs'])->name('web.update.bpjs');
     Route::post('/web/toggle', [WebSettingController::class, 'updateToggle'])->name('web.update.toggle');
     Route::get('/web/toggle/states', [WebSettingController::class, 'getToggleStates'])->name('web.get.toggle.states');
+    Route::post('/web/set-gudang-utama', [WebSettingController::class, 'setActiveGudangUtama'])->name('web.set.gudang.utama');
+    Route::post('/web/reset-gudang-utama', [WebSettingController::class, 'resetActiveGudangUtama'])->name('web.reset.gudang.utama');
 });
 
 // Menu Staff

@@ -16,6 +16,15 @@ use Illuminate\Validation\ValidationException;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
+// Gudang Utama
+use App\Models\gudang_barang_utama;
+use App\Models\gudang_barang_harga_utama;
+use App\Models\gudang_barang_stok_utama;
+use App\Models\gudang_setting_harga_utama;
+use App\Models\pembelian_detail_utama;
+use App\Models\pembelian_utama;
+use App\Models\WebSetting;
+use Illuminate\Support\Facades\Log;
 
 class PembelianController extends Controller
 {
@@ -23,11 +32,20 @@ class PembelianController extends Controller
     {
         $title = "Pembelian";
         $supplier = gudang_supplier_industri::all();
-        $dabar = gudang_barang::all();
+        $gudang = WebSetting::first()->is_gudangutama_active;
+        if ($gudang == 1) {
+            $dabar = gudang_barang_utama::all();
+        } else {
+            $dabar = gudang_barang::all();
+        }
         $user = User::all();
-        $settingHarga = gudang_setting_harga::first();
+        if ($gudang == 1) {
+            $settingHarga = gudang_setting_harga_utama::first();
+        } else {
+            $settingHarga = gudang_setting_harga::first();
+        }
 
-        return view('dashboard.pembelian', compact('title','supplier','dabar','user','settingHarga'));
+        return view('dashboard.pembelian', compact('title','supplier','dabar','user','settingHarga','gudang'));
     }
 
     public function pembelianadd(Request $request)
@@ -74,27 +92,51 @@ class PembelianController extends Controller
                 'penerima_barang' => 'Penerima Barang',
             ]);
 
-            // Simpan data ke database (1)
-            $pembelian = pembelian::create([
-                'nomor_faktur' => $request->input('nomor_faktur'),
-                'supplier' => $request->input('supplier_select') ?: $request->input('supplier_input'),
-                'no_po_sp' => $request->input('no_po_sp'),
-                'no_faktur_supplier' => $request->input('no_faktur_supplier'),
-                'tanggal_terima_barang' => $request->input('tanggal_terima_barang'),
-                'tanggal_faktur' => $request->input('tanggal_faktur'),
-                'tanggal_jatuh_tempo' => $request->input('tanggal_jatuh_tempo'),
-                'pajak_ppn' => $request->input('pajak_ppn'),
-                'metode_hna' => $request->input('metode_hna'),
-                'sub_total' => $request->input('sub_total_keseluruhan_input'),
-                'total_diskon' => $request->input('diskon_total_keseluruhan_input'),
-                'ppn_total' => $request->input('ppn_total_keseluruhan_input'),
-                'materai' => $request->input('materai'),
-                'koreksi' => $request->input('koreksi'),
-                'total' => $request->input('total_keseluruhan_input'),
-                'penerima_barang' => $request->input('penerima_barang'),
-                'user_input_id' => Auth::user()->id,
-                'user_input_nama' => Auth::user()->name,
-            ]);
+            // Konsep: Pembelian hanya boleh dilakukan oleh gudang utama.
+            // Gudang klinik tidak bisa melakukan pembelian langsung ke supplier.
+            if (WebSetting::first()->is_gudangutama_active == 1) {
+                $pembelian = pembelian_utama::create([
+                    'nomor_faktur' => $request->input('nomor_faktur'),
+                    'supplier' => $request->input('supplier_select') ?: $request->input('supplier_input'),
+                    'no_po_sp' => $request->input('no_po_sp'),
+                    'no_faktur_supplier' => $request->input('no_faktur_supplier'),
+                    'tanggal_terima_barang' => $request->input('tanggal_terima_barang'),
+                    'tanggal_faktur' => $request->input('tanggal_faktur'),
+                    'tanggal_jatuh_tempo' => $request->input('tanggal_jatuh_tempo'),
+                    'pajak_ppn' => $request->input('pajak_ppn'),
+                    'metode_hna' => $request->input('metode_hna'),
+                    'sub_total' => $request->input('sub_total_keseluruhan_input'),
+                    'total_diskon' => $request->input('diskon_total_keseluruhan_input'),
+                    'ppn_total' => $request->input('ppn_total_keseluruhan_input'),
+                    'materai' => $request->input('materai'),
+                    'koreksi' => $request->input('koreksi'),
+                    'total' => $request->input('total_keseluruhan_input'),
+                    'penerima_barang' => $request->input('penerima_barang'),
+                    'user_input_id' => Auth::user()->id,
+                    'user_input_nama' => Auth::user()->name,
+                ]);
+            } else {
+                $pembelian = pembelian::create([
+                    'nomor_faktur' => $request->input('nomor_faktur'),
+                    'supplier' => $request->input('supplier_select') ?: $request->input('supplier_input'),
+                    'no_po_sp' => $request->input('no_po_sp'),
+                    'no_faktur_supplier' => $request->input('no_faktur_supplier'),
+                    'tanggal_terima_barang' => $request->input('tanggal_terima_barang'),
+                    'tanggal_faktur' => $request->input('tanggal_faktur'),
+                    'tanggal_jatuh_tempo' => $request->input('tanggal_jatuh_tempo'),
+                    'pajak_ppn' => $request->input('pajak_ppn'),
+                    'metode_hna' => $request->input('metode_hna'),
+                    'sub_total' => $request->input('sub_total_keseluruhan_input'),
+                    'total_diskon' => $request->input('diskon_total_keseluruhan_input'),
+                    'ppn_total' => $request->input('ppn_total_keseluruhan_input'),
+                    'materai' => $request->input('materai'),
+                    'koreksi' => $request->input('koreksi'),
+                    'total' => $request->input('total_keseluruhan_input'),
+                    'penerima_barang' => $request->input('penerima_barang'),
+                    'user_input_id' => Auth::user()->id,
+                    'user_input_nama' => Auth::user()->name,
+                ]);
+            }
 
             // Simpan detail pembelian
             $dataDetail = json_decode($request->data_json_tabel, true);
@@ -158,50 +200,103 @@ class PembelianController extends Controller
                     $PPNbarang = $hargaSetelahDiskon * ($ppn / 100);
                     $hargaDasar = $hargaSetelahDiskon + $PPNbarang;
                 }
+                if (WebSetting::first()->is_gudangutama_active == 1) {
+                    $setting = gudang_setting_harga_utama::first(); // atau where('some_column', ...)
+                    $hargaJual1 = $hargaDasar * (1 + ($setting->harga_jual_1 / 100));
+                    $hargaJual2 = $hargaDasar * (1 + ($setting->harga_jual_2 / 100));
+                    $hargaJual3 = $hargaDasar * (1 + ($setting->harga_jual_3 / 100));
+                } else {
+                    $setting = gudang_setting_harga::first(); // atau where('some_column', ...)
+                    $hargaJual1 = $hargaDasar * (1 + ($setting->harga_jual_1 / 100));
+                    $hargaJual2 = $hargaDasar * (1 + ($setting->harga_jual_2 / 100));
+                    $hargaJual3 = $hargaDasar * (1 + ($setting->harga_jual_3 / 100));
+                }
 
-                $setting = gudang_setting_harga::first(); // atau where('some_column', ...)
 
-                $hargaJual1 = $hargaDasar * (1 + ($setting->harga_jual_1 / 100));
-                $hargaJual2 = $hargaDasar * (1 + ($setting->harga_jual_2 / 100));
-                $hargaJual3 = $hargaDasar * (1 + ($setting->harga_jual_3 / 100));
 
-                // Simpan ke gudang
-                gudang_barang_harga::create([
-                    'kode_obat_alkes' => $detail['kodeBarang'],
-                    'nama_obat_alkes' => $detail['nama'],
-                    'harga_dasar' => $hargaDasar,
-                    'harga_jual_1' => $hargaJual1,
-                    'harga_jual_2' => $hargaJual2,
-                    'harga_jual_3' => $hargaJual3,
-                    'diskon' => $Diskonbarang,
-                    'ppn' => $PPNbarang,
-                    'tanggal_obat_masuk' => $request->input('tanggal_terima_barang'),
-                    'user_input_id' => Auth::user()->id,
-                    'user_input_name' => Auth::user()->name,
-                ]);
+                // Contoh: switch mode gudang utama/klinik (bisa diganti dari request/session sesuai kebutuhan)
+
+                // Simpan ke gudang (switch model sesuai mode)
+                if (WebSetting::first()->is_gudangutama_active == 1) {
+                    gudang_barang_harga_utama::create([
+                        'kode_obat_alkes' => $detail['kodeBarang'],
+                        'nama_obat_alkes' => $detail['nama'],
+                        'harga_dasar' => $hargaDasar,
+                        'harga_jual_1' => $hargaJual1,
+                        'harga_jual_2' => $hargaJual2,
+                        'harga_jual_3' => $hargaJual3,
+                        'diskon' => $Diskonbarang,
+                        'ppn' => $PPNbarang,
+                        'tanggal_obat_masuk' => $request->input('tanggal_terima_barang'),
+                        'user_input_id' => Auth::user()->id,
+                        'user_input_name' => Auth::user()->name,
+                    ]);
+                } else {
+                    gudang_barang_harga::create([
+                        'kode_obat_alkes' => $detail['kodeBarang'],
+                        'nama_obat_alkes' => $detail['nama'],
+                        'harga_dasar' => $hargaDasar,
+                        'harga_jual_1' => $hargaJual1,
+                        'harga_jual_2' => $hargaJual2,
+                        'harga_jual_3' => $hargaJual3,
+                        'diskon' => $Diskonbarang,
+                        'ppn' => $PPNbarang,
+                        'tanggal_obat_masuk' => $request->input('tanggal_terima_barang'),
+                        'user_input_id' => Auth::user()->id,
+                        'user_input_name' => Auth::user()->name,
+                    ]);
+                }
 
                 // Simpan ke detail pembelian
-                pembelian_details::create([
-                    'nomor_faktur' => $request->input('nomor_faktur'),
-                    'nama_obat_alkes' => $detail['nama'],
-                    'kode_obat_alkes' => $detail['kodeBarang'],
-                    'qty' => $detail['qty'],
-                    'harga_satuan' => $detail['hargaSatuan'],
-                    'diskon' => $detail['disc'],
-                    'exp' => $detail['exp'],
-                    'batch' => $detail['batch'],
-                    'sub_total' => $detail['subTotal'],
-                ]);
 
-                gudang_barang_stok::create([
-                    'kode_obat_alkes' => $detail['kodeBarang'],
-                    'nama_obat_alkes' => $detail['nama'],
-                    'qty' => $detail['qty'],
-                    'tanggal_terima_obat' => $request->input('tanggal_terima_barang'),
-                    'expired' => $detail['exp'],
-                    'user_input_id' => Auth::user()->id,
-                    'user_input_name' => Auth::user()->name,
-                ]);
+                if (WebSetting::first()->is_gudangutama_active == 1) {
+                    pembelian_detail_utama::create([
+                        'nomor_faktur' => $request->input('nomor_faktur'),
+                        'nama_obat_alkes' => $detail['nama'],
+                        'kode_obat_alkes' => $detail['kodeBarang'],
+                        'qty' => $detail['qty'],
+                        'harga_satuan' => $detail['hargaSatuan'],
+                        'diskon' => $detail['disc'],
+                        'exp' => $detail['exp'],
+                        'batch' => $detail['batch'],
+                        'sub_total' => $detail['subTotal'],
+                    ]);
+                } else {
+                    pembelian_details::create([
+                        'nomor_faktur' => $request->input('nomor_faktur'),
+                        'nama_obat_alkes' => $detail['nama'],
+                        'kode_obat_alkes' => $detail['kodeBarang'],
+                        'qty' => $detail['qty'],
+                        'harga_satuan' => $detail['hargaSatuan'],
+                        'diskon' => $detail['disc'],
+                        'exp' => $detail['exp'],
+                        'batch' => $detail['batch'],
+                        'sub_total' => $detail['subTotal'],
+                    ]);
+                }
+
+                // Simpan ke stok (switch model sesuai mode)
+                if (WebSetting::first()->is_gudangutama_active == 1) {
+                    gudang_barang_stok_utama::create([
+                        'kode_obat_alkes' => $detail['kodeBarang'],
+                        'nama_obat_alkes' => $detail['nama'],
+                        'qty' => $detail['qty'],
+                        'tanggal_terima_obat' => $request->input('tanggal_terima_barang'),
+                        'expired' => $detail['exp'],
+                        'user_input_id' => Auth::user()->id,
+                        'user_input_name' => Auth::user()->name,
+                    ]);
+                } else {
+                    gudang_barang_stok::create([
+                        'kode_obat_alkes' => $detail['kodeBarang'],
+                        'nama_obat_alkes' => $detail['nama'],
+                        'qty' => $detail['qty'],
+                        'tanggal_terima_obat' => $request->input('tanggal_terima_barang'),
+                        'expired' => $detail['exp'],
+                        'user_input_id' => Auth::user()->id,
+                        'user_input_name' => Auth::user()->name,
+                    ]);
+                }
             }
 
 
@@ -234,9 +329,15 @@ class PembelianController extends Controller
                 $today = date('Ymd'); // Format menjadi YYYYMMDD
 
                 // Cari nomor faktur terakhir untuk tanggal yang sama
-                $lastPembelian = pembelian::whereDate('created_at', '=', date('Y-m-d'))  // filter by actual date
-                                            ->latest('nomor_faktur')
-                                            ->first();
+                if (WebSetting::first()->is_gudangutama_active == 1) {
+                    $lastPembelian = pembelian_utama::whereDate('created_at', '=', date('Y-m-d'))
+                        ->latest('nomor_faktur')
+                        ->first();
+                } else {
+                    $lastPembelian = pembelian::whereDate('created_at', '=', date('Y-m-d'))
+                        ->latest('nomor_faktur')
+                        ->first();
+                }
 
                 // Format dasar nomor faktur 'INV-YYYYMMDD-'
                 $prefix = 'INV-' . $today . '-';
@@ -270,11 +371,15 @@ class PembelianController extends Controller
     //CETAK PDF
         public function cetakPembelianPdf($nomor_faktur)
         {
+            //pembelian sama details dibuat utama
             // Ambil data pembelian
-            $pembelian = pembelian::where('nomor_faktur', $nomor_faktur)->first();
-
-            // Ambil detail pembelian
-            $details = pembelian_details::where('nomor_faktur', $nomor_faktur)->get();
+            if (WebSetting::first()->is_gudangutama_active == 1) {
+                $pembelian = pembelian_utama::where('nomor_faktur', $nomor_faktur)->first();
+                $details = pembelian_detail_utama::where('nomor_faktur', $nomor_faktur)->get();
+            } else {
+                $pembelian = pembelian::where('nomor_faktur', $nomor_faktur)->first();
+                $details = pembelian_details::where('nomor_faktur', $nomor_faktur)->get();
+            }
 
             // Pastikan data numerik dikonversi dengan benar
             foreach ($details as $detail) {

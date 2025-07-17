@@ -61,12 +61,23 @@ public function kunjunganHarian()
 
 public function kunjunganPerPoli()
     {
-        $data = DB::table('pendaftaran_rawat_jalans')
-            ->join('polis', 'pendaftaran_rawat_jalans.poli_id', '=', 'polis.id')
-            ->select('polis.nama', DB::raw('COUNT(*) as jumlah'))
-            ->groupBy('polis.nama')
-            ->orderByDesc('jumlah')
-            ->get();
+       $data = Pendaftaran_rawat_jalan::whereHas('status', function ($query) {
+                    $query->where('status_pendaftaran', '!=', 0);
+                })
+                ->whereMonth('tanggal_kujungan', Carbon::now()->month)
+                ->whereYear('tanggal_kujungan', Carbon::now()->year)
+                ->with('poli')
+                ->get()
+                ->groupBy('poli.nama')
+                ->map(function ($group) {
+                    return [
+                        'nama' => $group->first()->poli->nama,
+                        'jumlah' => $group->count(),
+                    ];
+                })
+                ->sortByDesc('jumlah')
+                ->values();
+
 
         return response()->json([
             'labels' => $data->pluck('nama'),
@@ -124,7 +135,7 @@ public function kunjunganPerPoli()
             ->whereDate('created_at', $today)
             ->sum('total');
 
-        // Ambil total obat dari tabel kasir_apotek_lunas  
+        // Ambil total obat dari tabel kasir_apotek_lunas
         $totalObat = DB::table('kasir_apotek_lunas')
             ->whereDate('created_at', $today)
             ->sum('total');

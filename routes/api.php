@@ -41,6 +41,7 @@ Route::get('/get-staff-all/{id}', [StaffController::class, 'getStaffEdit']);
 Route::get('/jadwal/json/{id}', [DokterController::class, 'dokterjadwaljson']);
 Route::get('/get-dokter-by-poli/{id}', [PendaftaranController::class, 'getByPoli']);
 Route::get('/generate-kode-data-barang', [DabarController::class, 'generateKodeDataBarang'])->name('generateKodeDataBarang');
+Route::get('/generate-kode-data-barang-utama', [DabarController::class, 'generateKodeDataBarangUtama'])->name('generateKodeDataBarangUtama');
 Route::get('/generate-faktur-pembelian', [PembelianController::class, 'generateFakturPembelian'])->name('generateFakturPembelian');
 Route::get('/generate-kode-inventaris', [InventarisController::class, 'generateKodeInventaris'])->name('generateKodeInventaris');
 Route::get('/generate-kode-pembelian-inventaris', [InventarisController::class, 'generatePembelianInventaris'])->name('generatePembelianInventaris');
@@ -127,7 +128,9 @@ Route::prefix('data-master-gudang')->group(function () {
 
 
     Route::get('/kartu-stok-masuk', [StokBarangController::class, 'getKartuStokMasuk'])->name('getKartuStokMasuk');
+    Route::get('/kartu-stok-masuk-utama', [StokBarangController::class, 'getKartuStokMasukUtama'])->name('getKartuStokMasukUtama');
     Route::get('/kartu-stok-keluar', [StokBarangController::class, 'getKartuStokKeluar'])->name('getKartuStokKeluar');
+    Route::get('/kartu-stok-keluar-utama', [StokBarangController::class, 'getKartuStokKeluarUtama'])->name('getKartuStokKeluarUtama');
 });
 
 
