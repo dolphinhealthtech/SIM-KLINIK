@@ -32,10 +32,24 @@
                                 <div class="card-header">
                                     <h3 class="card-title">Setting Harga Jual</h3>
                                     <div class="card-tools">
+
+                                        @php
+                                            use App\Models\WebSetting;
+
+                                            $setting = WebSetting::first();
+                                            $isGudangUtamaActive = $setting->is_gudangutama_active ?? true;
+                                        @endphp
+
+                                        @if($isGudangUtamaActive)
+                                            <a href="{{ route('setharga_klinik.singkron') }}" class="btn btn-info">
+                                                <i class="fas fa-file-upload"></i> Sinkron
+                                            </a>
+                                        @else
+                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
+                                                <i class="fas fa-file-upload"></i> Sinkron
+                                            </button>
+                                        @endif
                                         <!-- Tombol Sinkron (Memunculkan Modal) -->
-                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
-                                            <i class="fas fa-file-upload"></i> Sinkron
-                                        </button>
                                     </div>
                                 </div>
                                 <div class="card-body">
