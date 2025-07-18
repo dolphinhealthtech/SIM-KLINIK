@@ -169,9 +169,10 @@ class SetHargaController extends Controller
     public function sethargasingkronklinik()
     {
         try {
-            $items = gudang_setting_harga_utama::first();
+            // Ambil 1 data pertama dari gudang_setting_harga_utama
+            $item = gudang_setting_harga_utama::orderBy('id')->first();
 
-            foreach ($items as $item) {
+            if ($item) {
                 // Cari data di tabel tujuan berdasarkan ID
                 $model = gudang_setting_harga::find($item->id);
 
@@ -183,19 +184,22 @@ class SetHargaController extends Controller
                         'harga_jual_3' => $item->harga_jual_3,
                     ]);
                 }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Sinkron setting harga jual berhasil dilakukan!'
+                ], 201);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada data ditemukan untuk disinkronisasi.'
+                ], 404);
             }
 
-
-
-            // Return response JSON untuk AJAX
-            return response()->json([
-                'success' => true,
-                'message' => 'Sinkron setting harga jual berhasil dilakukan!'
-            ], 201);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Sinkron setting harga jual sudah dilakukan!',
+                'message' => 'Validasi gagal.',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
@@ -205,6 +209,7 @@ class SetHargaController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+
     }
     // Koneksi antar database
     public function sethargasingkron($id)
