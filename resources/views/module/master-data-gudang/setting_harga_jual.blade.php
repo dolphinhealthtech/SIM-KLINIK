@@ -193,12 +193,18 @@ document.getElementById('btnSinkronHarga').addEventListener('click', function ()
                         icon: 'success',
                         title: 'Berhasil!',
                         text: data.message || 'Sinkronisasi berhasil dilakukan.'
+                    }).then(() => {
+                        // Reload halaman setelah OK ditekan
+                        location.reload();
                     });
                 } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
                         text: data.message || 'Sinkronisasi gagal.'
+                    }).then(() => {
+                        // Reload halaman setelah OK ditekan
+                        location.reload();
                     });
                 }
             })
