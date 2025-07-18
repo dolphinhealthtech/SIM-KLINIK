@@ -192,11 +192,12 @@ document.getElementById('btnSinkronHarga').addEventListener('click', function ()
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil!',
+                        confirmButtonText: 'Ya',
                         text: data.message || 'Sinkronisasi berhasil dilakukan.'
-                    }).then(() => {
-                        // Reload halaman setelah OK ditekan
-                        location.reload();
-                    });
+                        }).then(() => {
+                            // Reload halaman setelah OK ditekan
+                            location.reload();
+                        });
                 } else {
                     Swal.fire({
                         icon: 'error',
