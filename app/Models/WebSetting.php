@@ -17,6 +17,7 @@ class WebSetting extends Model
         'kode_klinik',
         'is_bpjs_active',
         'is_satusehat_active',
-        'is_gudangutama_active'
+        'is_gudangutama_active',
+        'is_tindakan_active'
     ];
 }

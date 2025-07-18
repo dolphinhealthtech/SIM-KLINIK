@@ -59,7 +59,7 @@ class WebSettingController extends Controller
     {
         try {
             $validated = $request->validate([
-                'toggle_type' => 'required|string|in:toggleBPJS,toggleSatusehat,toggleGudangutama',
+                'toggle_type' => 'required|string|in:toggleBPJS,toggleSatusehat,toggleGudangutama,toggleTindakanAll',
                 'value' => 'required|boolean'
             ]);
 
@@ -69,7 +69,8 @@ class WebSettingController extends Controller
             $fieldMap = [
                 'toggleBPJS' => 'is_bpjs_active',
                 'toggleSatusehat' => 'is_satusehat_active',
-                'toggleGudangutama' => 'is_gudangutama_active'
+                'toggleGudangutama' => 'is_gudangutama_active',
+                'toggleTindakanAll' => 'is_tindakan_active',
             ];
 
             $field = $fieldMap[$validated['toggle_type']];
@@ -85,7 +86,7 @@ class WebSettingController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Pengaturan berhasil diperbarui!'
-                
+
             ]);
 
         } catch (\Exception $e) {
@@ -95,7 +96,7 @@ class WebSettingController extends Controller
             ], 500);
         }
 
-        
+
     }
 
     public function getToggleStates()
@@ -108,7 +109,8 @@ class WebSettingController extends Controller
                 'data' => [
                     'is_bpjs_active' => $setting->is_bpjs_active ?? true,
                     'is_satusehat_active' => $setting->is_satusehat_active ?? true,
-                    'is_gudangutama_active' => $setting->is_gudangutama_active ?? true
+                    'is_gudangutama_active' => $setting->is_gudangutama_active ?? true,
+                    'is_tindakan_active' => $setting->is_tindakan_active ?? true,
                 ]
             ]);
 

@@ -21,7 +21,8 @@ class Perawatan_tindakanImport implements ToModel,WithStartRow
             'perawatan_kategori_id'  => $row[2],
             'tarif_dokter'  => $row[3],
             'tarif_perawat'  => $row[4],
-            'tarif_total'  => $row[5]
+            'tarif_all'  => $row[5],
+            'tarif_total'  => $row[6]
         ]);
     }
 

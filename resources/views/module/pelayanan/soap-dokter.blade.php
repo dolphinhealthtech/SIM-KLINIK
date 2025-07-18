@@ -507,12 +507,22 @@
                                                                     <option value="">Tindakan</option>
                                                                 </select>
                                                             </div>
+                                                            @php
+                                                                use App\Models\WebSetting;
+
+                                                                $setting = WebSetting::first();
+                                                                $isTindakanActive = $setting->is_tindakan_active ?? true;
+                                                            @endphp
                                                             <div class="col-md-3 mb-2">
                                                                 <select class="form-control" id="pelaksana">
                                                                     <option value="">Pelaksana</option>
-                                                                    <option value="dokter">Dokter</option>
-                                                                    <option value="perawat">Perawat</option>
-                                                                    <option value="keduanya">Keduanya</option>
+                                                                    @if ($isTindakanActive)
+                                                                        <option value="pemeriksa" selected>Pemeriksa</option>
+                                                                    @else
+                                                                        <option value="dokter">Dokter</option>
+                                                                        <option value="perawat">Perawat</option>
+                                                                        <option value="keduanya">Keduanya</option>
+                                                                    @endif
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3 mb-2">
@@ -1544,6 +1554,8 @@
             } else if (pelaksana === 'keduanya') {
                 pelaksanaList.push({ pelaksana: 'Dokter', harga: tindakanData.tarif_dokter });
                 pelaksanaList.push({ pelaksana: 'Perawat', harga: tindakanData.tarif_perawat });
+            } else {
+                pelaksanaList.push({ pelaksana: 'Tindakan', harga: tindakanData.tarif_all });
             }
 
             const newEntry = { nama: tindakanData.nama, pelaksana: pelaksanaList, _id: 'tindakan_' + Date.now() };
