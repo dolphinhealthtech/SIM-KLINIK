@@ -41,9 +41,10 @@
                                         @endphp
 
                                         @if($isGudangUtamaActive)
-                                            <a id="btnSinkronHarga" href="{{ route('setharga_klinik.singkron') }}" class="btn btn-info">
+                                            <button id="btnSinkronHarga" class="btn btn-info">
                                                 <i class="fas fa-file-upload"></i> Sinkron
-                                            </a>
+                                            </button>
+
                                         @else
                                             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
                                                 <i class="fas fa-file-upload"></i> Sinkron
