@@ -41,7 +41,7 @@
                                         @endphp
 
                                         @if($isGudangUtamaActive)
-                                            <a href="{{ route('setharga_klinik.singkron') }}" class="btn btn-info">
+                                            <a id="btnSinkronHarga" href="{{ route('setharga_klinik.singkron') }}" class="btn btn-info">
                                                 <i class="fas fa-file-upload"></i> Sinkron
                                             </a>
                                         @else
@@ -168,6 +168,25 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('btnSinkronHarga').addEventListener('click', function () {
+    Swal.fire({
+        title: 'Yakin ingin sinkron data harga?',
+        text: 'Proses ini akan memperbarui data harga klinik.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Sinkronkan!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Redirect ke route
+            window.location.href = "{{ route('setharga_klinik.singkron') }}";
+        }
+    });
+});
+</script>
+
 
 <script>
     $(document).ready(function () {
