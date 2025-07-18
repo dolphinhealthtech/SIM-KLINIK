@@ -175,7 +175,7 @@
                                                     <input type="checkbox" class="custom-control-input" id="toggleTindakanAll"
                                                         name="toggleTindakanAll" checked>
                                                     <label class="custom-control-label" for="toggleTindakanAll">Aktifkan Fitur
-                                                        Tindakan All</label>
+                                                        Tindakan Pemeriksaan</label>
                                                 </div>
                                             </div>
                                         </div>
