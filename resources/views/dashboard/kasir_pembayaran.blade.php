@@ -323,6 +323,8 @@
                                                         <option value="debit">Debit Card</option>
                                                         <option value="credit">Credit Card</option>
                                                         <option value="transfer">Transfer</option>
+                                                        <option value="penjaminan_bpjs">Penjaminan BPJS</option>
+                                                        <option value="penjaminan_asuransi">Penjaminan Asuransi</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-3 px-1">
@@ -355,6 +357,7 @@
                                                         <option value="debit">Debit Card</option>
                                                         <option value="credit">Credit Card</option>
                                                         <option value="transfer">Transfer</option>
+                                                        <option value="penjaminan_asuransi">Penjaminan Asuransi</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-3 px-1">
@@ -387,6 +390,7 @@
                                                         <option value="debit">Debit Card</option>
                                                         <option value="credit">Credit Card</option>
                                                         <option value="transfer">Transfer</option>
+                                                        <option value="penjaminan_asuransi">Penjaminan Asuransi</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-3 px-1">

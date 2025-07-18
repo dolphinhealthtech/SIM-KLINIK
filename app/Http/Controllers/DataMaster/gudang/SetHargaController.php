@@ -165,6 +165,52 @@ class SetHargaController extends Controller
         }
 
     }
+
+    public function sethargasingkronklinik()
+    {
+        try {
+            // Ambil 1 data pertama dari gudang_setting_harga_utama
+            $item = gudang_setting_harga_utama::orderBy('id')->first();
+
+            if ($item) {
+                // Cari data di tabel tujuan berdasarkan ID
+                $model = gudang_setting_harga::find($item->id);
+
+                if ($model) {
+                    // Update kolom harga
+                    $model->update([
+                        'harga_jual_1' => $item->harga_jual_1,
+                        'harga_jual_2' => $item->harga_jual_2,
+                        'harga_jual_3' => $item->harga_jual_3,
+                    ]);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Sinkron setting harga jual berhasil dilakukan!'
+                ], 201);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada data ditemukan untuk disinkronisasi.'
+                ], 404);
+            }
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan sinkron setting harga jual!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
     // Koneksi antar database
     public function sethargasingkron($id)
     {

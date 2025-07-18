@@ -45,7 +45,17 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($pelayanan as $pelayanandata)
-                                            <tr>
+                                            @php
+                                                $rowClass = '';
+                                                if ($pelayanandata->tindakan_button == 'soap') {
+                                                    $rowClass = 'background-color: yellow; color: black;';
+                                                } elseif ($pelayanandata->tindakan_button == 'edit') {
+                                                    $rowClass = 'background-color: green; color: white;';
+                                                } elseif ($pelayanandata->tindakan_button == 'Complete') {
+                                                    $rowClass = 'background-color: blue; color: white;';
+                                                }
+                                            @endphp
+                                            <tr style="{{ $rowClass }}">
                                                 <td class="text-center">{{ $pelayanandata->nomor_rm }}</td>
                                                 <td class="text-center">{{ $pelayanandata->pasien->nama }}</td>
                                                 <td class="text-center">{{ $pelayanandata->nomor_register }}</td>

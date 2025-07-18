@@ -58,13 +58,14 @@ class PelayananController extends Controller
             'pendaftaran.status',
             'pelayanan_soap'
         ])
-            ->get()
-            ->filter(function ($item) {
-                $statusPanggil = $item->pendaftaran->status->status_panggil ?? null;
-                $soapExists = $item->pelayanan_soap && $item->pelayanan_soap->isNotEmpty();
+        ->whereDate('created_at', Carbon::today()) // Filter hanya hari ini
+        ->get()
+        ->filter(function ($item) {
+            $statusPanggil = $item->pendaftaran->status->status_panggil ?? null;
+            $soapExists = $item->pelayanan_soap && $item->pelayanan_soap->isNotEmpty();
 
-                return !($statusPanggil == 2 && $soapExists); // sembunyikan jika memenuhi syarat
-            });
+            return !($statusPanggil == 2 && $soapExists); // sembunyikan jika memenuhi syarat
+        });
 
 
         foreach ($pelayanan as $item) {
@@ -256,6 +257,7 @@ class PelayananController extends Controller
             ->whereHas('pendaftaran.status', function ($query) {
                 $query->where('status_panggil', '!=', 3);
             })
+            ->whereDate('created_at', Carbon::today()) // Filter hanya hari ini
             ->get();
 
 

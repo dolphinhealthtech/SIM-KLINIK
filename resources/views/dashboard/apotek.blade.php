@@ -410,7 +410,7 @@
             <div class="modal-body">
                 <!-- Isi modal akan ditambahkan nanti -->
                 {{-- <p class="text-center">Fitur pencarian pasien akan ditambahkan nanti.</p> --}}
-                <table class="table table-bordered mb-0">
+                <table id="agamatabel" class="table table-bordered mb-0">
                     <thead>
                         <tr>
                             <th class="text-center">No</th>
@@ -447,6 +447,7 @@
                         @endforeach
                     </tbody>
                 </table>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -591,6 +592,17 @@
 </div>
 
 
+<script>
+     $(document).ready(function() {
+            $("#agamatabel").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+                "info": false,
+                "paging": false,
+            }).buttons().container().appendTo('#agamatabel_wrapper .col-md-6:eq(0)');
+        });
+</script>
 {{-- SCRIPT GLOBAL --}}
     <style>
     .selected-row {

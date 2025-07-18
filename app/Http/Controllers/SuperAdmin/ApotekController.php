@@ -57,7 +57,7 @@ class ApotekController extends Controller
                 'nama' => 'required|string',
                 'alamat' => 'nullable|string',
                 'resep' => 'required|string',
-                'faktur_apotek' => 'required|string',
+                'faktur_apotek' => 'required|string|unique:apoteks,kode_faktur',
                 'dokter' => 'nullable|string',
                 'poli' => 'nullable|string',
                 'penjamin' => 'required|string',
@@ -68,6 +68,14 @@ class ApotekController extends Controller
                 'note_apotek' => 'nullable|string',
                 'tabel_apotek_harga_hidden' => 'required|string',
             ]);
+
+            $existing = apotek::where('kode_faktur', $validated['faktur_apotek'])->first();
+            if ($existing) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Transaksi sudah pernah dilakukan. Tidak boleh menginput ulang.',
+                ], 409);
+            }
 
             $apotek = apotek::create([
                 'kode_faktur' => $validated['faktur_apotek'],
@@ -138,7 +146,7 @@ class ApotekController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Data berhasil disimpan',
+                'message' => 'Data berhasil disimpan Silahkan verifikasi di kasir Sebelum di ambil obatnya',
                 'data' => $apotek,
             ]);
         } catch (ValidationException $e) {

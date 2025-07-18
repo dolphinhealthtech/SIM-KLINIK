@@ -54,7 +54,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach($request as $requestData)
-                                        <tr class="table-row" ondblclick="openModal('{{ $requestData->kode_request }}')"
+                                        <tr class="table-row" {{ $requestData->status == 2 ? '' : "ondblclick=openModal('$requestData->kode_request')" }}
                                                 data-kode-klinik="{{ $requestData->kode_klinik }}"
                                                 data-nama-klinik="{{ $requestData->nama_klinik }}"
                                                 data-tanggal-input="{{ $requestData->tanggal_input }}"

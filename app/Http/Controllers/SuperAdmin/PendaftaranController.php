@@ -343,6 +343,10 @@ class PendaftaranController extends Controller
                 ];
 
                 try {
+                   $pendaftaran->update([
+                        'status_pendaftaran' => 2
+                    ]);
+
                     $nourut = $this->PcareController->post_pendaftaran_bpjs($pendaftaranpcare);
                     $data = json_decode($nourut->getContent(), true);
 
@@ -356,9 +360,6 @@ class PendaftaranController extends Controller
                         if ($pendaftaran_nourut) {
                             $pendaftaran_nourut->no_urut = $no_urut;
                             $pendaftaran_nourut->save();
-
-                            $pendaftaran->status_pendaftaran = 2;
-                            $pendaftaran->save();
                         }
                     } else {
                         // log jika tidak ada message

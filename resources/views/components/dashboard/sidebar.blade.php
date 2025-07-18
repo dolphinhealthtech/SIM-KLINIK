@@ -44,7 +44,9 @@
                 'data-master-gudang/inventaris-utama',
                 'data-master-gudang/stok-inventaris-utama',
                 'data-barang-utama',
-                
+                'pembelian',
+                'inventaris-pembelian',
+
             ];
         @endphp
 
@@ -70,9 +72,9 @@
                         <a href="{{ $menu->url ? url($menu->url) : '#' }}"
                            class="nav-link {{ $isActive ? 'active' : '' }}">
                             <i class="nav-icon fa fa-{{ $menu->icon }}"
-                               {{ $isActive ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
+                               {{ $isActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
                             </i>
-                            <p {{ $isActive ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
+                            <p {{ $isActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
                                 {{ $menu->name }}
                                 @if ($menu->children->isNotEmpty())
                                     <i class="right fa fa-angle-left"></i>
@@ -98,9 +100,9 @@
                                             <a href="{{ $child->url ? url($child->url) : '#' }}"
                                                class="nav-link {{ request()->is(trim($child->url, '/')) ? 'active' : '' }}">
                                                 <i class="fa fa-{{ $child->icon }} nav-icon"
-                                                   {{ $isChildActive ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
+                                                   {{ $isChildActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
                                                 </i>
-                                                <p {{ $isChildActive ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
+                                                <p {{ $isChildActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
                                                     {{ $child->name }}
                                                     @if ($child->children->isNotEmpty())
                                                         <i class="right fa fa-angle-left"></i>
@@ -121,9 +123,9 @@
                                                                 <a href="{{ url($grandchild->url) }}"
                                                                    class="nav-link {{ request()->is($grandchildUrl) ? 'active' : '' }}">
                                                                     <i class="fa fa-{{ $grandchild->icon }} nav-icon"
-                                                                       {{ request()->is($grandchildUrl) ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
+                                                                       {{ request()->is($grandchildUrl) ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
                                                                     </i>
-                                                                    <p {{ request()->is($grandchildUrl) ? 'style=color:#ffffff;' : 'style=color:#6c757d;' }}>
+                                                                    <p {{ request()->is($grandchildUrl) ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
                                                                         {{ $grandchild->name }}
                                                                     </p>
                                                                 </a>
