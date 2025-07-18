@@ -169,7 +169,7 @@ class SetHargaController extends Controller
     public function sethargasingkronklinik()
     {
         try {
-            $items = gudang_setting_harga_utama::all();
+            $items = gudang_setting_harga_utama::first();
 
             foreach ($items as $item) {
                 // Cari data di tabel tujuan berdasarkan ID
