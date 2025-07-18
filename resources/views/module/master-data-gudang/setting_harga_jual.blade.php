@@ -41,10 +41,9 @@
                                         @endphp
 
                                         @if($isGudangUtamaActive)
-                                            <button id="btnSinkronHarga" class="btn btn-info">
+                                            <a id="btnSinkronHarga" class="btn btn-info">
                                                 <i class="fas fa-file-upload"></i> Sinkron
-                                            </button>
-
+                                            </a>
                                         @else
                                             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
                                                 <i class="fas fa-file-upload"></i> Sinkron
