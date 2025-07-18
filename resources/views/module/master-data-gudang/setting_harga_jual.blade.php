@@ -180,8 +180,35 @@ document.getElementById('btnSinkronHarga').addEventListener('click', function ()
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Redirect ke route
-            window.location.href = "{{ route('setharga_klinik.singkron') }}";
+            fetch("{{ route('setharga_klinik.singkron') }}", {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: data.message || 'Sinkronisasi berhasil dilakukan.'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: data.message || 'Sinkronisasi gagal.'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    text: error.message || 'Tidak dapat terhubung ke server.'
+                });
+            });
         }
     });
 });
