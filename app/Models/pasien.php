@@ -43,6 +43,10 @@ class pasien extends Model
         'bangsa',
         'verifikasi',
         'users',
+        'penjamin_2_nama',
+        'penjamin_3_nama',
+        'penjamin_2_no',
+        'penjamin_3_no',
         'user_id_input',
         'user_name_input',
     ];

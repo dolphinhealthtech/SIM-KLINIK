@@ -620,6 +620,65 @@
                                             <input type="Email" class="form-control" id="email" name="email">
                                         </div>
                                     </div>
+                                          {{-- Checkbox Penjamin 2 --}}
+                                    <div class="col-sm-2 d-flex align-items-center">
+                                        <div class="form-check">
+                                            <label class="form-check-label" for="aktif_penjamin_2">&nbsp;</label>
+                                            <input type="checkbox" class="form-check-input" id="aktif_penjamin_2">
+                                            <label class="form-check-label" for="aktif_penjamin_2">Penjamin 2</label>
+                                        </div>
+                                    </div>
+
+                                    {{-- Select Penjamin 2 --}}
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label for="penjamin_2">Penjamin 2</label>
+                                            <select class="form-control" name="penjamin_2" id="penjamin_2" disabled>
+                                                <option value="">-- Pilih Penjamin 2 --</option>
+                                                @foreach($pejamin as $penjamin)
+                                                    <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {{-- Input Penjamin 2 --}}
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label for="penjamin_2_info">No. Penjamin 2</label>
+                                            <input type="text" class="form-control" name="penjamin_2_info" id="penjamin_2_info" placeholder="No. Penjamin 2" disabled>
+                                        </div>
+                                    </div>
+
+                                    {{-- Checkbox Penjamin 3 --}}
+                                    <div class="col-sm-2 d-flex align-items-center">
+                                        <div class="form-check">
+                                            <label class="form-check-label" for="aktif_penjamin_3">&nbsp;</label>
+                                            <input type="checkbox" class="form-check-input" id="aktif_penjamin_3">
+                                            <label class="form-check-label" for="aktif_penjamin_3">Penjamin 3</label>
+                                        </div>
+                                    </div>
+
+                                    {{-- Select Penjamin 3 --}}
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label for="penjamin_3">Penjamin 3</label>
+                                            <select class="form-control" name="penjamin_3" id="penjamin_3" disabled>
+                                                <option value="">-- Pilih Penjamin 3 --</option>
+                                                @foreach($pejamin as $penjamin)
+                                                    <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {{-- Input Penjamin 3 --}}
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label for="penjamin_3_info">No. Penjamin 3</label>
+                                            <input type="text" class="form-control" name="penjamin_3_info" id="penjamin_3_info" placeholder="Keterangan / No. Penjamin 3" disabled>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1053,6 +1112,65 @@
                                             <input type="Email" class="form-control" id="email_edit" name="email_edit" value="{{ old('email_edit') }}">
                                         </div>
                                     </div>
+                                        {{-- Checkbox Penjamin 2 --}}
+                                    <div class="col-sm-2 d-flex align-items-center">
+                                        <div class="form-check">
+                                            <label class="form-check-label" for="aktif_penjamin_2_edit">&nbsp;</label>
+                                            <input type="checkbox" class="form-check-input" id="aktif_penjamin_2_edit">
+                                            <label class="form-check-label" for="aktif_penjamin_2_edit">Penjamin 2</label>
+                                        </div>
+                                    </div>
+
+                                    {{-- Select Penjamin 2 --}}
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label for="penjamin_2_edit">Penjamin 2</label>
+                                            <select class="form-control" name="penjamin_2_edit" id="penjamin_2_edit" disabled>
+                                                <option value="">-- Pilih Penjamin 2 --</option>
+                                                @foreach($pejamin as $penjamin)
+                                                    <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {{-- Input Penjamin 2 --}}
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label for="penjamin_2_info_edit">No. Penjamin 2</label>
+                                            <input type="text" class="form-control" name="penjamin_2_info_edit" id="penjamin_2_info_edit" placeholder="No. Penjamin 2" disabled>
+                                        </div>
+                                    </div>
+
+                                    {{-- Checkbox Penjamin 3 --}}
+                                    <div class="col-sm-2 d-flex align-items-center">
+                                        <div class="form-check">
+                                            <label class="form-check-label" for="aktif_penjamin_3_edit">&nbsp;</label>
+                                            <input type="checkbox" class="form-check-input" id="aktif_penjamin_3_edit">
+                                            <label class="form-check-label" for="aktif_penjamin_3_edit">Penjamin 3</label>
+                                        </div>
+                                    </div>
+
+                                    {{-- Select Penjamin 3 --}}
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label for="penjamin_3_edit">Penjamin 3</label>
+                                            <select class="form-control" name="penjamin_3_edit" id="penjamin_3_edit" disabled>
+                                                <option value="">-- Pilih Penjamin 3 --</option>
+                                                @foreach($pejamin as $penjamin)
+                                                    <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {{-- Input Penjamin 3 --}}
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label for="penjamin_3_info_edit">No. Penjamin 3</label>
+                                            <input type="text" class="form-control" name="penjamin_3_info_edit" id="penjamin_3_info_edit" placeholder="Keterangan / No. Penjamin 3" disabled>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1070,7 +1188,27 @@
             </div>
         </div>
     </div>
+<script>
+    $('#aktif_penjamin_2').on('change', function () {
+    const aktif = $(this).is(':checked');
+    $('#penjamin_2, #penjamin_2_info').prop('disabled', !aktif);
+});
 
+$('#aktif_penjamin_3').on('change', function () {
+    const aktif = $(this).is(':checked');
+    $('#penjamin_3, #penjamin_3_info').prop('disabled', !aktif);
+});
+    $('#aktif_penjamin_2_edit').on('change', function () {
+    const aktif = $(this).is(':checked');
+    $('#penjamin_2_edit, #penjamin_2_info_edit').prop('disabled', !aktif);
+});
+
+$('#aktif_penjamin_3_edit').on('change', function () {
+    const aktif = $(this).is(':checked');
+    $('#penjamin_3_edit, #penjamin_3_info_edit').prop('disabled', !aktif);
+});
+
+</script>
     <script>
         function formatDate_edit(dateString) {
                 let parts = dateString.split("-"); // Pisahkan berdasarkan "-"
@@ -1323,6 +1461,7 @@
                         $('#suku_edit').val(data.suku).trigger('change');
                         $('#bangsa_edit').val(data.bahasa).trigger('change');
                         $('#bahasa_edit').val(data.bangsa).trigger('change');
+                        $('#email_edit').val(data.getnama?.email ?? '');
 
                         // Load Provinsi, Kabupaten, Kecamatan, Desa secara berurutan
                         if (data.provinsi_kode) {
@@ -1361,6 +1500,8 @@
                     $('#pernikahan').val(data.pernikahan);
                     $('#goldar').val(data.goldar).trigger('change');
                     $('#seks').val(data.seks).trigger('change');
+                    $('#email').val(data.getnama?.email ?? '');
+
                     // generateCredentials();
                 }).fail(function (error) {
                     console.error("Gagal mengambil data pasien:", error);

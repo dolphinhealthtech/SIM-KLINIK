@@ -22,7 +22,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SatusehatController;
-
+use App\Models\penjamin;
 use Illuminate\Http\Request;
 
 
@@ -137,12 +137,16 @@ class PasienController extends Controller
             ->count();
         $kodefasyankes = Set_Bpjs::first();
 
-        return view('dashboard.pasien', compact('title', 'kodefasyankes', 'pasiens', 'provinsi', 'kelamin', 'goldar', 'agama', 'pernikahan', 'suku', 'bangsa', 'bahasa', 'pendidikan', 'pekerjaan', 'pasiennoverif', 'pasienall', 'pasienallnewnow', 'pasienallold'));
+        $pejamin = penjamin::all();
+
+        return view('dashboard.pasien', compact('title', 'pejamin','kodefasyankes', 'pasiens', 'provinsi', 'kelamin', 'goldar', 'agama', 'pernikahan', 'suku', 'bangsa', 'bahasa', 'pendidikan', 'pekerjaan', 'pasiennoverif', 'pasienall', 'pasienallnewnow', 'pasienallold'));
     }
 
     public function getPasien($id)
     {
-        $pasien = Pasien::find($id); // Ambil data pasien dari database
+        // $pasien = Pasien::find($id); // Ambil data pasien dari database
+        $pasien = Pasien::with(['getnama:id,email'])->find($id); // Ambil pasien + relasi email saja
+
         return response()->json($pasien);
     }
 
@@ -278,6 +282,10 @@ class PasienController extends Controller
             "email" => 'nullable',
             "username" => 'nullable',
             "password" => 'nullable',
+            'penjamin_2' => 'nullable',
+            'penjamin_3' => 'nullable',
+            'penjamin_2_info' => 'nullable|string|max:255',
+            'penjamin_3_info' => 'nullable|string|max:255',
         ]);
 
         $fotoName = null;
@@ -351,6 +359,10 @@ class PasienController extends Controller
                 'users' => $users->id,
                 'user_id_input' => $request->userinputid,
                 'user_name_input' => $request->userinput,
+                'penjamin_2_nama' => $request->penjamin_2,
+                'penjamin_3_nama' => $request->penjamin_3,
+                'penjamin_2_no' => $request->penjamin_2_info,
+                'penjamin_3_no' => $request->penjamin_3_info,
             ]);
 
             // Update status panggil menjadi 2 (selesai)
@@ -426,6 +438,10 @@ class PasienController extends Controller
             "bangsa_edit" => 'required',
             "bahasa_edit" => 'required',
             "email_edit" => 'nullable',
+            "penjamin_2_info_edit" => 'nullable',
+            "penjamin_3_info_edit" => 'nullable',
+            "penjamin_2_edit" => 'nullable',
+            "penjamin_3_edit" => 'nullable',
         ]);
 
         $pasien = Pasien::where('no_rm', $request->nomor_rm_edit)->first();
@@ -464,6 +480,10 @@ class PasienController extends Controller
                 'suku' => $request->suku_edit,
                 'bangsa' => $request->bangsa_edit,
                 'bahasa' => $request->bahasa_edit,
+                'penjamin_2_nama' => $request->penjamin_2_edit,
+                'penjamin_3_nama' => $request->penjamin_3_edit,
+                'penjamin_2_no' => $request->penjamin_2_info_edit,
+                'penjamin_3_no' => $request->penjamin_3_info_edit,
             ]);
 
             // Logging perubahan data
