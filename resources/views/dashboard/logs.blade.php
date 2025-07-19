@@ -23,7 +23,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Riwayat Aktivitas User</h3>
                                 <div class="card-tools">
-                                    <span class="badge badge-primary">{{ $logs->total() }} aktivitas</span>
+                                    <span class="badge badge-primary">{{ $logs->count() }} aktivitas</span>
                                 </div>
                             </div>
                             <div class="card-body table-responsive p-0" style="max-height: 500px;">
