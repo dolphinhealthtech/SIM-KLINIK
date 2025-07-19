@@ -11,7 +11,7 @@ class UserActivityLogController extends Controller
     {
         $logs = UserActivityLog::with('user')
             ->orderByDesc('created_at')
-            ->paginate(20);
+            ->get();
 
         return view('dashboard.logs', compact('logs'));
     }
