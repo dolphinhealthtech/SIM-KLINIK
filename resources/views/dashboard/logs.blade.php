@@ -26,8 +26,8 @@
                                     <span class="badge badge-primary">{{ $logs->count() }} aktivitas</span>
                                 </div>
                             </div>
-                            <div class="card-body table-responsive p-0" style="max-height: 500px;">
-                                <table id="alergitabel" class="table table-hover text-nowrap table-bordered table-sm">
+                            <div class="card-body">
+                                <table id="alergitabel" class="table table-bordered table-striped">
                                     <thead class="thead-dark">
                                         <tr>
                                             <th>User</th>
@@ -76,6 +76,7 @@
             "responsive": true,
             "lengthChange": false,
             "autoWidth": false,
+            "searching": false,
         }).buttons().container().appendTo('#alergitabel_wrapper .col-md-6:eq(0)');
     });
 </script>
