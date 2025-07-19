@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                             <div class="card-body table-responsive p-0" style="max-height: 500px;">
-                                <table class="table table-hover text-nowrap table-bordered table-sm">
+                                <table id="alergitabel" class="table table-hover text-nowrap table-bordered table-sm">
                                     <thead class="thead-dark">
                                         <tr>
                                             <th>User</th>
@@ -70,6 +70,14 @@
     </div>
 
 <!-- SCRIPT SECTION - DIPERBAIKI -->
-
+<script>
+    $(document).ready(function() {
+        $("#alergitabel").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+        }).buttons().container().appendTo('#alergitabel_wrapper .col-md-6:eq(0)');
+    });
+</script>
 
 @endsection

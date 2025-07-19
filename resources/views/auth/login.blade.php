@@ -46,9 +46,9 @@
             @endif
         </div>
 
-        <div class="text-center mt-2">
+        {{-- <div class="text-center mt-2">
             <a href="{{ route('register') }}">Daftar akun baru</a>
-        </div>
+        </div> --}}
     </form>
 </div>
 @endsection
