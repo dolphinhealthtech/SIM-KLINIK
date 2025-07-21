@@ -10,6 +10,7 @@ use App\Models\subspesialis;
 use App\Models\pelayanan_soap_dokter_icd;
 use App\Models\gcs_kesadaran;
 use App\Models\pelayanan_soap_dokter;
+use App\Models\pelayanan_rujukan;
 use App\Http\Controllers\PcareController;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -76,235 +77,161 @@ class RujukanController extends Controller
             ->where('nomor_register', $validated['no_rawat'])
             ->first();
 
+        if (!$pelayanan) {
+            return response()->json(['success' => false, 'message' => 'Data pelayanan tidak ditemukan'], 404);
+        }
 
-        $data = [
-            "noKunjungan" => null,
-            "noKartu" => $pelayanan->no_bpjs,
-
-        ];
-
+        // Penjamin UMUM
         if ($validated['penjamin'] === 'UMUM') {
+            // Simpan ke DB
+            pelayanan_rujukan::create([
+                'nomor_rm' => $validated['nomor_rm'],
+                'no_rawat' => $validated['no_rawat'],
+                'penjamin' => $validated['penjamin'],
+                'tujuan_rujukan' => $validated['tujuan_rujukan'],
+                'opsi_rujukan' => $validated['opsi_rujukan'],
+                'tanggal_rujukan' => now()->format('Y-m-d'),
+            ]);
+
             return response()->json([
-                'message' => 'Data rujukan berhasil disimpan',
+                'message' => 'Data rujukan berhasil disimpan (UMUM)',
                 'data' => $pelayanan
             ]);
-        } elseif ($validated['penjamin'] === 'BPJS') {
+        }
 
-            if ($validated['opsi_rujukan'] === 'rujukan_khusus') {
-                $soap = pelayanan_soap_dokter::where('no_rawat', $pelayanan->nomor_register)->first();
+        // Penjamin selain BPJS ditolak
+        if ($validated['penjamin'] !== 'BPJS') {
+            return response()->json(['success' => false, 'message' => 'Penjamin tidak valid'], 400);
+        }
 
-                if (!$soap) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Data SOAP tidak ditemukan.'
-                    ], 404);
-                }
+        // Ambil data SOAP
+        $soap = pelayanan_soap_dokter::where('no_rawat', $pelayanan->nomor_register)->first();
+        if (!$soap) {
+            return response()->json(['success' => false, 'message' => 'Data SOAP tidak ditemukan'], 404);
+        }
 
-                // Proses keluhan
-                $output = 'Keluhan tidak tersedia';
-                if (!empty($soap->tableData)) {
-                    $array = json_decode($soap->tableData, true);
-                    if (is_array($array)) {
-                        $hasil = [];
-                        foreach ($array as $item) {
-                            $hasil[] = "{$item['penyakit']} {$item['durasi']} " . strtolower($item['waktu']);
-                        }
-                        $output = implode(', ', $hasil);
-                    }
-                }
-
-                // GCS Kesadaran
-                $totalSkor = (int) $soap->eye + (int) $soap->verbal + (int) $soap->motorik;
-                $kesadaran = gcs_kesadaran::where('skor', $totalSkor)->first();
-                $kdSadar = $kesadaran?->kode ?? '01'; // fallback ke '01' jika tidak ditemukan
-
-                // Diagnosa (ICD)
-                $icds = pelayanan_soap_dokter_icd::where('no_rawat', $soap->no_rawat)
-                    ->where('nomor_rm', $soap->nomor_rm)
-                    ->pluck('kode_icd10')
-                    ->toArray();
-
-                $diagnosa = array_slice($icds, 0, 3);
-                $dataDiag = [];
-                foreach ($diagnosa as $i => $kode) {
-                    $dataDiag["kdDiag" . ($i + 1)] = $kode;
-                }
-                if (empty($dataDiag)) {
-                    $dataDiag['kdDiag1'] = 'Z00.0'; // Diagnosa default
-                }
-
-                // Bangun payload
-                $kunjunganPayload = array_merge([
-                    "noKunjungan" => null,
-                    "noKartu" => $pelayanan->pasien->no_bpjs ?? '',
-                    "tglDaftar" => now()->format('d-m-Y'),
-                    "kdPoli" => $pelayanan->poli->kode ?? '',
-                    "keluhan" => $output,
-                    "kdSadar" => $kdSadar,
-                    "sistole" => $soap->sistol,
-                    "diastole" => $soap->distol,
-                    "beratBadan" => $soap->berat,
-                    "tinggiBadan" => $soap->tinggi,
-                    "respRate" => $soap->rr,
-                    "heartRate" => $soap->nadi,
-                    "lingkarPerut" => $soap->lingkar_perut,
-                    "kdStatusPulang" => "4",
-                    "tglPulang" => now()->format('d-m-Y'),
-                    "kdDokter" => $pelayanan->dokter->kode ?? '',
-                    "kdPoliRujukInternal" => null,
-                    "rujukLanjut" => [
-                        "kdppk" => $validated['tujuan_rujukan_khusus'],
-                        "tglEstRujuk" => $validated['tanggal_rujukan_khusus'],
-                        "subSpesialis" => null,
-                        "khusus" =>  [
-                            "kdKhusus" => $validated['igd_rujukan_khusus'] ?? null,
-                            "kdSubSpesialis" => $validated['subspesialis_khusus'] !== "0" ? $validated['subspesialis_khusus'] : null,
-                            "catatan" =>  null
-                        ]
-                    ],
-                    "kdTacc" => '0',
-                    "alasanTacc" => null,
-                    "anamnesa" => null,
-                    "alergiMakan" => $pelayanan->alergi_makanan ?? '00',
-                    "alergiUdara" => $pelayanan->alergi_udara ?? '00',
-                    "alergiObat" => $pelayanan->alergi_obat ?? '00',
-                    "kdPrognosa" => null,
-                    "terapiObat" => $pelayanan->terapi_obat ?? null,
-                    "terapiNonObat" => $pelayanan->terapi_nonobat ?? null,
-                    "bmhp" => $soap->bmhp ?? null,
-                    "suhu" => $soap->suhu ?? "36.4"
-                ], $dataDiag);
-
-                // Kirim ke BPJS
-                try {
-                    $response = $this->PcareController->post_kunjungan_bpjs($kunjunganPayload);
-                    $noKunjungan = $response->response->message ?? null;
-                    pelayanan::where('nomor_register', $pelayanan->nomor_register)->update(['kunjungan' => $noKunjungan]);
-                    $pelayanan->pendaftaran->status->status_panggil = 3;
-                    $pelayanan->pendaftaran->status->save();
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Data rujukan berhasil disimpan',
-                        'no_kunjungan' => $noKunjungan,
-                        'data' => $pelayanan
-                    ]);
-                } catch (\Exception $e) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Gagal kirim kunjungan ke BPJS.',
-                        'error' => $e->getMessage()
-                    ], 500);
-                }
-            } elseif ($validated['opsi_rujukan'] === 'spesialis') {
-
-                $soap = pelayanan_soap_dokter::where('no_rawat', $pelayanan->nomor_register)->first();
-
-                if (!$soap) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Data SOAP tidak ditemukan.'
-                    ], 404);
-                }
-
-                // Proses keluhan
-                $output = 'Keluhan tidak tersedia';
-                if (!empty($soap->tableData)) {
-                    $array = json_decode($soap->tableData, true);
-                    if (is_array($array)) {
-                        $hasil = [];
-                        foreach ($array as $item) {
-                            $hasil[] = "{$item['penyakit']} {$item['durasi']} " . strtolower($item['waktu']);
-                        }
-                        $output = implode(', ', $hasil);
-                    }
-                }
-
-                // GCS Kesadaran
-                $totalSkor = (int) $soap->eye + (int) $soap->verbal + (int) $soap->motorik;
-                $kesadaran = gcs_kesadaran::where('skor', $totalSkor)->first();
-                $kdSadar = $kesadaran?->kode ?? '01'; // fallback ke '01' jika tidak ditemukan
-
-                // Diagnosa (ICD)
-                $icds = pelayanan_soap_dokter_icd::where('no_rawat', $soap->no_rawat)
-                    ->where('nomor_rm', $soap->nomor_rm)
-                    ->pluck('kode_icd10')
-                    ->toArray();
-
-                $diagnosa = array_slice($icds, 0, 3);
-                $dataDiag = [];
-                foreach ($diagnosa as $i => $kode) {
-                    $dataDiag["kdDiag" . ($i + 1)] = $kode;
-                }
-                if (empty($dataDiag)) {
-                    $dataDiag['kdDiag1'] = 'Z00.0'; // Diagnosa default
-                }
-
-                // Bangun payload
-                $kunjunganPayload = array_merge([
-                    "noKunjungan" => null,
-                    "noKartu" => $pelayanan->pasien->no_bpjs ?? '',
-                    "tglDaftar" => now()->format('d-m-Y'),
-                    "kdPoli" => $pelayanan->poli->kode ?? '',
-                    "keluhan" => $output,
-                    "kdSadar" => $kdSadar,
-                    "sistole" => $soap->sistol,
-                    "diastole" => $soap->distol,
-                    "beratBadan" => $soap->berat,
-                    "tinggiBadan" => $soap->tinggi,
-                    "respRate" => $soap->rr,
-                    "heartRate" => $soap->nadi,
-                    "lingkarPerut" => $soap->lingkar_perut,
-                    "kdStatusPulang" => "4",
-                    "tglPulang" => now()->format('d-m-Y'),
-                    "kdDokter" => $pelayanan->dokter->kode ?? '',
-                    "kdPoliRujukInternal" => null,
-                    "rujukLanjut" => [
-                        "kdppk" => $request['tujuan_rujukan_spesialis'],
-                        "tglEstRujuk" => $request['tanggal_rujukan'],
-                        "subSpesialis" => [
-                            "kdSubSpesialis1" => $request['sub_spesialis'] ?? null,
-                            "kdSarana" => $request['sarana'] !== "0" ? $request['sarana'] : null
-                        ],
-                        "khusus" => null
-                    ],
-                    "kdTacc" => $request['kategori_rujukan'] ?? '-1',
-                    "alasanTacc" => null,
-                    "anamnesa" => null,
-                    "alergiMakan" => $pelayanan->alergi_makanan ?? '00',
-                    "alergiUdara" => $pelayanan->alergi_udara ?? '00',
-                    "alergiObat" => $pelayanan->alergi_obat ?? '00',
-                    "kdPrognosa" => null,
-                    "terapiObat" => $pelayanan->terapi_obat ?? null,
-                    "terapiNonObat" => $pelayanan->terapi_nonobat ?? null,
-                    "bmhp" => $soap->bmhp ?? null,
-                    "suhu" => $soap->suhu ?? "36.4"
-                ], $dataDiag);
-
-                // Kirim ke BPJS
-                try {
-                    $response = $this->PcareController->post_kunjungan_bpjs($kunjunganPayload);
-                    $noKunjungan = $response->response->message ?? null;
-                    pelayanan::where('nomor_register', $pelayanan->nomor_register)->update(['kunjungan' => $noKunjungan]);
-                    $pelayanan->pendaftaran->status->status_panggil = 3;
-                    $pelayanan->pendaftaran->status->save();
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Data rujukan berhasil disimpan',
-                        'no_kunjungan' => $noKunjungan,
-                        'data' => $pelayanan
-                    ]);
-                } catch (\Exception $e) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Gagal kirim kunjungan ke BPJS.',
-                        'error' => $e->getMessage()
-                    ], 500);
-                }
-            } else {
-                return response()->json(['message' => 'Opsi rujukan tidak valid'], 400);
+        // Proses keluhan
+        $output = 'Keluhan tidak tersedia';
+        if (!empty($soap->tableData)) {
+            $array = json_decode($soap->tableData, true);
+            if (is_array($array)) {
+                $hasil = array_map(fn($item) => "{$item['penyakit']} {$item['durasi']} " . strtolower($item['waktu']), $array);
+                $output = implode(', ', $hasil);
             }
         }
 
-        // return response()->json(['message' => 'Data rujukan berhasil disimpan']);
+        // GCS
+        $totalSkor = (int) $soap->eye + (int) $soap->verbal + (int) $soap->motorik;
+        $kdSadar = gcs_kesadaran::where('skor', $totalSkor)->value('kode') ?? '01';
+
+        // Diagnosa ICD
+        $icds = pelayanan_soap_dokter_icd::where('no_rawat', $soap->no_rawat)
+            ->where('nomor_rm', $soap->nomor_rm)
+            ->pluck('kode_icd10')
+            ->toArray();
+
+        $diagnosa = array_slice($icds, 0, 3);
+        $dataDiag = [];
+        foreach ($diagnosa as $i => $kode) {
+            $dataDiag["kdDiag" . ($i + 1)] = $kode;
+        }
+        if (empty($dataDiag)) $dataDiag['kdDiag1'] = 'Z00.0';
+
+        // Payload Dasar
+        $kunjunganPayload = array_merge([
+            "noKunjungan" => null,
+            "noKartu" => $pelayanan->pasien->no_bpjs ?? '',
+            "tglDaftar" => now()->format('d-m-Y'),
+            "kdPoli" => $pelayanan->poli->kode ?? '',
+            "keluhan" => $output,
+            "kdSadar" => $kdSadar,
+            "sistole" => $soap->sistol,
+            "diastole" => $soap->distol,
+            "beratBadan" => $soap->berat,
+            "tinggiBadan" => $soap->tinggi,
+            "respRate" => $soap->rr,
+            "heartRate" => $soap->nadi,
+            "lingkarPerut" => $soap->lingkar_perut,
+            "kdStatusPulang" => "4",
+            "tglPulang" => now()->format('d-m-Y'),
+            "kdDokter" => $pelayanan->dokter->kode ?? '',
+            "kdPoliRujukInternal" => null,
+            "rujukLanjut" => [],
+            "kdTacc" => $request->input('kategori_rujukan', '0'),
+            "alasanTacc" => null,
+            "anamnesa" => null,
+            "alergiMakan" => $pelayanan->alergi_makanan ?? '00',
+            "alergiUdara" => $pelayanan->alergi_udara ?? '00',
+            "alergiObat" => $pelayanan->alergi_obat ?? '00',
+            "kdPrognosa" => null,
+            "terapiObat" => $pelayanan->terapi_obat ?? null,
+            "terapiNonObat" => $pelayanan->terapi_nonobat ?? null,
+            "bmhp" => $soap->bmhp ?? null,
+            "suhu" => $soap->suhu ?? "36.4"
+        ], $dataDiag);
+
+        // Tambahkan Rujukan Khusus atau Spesialis
+        if ($validated['opsi_rujukan'] === 'rujukan_khusus') {
+            $kunjunganPayload['rujukLanjut'] = [
+                "kdppk" => $request->input('tujuan_rujukan_khusus'),
+                "tglEstRujuk" => $request->input('tanggal_rujukan_khusus'),
+                "subSpesialis" => null,
+                "khusus" => [
+                    "kdKhusus" => $request->input('igd_rujukan_khusus'),
+                    "kdSubSpesialis" => $request->input('subspesialis_khusus') !== "0" ? $request->input('subspesialis_khusus') : null,
+                    "catatan" => null
+                ]
+            ];
+        } elseif ($validated['opsi_rujukan'] === 'spesialis') {
+            $kunjunganPayload['rujukLanjut'] = [
+                "kdppk" => $request->input('tujuan_rujukan'),
+                "tglEstRujuk" => $request->input('tanggal_rujukan'),
+                "subSpesialis" => [
+                    "kdSubSpesialis1" => $request->input('sub_spesialis'),
+                    "kdSarana" => $request->input('sarana') !== "0" ? $request->input('sarana') : null,
+                ],
+                "khusus" => null
+            ];
+        } else {
+            return response()->json(['success' => false, 'message' => 'Opsi rujukan tidak valid'], 400);
+        }
+
+        // Kirim ke BPJS
+        try {
+            $response = $this->PcareController->post_kunjungan_bpjs($kunjunganPayload);
+            $noKunjungan = $response->response->message ?? null;
+
+            // Simpan ke DB
+            pelayanan_rujukan::create([
+                'nomor_rm' => $validated['nomor_rm'],
+                'no_rawat' => $validated['no_rawat'],
+                'penjamin' => $validated['penjamin'],
+                'tujuan_rujukan' => $validated['tujuan_rujukan'],
+                'opsi_rujukan' => $validated['opsi_rujukan'],
+                'tanggal_rujukan' => $request->input('tanggal_rujukan') ?? $request->input('tanggal_rujukan_khusus'),
+                'sarana' => $request->input('sarana'),
+                'rujukan_lanjut' => json_encode($kunjunganPayload['rujukLanjut']),
+                'sub_spesialis' => $request->input('sub_spesialis') ?? $request->input('subspesialis_khusus'),
+            ]);
+
+            pelayanan::where('nomor_register', $pelayanan->nomor_register)
+                ->update(['kunjungan' => $noKunjungan]);
+
+            $pelayanan->pendaftaran->status->status_panggil = 3;
+            $pelayanan->pendaftaran->status->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data rujukan berhasil disimpan & dikirim ke BPJS',
+                'no_kunjungan' => $noKunjungan,
+                'data' => $pelayanan
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal kirim kunjungan ke BPJS.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

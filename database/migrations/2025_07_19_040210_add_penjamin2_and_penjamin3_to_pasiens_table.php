@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('pasiens', function (Blueprint $table) {
             $table->string('penjamin_2_nama')->nullable();
             $table->string('penjamin_3_nama')->nullable()->after('penjamin_2_nama');
-
             $table->string('penjamin_2_no')->nullable();
             $table->string('penjamin_3_no')->nullable()->after('penjamin_2_no');
         });
