@@ -85,7 +85,15 @@
                                                 <td class="text-center">{{ $t->nomor_rm }}</td>
                                                 <td class="text-center">{{ $t->nama }}</td>
                                                 <td class="text-center">{{ $t->data_soap->pendaftaran->poli->nama }}</td>
-                                                <td class="text-center">{{ number_format($t->harga, 0, ',', '.') }}</td>
+                                                {{-- <td class="text-center">{{ number_format($t->harga, 0, ',', '.') }}</td> --}}
+                                                <td class="text-center">
+                                                    {{ number_format(
+                                                        collect(explode(',', $t->harga ?? '0'))
+                                                            ->map(fn($h) => (int) trim($h))
+                                                            ->sum(),
+                                                        0, ',', '.'
+                                                    ) }}
+                                                </td>
                                                 <td class="text-center">{{ $t->created_at->format('Y-m-d') }}</td>
                                                 <td class="text-center">
                                                     <a href="{{ route('kasir.pembayaran', ['kode_faktur' => $t->kode_faktur, 'no_rawat' => $t->no_rawat]) }}" class="btn btn-sm btn-info">Bayar</a>
@@ -175,15 +183,27 @@
 
             const detail_tindakan = JSON.parse(row.getAttribute('data-detail_tindakan'));
             detail_tindakan.forEach(item => {
+                let hargaList = [];
+
+                if (typeof item.harga === 'string' && item.harga.includes(',')) {
+                    hargaList = item.harga.split(',').map(h => parseInt(h.trim()));
+                } else {
+                    hargaList = [parseInt(item.harga)];
+                }
+
+                const totalHarga = hargaList.reduce((sum, val) => sum + val, 0);
+
                 tbody.innerHTML += `
                     <tr>
                         <td>${item.Jenis_tindakan}</td>
-                        <td>${formatRupiah.format(item.harga)}</td>
+                        <td>${formatRupiah.format(totalHarga)}</td>
                         <td>${item.jenis_pelaksana}</td>
-                        <td>${formatRupiah.format(item.harga)}</td>
+                        <td>${formatRupiah.format(totalHarga)}</td>
                     </tr>
                 `;
             });
+
+
 
             const detail_obat = JSON.parse(row.getAttribute('data-detail_obat'));
             detail_obat.forEach(item => {
@@ -198,52 +218,6 @@
             });
         }
     }
-
-    // function showDetailTindakan(event, row) {
-    //     // Cegah jika yang diklik adalah tombol atau anak elemen dalam kolom terakhir (index 7 karena 0-based)
-    //     if (event.target.closest('td')?.cellIndex === 7) {
-    //         return;
-    //     }
-
-    //     const isActive = row.getAttribute('data-active') === 'true';
-
-    //     // Reset semua baris pada tabel tindakan (ganti #tindakanTable sesuai id tabelmu)
-    //     const rows = document.querySelectorAll('#kasirTable tbody tr');
-    //     rows.forEach(r => {
-    //         r.classList.remove('table-primary');
-    //         r.setAttribute('data-active', 'false');
-    //     });
-
-    //     // Target tbody preview tindakan
-    //     const tbody = document.querySelector('#previewTabel tbody');
-    //     tbody.innerHTML = '';
-
-    //     if (!isActive) {
-    //         row.classList.add('table-primary');
-    //         row.setAttribute('data-active', 'true');
-
-    //         const formatRupiah = new Intl.NumberFormat('id-ID', {
-    //             minimumFractionDigits: 0,
-    //             maximumFractionDigits: 0,
-    //         });
-
-    //         // Ambil data langsung dari kolom tabel
-    //         const jenisTindakan = row.querySelector('td:nth-child(5)').textContent.trim();
-    //         const jenisPelaksana = row.querySelector('td:nth-child(6)').textContent.trim();
-    //         let hargaText = row.querySelector('td:nth-child(7)').textContent.trim();
-    //         // Ubah format harga ke number (hapus titik ribuan)
-    //         const hargaNumber = parseInt(hargaText.replace(/\./g, ''), 10) || 0;
-
-    //         tbody.innerHTML = `
-    //             <tr>
-    //                 <td>${jenisTindakan}</td>
-    //                 <td>${formatRupiah.format(hargaNumber)}</td>
-    //                 <td>${jenisPelaksana}</td>
-    //                 <td>${formatRupiah.format(hargaNumber)}</td>
-    //             </tr>
-    //         `;
-    //     }
-    // }
 
     function showDetailTindakan(event, row) {
         if (event.target.closest('td')?.cellIndex === 7) {
@@ -292,12 +266,27 @@
 
                     let html = '';
                     data.forEach(item => {
+                        // Siapkan array untuk harga (bisa satu atau banyak)
+                        let hargaList = [];
+
+                        // Tangani jika item.harga adalah string berisi koma
+                        if (typeof item.harga === 'string' && item.harga.includes(',')) {
+                            hargaList = item.harga.split(',').map(h => parseInt(h.trim()));
+                        } else {
+                            // Jika angka biasa atau string angka tunggal
+                            hargaList = [parseInt(item.harga)];
+                        }
+
+                        // Hitung total harga
+                        const totalHarga = hargaList.reduce((sum, val) => sum + val, 0);
+
+                        // Tambahkan satu baris HTML
                         html += `
                             <tr>
                                 <td>${item.jenis_tindakan}</td>
-                                <td>${formatRupiah.format(item.harga)}</td>
+                                <td>${formatRupiah.format(totalHarga)}</td>
                                 <td>${item.jenis_pelaksana}</td>
-                                <td>${formatRupiah.format(item.harga)}</td>
+                                <td>${formatRupiah.format(totalHarga)}</td>
                             </tr>
                         `;
                     });

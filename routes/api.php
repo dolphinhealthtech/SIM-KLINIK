@@ -150,6 +150,7 @@ Route::prefix('apotek')->group(function () {
 Route::prefix('kasir')->group(function () {
     Route::post('/previewData', [KasirController::class, 'previewData'])->name('kasir.previewData');
     Route::get('/pdf/{kode_faktur}', [KasirController::class, 'generatePdf'])->name('kasir.pdf');
+    Route::get('/ambil-kode/{no_rawat}/{method}', [KasirController::class, 'getKodePenjamin'])->name('kasir.kode');
 });
 
 
