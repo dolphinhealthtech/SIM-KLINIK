@@ -635,8 +635,11 @@
                                             <label for="penjamin_2">Penjamin 2</label>
                                             <select class="form-control" name="penjamin_2" id="penjamin_2" disabled>
                                                 <option value="">-- Pilih Penjamin 2 --</option>
-                                                @foreach($pejamin as $penjamin)
+                                                {{-- @foreach($pejamin as $penjamin)
                                                     <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
+                                                @endforeach --}}
+                                                @foreach($asuransi as $asuransi2)
+                                                    <option value="{{ $asuransi2->nama }}">{{ $asuransi2->nama }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -665,8 +668,11 @@
                                             <label for="penjamin_3">Penjamin 3</label>
                                             <select class="form-control" name="penjamin_3" id="penjamin_3" disabled>
                                                 <option value="">-- Pilih Penjamin 3 --</option>
-                                                @foreach($pejamin as $penjamin)
+                                                {{-- @foreach($pejamin as $penjamin)
                                                     <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
+                                                @endforeach --}}
+                                                @foreach($asuransi as $asuransi3)
+                                                    <option value="{{ $asuransi3->nama }}">{{ $asuransi3->nama }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -676,7 +682,7 @@
                                     <div class="col-sm-5">
                                         <div class="form-group">
                                             <label for="penjamin_3_info">No. Penjamin 3</label>
-                                            <input type="text" class="form-control" name="penjamin_3_info" id="penjamin_3_info" placeholder="Keterangan / No. Penjamin 3" disabled>
+                                            <input type="text" class="form-control" name="penjamin_3_info" id="penjamin_3_info" placeholder="No. Penjamin 3" disabled>
                                         </div>
                                     </div>
                                 </div>
@@ -1127,8 +1133,11 @@
                                             <label for="penjamin_2_edit">Penjamin 2</label>
                                             <select class="form-control" name="penjamin_2_edit" id="penjamin_2_edit" disabled>
                                                 <option value="">-- Pilih Penjamin 2 --</option>
-                                                @foreach($pejamin as $penjamin)
+                                                {{-- @foreach($pejamin as $penjamin)
                                                     <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
+                                                @endforeach --}}
+                                                @foreach($asuransi as $asuransi2_edit)
+                                                    <option value="{{ $asuransi2_edit->nama }}">{{ $asuransi2_edit->nama }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -1157,8 +1166,11 @@
                                             <label for="penjamin_3_edit">Penjamin 3</label>
                                             <select class="form-control" name="penjamin_3_edit" id="penjamin_3_edit" disabled>
                                                 <option value="">-- Pilih Penjamin 3 --</option>
-                                                @foreach($pejamin as $penjamin)
+                                                {{-- @foreach($pejamin as $penjamin)
                                                     <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
+                                                @endforeach --}}
+                                                @foreach($asuransi as $asuransi_3_edit)
+                                                    <option value="{{ $asuransi_3_edit->nama }}">{{ $asuransi_3_edit->nama }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -1168,7 +1180,7 @@
                                     <div class="col-sm-5">
                                         <div class="form-group">
                                             <label for="penjamin_3_info_edit">No. Penjamin 3</label>
-                                            <input type="text" class="form-control" name="penjamin_3_info_edit" id="penjamin_3_info_edit" placeholder="Keterangan / No. Penjamin 3" disabled>
+                                            <input type="text" class="form-control" name="penjamin_3_info_edit" id="penjamin_3_info_edit" placeholder="No. Penjamin 3" disabled>
                                         </div>
                                     </div>
                                 </div>

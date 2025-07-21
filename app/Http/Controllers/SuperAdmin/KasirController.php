@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\apotek;
 use App\Models\apotek_prebayar;
 use App\Models\bank;
+use App\Models\asuransi;
 use App\Models\kasir;
 use App\Models\kasir_apotek_lunas;
 use App\Models\kasir_detail_lunas;
@@ -14,6 +15,7 @@ use App\Models\kasir_tindakan_lunas;
 use App\Models\pelayanan_soap_dokter_tindakan;
 use App\Models\penjamin;
 use App\Models\perawatan_kategori;
+use App\Models\Pendaftaran_rawat_jalan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -28,11 +30,23 @@ class KasirController extends Controller
     {
         $title = "Kasir";
 
-        $apotek = apotek::with('detail_obat', 'detail_tindakan')->where('status_kasir', 0)->get();
+        $apotek = apotek::with([
+            'detail_obat',
+            'detail_tindakan' => function ($query) {
+                $query->whereNotNull('Jenis_tindakan')
+                    ->whereNotNull('jenis_pelaksana')
+                    ->whereNotNull('harga');
+            }
+        ])->where('status_kasir', 0)->get();
 
         $tanggal = Carbon::now()->format('Ymd');
 
-        $tindakan = pelayanan_soap_dokter_tindakan::where('status_kasir', 0)->whereDoesntHave('cek_resep')->with('data_soap')->get();
+        $tindakan = pelayanan_soap_dokter_tindakan::where('status_kasir', 0)
+            ->whereHas('cek_resep', function ($query) {
+                $query->whereNull('resep_obat');
+            })
+            ->with('data_soap')
+            ->get();
 
         $latestFaktur = kasir::where('kode_faktur', 'LIKE', "TND-{$tanggal}-%")
             ->orderBy('kode_faktur', 'desc')
@@ -77,15 +91,16 @@ class KasirController extends Controller
         $tindakan = pelayanan_soap_dokter_tindakan::with('data_soap')->where('no_rawat', $no_rawat)->first();
 
         $apotekTabel = apotek_prebayar::where('kode_faktur', $kode_faktur)->get();
-        $tindakanTabel = pelayanan_soap_dokter_tindakan::with('data_soap')->where('no_rawat', $no_rawat)->get();
+        $tindakanTabel = pelayanan_soap_dokter_tindakan::with('data_soap')->where('no_rawat', $no_rawat)->whereNotNull('jenis_pelaksana')->get();
 
         $penjamin = penjamin::all();
         $tindakanTambahan = perawatan_kategori::with('perawatan_tindakan')->get();
 
         $bank = bank::all();
+        $asuransi = asuransi::all();
 
         // dd($tindakanTabel);
-        return view('dashboard.kasir_pembayaran', compact('title', 'no_rawat', 'kode_faktur', 'apotek', 'apotekTabel', 'tindakan', 'tindakanTabel', 'penjamin', 'tindakanTambahan', 'bank'));
+        return view('dashboard.kasir_pembayaran', compact('title', 'no_rawat', 'kode_faktur', 'apotek', 'apotekTabel', 'tindakan', 'tindakanTabel', 'penjamin', 'tindakanTambahan', 'bank', 'asuransi'));
     }
 
     public function kasiradd(Request $request)
@@ -674,4 +689,184 @@ class KasirController extends Controller
 
         return $pdf->stream($filename); // tampilkan langsung di tab baru
     }
+
+    public function getKode1($no_rawat, $method)
+    {
+        $pendaftaran = Pendaftaran_rawat_jalan::where('nomor_register', $no_rawat)
+            ->with('pasien')
+            ->first();
+
+        if (!$pendaftaran || !$pendaftaran->pasien) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pasien tidak ditemukan.'
+            ]);
+        }
+
+        $pasien = $pendaftaran->pasien;
+
+        if ($method === 'penjaminan_bpjs') {
+            if ($pasien->no_bpjs) {
+                return response()->json([
+                    'success' => true,
+                    'no_bpjs' => $pasien->no_bpjs
+                ]);
+            }
+        } else {
+            // Cek apakah nama penjamin_2_nama cocok
+            if (
+                isset($pasien->penjamin_2_nama, $pasien->penjamin_2_no) &&
+                $pasien->penjamin_2_nama === $method
+            ) {
+                return response()->json([
+                    'success' => true,
+                    'no_bpjs' => $pasien->penjamin_2_no
+                ]);
+            }
+
+            // Cek apakah nama penjamin_3_nama cocok
+            if (
+                isset($pasien->penjamin_3_nama, $pasien->penjamin_3_no) &&
+                $pasien->penjamin_3_nama === $method
+            ) {
+                return response()->json([
+                    'success' => true,
+                    'no_bpjs' => $pasien->penjamin_3_no
+                ]);
+            }
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Data penjamin tidak ditemukan.'
+        ]);
+    }
+
+    public function getKode2($no_rawat, $method)
+    {
+        $pendaftaran = Pendaftaran_rawat_jalan::where('nomor_register', $no_rawat)
+            ->with('pasien')
+            ->first();
+
+        if (!$pendaftaran || !$pendaftaran->pasien) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pasien tidak ditemukan.'
+            ]);
+        }
+
+        $pasien = $pendaftaran->pasien;
+
+        if (
+            isset($pasien->penjamin_2_nama, $pasien->penjamin_2_no) &&
+            $pasien->penjamin_2_nama === $method
+        ) {
+            return response()->json([
+                'success' => true,
+                'no_bpjs' => $pasien->penjamin_2_no
+            ]);
+        }
+
+        // Cek apakah nama penjamin_3_nama cocok
+        if (
+            isset($pasien->penjamin_3_nama, $pasien->penjamin_3_no) &&
+            $pasien->penjamin_3_nama === $method
+        ) {
+            return response()->json([
+                'success' => true,
+                'no_bpjs' => $pasien->penjamin_3_no
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Data penjamin tidak ditemukan.'
+        ]);
+    }
+
+    public function getKode3($no_rawat, $method)
+    {
+        $pendaftaran = Pendaftaran_rawat_jalan::where('nomor_register', $no_rawat)
+            ->with('pasien')
+            ->first();
+
+        if (!$pendaftaran || !$pendaftaran->pasien) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pasien tidak ditemukan.'
+            ]);
+        }
+
+        $pasien = $pendaftaran->pasien;
+
+        if (
+            isset($pasien->penjamin_2_nama, $pasien->penjamin_2_no) &&
+            $pasien->penjamin_2_nama === $method
+        ) {
+            return response()->json([
+                'success' => true,
+                'no_bpjs' => $pasien->penjamin_2_no
+            ]);
+        }
+
+        // Cek apakah nama penjamin_3_nama cocok
+        if (
+            isset($pasien->penjamin_3_nama, $pasien->penjamin_3_no) &&
+            $pasien->penjamin_3_nama === $method
+        ) {
+            return response()->json([
+                'success' => true,
+                'no_bpjs' => $pasien->penjamin_3_no
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Data penjamin tidak ditemukan.'
+        ]);
+    }
+
+    public function getKodePenjamin($no_rawat, $method)
+    {
+        $pendaftaran = Pendaftaran_rawat_jalan::where('nomor_register', $no_rawat)
+            ->with('pasien')
+            ->first();
+
+        if (!$pendaftaran || !$pendaftaran->pasien) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pasien tidak ditemukan.'
+            ]);
+        }
+
+        $pasien = $pendaftaran->pasien;
+
+        // Penjaminan BPJS
+        if ($method === 'penjaminan_bpjs' && $pasien->no_bpjs) {
+            return response()->json([
+                'success' => true,
+                'no_bpjs' => $pasien->no_bpjs
+            ]);
+        }
+
+        // Penjaminan Asuransi: cek penjamin_2 dan penjamin_3
+        foreach ([2, 3] as $i) {
+            $nama = $pasien->{"penjamin_{$i}_nama"} ?? null;
+            $nomor = $pasien->{"penjamin_{$i}_no"} ?? null;
+
+            if ($nama === $method && $nomor) {
+                return response()->json([
+                    'success' => true,
+                    'no_bpjs' => $nomor
+                ]);
+            }
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Data penjamin tidak ditemukan.'
+        ]);
+    }
+
+
 }

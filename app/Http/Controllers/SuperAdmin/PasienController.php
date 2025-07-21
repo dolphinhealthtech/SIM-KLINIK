@@ -17,6 +17,7 @@ use App\Models\pekerjaan;
 use App\Models\provinsi;
 use App\Models\suku;
 use App\Models\User;
+use App\Models\asuransi;
 use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Hash;
@@ -139,7 +140,9 @@ class PasienController extends Controller
 
         $pejamin = penjamin::all();
 
-        return view('dashboard.pasien', compact('title', 'pejamin','kodefasyankes', 'pasiens', 'provinsi', 'kelamin', 'goldar', 'agama', 'pernikahan', 'suku', 'bangsa', 'bahasa', 'pendidikan', 'pekerjaan', 'pasiennoverif', 'pasienall', 'pasienallnewnow', 'pasienallold'));
+        $asuransi = asuransi::all();
+
+        return view('dashboard.pasien', compact('title', 'pejamin','kodefasyankes', 'pasiens', 'provinsi', 'kelamin', 'goldar', 'agama', 'pernikahan', 'suku', 'bangsa', 'bahasa', 'pendidikan', 'pekerjaan', 'pasiennoverif', 'pasienall', 'pasienallnewnow', 'pasienallold', 'asuransi'));
     }
 
     public function getPasien($id)

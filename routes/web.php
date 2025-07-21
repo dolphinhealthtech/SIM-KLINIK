@@ -41,6 +41,7 @@ use App\Http\Controllers\DataMaster\main\KelaminController;
 use App\Http\Controllers\DataMaster\main\PernikahanController;
 use App\Http\Controllers\DataMaster\main\PekerjaanController;
 use App\Http\Controllers\DataMaster\main\BankController;
+use App\Http\Controllers\DataMaster\main\AsuransiController;
 use App\Http\Controllers\DataMaster\main\PenjaminController;
 use App\Http\Controllers\DataMaster\main\LoketController;
 use App\Http\Controllers\soap;
@@ -422,6 +423,14 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     Route::post('/bank/delete', [BankController::class, 'bankdelete'])->name('bank.destroy');
     Route::get('/bank/export', [BankController::class, 'bankexport'])->name('bank.export');
     Route::post('/bank/import', [BankController::class, 'bankimport'])->name('bank.import');
+
+    //asuransi
+    Route::get('/asuransi', [AsuransiController::class, 'asuransi'])->name('asuransi.get');
+    Route::post('/asuransi/add', [AsuransiController::class, 'asuransiadd'])->name('asuransi.store');
+    Route::post('/asuransi/update', [AsuransiController::class, 'asuransiedit'])->name('asuransi.update');
+    Route::post('/asuransi/delete', [AsuransiController::class, 'asuransidelete'])->name('asuransi.destroy');
+    Route::get('/asuransi/export', [AsuransiController::class, 'asuransiexport'])->name('asuransi.export');
+    Route::post('/asuransi/import', [AsuransiController::class, 'asuransiimport'])->name('asuransi.import');
 
     //penjamin
     Route::get('/penjamin', [PenjaminController::class, 'penjamin'])->name('penjamin.get');

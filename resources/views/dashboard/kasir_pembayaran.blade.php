@@ -159,7 +159,7 @@
                                                 <th class="text-center align-middle" width="20%">Qty / Pelaksana</th>
                                                 <th class="text-center align-middle" width="10%">Total</th>
                                                 <th class="text-center align-middle" width="10%">Date</th>
-                                                <th class="text-center align-middle" width="5%">Aksi</th>
+                                                {{-- <th class="text-center align-middle" width="5%">Aksi</th> --}}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -418,9 +418,12 @@
                                                         <i class="fas fa-arrow-left mr-1"></i>Kembali
                                                     </button>
                                                     <div>
-                                                        <button type="button" class="btn btn-sm btn-danger mr-1">
-                                                            <i class="fas fa-trash mr-1"></i>Delete
+                                                        <button type="button" class="btn btn-sm btn-primary mr-1" onclick="sinkronData()">
+                                                            <i class="fas fa-sync-alt mr-1"></i>Sinkron
                                                         </button>
+                                                        {{-- <button type="button" class="btn btn-sm btn-danger mr-1">
+                                                            <i class="fas fa-trash mr-1"></i>Delete
+                                                        </button> --}}
                                                         <button type="submit" class="btn btn-sm btn-success mr-1">
                                                             <i class="fas fa-save mr-1"></i>Simpan
                                                         </button>
@@ -591,6 +594,73 @@
     </div>
 </div>
 
+<script>
+    function sinkronData() {
+        const no_rawat = @json($no_rawat);
+
+        // Iterasi untuk payment_method_1 sampai payment_method_3
+        for (let i = 1; i <= 3; i++) {
+            const methodEl = document.getElementById(`payment_method_${i}`);
+            const typeEl = document.getElementById(`payment_type_${i}`);
+            const refEl = document.getElementById(`payment_ref_${i}`);
+
+            // Cek jika elemen-nya ada
+            if (!methodEl || !refEl) continue;
+
+            const selectedMethod = methodEl.value;
+            let methodToSend = '';
+
+            if (selectedMethod === 'penjaminan_bpjs') {
+                methodToSend = selectedMethod;
+            } else if (selectedMethod === 'penjaminan_asuransi' && typeEl) {
+                methodToSend = typeEl.value;
+            } else {
+                refEl.value = '';
+                continue;
+            }
+
+            // Jalankan AJAX
+            $.ajax({
+                url: `/api/kasir/ambil-kode/${no_rawat}/${methodToSend}`,
+                method: 'GET',
+                beforeSend: function () {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Mengambil data...',
+                        text: 'Silakan tunggu',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                },
+                success: function (response) {
+                    Swal.close();
+                    if (response.success) {
+                        refEl.value = response.no_bpjs;
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Data tidak ditemukan',
+                            text: 'Penjamin tidak tersedia untuk pasien ini.'
+                        });
+                        refEl.value = '';
+                    }
+                },
+                error: function () {
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal mengambil data',
+                        text: 'Terjadi kesalahan saat menghubungi server.'
+                    });
+                    refEl.value = '';
+                }
+            });
+        }
+    }
+</script>
+
 
 <script>
     const tindakanTabel = @json($tindakanTabel);
@@ -598,7 +668,7 @@
     document.getElementById('kode_faktur_hidden').value = @json($kode_faktur);
     document.getElementById('no_rawat_hidden').value = @json($no_rawat);
 
-    console.log(@json($no_rawat));
+    // console.log(@json($no_rawat));
 
     //SCRIPT MASUKIN DATA KE INPUTAN HIDDEN
     function collectTableDataToHiddenInput() {
@@ -652,7 +722,7 @@
         };
 
         document.getElementById('data_hidden').value = JSON.stringify(data);
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
     }
 
 
@@ -662,17 +732,28 @@
         let html = '';
 
         tindakanTabel.forEach(item => {
+            // Siapkan array untuk harga (bisa satu atau banyak)
+            let hargaList = [];
+
+            // Tangani jika item.harga adalah string berisi koma
+            if (typeof item.harga === 'string' && item.harga.includes(',')) {
+                hargaList = item.harga.split(',').map(h => parseInt(h.trim()));
+            } else {
+                // Jika angka biasa atau string angka tunggal
+                hargaList = [parseInt(item.harga)];
+            }
+
+            // Hitung total harga
+            const totalHarga = hargaList.reduce((sum, val) => sum + val, 0);
+
             html += `
             <tr>
                 <td class="text-center align-middle">${no++}</td>
                 <td class="align-middle">${item.Jenis_tindakan ?? '-'}</td>
-                <td class="text-center align-middle">${numberFormat(item.harga)}</td>
+                <td class="text-center align-middle">${numberFormat(totalHarga)}</td>
                 <td class="text-center align-middle">${item.jenis_pelaksana ?? '-'}</td>
-                <td class="text-center align-middle">${numberFormat(item.harga)}</td>
+                <td class="text-center align-middle">${numberFormat(totalHarga)}</td>
                 <td class="text-center align-middle">${formatDate(item.created_at)}</td>
-                <td class="text-center align-middle">
-                <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
-                </td>
             </tr>
             `;
         });
@@ -686,9 +767,6 @@
                 <td class="text-center align-middle">${item.qty ?? 1}</td>
                 <td class="text-center align-middle">${numberFormat(item.total)}</td>
                 <td class="text-center align-middle">${formatDate(item.tanggal)}</td>
-                <td class="text-center align-middle">
-                <button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
-                </td>
             </tr>
             `;
         });
@@ -769,9 +847,6 @@
             <td class="text-center align-middle">1</td>
             <td class="text-center align-middle">-${numberFormat(total)}</td>
             <td class="text-center align-middle">${now}</td>
-            <td class="text-center align-middle">
-                <button type="button" class="btn btn-sm btn-danger btn-hapus"><i class="fas fa-trash-alt"></i></button>
-            </td>
         `;
 
         tabel.appendChild(barisBaru);
@@ -889,9 +964,6 @@
             <td class="text-center align-middle">${petugas}</td>
             <td class="text-center align-middle">${numberFormat(tarif_total)}</td>
             <td class="text-center align-middle">${now}</td>
-            <td class="text-center align-middle">
-                <button type="button" class="btn btn-sm btn-danger btn-hapus"><i class="fas fa-trash-alt"></i></button>
-            </td>
         `;
 
         tabel.appendChild(barisBaru);
@@ -1010,6 +1082,8 @@
             bankBayar3.disabled = true;
             refInput2.disabled = true;
             refInput3.disabled = true;
+            refInput2.value = '';
+            refInput3.value = '';
             labelBayar2.style.color = "gray";
             labelBayar3.style.color = "gray";
             $(uangBayar2).val(""); // Set nilai uangBayar2 ke
@@ -1026,6 +1100,7 @@
             $(bankBayar1).val("").trigger("change");
             bankBayar1.disabled = true;
             refInput1.disabled = true;
+            refInput1.value = '';
         } else {
             bankBayar1.disabled = false;
             refInput1.disabled = false;
@@ -1039,6 +1114,7 @@
             $(bankBayar2).val("").trigger("change");
             bankBayar2.disabled = true;
             refInput2.disabled = true;
+            refInput2.value = '';
         } else {
             bankBayar2.disabled = false;
             refInput2.disabled = false;
@@ -1052,6 +1128,7 @@
             $(bankBayar3).val("").trigger("change");
             bankBayar3.disabled = true;
             refInput3.disabled = true;
+            refInput3.value = '';
         } else {
             bankBayar3.disabled = false;
             refInput3.disabled = false;
@@ -1064,13 +1141,24 @@
         @endforeach
     ];
 
+    const asuransiOptions = [
+        @foreach ($asuransi as $asuransi)
+        { value: "{{ $asuransi->nama }}", label: "{{ $asuransi->nama }}", type: "asuransi" },
+        @endforeach
+    ];
+
     // Fungsi dinamis untuk mengupdate dropdown
     function updateBankOptions(payment_method_Id, payment_type_Id) {
         const bayar = document.getElementById(payment_method_Id).value;
         const bankBayar = document.getElementById(payment_type_Id);
 
         let options = [];
-        if (bayar !== "cash") {
+
+        if (bayar === "penjaminan_bpjs" || bayar === "penjaminan_asuransi") {
+            options = asuransiOptions;
+            bankBayar.innerHTML = "";
+            bankBayar.disabled = false;
+        } else if (bayar !== "cash") {
             options = bankOptions;
             bankBayar.innerHTML = "";
             bankBayar.disabled = false;
