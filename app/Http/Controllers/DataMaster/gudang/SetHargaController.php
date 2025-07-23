@@ -238,17 +238,14 @@ class SetHargaController extends Controller
         try {
             // Simpan data ke database
             foreach ($response as $item) {
-                // Temukan data di lokal berdasarkan ID
-                $model = gudang_setting_harga::find($item->id);  // ID Row Data harus sama
-
-                if ($model) {
-                    // Update hanya kolom harga
-                    $model->update([
+                gudang_setting_harga::updateOrCreate(
+                    ['id' => $item->id],
+                    [
                         'harga_jual_1' => $item->harga_jual_1,
                         'harga_jual_2' => $item->harga_jual_2,
                         'harga_jual_3' => $item->harga_jual_3,
-                    ]);
-                }
+                    ]
+                );
             }
 
 
