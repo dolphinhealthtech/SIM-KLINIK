@@ -622,6 +622,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
+Route::get('/rujukan/cetak/{no_rawat}', [App\Http\Controllers\Soap\RujukanController::class, 'cetakSuratRujukan'])->name('rujukan.cetak');
 
 
 

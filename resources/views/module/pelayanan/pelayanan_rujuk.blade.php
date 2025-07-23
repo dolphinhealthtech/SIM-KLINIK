@@ -585,7 +585,8 @@ $(document).ready(function () {
                             showConfirmButton: true
                         }).then(() => {
                             $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
-                            location.reload(); // Reload halaman untuk update data
+                            var noRawat = $('#no_rawat').val();
+                            window.location.href = '/rujukan/cetak/' + noRawat;
                         });
                     } else {
                         Swal.fire({

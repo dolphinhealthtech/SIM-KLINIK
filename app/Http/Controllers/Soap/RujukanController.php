@@ -12,8 +12,10 @@ use App\Models\gcs_kesadaran;
 use App\Models\pelayanan_soap_dokter;
 use App\Models\pelayanan_rujukan;
 use App\Http\Controllers\PcareController;
+use App\Models\WebSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class RujukanController extends Controller
@@ -130,51 +132,59 @@ class RujukanController extends Controller
             ->pluck('kode_icd10')
             ->toArray();
 
-        $diagnosa = array_slice($icds, 0, 3);
-        $dataDiag = [];
-        foreach ($diagnosa as $i => $kode) {
-            $dataDiag["kdDiag" . ($i + 1)] = $kode;
-        }
-        if (empty($dataDiag)) $dataDiag['kdDiag1'] = 'Z00.0';
+            $diagnosa = array_slice($icds, 0, 3);
+            $dataDiag = [];
+            for ($i = 0; $i < 3; $i++) {
+                $dataDiag["kdDiag" . ($i + 1)] = isset($diagnosa[$i]) ? $diagnosa[$i] : null;
+            }
+            // Jika tidak ada diagnosa sama sekali, isi default
+            if (empty($dataDiag['kdDiag1'])) {
+                $dataDiag['kdDiag1'] = 'Z00.0';
+            }
 
-        // Payload Dasar
-        $kunjunganPayload = array_merge([
-            "noKunjungan" => null,
-            "noKartu" => $pelayanan->pasien->no_bpjs ?? '',
-            "tglDaftar" => now()->format('d-m-Y'),
-            "kdPoli" => $pelayanan->poli->kode ?? '',
-            "keluhan" => $output,
-            "kdSadar" => $kdSadar,
-            "sistole" => $soap->sistol,
-            "diastole" => $soap->distol,
-            "beratBadan" => $soap->berat,
-            "tinggiBadan" => $soap->tinggi,
-            "respRate" => $soap->rr,
-            "heartRate" => $soap->nadi,
-            "lingkarPerut" => $soap->lingkar_perut,
-            "kdStatusPulang" => "4",
-            "tglPulang" => now()->format('d-m-Y'),
-            "kdDokter" => $pelayanan->dokter->kode ?? '',
-            "kdPoliRujukInternal" => null,
-            "rujukLanjut" => [],
-            "kdTacc" => $request->input('kategori_rujukan', '0'),
-            "alasanTacc" => null,
-            "anamnesa" => null,
-            "alergiMakan" => $pelayanan->alergi_makanan ?? '00',
-            "alergiUdara" => $pelayanan->alergi_udara ?? '00',
-            "alergiObat" => $pelayanan->alergi_obat ?? '00',
-            "kdPrognosa" => null,
-            "terapiObat" => $pelayanan->terapi_obat ?? null,
-            "terapiNonObat" => $pelayanan->terapi_nonobat ?? null,
-            "bmhp" => $soap->bmhp ?? null,
-            "suhu" => $soap->suhu ?? "36.4"
-        ], $dataDiag);
+            // Payload kunjungan dengan posisi kdDiag setelah kdDokter
+            $suhu = str_replace(',', '.', $soap->suhu); // Ubah koma ke titik agar bisa dibaca sebagai float
+
+            $kunjunganPayload = array_merge([
+                "noKunjungan" => null,
+                "noKartu" => $pelayanan->pasien->no_bpjs,
+                "tglDaftar" => now()->format('d-m-Y'),
+                "kdPoli" => $pelayanan->poli->kode,
+                "keluhan" => $output,
+                "kdSadar" => $kdSadar,
+                "sistole" => (int)$soap->sistol,
+                "diastole" => (int)$soap->distol,
+                "beratBadan" => (int)$soap->berat,
+                "tinggiBadan" => (int)$soap->tinggi,
+                "respRate" => (int)$soap->rr,
+                "heartRate" => (int)$soap->nadi,
+                "lingkarPerut" => (int)$soap->lingkar_perut,
+                "kdStatusPulang" => "4",
+                "tglPulang" => now()->format('d-m-Y'),
+                "kdDokter" => $pelayanan->dokter->kode,
+            ] + $dataDiag + [
+                "kdPoliRujukInternal" => null,
+                "rujukLanjut" => [],
+                "kdTacc" => (int) $request->input('kategori_rujukan', -1),
+                "alasanTacc" => $request->input('alasanTacc', null),
+                "anamnesa" => $request->input('anamnesa', null),
+                "alergiMakan" => $pelayanan->alergi_makanan ?? "00",
+                "alergiUdara" => $pelayanan->alergi_udara ?? "00",
+                "alergiObat" => $pelayanan->alergi_obat ?? "00",
+                "kdPrognosa" => $request->input('kdPrognosa'),
+                "terapiObat" => $pelayanan->terapi_obat ?? "tidak ada",
+                "terapiNonObat" => $pelayanan->terapi_nonobat ?? "tidak ada",
+                "bmhp" => $request->input('bmhp') ?? null,
+                "suhu" => $suhu !== null ? (float)$suhu : null,
+            ]);
+
+
 
         // Tambahkan Rujukan Khusus atau Spesialis
         if ($validated['opsi_rujukan'] === 'rujukan_khusus') {
             $kunjunganPayload['rujukLanjut'] = [
                 "kdppk" => $request->input('tujuan_rujukan_khusus'),
-                "tglEstRujuk" => $request->input('tanggal_rujukan_khusus'),
+                "tglEstRujuk" => Carbon::parse($request->input('tanggal_rujukan_khusus'))->format('d-m-Y'),
                 "subSpesialis" => null,
                 "khusus" => [
                     "kdKhusus" => $request->input('igd_rujukan_khusus'),
@@ -184,8 +194,8 @@ class RujukanController extends Controller
             ];
         } elseif ($validated['opsi_rujukan'] === 'spesialis') {
             $kunjunganPayload['rujukLanjut'] = [
-                "kdppk" => $request->input('tujuan_rujukan'),
-                "tglEstRujuk" => $request->input('tanggal_rujukan'),
+                "kdppk" => $request->input('tujuan_rujukan_spesialis'),
+                "tglEstRujuk" => Carbon::parse($request->input('tanggal_rujukan'))->format('d-m-Y'),
                 "subSpesialis" => [
                     "kdSubSpesialis1" => $request->input('sub_spesialis'),
                     "kdSarana" => $request->input('sarana') !== "0" ? $request->input('sarana') : null,
@@ -233,5 +243,44 @@ class RujukanController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    // Fungsi cetak surat rujukan PDF
+    public function cetakSuratRujukan($no_rawat)
+    {
+        $pelayanan = pelayanan::with(['poli', 'dokter.namauser', 'pasien.kelamin', 'pendaftaran.penjamin'])
+            ->where('nomor_register', $no_rawat)
+            ->first();
+        $websetting = WebSetting::find(1);
+        $rujukan = pelayanan_rujukan::where('no_rawat', $no_rawat)->first(); // hanya satu baris data
+        $data_rujukan = json_decode($rujukan->rujukan_lanjut, true); // decode kolom rujukan_lanjut yang isinya JSON
+
+        $kdSubSpesialis = data_get($data_rujukan, 'subSpesialis.kdSubSpesialis1');
+
+        $kepada = subspesialis::where('kode', $kdSubSpesialis)->first();
+
+        if (!$pelayanan) {
+            abort(404, 'Data tidak ditemukan');
+        }
+        $diagnosa = pelayanan_soap_dokter_icd::where('no_rawat', $no_rawat)->first();
+        $data = [
+            'nomor_registrasi' => $pelayanan->nomor_register ?? '-',
+            'fktp'             => $websetting->nama ?? '-',
+            'nama_pasien'      => $pelayanan->pasien->nama ?? '-',
+            'nomor_rm'         => $pelayanan->nomor_rm ?? '-',
+            'tanggal_lahir'    => $pelayanan->pasien->tanggal_lahir ?? '-',
+            'jenis_kelamin'    => $pelayanan->pasien->kelamin->nama ?? '-',
+            'penjamin'         => $pelayanan->pendaftaran->penjamin->nama ?? '-',
+            'dokter_pengirim'  => $pelayanan->dokter->namauser->name ?? '-',
+            'diagnosa'         => $diagnosa ?? '-',
+            'tanggal_rujukan'  => $data_rujukan['tglEstRujuk'],
+            'keterangan'       => 'Rujukan untuk pemeriksaan lebih lanjut',
+            'no_rujukan'       => $pelayanan->kunjungan ?? '-',
+            'no_bpjs'          => $pelayanan->pasien->no_bpjs ?? '-',
+            'subspesialis'     => $kepada->nama,
+            'lokasi'           => $data_rujukan['kdppk'] ?? null,
+        ];
+        $pdf = Pdf::loadView('pdf.rujukan', $data)->setPaper('a4', 'landscape');
+        return $pdf->stream('rujukan-'.$pelayanan->nomor_rm.'.pdf');
     }
 }
