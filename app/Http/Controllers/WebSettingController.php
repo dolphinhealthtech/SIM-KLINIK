@@ -19,7 +19,7 @@ class WebSettingController extends Controller
                 'nama' => 'required|string|max:255',
                 'alamat' => 'required|string',
                 'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'kode_klinik' => 'required|numeric',
+                'kode_klinik' => 'required',
             ]);
 
             // Ambil pengaturan pertama, atau buat baru jika belum ada
