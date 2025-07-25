@@ -569,6 +569,13 @@ foreach ($subMenuObatAllkes as $subMenu) {
             ['name' => 'Pekerjaan', 'url' => '/data-master/pekerjaan', 'icon' => 'briefcase', 'order' => 9],
             ['name' => 'Penjamin', 'url' => '/data-master/penjamin', 'icon' => 'money-bill-alt', 'order' => 10],
             ['name' => 'Bank', 'url' => '/data-master/bank', 'icon' => 'university', 'order' => 11],
+            [
+                'name' => 'Asuransi',
+                'url' => '/data-master/asuransi',
+                'icon' => 'file-medical', // ikon yang cocok untuk asuransi
+                'order' => 12,
+            ],
+
         ];
 
         foreach ($subMenusDataMasterUmum as $subMenu) {

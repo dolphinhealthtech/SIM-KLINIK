@@ -9,60 +9,39 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
-            background-color: #021f34;
-            background-image: linear-gradient(135deg, #021f34, #04364f);
-            overflow-x: hidden;
         }
-
         .login-container {
             display: flex;
             min-height: 100vh;
             flex-direction: row;
         }
-
         .login-left {
             flex: 1;
-            background: url('/dist/img/logo2.png') no-repeat center center;
+            background-image: url('/dist/img/logo2.png');
             background-size: cover;
-            position: relative;
+            background-position: center;
             display: flex;
-            justify-content: center;   /* Center horizontally */
-            align-items: center;       /* Center vertically */
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
         }
-
-        .login-left::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.3), rgba(2, 31, 52, 0.8));
-            z-index: 0;
-        }
-
         .login-left-content {
-            position: relative;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0,0,0,0.5);
             padding: 40px;
             border-radius: 1rem;
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15);
-            color: white;
-            z-index: 1;
-            text-align: center;
-            margin-top: 415px;
+            box-shadow: 0 8px 20px rgb(255, 255, 255);
         }
-
         .login-left h1 {
-            font-size: 2.8rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
         }
-
         .login-left span {
             color: #00ffc3;
         }
-
         .login-left small {
             font-size: 1rem;
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(255,255,255,0.9);
         }
 
         .login-right {
@@ -70,34 +49,46 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 60px 30px;
-            background: radial-gradient(circle at top left, #04293a, #021f34);
+            padding: 40px;
+            background: linear-gradient(135deg, #021f34, #04364f);
         }
 
         .card {
             width: 100%;
-            max-width: 420px;
-            border-radius: 1.25rem;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 10px 40px rgba(0, 255, 195, 0.2);
-            padding: 30px;            
-            transition: all 0.3s ease;
+            max-width: 400px;
+            border-radius: 1rem;
+            background-color: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 25px rgba(0, 255, 195, 0.4);
+            backdrop-filter: blur(6px);
+            color: white;
+            transition: all 0.4s ease-in-out;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 45px rgba(0, 255, 195, 0.3);
+            box-shadow: 0 0 35px rgba(0, 255, 195, 0.6);
         }
 
-        .form-control {
-            border: 1px solid #ced4da;
-            background-color: #f8f9fa;
-            color: #212529;
+        .card .form-control {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
         }
 
-        .form-control:focus {
-            border-color: #00ffc3;
-            box-shadow: 0 0 0 0.2rem rgba(0, 255, 195, 0.25);
+        .card .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .card label,
+        .card .form-check-label {
+            color: #ffffff;
+        }
+
+        .card a {
+            color: #00ffc3;
+        }
+
+        .card a:hover {
+            text-decoration: underline;
         }
 
         .btn-primary {
@@ -109,40 +100,12 @@
         .btn-primary:hover {
             background-color: #00d5a7;
         }
-
-        .text-muted, .form-check-label {
-            color: #444;
-        }
-
-        .card a {
-            color: #007bff;
-        }
-
-        .card a:hover {
-            text-decoration: underline;
-        }
-
-        @media screen and (max-width: 768px) {
-            .login-container {
-                flex-direction: column;
-            }
-
-            .login-left, .login-right {
-                flex: none;
-                width: 100%;
-                min-height: 50vh;
-            }
-
-            .login-left-content {
-                margin: 20px;
-            }
-        }
     </style>
 </head>
 <body>
 
 <div class="login-container">
-    <!-- LEFT -->
+    <!-- LEFT SIDE -->
     <div class="login-left">
         <div class="login-left-content">
             <h1>Dolphin <span>Healthtech</span></h1>
@@ -150,9 +113,9 @@
         </div>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT SIDE -->
     <div class="login-right">
-        <div class="card">
+        <div class="card p-4">
             @yield('content')
         </div>
     </div>
