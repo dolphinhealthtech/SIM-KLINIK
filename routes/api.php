@@ -93,6 +93,8 @@ Route::prefix('pcare')->group(function () {
     Route::get('/jadwal/{kodepoli}/{tanggal}', [PcareController::class, 'get_jadwal_dokter_bpjs'])->name('pcare.jadwal');
     Route::get('/poli/{tanggal}', [PcareController::class, 'get_ws_poli_bpjs'])->name('pcare.poli_ws');
     Route::get('/get-dekrip-bpjs', [PcareController::class, 'bpjs_dekrip'])->name('pcare.dekrip_bpjs');
+    Route::get('/get-pendaftaran-nomor/{nomor}/{tanggal}', [PcareController::class, 'get_pendaftaran_nomor'])->name('pcare.pendaftaran_nomor');
+    Route::get('/get-pendaftaran-provide/{tanggal}', [PcareController::class, 'get_pendaftaran_provide'])->name('pcare.pendaftaran_provide');
 });
 
 // Data Master Medis

@@ -2622,6 +2622,211 @@ class PcareController extends Controller
         ]);
     }
 
+    public function get_pendaftaran_nomor($nomor, $tanggal)
+    {
+        $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
+        $BASE_URL = $config->BASE_URL;
+        $SERVICE_NAME = $config->SERVICE;
+        $endpoint = "pendaftaran/noUrut/{$nomor}/tglDaftar/{$tanggal}";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
+        $responseTime = 0;
+        $data = null;
+
+        try {
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
+
+            for ($i = 0; $i < $maxRequest; $i++) {
+                $startTime = microtime(true);
+                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$endpoint}");
+                $responseTime = microtime(true) - $startTime;
+
+                $responseBody = json_decode($response->body(), true);
+                if (!is_array($responseBody)) continue;
+
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'BPJS error',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
+
+                if (!isset($responseBody['response'])) continue;
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2;
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi gagal attempt {$j} (request {$i})");
+                }
+
+                Log::warning("Fallback dekrip internal - Rujukan Khusus Subspesialis (request {$i})");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
+                    break;
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
+        }
+
+        if (empty($data) || !isset($data['list']) || empty($data['list'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
+        ]);
+    }
+
+    public function get_pendaftaran_provide($tanggal)
+    {
+        $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
+        $BASE_URL = $config->BASE_URL;
+        $SERVICE_NAME = $config->SERVICE;
+        $endpoint = "pendaftaran/tglDaftar/{$tanggal}/1/10";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
+        $responseTime = 0;
+        $data = null;
+
+        try {
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
+
+            for ($i = 0; $i < $maxRequest; $i++) {
+                $startTime = microtime(true);
+                $response = Http::withHeaders($headers)->get("{$BASE_URL}/{$SERVICE_NAME}/{$endpoint}");
+                $responseTime = microtime(true) - $startTime;
+
+                $responseBody = json_decode($response->body(), true);
+                if (!is_array($responseBody)) continue;
+
+                if (isset($responseBody['metadata']) && $responseBody['metadata']['code'] != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $responseBody['metadata']['message'] ?? 'BPJS error',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
+
+                if (!isset($responseBody['response'])) continue;
+
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2;
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi gagal attempt {$j} (request {$i})");
+                }
+
+                Log::warning("Fallback dekrip internal - Rujukan Khusus Subspesialis (request {$i})");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
+                    break;
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
+        }
+
+        if (empty($data) || !isset($data['list']) || empty($data['list'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No data found',
+                'response_time' => number_format($responseTime, 2)
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+            'response_time' => number_format($responseTime, 2)
+        ]);
+    }
 
     public function bpjs_dekrip(Request $request)
     {
