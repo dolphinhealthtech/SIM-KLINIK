@@ -249,6 +249,58 @@ class InventarisController extends Controller
         }
     }
 
+    public function inventarissingkroninternal()
+    {
+        try {
+            $data = inventaris_data_barang_utama::get();
+
+            if ($data) {
+
+                $response = response()->json($data)->getData();
+
+                foreach ($response  as $item) {
+                    inventaris_data_barang::updateOrCreate(
+                        [
+                            'kode_barang' => $item->kode_barang,
+                            'nama_barang' => $item->nama_barang,
+                            'kategori_barang' => $item->kategori_barang,
+                            'satuan_barang' => $item->satuan_barang,
+                            'jenis_barang' => $item->jenis_barang,
+                            'masa_pakai_barang' => $item->masa_pakai_barang,
+                            'masa_pakai_waktu_barang' => $item->masa_pakai_waktu_barang,
+                            'deskripsi_barang' => $item->deskripsi_barang,
+                            'user_input_id' => Auth::user()->id,
+                            'user_input_name' => Auth::user()->name,
+                        ]
+                    );
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Sinkron daftar inventaris berhasil dilakukan!'
+                ], 201);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada data ditemukan untuk disinkronisasi.'
+                ], 404);
+            }
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan sinkron daftar inventaris!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     //Generate Kode Barang Otomatis
     public function generateKodeInventaris()
     {

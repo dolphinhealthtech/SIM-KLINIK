@@ -44,11 +44,23 @@
                                         <i class="fas fa-file-upload"></i> Import
                                     </button>
 
-                                    <!-- Tombol Sinkron (Memunculkan Modal) -->
-                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
-                                        <i class="fas fa-file-upload"></i> Sinkron
-                                    </button>
+                                    @php
+                                        use App\Models\WebSetting;
 
+                                        $setting = WebSetting::first();
+                                        $isGudangUtamaActive = $setting->is_gudangutama_active ?? true;
+                                    @endphp
+
+                                    @if($isGudangUtamaActive)
+                                        <a id="btnSinkronInternal" class="btn btn-info">
+                                            <i class="fas fa-file-upload"></i> Sinkron
+                                        </a>
+                                    @else
+                                        <!-- Tombol Sinkron (Memunculkan Modal) -->
+                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#singkrondabarModal">
+                                            <i class="fas fa-file-upload"></i> Sinkron
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
                             <div class="card-body">
@@ -605,6 +617,58 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('btnSinkronInternal').addEventListener('click', function () {
+        Swal.fire({
+            title: 'Yakin ingin sinkron data harga?',
+            text: 'Proses ini akan memperbarui data harga klinik.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Sinkronkan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch("{{ route('dabar.singkron.internal') }}", {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            confirmButtonText: 'Ya',
+                            text: data.message || 'Sinkronisasi berhasil dilakukan.'
+                            }).then(() => {
+                                // Reload halaman setelah OK ditekan
+                                location.reload();
+                            });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: data.message || 'Sinkronisasi gagal.'
+                        }).then(() => {
+                            // Reload halaman setelah OK ditekan
+                            location.reload();
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        text: error.message || 'Tidak dapat terhubung ke server.'
+                    });
+                });
+            }
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function () {
