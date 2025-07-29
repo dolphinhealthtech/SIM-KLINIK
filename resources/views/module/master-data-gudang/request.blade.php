@@ -457,7 +457,6 @@
         });
 
         function addNewDataToTabel() {
-            let nomorUrut = 1;
             const select = document.getElementById('nama_obat_alkes');
             const selectedOption = select.options[select.selectedIndex];
             const namaObat = selectedOption.value;
@@ -477,6 +476,8 @@
             // Tambahkan baris ke tabel
             const tbody = document.querySelector('#tabel-obat tbody');
             const row = document.createElement('tr');
+            const rowCount = tbody.querySelectorAll('tr').length;
+            const nomorUrut = rowCount + 1;
 
             row.innerHTML = `
                 <td style="width: 5%;">${nomorUrut}</td>
@@ -486,9 +487,6 @@
             `;
 
             tbody.appendChild(row);
-
-            // Increment nomor urut untuk baris berikutnya
-            nomorUrut++;
 
             // Ambil data tabel dan simpan dalam array
             const tableData = [];
