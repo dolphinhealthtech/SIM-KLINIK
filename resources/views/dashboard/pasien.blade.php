@@ -269,9 +269,9 @@
                                     <input type="hidden" class="form-control" placeholder="nomor_rm" id="nomor_rm" name="nomor_rm">
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            <label>Nama </label>
+                                            <label>Nama</label>
                                             <input type="text" class="form-control" placeholder="nama"
-                                                id="nama" name="nama" readonly>
+                                                id="nama" name="nama" readonly required>
                                         </div>
                                         @error('nama')
                                             <div style="color: red;">{{ $message }}</div>
@@ -280,10 +280,10 @@
 
                                     <div class="col-sm-3">
                                         <div class="form-group">
-                                            <label>Nomor NIK</label>
+                                            <label>Nomor NIK <span class="text-danger">*</span></label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik" name="nik"
-                                                    readonly onclick="handleClick()"
+                                                    readonly onclick="handleClick()" required
                                                     style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
                                             </div>
                                         </div>
@@ -295,12 +295,12 @@
                                             <div class="input-group">
                                                 <!-- Input Tempat Lahir -->
                                                 <input type="text" class="form-control" id="tempat_lahir"
-                                                    name="tempat_lahir"
+                                                    name="tempat_lahir" required
                                                     placeholder="Tempat" style="width: 50%;">
 
                                                 <!-- Input Tanggal Lahir -->
                                                 <input type="date" class="form-control" id="tgllahir"
-                                                    name="tgllahir"
+                                                    name="tgllahir" required
                                                     style="width: 50%;">
                                             </div>
                                         </div>
@@ -310,7 +310,7 @@
                                         <div class="form-group">
                                             <label>Provinsi</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="provinsi"
-                                                name="provinsi">
+                                                name="provinsi" required>
                                                 <option value="" disabled selected>Provinsi</option>
                                                 @foreach ($provinsi as $provinsidata)
                                                     <option value="{{ $provinsidata->kode }}">{{ $provinsidata->name }}</option>
@@ -323,7 +323,7 @@
                                         <div class="form-group">
                                             <label>Kota/Kabupaten</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
-                                                id="kabupaten" name="kabupaten">
+                                                id="kabupaten" name="kabupaten" required>
                                                 <option value="" disabled selected>Kota/Kabupaten</option>
                                             </select>
                                         </div>
@@ -333,7 +333,7 @@
                                         <div class="form-group">
                                             <label>Kecamatan</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="kecamatan"
-                                                name="kecamatan" value="{{ old('kecamatan') }}">
+                                                name="kecamatan" value="{{ old('kecamatan') }}" required>
                                                 <option value="" disabled selected>Kecamatan</option>
                                             </select>
                                         </div>
@@ -343,7 +343,7 @@
                                         <div class="form-group">
                                             <label>Desa/Kelurahan</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="desa"
-                                                name="desa" value="{{ old('desa') }}">
+                                                name="desa" value="{{ old('desa') }}" required>
                                                 <option value="" disabled selected>Desa/Kelurahan</option>
                                             </select>
                                         </div>
@@ -351,9 +351,9 @@
 
                                     <div class="col-sm-1">
                                         <div class="form-group">
-                                            <label>RT </label>
+                                            <label>RT</label>
                                             <input type="text" class="form-control" placeholder="001" id="rt"
-                                                name="rt" value="{{ old('rt') }}">
+                                                name="rt" value="{{ old('rt') }}" required>
                                         </div>
                                         @error('rt')
                                             <div style="color: red;">{{ $message }}</div>
@@ -362,9 +362,9 @@
 
                                     <div class="col-sm-1">
                                         <div class="form-group">
-                                            <label>RW </label>
+                                            <label>RW</label>
                                             <input type="text" class="form-control" placeholder="002" id="rw"
-                                                name="rw" value="{{ old('rw') }}">
+                                                name="rw" value="{{ old('rw') }}" required>
                                         </div>
                                         @error('rw')
                                             <div style="color: red;">{{ $message }}</div>
@@ -373,9 +373,9 @@
 
                                     <div class="col-sm-2">
                                         <div class="form-group">
-                                            <label>Kode Pos </label>
+                                            <label>Kode Pos</label>
                                             <input type="text" class="form-control" id="kode_pos" name="kode_pos"
-                                                value="{{ old('kode_pos') }}">
+                                                value="{{ old('kode_pos') }}" required>
                                         </div>
                                         @error('kode_pos')
                                             <div style="color: red;">{{ $message }}</div>
@@ -385,7 +385,7 @@
                                     <div class="col-sm-8">
                                         <div class="form-group">
                                             <label>Alamat</label>
-                                            <textarea class="form-control" placeholder="Masukkan alamat" id="alamat" name="alamat" rows="1"></textarea>
+                                            <textarea class="form-control" placeholder="Masukkan alamat" id="alamat" name="alamat" rows="1" required></textarea>
                                         </div>
                                         @error('alamat')
                                             <div style="color: red;">{{ $message }}</div>
@@ -449,7 +449,7 @@
                                         <div class="form-group">
                                             <label>Jenis Kelamin</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="seks"
-                                                name="seks">
+                                                name="seks" required>
                                                 <option value="" disabled selected>Jenis Kelamin</option>
                                                 @foreach ($kelamin as $kelamindata)
                                                     <option value="{{ $kelamindata->kode }}">{{ $kelamindata->nama }}</option>
@@ -462,7 +462,7 @@
                                         <div class="form-group">
                                             <label>Golongan Darah</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="goldar"
-                                                name="goldar">
+                                                name="goldar" required>
                                                 <option value="" disabled selected>--- pilih ---</option>
                                                 @foreach ($goldar as $goldardata)
                                                     <option value="{{ $goldardata->id }}">
@@ -484,7 +484,7 @@
                                         <div class="form-group">
                                             <label>Status Pernikahan</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="pernikahan"
-                                                name="pernikahan">
+                                                name="pernikahan" required>
                                                 <option value="" disabled selected>--- pilih ---</option>
                                                 @foreach ($pernikahan as $pernikahandata)
                                                     <option value="{{ $pernikahandata->id }}">{{ $pernikahandata->nama }}</option>
@@ -500,7 +500,7 @@
                                         <div class="form-group">
                                             <label>Kewarganegaraan</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
-                                                id="kewarganegaraan" name="kewarganegaraan">
+                                                id="kewarganegaraan" name="kewarganegaraan" required>
                                                 <option value=""
                                                     {{ old('kewarganegaraan') == '' ? 'selected' : '' }}>--- pilih ---
                                                 </option>
@@ -518,7 +518,7 @@
                                         <div class="form-group">
                                             <label>Agama</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="agama"
-                                                name="agama">
+                                                name="agama" required>
                                                 <option value="" disabled selected>--- pilih ---</option>
                                                 @foreach ($agama as $agamadata)
                                                     <option value="{{ $agamadata->id }}">{{ $agamadata->nama }}</option>
@@ -534,7 +534,7 @@
                                         <div class="form-group">
                                             <label>Pendidikan</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
-                                                id="pendidikan" name="pendidikan">
+                                                id="pendidikan" name="pendidikan" required>
                                                 <option value="" disabled selected>--- pilih ---</option>
                                                 @foreach ($pendidikan as $pendidikandata)
                                                 <option value="{{ $pendidikandata->kode }}">{{ $pendidikandata->nama }}</option>
@@ -550,7 +550,7 @@
                                         <div class="form-group">
                                             <label>Pekerja</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
-                                                id="status_kerja" name="status_kerja">
+                                                id="status_kerja" name="status_kerja" required>
                                                 <option value="" disabled selected>Pilih Pekerjaan</option>
                                                 @foreach ($pekerjaan as $pekerjaandata)
                                                     <option value="{{ $pekerjaandata->id }}">{{ $pekerjaandata->nama }}</option>
@@ -562,7 +562,7 @@
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Telepon</label>
-                                            <input type="text" class="form-control" id="telepon" name="telepon">
+                                            <input type="text" class="form-control" id="telepon" name="telepon" required>
                                         </div>
                                     </div>
 
@@ -570,7 +570,7 @@
                                         <div class="form-group">
                                             <label>Suku</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="suku"
-                                                name="suku">
+                                                name="suku" required>
                                                 <option value="" disabled selected>Pilih Suku</option>
                                                 @foreach ($suku as $sukudata)
                                                     <option value="{{ $sukudata->id }}">{{ $sukudata->nama }}</option>
@@ -617,7 +617,7 @@
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Email</label>
-                                            <input type="Email" class="form-control" id="email" name="email">
+                                            <input type="Email" class="form-control" id="email" name="email" required>
                                         </div>
                                     </div>
                                           {{-- Checkbox Penjamin 2 --}}
@@ -767,9 +767,9 @@
 
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            <label>Nama </label>
+                                            <label>Nama</label>
                                             <input type="text" class="form-control" placeholder="nama"
-                                                id="nama_edit" name="nama_edit" readonly value="{{ old('nama_edit') }}">
+                                                id="nama_edit" name="nama_edit" readonly value="{{ old('nama_edit') }}" required>
                                         </div>
                                         @error('nama_edit')
                                             <div style="color: red;">{{ $message }}</div>
@@ -781,7 +781,7 @@
                                             <label>Nomor NIK</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik_edit" name="nik_edit"
-                                                    readonly onclick="handleClick_edit()" value="{{ old('nik_edit') }}"
+                                                    readonly onclick="handleClick_edit()" value="{{ old('nik_edit') }}" required
                                                     style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
                                             </div>
                                         </div>
@@ -793,12 +793,12 @@
                                             <div class="input-group">
                                                 <!-- Input Tempat Lahir -->
                                                 <input type="text" class="form-control" id="tempat_lahir_edit"
-                                                    name="tempat_lahir_edit" value="{{ old('tempat_lahir_edit') }}"
+                                                    name="tempat_lahir_edit" value="{{ old('tempat_lahir_edit') }}" required
                                                     placeholder="Tempat" style="width: 50%;">
 
                                                 <!-- Input Tanggal Lahir -->
                                                 <input type="date" class="form-control" id="tgllahir_edit"
-                                                    name="tgllahir_edit" value="{{ old('tgllahir_edit') }}"
+                                                    name="tgllahir_edit" value="{{ old('tgllahir_edit') }}" required
                                                     style="width: 50%;">
                                             </div>
                                         </div>
@@ -808,7 +808,7 @@
                                         <div class="form-group">
                                             <label>Provinsi</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="provinsi_edit"
-                                                name="provinsi_edit" value="{{ old('provinsi_edit') }}">
+                                                name="provinsi_edit" value="{{ old('provinsi_edit') }}" required>
                                                 <option value="" disabled selected>Provinsi</option>
                                                 @foreach ($provinsi as $provinsidata)
                                                     <option value="{{ $provinsidata->kode }}">{{ $provinsidata->name }}</option>
@@ -821,7 +821,7 @@
                                         <div class="form-group">
                                             <label>Kota/Kabupaten</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
-                                                id="kabupaten_edit" name="kabupaten_edit" value="{{ old('kabupaten_edit') }}">
+                                                id="kabupaten_edit" name="kabupaten_edit" value="{{ old('kabupaten_edit') }}" required>
                                                 <option value="" disabled selected>Kota/Kabupaten</option>
                                             </select>
                                         </div>
@@ -831,7 +831,7 @@
                                         <div class="form-group">
                                             <label>Kecamatan</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="kecamatan_edit"
-                                                name="kecamatan_edit" value="{{ old('kecamatan_edit') }}">
+                                                name="kecamatan_edit" value="{{ old('kecamatan_edit') }}" required>
                                                 <option value="" disabled selected>Kecamatan</option>
                                             </select>
                                         </div>
@@ -841,7 +841,7 @@
                                         <div class="form-group">
                                             <label>Desa/Kelurahan</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="desa_edit"
-                                                name="desa_edit" value="{{ old('desa_edit') }}">
+                                                name="desa_edit" value="{{ old('desa_edit') }}" required>
                                                 <option value="" disabled selected>Desa/Kelurahan</option>
                                             </select>
                                         </div>
@@ -849,9 +849,9 @@
 
                                     <div class="col-sm-1">
                                         <div class="form-group">
-                                            <label>RT </label>
+                                            <label>RT</label>
                                             <input type="text" class="form-control" placeholder="001" id="rt_edit"
-                                                name="rt_edit" value="{{ old('rt_edit') }}">
+                                                name="rt_edit" value="{{ old('rt_edit') }}" required>
                                         </div>
                                         @error('rt_edit')
                                             <div style="color: red;">{{ $message }}</div>
@@ -860,9 +860,9 @@
 
                                     <div class="col-sm-1">
                                         <div class="form-group">
-                                            <label>RW </label>
+                                            <label>RW</label>
                                             <input type="text" class="form-control" placeholder="002" id="rw_edit"
-                                                name="rw_edit" value="{{ old('rw_edit') }}">
+                                                name="rw_edit" value="{{ old('rw_edit') }}" required>
                                         </div>
                                         @error('rw')
                                             <div style="color: red;">{{ $message }}</div>
@@ -871,9 +871,9 @@
 
                                     <div class="col-sm-2">
                                         <div class="form-group">
-                                            <label>Kode Pos </label>
+                                            <label>Kode Pos</label>
                                             <input type="text" class="form-control" id="kode_pos_edit" name="kode_pos_edit"
-                                                value="{{ old('kode_pos_edit') }}">
+                                                value="{{ old('kode_pos_edit') }}" required>
                                         </div>
                                         @error('kode_pos_edit')
                                             <div style="color: red;">{{ $message }}</div>
@@ -883,7 +883,7 @@
                                     <div class="col-sm-8">
                                         <div class="form-group">
                                             <label>Alamat</label>
-                                            <textarea class="form-control" placeholder="Masukkan alamat" id="alamat_edit" name="alamat_edit" rows="1" value="{{ old('alamat_edit') }}"></textarea>
+                                            <textarea class="form-control" placeholder="Masukkan alamat" id="alamat_edit" name="alamat_edit" rows="1" value="{{ old('alamat_edit') }}" required></textarea>
                                         </div>
                                         @error('alamat')
                                             <div style="color: red;">{{ $message }}</div>
@@ -947,7 +947,7 @@
                                         <div class="form-group">
                                             <label>Jenis Kelamin</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="seks_edit"
-                                                name="seks_edit" value="{{ old('seks_edit') }}">
+                                                name="seks_edit" value="{{ old('seks_edit') }}" required>
                                                 <option value="" disabled selected>Jenis Kelamin</option>
                                                 @foreach ($kelamin as $kelamindata)
                                                     <option value="{{ $kelamindata->kode }}">{{ $kelamindata->nama }}</option>
@@ -960,7 +960,7 @@
                                         <div class="form-group">
                                             <label>Golongan Darah</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="goldar_edit"
-                                                name="goldar_edit" value="{{ old('goldar_edit') }}">
+                                                name="goldar_edit" value="{{ old('goldar_edit') }}" required>
                                                 <option value="" disabled selected>--- pilih ---</option>
                                                 @foreach ($goldar as $goldardata)
                                                     <option value="{{ $goldardata->id }}">
@@ -982,7 +982,7 @@
                                         <div class="form-group">
                                             <label>Status Pernikahan</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="pernikahan_edit"
-                                                name="pernikahan_edit" value="{{ old('pernikahan_edit') }}">
+                                                name="pernikahan_edit" value="{{ old('pernikahan_edit') }}" required>
                                                 <option value="" disabled selected>--- pilih ---</option>
                                                 @foreach ($pernikahan as $pernikahandata)
                                                     <option value="{{ $pernikahandata->id }}">{{ $pernikahandata->nama }}</option>
@@ -998,7 +998,7 @@
                                         <div class="form-group">
                                             <label>Kewarganegaraan</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
-                                                id="kewarganegaraan_edit" name="kewarganegaraan_edit">
+                                                id="kewarganegaraan_edit" name="kewarganegaraan_edit" required>
                                                 <option value=""
                                                     {{ old('kewarganegaraan_edit') == '' ? 'selected' : '' }}>--- pilih ---
                                                 </option>
@@ -1016,7 +1016,7 @@
                                         <div class="form-group">
                                             <label>Agama</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="agama_edit"
-                                                name="agama_edit" value="{{ old('agama_edit') }}">
+                                                name="agama_edit" value="{{ old('agama_edit') }}" required>
                                                 <option value="" disabled selected>--- pilih ---</option>
                                                 @foreach ($agama as $agamadata)
                                                     <option value="{{ $agamadata->id }}">{{ $agamadata->nama }}</option>
@@ -1032,7 +1032,7 @@
                                         <div class="form-group">
                                             <label>Pendidikan</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
-                                                id="pendidikan_edit" name="pendidikan_edit" value="{{ old('pendidikan_edit') }}">
+                                                id="pendidikan_edit" name="pendidikan_edit" value="{{ old('pendidikan_edit') }}" required>
                                                 <option value="" disabled selected>--- pilih ---</option>
                                                 @foreach ($pendidikan as $pendidikandata)
                                                 <option value="{{ $pendidikandata->kode }}">{{ $pendidikandata->nama }}</option>
@@ -1048,7 +1048,7 @@
                                         <div class="form-group">
                                             <label>Pekerja</label>
                                             <select class="form-control select2bs4" style="width: 100%;"
-                                                id="status_kerja_edit" name="status_kerja_edit" value="{{ old('status_kerja_edit') }}">
+                                                id="status_kerja_edit" name="status_kerja_edit" value="{{ old('status_kerja_edit') }}" required>
                                                 <option value="" disabled selected>Pilih Pekerjaan</option>
                                                 @foreach ($pekerjaan as $pekerjaandata)
                                                     <option value="{{ $pekerjaandata->id }}">{{ $pekerjaandata->nama }}</option>
@@ -1060,7 +1060,7 @@
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Telepon</label>
-                                            <input type="text" class="form-control" id="telepon_edit" name="telepon_edit" value="{{ old('telepon_edit') }}">
+                                            <input type="text" class="form-control" id="telepon_edit" name="telepon_edit" value="{{ old('telepon_edit') }}" required>
                                         </div>
                                     </div>
 
@@ -1068,7 +1068,7 @@
                                         <div class="form-group">
                                             <label>Suku</label>
                                             <select class="form-control select2bs4" style="width: 100%;" id="suku_edit"
-                                                name="suku_edit" value="{{ old('suku_edit') }}">
+                                                name="suku_edit" value="{{ old('suku_edit') }}" required>
                                                 <option value="" disabled selected>Pilih Suku</option>
                                                 @foreach ($suku as $sukudata)
                                                     <option value="{{ $sukudata->id }}">{{ $sukudata->nama }}</option>
@@ -1115,7 +1115,7 @@
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Email</label>
-                                            <input type="Email" class="form-control" id="email_edit" name="email_edit" value="{{ old('email_edit') }}">
+                                            <input type="Email" class="form-control" id="email_edit" name="email_edit" value="{{ old('email_edit') }}" required>
                                         </div>
                                     </div>
                                         {{-- Checkbox Penjamin 2 --}}
@@ -1471,8 +1471,8 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                         $('#status_kerja_edit').val(data.pekerjaan).trigger('change');
                         $('#telepon_edit').val(data.telepon);
                         $('#suku_edit').val(data.suku).trigger('change');
-                        $('#bangsa_edit').val(data.bahasa).trigger('change');
-                        $('#bahasa_edit').val(data.bangsa).trigger('change');
+                        $('#bangsa_edit').val(data.bangsa).trigger('change');
+                        $('#bahasa_edit').val(data.bahasa).trigger('change');
                         $('#email_edit').val(data.getnama?.email ?? '');
 
                         // Load Provinsi, Kabupaten, Kecamatan, Desa secara berurutan
@@ -1513,6 +1513,8 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                     $('#goldar').val(data.goldar).trigger('change');
                     $('#seks').val(data.seks).trigger('change');
                     $('#email').val(data.getnama?.email ?? '');
+                    $('#bangsa').val(data.bangsa).trigger('change');
+                    $('#bahasa').val(data.bahasa).trigger('change');
 
                     // generateCredentials();
                 }).fail(function (error) {
@@ -1725,9 +1727,90 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                 ]
             }).buttons().container().appendTo('#userstabel_wrapper .col-md-6:eq(0)');
         });
-
-
     </script>
+
+    {{-- <script>
+        // Validasi form untuk modal lengkapi
+        $(document).ready(function() {
+            $('#lengkapiModal form').on('submit', function(e) {
+                let isValid = true;
+                let firstInvalidField = null;
+
+                // Validasi semua field required
+                $(this).find('[required]').each(function() {
+                    if (!$(this).val()) {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                        if (!firstInvalidField) {
+                            firstInvalidField = $(this);
+                        }
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Data Belum Lengkap!',
+                        text: 'Mohon lengkapi semua field yang wajib diisi (ditandai dengan *)',
+                        confirmButtonText: 'OK'
+                    });
+
+                    // Scroll ke field pertama yang kosong
+                    if (firstInvalidField) {
+                        $('#lengkapiModal').scrollTop(0);
+                        firstInvalidField.focus();
+                    }
+                    return false;
+                }
+            });
+
+            // Validasi form untuk modal edit
+            $('#EditModal form').on('submit', function(e) {
+                let isValid = true;
+                let firstInvalidField = null;
+
+                // Validasi semua field required
+                $(this).find('[required]').each(function() {
+                    if (!$(this).val()) {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                        if (!firstInvalidField) {
+                            firstInvalidField = $(this);
+                        }
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Data Belum Lengkap!',
+                        text: 'Mohon lengkapi semua field yang wajib diisi (ditandai dengan *)',
+                        confirmButtonText: 'OK'
+                    });
+
+                    // Scroll ke field pertama yang kosong
+                    if (firstInvalidField) {
+                        $('#EditModal').scrollTop(0);
+                        firstInvalidField.focus();
+                    }
+                    return false;
+                }
+            });
+
+            // Hapus class is-invalid saat user mulai mengetik
+            $('input, select, textarea').on('input change', function() {
+                if ($(this).val()) {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+        });
+    </script> --}}
 
 
 
