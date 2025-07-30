@@ -43,6 +43,7 @@
                 'inventaris-pembelian-utama',
                 'data-master-gudang/inventaris-utama',
                 'data-master-gudang/stok-inventaris-utama',
+                'data-master-gudang/stok-obat-alkes-utama',
                 'data-barang-utama',
                 'pembelian',
                 'inventaris-pembelian',
