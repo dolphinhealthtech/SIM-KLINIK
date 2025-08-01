@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Stok obat</h1>
+                        <h1 class="m-0">Stok Obat/Alkes Gudang Utama</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Stok Obat / Alkes</h3>
+                                <h3 class="card-title">Stok Obat/Alkes Gudang Utama</h3>
                             </div>
                             <div class="card-body">
                                 <table id="stoktabel" class="table table-bordered table-striped">
@@ -67,10 +67,10 @@
                                                 <td>{{ $group['nama'] }}</td>
                                                 <td class="text-center">{{ $group['total_qty'] }}</td>
                                                 <td class="text-center">
-                                                    <button class="btn btn-sm btn-primary detail-btn" 
+                                                    <button class="btn btn-sm btn-primary detail-btn"
                                                         data-kode="{{ $group['kode'] }}"
                                                         data-nama="{{ $group['nama'] }}"
-                                                        data-toggle="modal" 
+                                                        data-toggle="modal"
                                                         data-target="#detailModal">
                                                         Detail
                                                     </button>
@@ -158,42 +158,33 @@
                 }
             }
         }).buttons().container().appendTo('#stoktabel_wrapper .col-md-6:eq(0)');
-        
+
         // Variabel untuk menyimpan data stok
         let stokData = @json($stok);
-        
+
         // Event handler untuk tombol detail
-        $('.detail-btn').on('click', function() {
+        $('#stoktabel').on('click', '.detail-btn', function () {
             const kode = $(this).data('kode');
             const nama = $(this).data('nama');
-            
+
             // Set judul modal
             $('#modalTitle').text(kode + ' - ' + nama);
-            
+
             // Filter data berdasarkan kode
             const filteredItems = stokData.filter(item => item.kode_obat_alkes === kode);
-            
+
             // Hitung total stok
             let totalStok = 0;
             filteredItems.forEach(item => {
                 totalStok += parseInt(item.qty || 0);
             });
-            
+
             // Isi tabel detail
             let tableHtml = '';
             filteredItems.forEach((item, index) => {
-                const tanggalMasuk = item.tanggal_terima_obat ? new Date(item.tanggal_terima_obat).toLocaleDateString('id-ID', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                }) : '-';
-                
-                const tanggalExpired = item.expired ? new Date(item.expired).toLocaleDateString('id-ID', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                }) : '-';
-                
+                const tanggalMasuk = item.tanggal_terima_obat ? new Date(item.tanggal_terima_obat).toLocaleDateString('id-ID') : '-';
+                const tanggalExpired = item.expired ? new Date(item.expired).toLocaleDateString('id-ID') : '-';
+
                 tableHtml += `
                     <tr>
                         <td class="text-center">${index + 1}</td>
@@ -204,48 +195,39 @@
                     </tr>
                 `;
             });
-            
+
             $('#detailTableBody').html(tableHtml);
             $('#totalStok').text(totalStok);
-            
-            // Inisialisasi DataTable untuk tabel detail
+
+            // Inisialisasi ulang DataTable di modal
             if ($.fn.DataTable.isDataTable('#detailTable')) {
                 $('#detailTable').DataTable().destroy();
             }
-            
+
             $('#detailTable').DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "searching": false,
-                "paging": true,
-                "info": true,
-                "ordering": true,
-                "autoWidth": false,
-                "pageLength": 10,
-                "language": {
-                    "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-                    "infoEmpty": "Menampilkan 0 sampai 0 dari 0 data",
-                    "paginate": {
-                        "first": "Pertama",
-                        "last": "Terakhir",
-                        "next": "Selanjutnya",
-                        "previous": "Sebelumnya"
-                    }
-                }
+                responsive: true,
+                lengthChange: false,
+                searching: false,
+                paging: true,
+                info: true,
+                ordering: true,
+                autoWidth: false,
+                pageLength: 10
             });
         });
-        // Reset modal saat ditutup
-$('#detailModal').on('hidden.bs.modal', function () {
-    // Hapus DataTable jika ada
-    if ($.fn.DataTable.isDataTable('#detailTable')) {
-        $('#detailTable').DataTable().destroy();
-    }
 
-    // Kosongkan isi tabel
-    $('#detailTableBody').empty();
-    $('#totalStok').text('0');
-    $('#modalTitle').text('');
-});
+        // Reset modal saat ditutup
+        $('#detailModal').on('hidden.bs.modal', function () {
+            // Hapus DataTable jika ada
+            if ($.fn.DataTable.isDataTable('#detailTable')) {
+                $('#detailTable').DataTable().destroy();
+            }
+
+            // Kosongkan isi tabel
+            $('#detailTableBody').empty();
+            $('#totalStok').text('0');
+            $('#modalTitle').text('');
+        });
     });
 </script>
 @endsection
