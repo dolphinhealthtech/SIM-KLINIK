@@ -502,6 +502,67 @@ class DabarController extends Controller
         }
     }
 
+    public function dabarsingkroninternal()
+    {
+        try {
+            $data = gudang_barang_utama::get();
+
+            if ($data) {
+
+                $response = response()->json($data)->getData();
+
+                foreach ($response  as $item) {
+                    gudang_barang::updateOrCreate(
+                        [
+                            'kode_barang' => $item->kode_barang,
+                            'nama_barang' => $item->nama_barang,
+                            'kfa_kode' => $item->kfa_kode,
+                            'jenis_formularium' => $item->jenis_formularium,
+                            'nama_industri_barang' => $item->nama_industri_barang,
+                            'satuan_kecil' => $item->satuan_kecil,
+                            'satuan_sedang' => $item->satuan_sedang,
+                            'satuan_besar' => $item->satuan_besar,
+                            'nilai_satuan_kecil' => $item->nilai_satuan_kecil,
+                            'nilai_satuan_sedang' => $item->nilai_satuan_sedang,
+                            'nilai_satuan_besar' => $item->nilai_satuan_besar,
+                            'tempat_penyimpanan' => $item->tempat_penyimpanan,
+                            'barcode' => $item->barcode,
+                            'gudang_kategori' => $item->gudang_kategori,
+                            'jenis_obat' => $item->jenis_obat,
+                            'jenis_generik' => $item->jenis_generik,
+                            'bentuk_sediaan' => $item->bentuk_sediaan,
+                            'user_input_id' => Auth::user()->id,
+                            'user_input_nama' => Auth::user()->name,
+                        ]
+                    );
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Sinkron daftar barang berhasil dilakukan!'
+                ], 201);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada data ditemukan untuk disinkronisasi.'
+                ], 404);
+            }
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan sinkron daftar barang!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
         //Generate Kode Barang Otomatis
         public function generateKodeDataBarang()
         {

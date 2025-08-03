@@ -97,6 +97,7 @@ Route::post('/data-barang/import', [DabarController::class, 'dabarimport'])->nam
 Route::post('/data-barang-utama/import', [DabarController::class, 'dabarimport_utama'])->name('dabar_utama.import');
 //Koneksi antar database
 Route::get('/data-barang/singkron/{id}', [DabarController::class, 'dabarsingkron'])->name('dabar.singkron');
+Route::get('/data-barang-internal/singkron', [DabarController::class, 'dabarsingkroninternal'])->name('dabar.singkron.internal');
 
 // Menu Inventaris
 Route::get('/data-inventaris', [InventarisController::class, 'inventaris'])->name('inventaris.get');
@@ -107,6 +108,7 @@ Route::get('/data-inventaris/export', [InventarisController::class, 'inventarise
 Route::post('/data-inventaris/import', [InventarisController::class, 'inventarisimport'])->name('inventaris.import');
 // Inventaris koneksi antar database
 Route::get('/data-inventaris/singkron/{id}', [InventarisController::class, 'inventarissingkron'])->name('inventaris.singkron');
+Route::get('/data-inventaris-internal/singkron/', [InventarisController::class, 'inventarissingkroninternal'])->name('inventaris.singkron.internal');
 
 Route::get('/inventaris-pembelian', [InventarisController::class, 'inventaris_pembelian'])->name('inventaris_pembelian.get');
 Route::post('/inventaris-pembelian/add', [InventarisController::class, 'inventaris_pembelianadd'])->name('inventaris_pembelian.add');

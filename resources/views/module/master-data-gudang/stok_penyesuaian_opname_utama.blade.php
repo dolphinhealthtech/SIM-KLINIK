@@ -8,7 +8,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Penyesuaian Barang Utama</h1>
+                        <h1 class="m-0">Penyesuaian Barang Gudang Utama</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Penyesuaian Barang Utama</h3>
+                                <h3 class="card-title">Penyesuaian Barang Gudang Utama</h3>
                             </div>
                             <form id="addFormPenyesuaian" action="{{ route('stok_penyesuaian_utama.store') }}" method="POST">
                                 @csrf

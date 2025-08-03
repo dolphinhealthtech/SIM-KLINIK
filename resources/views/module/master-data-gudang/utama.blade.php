@@ -36,10 +36,9 @@
                                         <label for="filterKlinik">Filter Klinik:</label>
                                         <select class="form-control" id="filterKlinik">
                                             <option value="">Semua Klinik</option>
-                                            <option value="Klinik Balaraja">Klinik Balaraja</option>
-                                            <option value="Klinik Jaya">Klinik Jaya</option>
-                                            <option value="Klinik Sentosa">Klinik Sentosa</option>
-                                            <option value="Klinik Makmur">Klinik Makmur</option>
+                                            @foreach ($request->unique('nama_klinik') as $requestFilter)
+                                                <option value="{{ $requestFilter->nama_klinik }}">{{ $requestFilter->nama_klinik }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -189,6 +188,22 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $('#filterKlinik').on('change', function () {
+            const selectedKlinik = $(this).val();
+
+            $('#permintaanTable tbody tr').each(function () {
+                const rowKlinik = $(this).data('nama-klinik');
+
+                if (selectedKlinik === '' || rowKlinik === selectedKlinik) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    </script>
 
     <script>
         const CURRENT_USER_ID = {{ auth()->user()->id }};

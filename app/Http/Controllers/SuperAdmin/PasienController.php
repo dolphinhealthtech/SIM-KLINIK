@@ -171,7 +171,12 @@ class PasienController extends Controller
             ]);
 
             $noRM = $this->creatnorm();
-            $kodeihs = $this->SatusehatController->get_nik_satusehat($request->nik)->getData(true); // Konversi ke array
+            // $kodeihs = $this->SatusehatController->get_nik_satusehat($request->nik)->getData(true); // Konversi ke array
+            try {
+                $kodeihs = $this->SatusehatController->get_nik_satusehat($request->nik)->getData(true);
+            } catch (\Exception $e) {
+                $kodeihs = null;
+            }
             $pasiens = pasien::create([
                 'no_rm' => $noRM,
                 'kode_ihs' => $kodeihs['data'] ?? "--",

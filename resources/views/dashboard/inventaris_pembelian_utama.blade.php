@@ -9,7 +9,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-10">
-                            <h1 class="m-0">Pembelian Inventaris Utama</h1>
+                            <h1 class="m-0">Pembelian Inventaris Gudang Utama</h1>
                         </div><!-- /.col -->
                         <div class="col-sm-2 d-flex justify-content-end">
                             <input type="text" class="form-control" id="kode_pembelian_inventaris" name="kode_pembelian_inventaris" readonly>
