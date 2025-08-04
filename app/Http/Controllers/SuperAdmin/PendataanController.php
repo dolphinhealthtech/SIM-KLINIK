@@ -8,6 +8,7 @@ use App\Models\gudang_penyesuaian_masuk;
 use App\Models\gudang_stok_opname;
 use App\Models\pasien_antrian;
 use App\Models\Pendaftaran_rawat_jalan;
+use App\Models\WebSetting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
@@ -31,7 +32,10 @@ class PendataanController extends Controller
 
         $total_invoice = count($data);
 
-        $pdf = Pdf::loadView('pdf.data_antrian', compact('data', 'tanggal_awal', 'tanggal_akhir', 'total_invoice'))
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.data_antrian', compact('data', 'tanggal_awal', 'tanggal_akhir', 'total_invoice', 'namaKlinik', 'alamatKlinik'))
                 ->setPaper('a4', 'landscape');
 
         $filename = 'laporan_antrian_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
@@ -58,7 +62,10 @@ class PendataanController extends Controller
 
         $total_invoice = count($data);
 
-        $pdf = Pdf::loadView('pdf.data_pendaftaran', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice'))
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.data_pendaftaran', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice', 'namaKlinik', 'alamatKlinik'))
                 ->setPaper('a4', 'landscape');
 
         $filename = 'laporan_pendaftaran_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
@@ -87,7 +94,10 @@ class PendataanController extends Controller
 
         $total_invoice = count($data);
 
-        $pdf = Pdf::loadView('pdf.data_pelayanan_dokter', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice'))
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.data_pelayanan_dokter', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice', 'namaKlinik', 'alamatKlinik'))
                 ->setPaper('a4', 'landscape');
 
         $filename = 'laporan_pelayanan_dokter_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
@@ -116,7 +126,10 @@ class PendataanController extends Controller
 
         $total_invoice = count($data);
 
-        $pdf = Pdf::loadView('pdf.data_pelayanan_perawat', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice'))
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.data_pelayanan_perawat', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'dokter', 'total_invoice', 'namaKlinik', 'alamatKlinik'))
                 ->setPaper('a4', 'landscape');
 
         $filename = 'laporan_pelayanan_perawat_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
@@ -156,7 +169,10 @@ class PendataanController extends Controller
 
         $total_invoice = count($data);
 
-        $pdf = Pdf::loadView('pdf.data_mutasi_penyesuaian', compact('data', 'tanggal_awal', 'tanggal_akhir', 'obat', 'jenis', 'total_invoice'))
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.data_mutasi_penyesuaian', compact('data', 'tanggal_awal', 'tanggal_akhir', 'obat', 'jenis', 'total_invoice', 'namaKlinik', 'alamatKlinik'))
                 ->setPaper('a4', 'landscape');
 
         $filename = 'laporan_selisih_mutasi_penyesuaian_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
@@ -184,7 +200,10 @@ class PendataanController extends Controller
 
         $total_invoice = count($data);
 
-        $pdf = Pdf::loadView('pdf.data_stok_opname', compact('data', 'tanggal_awal', 'tanggal_akhir', 'obat', 'total_invoice'))
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.data_stok_opname', compact('data', 'tanggal_awal', 'tanggal_akhir', 'obat', 'total_invoice', 'namaKlinik', 'alamatKlinik'))
                 ->setPaper('a4', 'landscape');
 
         $filename = 'laporan_stok_opname_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';

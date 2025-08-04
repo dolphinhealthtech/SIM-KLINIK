@@ -576,7 +576,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-4">
-                                                                <label>Dosis</label>
+                                                                <label>Qty / Jumlah</label>
                                                                 <div class="form-row">
                                                                     <div class="col">
                                                                     <input type="text" id="dosis1" class="form-control" placeholder="Contoh: 500">

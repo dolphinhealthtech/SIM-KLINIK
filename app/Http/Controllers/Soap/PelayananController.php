@@ -32,6 +32,7 @@ use App\Models\laboratorium_bidang_sub;
 use App\Models\radiologi_pemeriksaan;
 use App\Models\radiologi_jenis;
 use App\Models\kode_surat;
+use App\Models\WebSetting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -257,7 +258,7 @@ class PelayananController extends Controller
             ->whereHas('pendaftaran.status', function ($query) {
                 $query->where('status_panggil', '!=', 3);
             })
-            ->whereDate('created_at', Carbon::today()) // Filter hanya hari ini
+            // ->whereDate('created_at', Carbon::today()) // Filter hanya hari ini
             ->get();
 
 
@@ -904,7 +905,15 @@ class PelayananController extends Controller
     public function print(Request $request)
     {
         $resepList = json_decode($request->input('resep_data'), true);
-        $pdf = Pdf::loadView('pdf.resep', ['resepList' => $resepList])->setPaper('a6', 'portrait');
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.resep', [
+            'resepList' => $resepList,
+            'namaKlinik' => $namaKlinik,
+            'alamatKlinik' => $alamatKlinik,
+        ])->setPaper('a6', 'portrait');
+
         return $pdf->download('resep-obat.pdf'); // akan dibuka lewat blob di JS
     }
 
@@ -950,8 +959,10 @@ class PelayananController extends Controller
         // Nomor urut berikutnya (increment)
         $nomorUrut = str_pad($jumlah + 1, 4, '0', STR_PAD_LEFT); // 0001, 0002, dst
 
+        $kodeKlinik = WebSetting::value('kode_klinik');
+
         // Buat format kode surat
-        $kodeSurat = "BLRJ/{$nomorUrut}/SKD/{$bulan}/{$tahun}";
+        $kodeSurat = "$kodeKlinik/{$nomorUrut}/SKD/{$bulan}/{$tahun}";
 
         return view('module.pelayanan.pelayanan_permintaan', compact('title', 'kodeSurat', 'pelayanan', 'umur', 'data_icd9', 'data_lab', 'radiologi_pemeriksaan', 'radiologi_jenis'));
     }
@@ -981,6 +992,9 @@ class PelayananController extends Controller
         $alamat = $request->alamat;
         $penjamin = $request->penjamin;
 
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
         $pdf = PDF::loadView('pdf.permintaan_laboratorium', [
             'labData' => $labData,
             'diagnosa' => $diagnosa,
@@ -993,6 +1007,8 @@ class PelayananController extends Controller
             'tanggal_lahir' => $tanggal_lahir,
             'alamat' => $alamat,
             'penjamin' => $penjamin,
+            'namaKlinik' => $namaKlinik,
+            'alamatKlinik' => $alamatKlinik,
         ])->setPaper('a6', 'portrait');
 
         $filename = 'permintaan_laboratorium_' . $nama_pasien . '.pdf';
@@ -1014,6 +1030,9 @@ class PelayananController extends Controller
         $alamat = $request->alamat;
         $penjamin = $request->penjamin;
 
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
         $pdf = PDF::loadView('pdf.permintaan_radiologi', [
             'radData' => $radData,
             'diagnosa' => $diagnosa,
@@ -1026,6 +1045,8 @@ class PelayananController extends Controller
             'tanggal_lahir' => $tanggal_lahir,
             'alamat' => $alamat,
             'penjamin' => $penjamin,
+            'namaKlinik' => $namaKlinik,
+            'alamatKlinik' => $alamatKlinik,
         ])->setPaper('a6', 'portrait');
 
         $filename = 'permintaan_radiologi_' . $nama_pasien . '.pdf';
@@ -1053,6 +1074,9 @@ class PelayananController extends Controller
 
         $jumlah_hari = $tgl_awal_proses->diffInDays($tgl_akhir_proses) + 1;
 
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
         kode_surat::create([
             'kode_surat_skd' => $kode_surat,
             'user_input_id' => Auth::user()->id,
@@ -1073,6 +1097,8 @@ class PelayananController extends Controller
             'umur' => $umur,
             'now' => $now,
             'jumlah_hari' => $jumlah_hari,
+            'namaKlinik' => $namaKlinik,
+            'alamatKlinik' => $alamatKlinik,
         ])->setPaper('a6', 'portrait');
 
         $filename = 'surat_keterangan_dokter_' . $nama_pasien . '.pdf';

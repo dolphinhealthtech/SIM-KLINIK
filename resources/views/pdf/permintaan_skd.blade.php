@@ -81,12 +81,10 @@
             </td>
             <td style="text-align: center;">
                 <div style="font-size: 14px; font-weight: bold; margin: 0;">
-                    KLINIK OMEGA CITRA RAYA
+                    {{ $namaKlinik }}
                 </div>
                 <div style="font-size: 9px; line-height: 1.3; margin: 0;">
-                    Ruko Danau Citra, Jl. Citra Raya Boulevard No.10, Kec. Cikupa,
-                    Kabupaten Tangerang, Banten 15131<br>
-                    0813-1089-4294
+                    {!! nl2br(e($alamatKlinik)) !!}
                 </div>
             </td>
         </tr>

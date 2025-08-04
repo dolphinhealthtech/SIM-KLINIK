@@ -155,9 +155,8 @@
                 style="width: 80px; height: 80px; opacity: .8">
         </div>
         <div class="header-text">
-            <div class="header-title">KLINIK OMEGA CITRA RAYA</div>
-            <div class="header-address">Ruko Danau Citra, Jl. Citra Raya Boulevard No.10, Kec. Cikupa, Kabupaten Tangerang, Banten 15131</div>
-            <div class="header-phone">0813-1089-4294</div>
+            <div class="header-title">{{ $namaKlinik }}</div>
+            <div class="header-address">{!! nl2br(e($alamatKlinik)) !!}</div>
         </div>
     </div>
 

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\DataMaster\medis;
 
 use App\Http\Controllers\Controller;
-use App\Exports\jenis_dietExport;
-use App\Imports\jenis_dietImport;
+use App\Exports\Jenis_DietExport;
+use App\Imports\Jenis_DietImport;
 use App\Models\jenis_diet;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -100,7 +100,7 @@ class JenisDietController extends Controller
 
     public function jenis_dietexport()
     {
-        return Excel::download(new jenis_dietExport, 'jenis_diet.xlsx');
+        return Excel::download(new Jenis_DietExport, 'jenis_diet.xlsx');
     }
 
     public function jenis_dietimport(Request $request)
@@ -109,7 +109,7 @@ class JenisDietController extends Controller
             'file' => 'required|mimes:xlsx,xls'
         ]);
 
-        Excel::import(new jenis_dietImport, $request->file('file'));
+        Excel::import(new Jenis_DietImport, $request->file('file'));
 
 
         return redirect()->route('jenis_diet.get')->with('success', 'Data berhasil diimpor!');
