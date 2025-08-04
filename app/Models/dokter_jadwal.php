@@ -11,4 +11,9 @@ class dokter_jadwal extends Model
     protected $fillable = [
         'dokter_id', 'title', 'start', 'end'
     ];
+
+    public function dokter()
+    {
+        return $this->belongsTo(dokter::class);
+    }
 }

@@ -18,187 +18,235 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-
-                    <!-- Card 1: Jumlah Pasien -->
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-info">
-                        <div class="inner">
-                            <h3>{{ $datapasien }}</h3>
-                            <p>Jumlah Pasien</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <a class="small-box-footer">
-                            Selengkapnya <i class="fas fa-arrow-circle-right"></i>
-                        </a>
-                        </div>
-                    </div>
-
-                    <!-- Card 2: Dokter Aktif -->
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-success">
-                        <div class="inner">
-                            <h3>{{ $datadokter }}</h3>
-                            <p>Dokter Aktif</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-user-md"></i>
-                        </div>
-                        <a class="small-box-footer">
-                            Lihat Dokter <i class="fas fa-arrow-circle-right"></i>
-                        </a>
-                        </div>
-                    </div>
-
-                    <!-- Card 3: Kunjungan Hari Ini -->
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-warning">
-                        <div class="inner">
-                            <h3>{{ $datakunjungan }}</h3>
-                            <p>Kunjungan Hari Ini</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <a class="small-box-footer">
-                            Detail <i class="fas fa-arrow-circle-right"></i>
-                        </a>
-                        </div>
-                    </div>
-
-                    <!-- Card 4: Pendapatan -->
-                    <div class="col-lg-3 col-6">
-                        <div class="small-box bg-danger">
-                            <div class="inner">
-                                <h3 id="pendapatan">Rp0</h3>
-                                <p>Pendapatan Hari Ini</p>
+                    <!-- Reusable Card Template -->
+                    <div class="col-xl-3 col-md-6 col-sm-12 mb-4">
+                        <div class="card text-white bg-success shadow">
+                            <div class="card-body position-relative">
+                                <div class="text-center">
+                                    <h3 class="font-weight-bold">{{ $datadokter }}</h3>
+                                    <p class="mb-0">Dokter Aktif</p>
+                                </div>
+                                <div class="position-absolute" style="top: 15px; right: 15px;">
+                                    <i class="fas fa-user-md fa-2x opacity-50"></i>
+                                </div>
                             </div>
-                            <div class="icon">
-                                <i class="fas fa-money-bill-wave"></i>
+                            <div class="card-footer text-white clearfix small z-1"data-toggle="modal" data-target="#dokterAktifModal" >
+                                <a href="#" class="text-white">
+                                    Lihat Dokter <i class="fas fa-arrow-circle-right float-right"></i>
+                                </a>
                             </div>
-                            <!-- PERBAIKAN: Gunakan data-toggle untuk Bootstrap 4/AdminLTE -->
-                            <a href="#" class="small-box-footer" data-toggle="modal" data-target="#modalPendapatan" onclick="openModalPendapatan()">
-                                Rincian <i class="fas fa-arrow-circle-right"></i>
-                            </a>
                         </div>
                     </div>
 
+                    <div class="col-xl-3 col-md-6 col-sm-12 mb-4">
+                        <div class="card text-white bg-info shadow">
+                            <div class="card-body position-relative">
+                                <div class="text-center">
+                                    <h3 class="font-weight-bold">{{ $datapasien }}</h3>
+                                    <p class="mb-0">Jumlah Pasien Terdaftar</p>
+                                </div>
+                                <div class="position-absolute" style="top: 15px; right: 15px;">
+                                    <i class="fas fa-users fa-2x opacity-50"></i>
+                                </div>
+                            </div>
+                            <div class="card-footer text-white clearfix small z-1" style="visibility: hidden;">...</div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 col-sm-12 mb-4">
+                        <div class="card text-white bg-warning shadow">
+                            <div class="card-body position-relative">
+                                <div class="text-center">
+                                    <h3 class="font-weight-bold">{{ $datakunjungan }}</h3>
+                                    <p class="mb-0">Kunjungan Hari Ini</p>
+                                </div>
+                                <div class="position-absolute" style="top: 15px; right: 15px;">
+                                    <i class="fas fa-calendar-check fa-2x opacity-50"></i>
+                                </div>
+                            </div>
+                            <div class="card-footer text-white clearfix small z-1" style="visibility: hidden;">...</div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 col-sm-12 mb-4">
+                        <div class="card text-white bg-danger shadow">
+                            <div class="card-body position-relative">
+                                <div class="text-center">
+                                    <h3 class="font-weight-bold" id="pendapatan">Rp0</h3>
+                                    <p class="mb-0">Pendapatan Hari Ini</p>
+                                </div>
+                                <div class="position-absolute" style="top: 15px; right: 15px;">
+                                    <i class="fas fa-money-bill-wave fa-2x opacity-50"></i>
+                                </div>
+                            </div>
+                            <div class="card-footer text-white clearfix small z-1">
+                                <a href="#" class="text-white" data-toggle="modal" data-target="#modalPendapatan" onclick="openModalPendapatan()">
+                                    Rincian <i class="fas fa-arrow-circle-right float-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Modal Dokter Aktif Hari Ini -->
+                <div class="modal fade" id="dokterAktifModal" tabindex="-1" role="dialog" aria-labelledby="dokterAktifModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="dokterAktifModalLabel">Dokter Aktif Hari Ini</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th class="text-center">Nama Dokter</th>
+                                    <th class="text-center">Poli / Spesialisasi</th>
+                                    <th class="text-center">Jam Mulai</th>
+                                    <th class="text-center">Jam Selesai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($dokterHariIni as $dokter)
+                                    <tr>
+                                        <td class="text-center">{{ $dokter->nama }}</td>
+                                        <td class="text-center">{{ $dokter->spesialisasi }}</td>
+                                        <td class="text-center">{{ $dokter->start }}</td>
+                                        <td class="text-center">{{ $dokter->end }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Tidak ada dokter aktif hari ini.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    </div>
+                    </div>
+                </div>
                 </div>
 
                 <!-- Modal rincian pendapatan harian -->
-<div class="modal fade" id="modalPendapatan" tabindex="-1" role="dialog" aria-labelledby="modalPendapatanLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-primary">
-                <h4 class="modal-title text-white" id="modalPendapatanLabel">
-                    <i class="fas fa-money-bill-wave mr-2"></i>Rincian Pendapatan Hari Ini
-                </h4>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-
-                <!-- Row untuk 2 kategori -->
-                <div class="row">
-                    <!-- KIRI: Penghasilan Jasa -->
-                    <div class="col-md-6 mb-3">
-                        <div class="card border-success h-100">
-                            <div class="card-header bg-success text-white text-center">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-hand-holding-medical mr-2"></i>
-                                    Pendapatan Jasa dan Tindakan
-                                </h6>
-                            </div>
-                            <div class="card-body text-center d-flex flex-column justify-content-center">
-                                <h4 class="text-success font-weight-bold" id="pendapatan-jasa">
-                                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                <div class="modal fade" id="modalPendapatan" tabindex="-1" role="dialog" aria-labelledby="modalPendapatanLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary">
+                                <h4 class="modal-title text-white" id="modalPendapatanLabel">
+                                    <i class="fas fa-money-bill-wave mr-2"></i>Rincian Pendapatan Hari Ini
                                 </h4>
-                                <small class="text-muted">Pendapatan dari Tindakan Medis, Administrasi & Materai</small>
+                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
-                        </div>
-                    </div>
+                            <div class="modal-body">
 
-                    <!-- KANAN: Penghasilan Obat -->
-                    <div class="col-md-6 mb-3">
-                        <div class="card border-info h-100">
-                            <div class="card-header bg-info text-white text-center">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-pills mr-2"></i>
-                                    Pendapatan Obat
-                                </h6>
+                                <!-- Row untuk 2 kategori -->
+                                <div class="row">
+                                    <!-- KIRI: Penghasilan Jasa -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border-success h-100">
+                                            <div class="card-header bg-success text-white text-center">
+                                                <h6 class="mb-0">
+                                                    <i class="fas fa-hand-holding-medical mr-2"></i>
+                                                    Pendapatan Jasa dan Tindakan
+                                                </h6>
+                                            </div>
+                                            <div class="card-body text-center d-flex flex-column justify-content-center">
+                                                <h4 class="text-success font-weight-bold" id="pendapatan-jasa">
+                                                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                                                </h4>
+                                                <small class="text-muted">Pendapatan dari Tindakan Medis, Administrasi & Materai</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- KANAN: Penghasilan Obat -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border-info h-100">
+                                            <div class="card-header bg-info text-white text-center">
+                                                <h6 class="mb-0">
+                                                    <i class="fas fa-pills mr-2"></i>
+                                                    Pendapatan Obat
+                                                </h6>
+                                            </div>
+                                            <div class="card-body text-center d-flex flex-column justify-content-center">
+                                                <h4 class="text-info font-weight-bold" id="pendapatan-obat">
+                                                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                                                </h4>
+                                                <small class="text-muted">Pendapatan dari Penjualan Obat</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Divider -->
+                                <hr class="my-4">
+
+                                <!-- Total Pendapatan -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="card border-warning">
+                                            <div class="card-header bg-warning text-center">
+                                                <h5 class="mb-0">
+                                                    <i class="fas fa-chart-line mr-2"></i>
+                                                    Total Pendapatan Hari Ini
+                                                </h5>
+                                            </div>
+                                            <div class="card-body text-center">
+                                                <h1 class="text-warning font-weight-bold" id="total-pendapatan">
+                                                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                                                </h1>
+                                                <small class="text-muted">
+                                                    <i class="far fa-calendar-alt mr-1"></i>
+                                                    {{ date('d F Y') }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Detail Breakdown -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="alert alert-light">
+                                            <div class="row text-center">
+                                                <div class="col-md-3 col-6 mb-2">
+                                                    <strong>Jasa dan Tindakan</strong><br>
+                                                    <span class="text-success" id="persentase-jasa">0%</span>
+                                                </div>
+                                                <div class="col-md-3 col-6 mb-2">
+                                                    <strong>Obat</strong><br>
+                                                    <span class="text-info" id="persentase-obat">0%</span>
+                                                </div>
+                                                <div class="col-md-6 col-12">
+                                                    <strong>Total Kategori</strong><br>
+                                                    <span class="text-warning" id="jumlah-transaksi">0 kategori</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
-                            <div class="card-body text-center d-flex flex-column justify-content-center">
-                                <h4 class="text-info font-weight-bold" id="pendapatan-obat">
-                                    <i class="fas fa-spinner fa-spin"></i> Loading...
-                                </h4>
-                                <small class="text-muted">Pendapatan dari Penjualan Obat</small>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    <i class="fas fa-times mr-1"></i> Tutup
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="openModalPendapatan()">
+                                    <i class="fas fa-sync-alt mr-1"></i> Refresh Data
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Divider -->
-                <hr class="my-4">
-
-                <!-- Total Pendapatan -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card border-warning">
-                            <div class="card-header bg-warning text-center">
-                                <h5 class="mb-0">
-                                    <i class="fas fa-chart-line mr-2"></i>
-                                    Total Pendapatan Hari Ini
-                                </h5>
-                            </div>
-                            <div class="card-body text-center">
-                                <h1 class="text-warning font-weight-bold" id="total-pendapatan">
-                                    <i class="fas fa-spinner fa-spin"></i> Loading...
-                                </h1>
-                                <small class="text-muted">
-                                    <i class="far fa-calendar-alt mr-1"></i>
-                                    {{ date('d F Y') }}
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detail Breakdown -->
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <div class="alert alert-light">
-                            <div class="row text-center">
-                                <div class="col-md-3 col-6 mb-2">
-                                    <strong>Jasa dan Tindakan</strong><br>
-                                    <span class="text-success" id="persentase-jasa">0%</span>
-                                </div>
-                                <div class="col-md-3 col-6 mb-2">
-                                    <strong>Obat</strong><br>
-                                    <span class="text-info" id="persentase-obat">0%</span>
-                                </div>
-                                <div class="col-md-6 col-12">
-                                    <strong>Total Kategori</strong><br>
-                                    <span class="text-warning" id="jumlah-transaksi">0 kategori</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    <i class="fas fa-times mr-1"></i> Tutup
-                </button>
-                <button type="button" class="btn btn-primary" onclick="openModalPendapatan()">
-                    <i class="fas fa-sync-alt mr-1"></i> Refresh Data
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
 
                 <div class="row">
