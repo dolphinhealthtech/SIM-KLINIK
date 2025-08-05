@@ -12,7 +12,7 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = ['add', 'edit', 'delete'];
-        $roles = ['Super-admin', 'Administrasi', 'Apoteker', 'Perawat', 'Dokter', 'Manajemen', 'User', 'Gudang', 'Personalia', 'Registrasi'];
+        $roles = ['Super-admin', 'Administrasi', 'Apoteker', 'Perawat', 'Dokter', 'Manajemen', 'User', 'Gudang', 'Personalia', 'Registrasi', 'Kasir'];
 
         // Membuat Permissions (hindari duplikat)
         foreach ($permissions as $permission) {

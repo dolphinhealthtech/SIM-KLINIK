@@ -84,17 +84,17 @@ class pelayanan_soap_dokter extends Model
 
     public function gcs_eye()
     {
-        return $this->belongsTo(gcs_eye::class, 'eye');
+        return $this->belongsTo(gcs_eye::class, 'eye', 'skor');
     }
 
     public function gcs_verbal()
     {
-        return $this->belongsTo(gcs_verbal::class, 'verbal');
+        return $this->belongsTo(gcs_verbal::class, 'verbal', 'skor');
     }
 
     public function gcs_motorik()
     {
-        return $this->belongsTo(gcs_motorik::class, 'motorik');
+        return $this->belongsTo(gcs_motorik::class, 'motorik', 'skor');
     }
 
     public function gcs_kesadaran()
