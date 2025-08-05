@@ -360,7 +360,10 @@ class KasirController extends Controller
     {
         $kasir = kasir::with('detail_lunas')->where('kode_faktur', $kode_faktur)->firstOrFail();
 
-        $pdf = Pdf::loadView('pdf.kasir_bil', compact('kasir'))->setPaper('a5', 'landscape');
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.kasir_bil', compact('kasir', 'namaKlinik', 'alamatKlinik'))->setPaper('a5', 'landscape');
         return $pdf->stream('kasir_' . $kode_faktur . '.pdf');
     }
 

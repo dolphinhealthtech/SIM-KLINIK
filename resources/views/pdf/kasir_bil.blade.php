@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Tanda Terima Apotek</title>
+    <title>Kasir Bill</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -138,14 +138,15 @@
 <body>
     <table class="info-table" style="width: 100%;">
         <tr>
-            <td class="header-title">KLINIK OMEGA CITRA RAYA</td>
+            <td class="header-title">{{ $namaKlinik }}</td>
 
             <td class="header-label">No. Invoice</td>
             <td class="header-separator">:</td>
             <td class="header-content">{{ $kasir->kode_faktur }}</td>
         </tr>
         <tr>
-            <td class="header-address">Ruko Danau Citra, Jl. Citra Raya Boulevard No.10, Kec. Cikupa,</td>
+            {{-- <td class="header-address" rowspan="3">Ruko Danau Citra, Jl. Citra Raya Boulevard No.10, Kec. Cikupa,</td> --}}
+            <td class="header-address" rowspan="3">{!! nl2br(e($alamatKlinik)) !!}</td>
 
             <td class="header-label">No. Pendaftaran</td>
             <td class="header-separator">:</td>
@@ -153,7 +154,7 @@
 
         </tr>
         <tr>
-            <td class="header-address">Kabupaten Tangerang, Banten 15131</td>
+            {{-- <td class="header-address">Kabupaten Tangerang, Banten 15131</td> --}}
 
             <td class="header-label">No. pasien</td>
             <td class="header-separator">:</td>
@@ -161,7 +162,7 @@
         </tr>
 
         <tr>
-            <td class="header-phone">0813-1089-4294</td>
+            {{-- <td class="header-phone">0813-1089-4294</td> --}}
 
             <td class="header-label">Tanggal</td>
             <td class="header-separator">:</td>
