@@ -21,14 +21,15 @@ class dashboard extends Controller
      */
     public function index()
     {
+        $today = Carbon::today();
+        $now = Carbon::now();
+
+        // ================================
+        // 1. Data Pasien & Dokter Aktif
+        // ================================
         $datapasien = pasien::count();
-        $datadokter = dokter::where('verifikasi', 2)->count();
-        $datakunjungan = Pendaftaran_rawat_jalan::whereDate('tanggal_kujungan', Carbon::today())->count();
 
-        $now = Carbon::now(); // waktu saat ini
-        $today = Carbon::today(); // hanya tanggal hari ini
-
-        // Ambil dokter yang sedang aktif sekarang
+        // Dokter yang sedang bertugas saat ini
         $dokterHariIni = dokter_jadwal::whereDate('start', $today)
             ->where('start', '<=', $now)
             ->where('end', '>=', $now)
@@ -46,8 +47,88 @@ class dashboard extends Controller
 
         $datadokter = $dokterHariIni->count();
 
-        return view('dashboard.index', compact('datapasien', 'datadokter', 'datakunjungan', 'dokterHariIni'));
+        $datakunjungan = Pendaftaran_rawat_jalan::whereDate('tanggal_kujungan', $today)->count();
+
+        // ================================
+        // 2. Pendapatan Harian
+        // ================================
+        $pendapatanHariIni = DB::table('kasirs')
+            ->whereDate('created_at', $today)
+            ->sum('total');
+
+        // ================================
+        // 3. Pendapatan Detail (Jasa & Obat)
+        // ================================
+        $totalJasa = DB::table('kasir_tindakan_lunas')
+            ->whereDate('created_at', $today)
+            ->sum('total');
+
+        $totalObat = DB::table('kasir_apotek_lunas')
+            ->whereDate('created_at', $today)
+            ->sum('total');
+
+        $dataKasirs = DB::table('kasirs')
+            ->whereDate('created_at', $today)
+            ->get(['administrasi', 'materai']);
+
+        $totalAdministrasi = 0;
+        $totalMaterai = 0;
+
+        foreach ($dataKasirs as $kasir) {
+            $administrasi = str_replace('.', '', $kasir->administrasi ?? '0');
+            $materai = str_replace('.', '', $kasir->materai ?? '0');
+
+            $totalAdministrasi += floatval($administrasi);
+            $totalMaterai += floatval($materai);
+        }
+
+        $totalJasaGabungan = ($totalJasa ?? 0) + $totalAdministrasi + $totalMaterai;
+        $totalPendapatan = $totalJasaGabungan + ($totalObat ?? 0);
+
+        $persenJasa = $totalPendapatan > 0 ? round(($totalJasaGabungan / $totalPendapatan) * 100) : 0;
+        $persenObat = $totalPendapatan > 0 ? round(($totalObat / $totalPendapatan) * 100) : 0;
+
+        $kategoriAktif = 0;
+        if ($totalJasaGabungan > 0) $kategoriAktif++;
+        if ($totalObat > 0) $kategoriAktif++;
+
+        // ================================
+        // 4. Pendapatan Bulanan
+        // ================================
+        $dataBulanan = DB::table('kasirs')
+            ->selectRaw('MONTH(created_at) as bulan, SUM(total) as total')
+            ->whereYear('created_at', $now->year)
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->get();
+
+        $pendapatanBulanan = array_fill(1, 12, 0);
+        foreach ($dataBulanan as $row) {
+            $pendapatanBulanan[(int)$row->bulan] = (float)$row->total;
+        }
+
+        $bulanLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        $bulananTotals = array_values($pendapatanBulanan);
+
+        // ================================
+        // 5. Kirim Semua ke View
+        // ================================
+        return view('dashboard.index', compact(
+            'datapasien',
+            'datadokter',
+            'datakunjungan',
+            'dokterHariIni',
+            'pendapatanHariIni',
+            'totalJasaGabungan',
+            'totalObat',
+            'totalPendapatan',
+            'persenJasa',
+            'persenObat',
+            'kategoriAktif',
+            'bulanLabels',
+            'bulananTotals'
+        ));
     }
+
 
 
     public function kunjunganHarian()
@@ -104,94 +185,5 @@ class dashboard extends Controller
         ]);
     }
 
-    public function getPendapatanHariIni()
-    {
-        $pendapatanHariIni = DB::table('kasirs')
-            ->whereDate('created_at', Carbon::today())
-            ->sum('total');
 
-        return response()->json([
-            'pendapatan' => $pendapatanHariIni
-        ]);
-    }
-
-    public function getPendapatanBulanan()
-    {
-        $data = DB::table('kasirs')
-            ->selectRaw('MONTH(created_at) as bulan, SUM(total) as total')
-            ->whereYear('created_at', Carbon::now()->year)
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->get();
-
-        // Siapkan array 12 bulan
-        $pendapatan = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $pendapatan[$i] = 0;
-        }
-
-        foreach ($data as $row) {
-            $pendapatan[(int)$row->bulan] = (float)$row->total;
-        }
-
-        // Buat labels dan data
-        $bulanLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-        $totals = array_values($pendapatan);
-
-        return response()->json([
-            'labels' => $bulanLabels,
-            'totals' => $totals
-        ]);
-    }
-
-
-    public function getPendapatanDetail()
-    {
-        try {
-            $today = now()->toDateString();
-
-            // Ambil total jasa dari tabel kasir_tindakan_lunas
-            $totalJasa = DB::table('kasir_tindakan_lunas')
-                ->whereDate('created_at', $today)
-                ->sum('total');
-
-            // Ambil total obat dari tabel kasir_apotek_lunas
-            $totalObat = DB::table('kasir_apotek_lunas')
-                ->whereDate('created_at', $today)
-                ->sum('total');
-
-            // Ambil data administrasi dan materai mentah
-            $dataKasirs = DB::table('kasirs')
-                ->whereDate('created_at', $today)
-                ->get(['administrasi', 'materai']);
-
-            $totalAdministrasi = 0;
-            $totalMaterai = 0;
-
-            foreach ($dataKasirs as $kasir) {
-                // Konversi format Indonesia (misalnya 120.000) ke format standar (120000)
-                $administrasi = str_replace('.', '', $kasir->administrasi ?? '0');
-                $materai = str_replace('.', '', $kasir->materai ?? '0');
-
-                $totalAdministrasi += floatval($administrasi);
-                $totalMaterai += floatval($materai);
-            }
-
-            // Gabungkan administrasi dan materai ke total jasa
-            $totalJasaGabungan = ($totalJasa ?? 0) + $totalAdministrasi + $totalMaterai;
-
-            return response()->json([
-                'status' => 'success',
-                'jasa' => $totalJasaGabungan,
-                'obat' => $totalObat ?? 0,
-                'total' => $totalJasaGabungan + ($totalObat ?? 0),
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Gagal mengambil data pendapatan',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
 }
