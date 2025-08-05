@@ -13,6 +13,7 @@ use App\Models\gudang_setting_harga;
 use App\Models\gudang_satuan;
 use App\Models\penjamin;
 use App\Models\pelayanan_soap_dokter;
+use App\Models\WebSetting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -291,8 +292,10 @@ class ApotekController extends Controller
     {
         $data = json_decode($request->input('data'), true); // penting! decode data JSON
         $note = $request->input('note');
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
 
-        $pdf = Pdf::loadView('pdf.resepApotek_dokter', compact('data', 'note'))
+        $pdf = Pdf::loadView('pdf.resepApotek_dokter', compact('data', 'note', 'namaKlinik', 'alamatKlinik'))
             ->setPaper('a6', 'potrait');
 
         $filename = 'kasir_detail_lunas_' . now()->format('Ymd_His') . '.pdf';
@@ -304,10 +307,14 @@ class ApotekController extends Controller
     {
         $resepList = json_decode($request->input('resep_data'), true);
         $note = $request->input('note');
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
 
         $pdf = Pdf::loadView('pdf.resepApotek_revisi', [
             'resepList' => $resepList,
-            'note' => $note
+            'note' => $note,
+            'namaKlinik' => $namaKlinik,
+            'alamatKlinik' => $alamatKlinik
         ])->setPaper('a6', 'portrait');
 
         $filename = 'resep_obat_revisi_' . now()->format('Ymd_His') . '.pdf';

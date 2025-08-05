@@ -16,6 +16,7 @@ use App\Models\pelayanan_soap_dokter_tindakan;
 use App\Models\penjamin;
 use App\Models\perawatan_kategori;
 use App\Models\Pendaftaran_rawat_jalan;
+use App\Models\WebSetting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -426,7 +427,8 @@ class KasirController extends Controller
             }
         }
 
-
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
 
         // Contoh penggunaan:
         $cashFormatted = $this->formatRupiah($cash);
@@ -437,7 +439,7 @@ class KasirController extends Controller
         $pendapatan = $cash + $debit + $credit + $transfer;
         $pendapatanFormatted = $this->formatRupiah($pendapatan);
 
-        $pdf = Pdf::loadView('pdf.data_lunas_kasir', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'total_invoice', 'cashFormatted', 'debitFormatted', 'creditFormatted', 'transferFormatted', 'pendapatanFormatted'))
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'total_invoice', 'cashFormatted', 'debitFormatted', 'creditFormatted', 'transferFormatted', 'pendapatanFormatted', 'namaKlinik', 'alamatKlinik'))
             ->setPaper('a4', 'landscape');
 
         $filename = 'kasir_lunas_' . now()->format('Ymd_His') . '.pdf';
@@ -517,7 +519,10 @@ class KasirController extends Controller
         $pendapatan = $cash + $debit + $credit + $transfer;
         $pendapatanFormatted = $this->formatRupiah($pendapatan);
 
-        $pdf = Pdf::loadView('pdf.data_lunas_kasir_detail', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'total_invoice', 'cashFormatted', 'debitFormatted', 'creditFormatted', 'transferFormatted', 'pendapatanFormatted'))
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_detail', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'total_invoice', 'cashFormatted', 'debitFormatted', 'creditFormatted', 'transferFormatted', 'pendapatanFormatted', 'namaKlinik', 'alamatKlinik'))
             ->setPaper('a4', 'landscape');
 
         $filename = 'kasir_detail_lunas_' . now()->format('Ymd_His') . '.pdf';
@@ -575,7 +580,10 @@ class KasirController extends Controller
             $obatQtySummary[$nama_obat] += $qty;
         }
 
-        $pdf = Pdf::loadView('pdf.data_lunas_kasir_apotek', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'total_invoice', 'pendapatanFormatted', 'obatQtySummary'))
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_apotek', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'total_invoice', 'pendapatanFormatted', 'obatQtySummary', 'namaKlinik', 'alamatKlinik'))
             ->setPaper('a4', 'landscape');
 
         $filename = 'kasir_apotek_lunas_' . now()->format('Ymd_His') . '.pdf';
@@ -634,8 +642,10 @@ class KasirController extends Controller
             $tindakanQtySummary[$namaTindakan] += 1; // Hitung jumlah kemunculan
         }
 
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
 
-        $pdf = Pdf::loadView('pdf.data_lunas_kasir_tindakan', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'total_invoice', 'pendapatanFormatted', 'tindakanQtySummary'))
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_tindakan', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'total_invoice', 'pendapatanFormatted', 'tindakanQtySummary', 'namaKlinik', 'alamatKlinik'))
             ->setPaper('a4', 'landscape');
 
         $filename = 'kasir_tindakan_lunas_' . now()->format('Ymd_His') . '.pdf';
@@ -682,7 +692,10 @@ class KasirController extends Controller
 
         $pendapatanFormatted = formatRupiah($pendapatan);
 
-        $pdf = Pdf::loadView('pdf.data_lunas_kasir_diskon', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'total_invoice', 'pendapatanFormatted'))
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.data_lunas_kasir_diskon', compact('data', 'tanggal_awal', 'tanggal_akhir', 'poli', 'total_invoice', 'pendapatanFormatted', 'namaKlinik', 'alamatKlinik'))
             ->setPaper('a4', 'landscape');
 
         $filename = 'kasir_diskon_' . now()->format('Ymd_His') . '.pdf';

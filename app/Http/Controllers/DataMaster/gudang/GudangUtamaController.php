@@ -13,6 +13,7 @@ use App\Models\gudang_barang_utama;
 use App\Models\gudang_barang_harga_utama;
 use App\Models\gudang_barang_stok_utama;
 use App\Models\gudang_barang_keluar_utama;
+use App\Models\WebSetting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -268,7 +269,10 @@ class GudangUtamaController extends Controller
             $obatQtySummary[$nama_obat] += $qty;
         }
 
-        $pdf = Pdf::loadView('pdf.data_laporan_gudang_utama', compact('data', 'tanggal_awal', 'tanggal_akhir', 'klinik','total_invoice','obatQtySummary'))
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = Pdf::loadView('pdf.data_laporan_gudang_utama', compact('data', 'tanggal_awal', 'tanggal_akhir', 'klinik','total_invoice','obatQtySummary', 'namaKlinik', 'alamatKlinik'))
                 ->setPaper('a4', 'landscape');
 
         $filename = 'laporan_gudang_utama_' . $tanggal_awal . '_' . $tanggal_akhir . '.pdf';
