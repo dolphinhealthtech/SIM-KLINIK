@@ -7,13 +7,8 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Pelayanan Perawat</h1>
-                    </div><!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-
-                        </ol>
+                    <div class="col-sm-12">
+                        <h5 class="text-muted text-center">Selamat datang di modul Pelayanan Perawat</h5>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -27,35 +22,34 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Pelayanan Perawat</h3>
-                            </div>
                             <div class="card-body">
                                 <table id="banktabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nomor RM</th>
-                                            <th class="text-center">Nama Pasien</th>
-                                            <th class="text-center">Nomor Registrasi</th>
+                                            <th class="text-center">Status</th>
+                                            <th class="text-center">No.RM</th>
+                                            <th class="text-center">Pasien</th>
+                                            <th class="text-center">No.Registrasi</th>
                                             <th class="text-center">Tanggal Kunjungan</th>
                                             <th class="text-center">Poli</th>
                                             <th class="text-center">Dokter</th>
-                                            <th class="text-center" width="25%">Action</th>
+                                            <th class="text-center" width="25%">Tindakan</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($pelayanan as $pelayanandata)
-                                            @php
-                                                $rowClass = '';
-                                                if ($pelayanandata->tindakan_button == 'soap') {
-                                                    $rowClass = 'background-color: yellow; color: black;';
-                                                } elseif ($pelayanandata->tindakan_button == 'edit') {
-                                                    $rowClass = 'background-color: green; color: white;';
-                                                } elseif ($pelayanandata->tindakan_button == 'Complete') {
-                                                    $rowClass = 'background-color: blue; color: white;';
-                                                }
-                                            @endphp
-                                            <tr style="{{ $rowClass }}">
+                                            <tr>
+                                                <td class="text-center">
+                                                    @if ($pelayanandata->tindakan_button == 'panggil')
+                                                        <span class="badge badge-warning rounded-pill">Belum Hadir</span>
+                                                    @elseif ($pelayanandata->tindakan_button == 'soap')
+                                                        <span class="badge badge-primary rounded-pill">SOAP</span>
+                                                    @elseif ($pelayanandata->tindakan_button == 'edit')
+                                                        <span class="badge badge-info rounded-pill">Edit SOAP</span>
+                                                    @elseif ($pelayanandata->tindakan_button == 'Complete')
+                                                        <span class="badge badge-success rounded-pill">Sudah Dicek Dokter</span>
+                                                    @endif
+                                                </td>
                                                 <td class="text-center">{{ $pelayanandata->nomor_rm }}</td>
                                                 <td class="text-center">{{ $pelayanandata->pasien->nama }}</td>
                                                 <td class="text-center">{{ $pelayanandata->nomor_register }}</td>
@@ -63,32 +57,43 @@
                                                 <td class="text-center">{{ $pelayanandata->poli->nama }}</td>
                                                 <td class="text-center">{{ $pelayanandata->dokter->namauser->name }}</td>
                                                 <td class="text-center">
-                                                   <div class="btn-group">
-                                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                            Menu
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                                            @if ($pelayanandata->tindakan_button == 'panggil')
-                                                                <a href="javascript:void(0);"
-                                                                class="dropdown-item pasien-hadir"
-                                                                data-url="{{ route('sopelayana.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
-                                                                    <i class="fas fa-bell"></i> Panggil
-                                                                </a>
+                                                    <div class="btn-group">
+                                                        @if ($pelayanandata->tindakan_button == 'panggil')
+                                                            <a href="javascript:void(0);"
+                                                            class="btn btn-sm btn-warning rounded-pill shadow pasien-hadir"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Panggil pasien ke ruangan"
+                                                            data-url="{{ route('sopelayana.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
+                                                                <i class="fas fa-bell"></i> Panggil
+                                                            </a>
 
-                                                            @elseif ($pelayanandata->tindakan_button == 'soap')
-                                                                <a class="dropdown-item" href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
-                                                                    <i class="fas fa-file-medical-alt"></i> SOAP & Pemeriksaan
-                                                                </a>
-                                                            @elseif ($pelayanandata->tindakan_button == 'edit')
-                                                                <a class="dropdown-item" href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
-                                                                    <i class="fas fa-edit"></i> Edit SOAP
-                                                                </a>
-                                                             @elseif ($pelayanandata->tindakan_button == 'Complete')
-                                                                <a class="dropdown-item">
-                                                                    <i class="fas fa-edit"></i> Sudah Di cek Dokter
-                                                                </a>
-                                                            @endif
-                                                        </div>
+                                                        @elseif ($pelayanandata->tindakan_button == 'soap')
+                                                            <a href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}"
+                                                            class="btn btn-sm btn-primary rounded-pill shadow"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Lanjutkan ke SOAP & Pemeriksaan">
+                                                                <i class="fas fa-file-medical-alt"></i> Pemeriksaan Pasien
+                                                            </a>
+
+                                                        @elseif ($pelayanandata->tindakan_button == 'edit')
+                                                            <a href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}"
+                                                            class="btn btn-sm btn-info rounded-pill shadow"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Edit data SOAP yang sudah diisi">
+                                                                <i class="fas fa-edit"></i> Edit Pemeriksaan Pasien
+                                                            </a>
+
+                                                        @elseif ($pelayanandata->tindakan_button == 'Complete')
+                                                            <span class="btn btn-sm btn-success rounded-pill shadow-sm disabled"
+                                                                data-bs-toggle="tooltip"
+                                                                data-bs-placement="top"
+                                                                title="Sudah selesai diperiksa oleh dokter">
+                                                                <i class="fas fa-check-circle"></i> Dicek
+                                                            </span>
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
@@ -112,12 +117,15 @@
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
-                "buttons": [
-                    "csv",
-                    "excel",
-                    "pdf",
-                    "print",
-                ]
+                "buttons": false,
+                "language": {
+                    "emptyTable": "Tidak ada data yang tersedia pada tabel ini",
+                    "zeroRecords": "Tidak ada data yang cocok dengan pencarian Anda",
+                    "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ entri",
+                    "infoEmpty": "Menampilkan 0 hingga 0 dari 0 entri",
+                    "infoFiltered": "(disaring dari _MAX_ total entri)",
+                    "search": "Cari:",
+                }
             }).buttons().container().appendTo('#banktabel_wrapper .col-md-6:eq(0)');
         });
 
