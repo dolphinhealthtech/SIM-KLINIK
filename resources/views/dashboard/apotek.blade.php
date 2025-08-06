@@ -860,7 +860,7 @@
                     const hargaBersih = parseInt((harga || '0').replace(/[Rp.\s]/g, ''));
 
                     // 2. Kalikan dengan kuantitas (pastikan kuantitas sudah number)
-                    const jumlah = hargaBersih * parseInt(kuantitas);
+                    const jumlah = harga * parseInt(kuantitas);
 
                     // 3. Format jumlah dengan prefix dan pemisah ribuan
                     const jumlahFormatted = 'Rp ' + jumlah.toLocaleString('id-ID', {
@@ -869,7 +869,7 @@
                     });
 
                     // 4. Format harga agar tetap terlihat rapi
-                    const hargaFormatted = 'Rp ' + hargaBersih.toLocaleString('id-ID', {
+                    const hargaFormatted = 'Rp ' + harga.toLocaleString('id-ID', {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0
                     });
@@ -889,7 +889,7 @@
                     dataJsonArray.push({
                         nama: nama,
                         kode: kode,
-                        harga: hargaBersih,
+                        harga: harga,
                         qty: kuantitas,
                         total: jumlah
                     });
@@ -1047,20 +1047,20 @@
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            Inputmask({
-                alias: "numeric",
-                groupSeparator: ".",
-                radixPoint: ",",
-                autoGroup: true,
-                digitsOptional: true,
-                digits: 0,
-                placeholder: "",
-                prefix: "Rp ",
-                rightAlign: false,
-                removeMaskOnSubmit: true
-            }).mask("#harga_tambahan");
-        });
+        // document.addEventListener("DOMContentLoaded", function () {
+        //     Inputmask({
+        //         alias: "numeric",
+        //         groupSeparator: ".",
+        //         radixPoint: ",",
+        //         autoGroup: true,
+        //         digitsOptional: true,
+        //         digits: 0,
+        //         placeholder: "",
+        //         prefix: "Rp ",
+        //         rightAlign: false,
+        //         removeMaskOnSubmit: true
+        //     }).mask("#harga_tambahan");
+        // });
 
     //NARIK HARGA DI BARANG TAMBAHAN
         $(document).ready(function () {
@@ -1165,7 +1165,7 @@
                 return;
             }
 
-            const total = hargaBersih * qty;
+            const total = hargaInput * qty;
 
             // Dapatkan elemen tbody dan hitung jumlah baris
             const tableBody = document.querySelector('#tabel_apotek_harga tbody');
@@ -1183,7 +1183,7 @@
                     <td>${rowCount}</td>
                     <td>${nama}</td>
                     <td>${kode}</td>
-                    <td>Rp ${formatRupiah(hargaBersih)}</td>
+                    <td>Rp ${formatRupiah(hargaInput)}</td>
                     <td>${qty}</td>
                     <td>Rp ${formatRupiah(total)}</td>
                 </tr>
