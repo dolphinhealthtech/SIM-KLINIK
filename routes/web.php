@@ -497,7 +497,7 @@ Route::middleware('auth')->prefix('pasien-selesai')->group(function () {
 Route::get('/list_pasien', [PelayananController::class, 'list_pasien'])->name('list_pasien.get');
 Route::get('/rme/{norawat}', [PelayananController::class, 'pelayana_rme_selesai'])->name('list_pasien_rme.get');
 
-Route::prefix('pasien')->group(function () {
+Route::middleware(['auth'])->prefix('pasien')->group(function () {
     Route::get('/', [PasienController::class, 'pasiens'])->name('pasien.get');
     Route::post('/add', [PasienController::class, 'pasiensadd'])->name('pasien.store');
     Route::post('/verifikasi', [PasienController::class, 'pasienvefiv'])->name('pasien.verifikasi');
@@ -515,7 +515,9 @@ Route::get('/pembelian/cetak/{nomor_faktur}', [PembelianController::class, 'ceta
 Route::prefix('pemeriksaan')->group(function () {
     Route::get('/dokter', [PelayananController::class, 'pelayana_dokter'])->name('pelayanad.get');
     Route::get('/dokter/so/{norawat}', [PelayananController::class, 'soappelayanan'])->name('pelayana_dokter.get');
+    Route::get('/dokter/so/edit/{norawat}', [PelayananController::class, 'soappelayananedit'])->name('pelayana_dokter.edit');
     Route::post('/dokter/so/add', [PelayananController::class, 'soappelayananandd'])->name('pelayana_dokter.add');
+    Route::post('/dokter/so/update', [PelayananController::class, 'soappelayananupdate'])->name('pelayana_dokter.update');
     Route::get('/dokter/so/hadir/{norawat}', [PelayananController::class, 'soappelayananpanggil'])->name('pelayana_dokter.hadir');
     Route::get('/dokter/so/selesai/{norawat}', [PelayananController::class, 'soappelayananselesai'])->name('pelayana_dokter.selesai');
     Route::get('/rujuk/{norawat}', [RujukanController::class, 'pelayana_rujukan'])->name('pelayana_rujuk.get');
@@ -527,13 +529,19 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::post('/laboratorium/print', [PelayananController::class, 'laboratoriumPrint'])->name('laboratorium.print');
     Route::post('/radiologi/print', [PelayananController::class, 'radiologiPrint'])->name('radiologi.print');
     Route::post('/skd/print', [PelayananController::class, 'skdPrint'])->name('skd.print');
+    Route::post('/surat-sakit/print', [PelayananController::class, 'suratSakitPrint'])->name('surat.sakit.print');
+    Route::post('/surat-sehat/print', [PelayananController::class, 'suratSehatPrint'])->name('surat.sehat.print');
+    Route::post('/surat-kematian/print', [PelayananController::class, 'suratKematianPrint'])->name('surat.kematian.print');
+    Route::post('/skdp/print', [PelayananController::class, 'skdpPrint'])->name('skdp.print');
     Route::post('/dokter/so/odontogram/add', [OdoController::class, 'odontogramadd'])->name('odontogram.add');
     Route::post('/dokter/so/odontogram/details/add', [OdoController::class, 'odontogramdetailsadd'])->name('odontogram.details.add');
 
     // Menu Pasien
     Route::get('/perawat', [PelayananController::class, 'pelayana'])->name('pelayana.get');
     Route::get('/perawat/so/{norawat}', [PelayananController::class, 'sopelayanan'])->name('sopelayana.get');
+    Route::get('/perawat/so/edit/{norawat}', [PelayananController::class, 'sopelayananedit'])->name('sopelayana.edit');
     Route::post('/perawat/so/add', [PelayananController::class, 'sopelayanandd'])->name('sopelayana.add');
+    Route::post('/perawat/so/update', [PelayananController::class, 'sopelayananupdate'])->name('sopelayana.update');
     Route::get('/perawat/so/hadir/{norawat}', [PelayananController::class, 'sopelayananpanggil'])->name('sopelayana.hadir');
 });
 
@@ -542,6 +550,7 @@ Route::prefix('pendaftaran')->group(function () {
     Route::get('/', [PendaftaranController::class, 'pendaftaran'])->name('pendaftaran.get');
     Route::post('/add', [PendaftaranController::class, 'pendaftaranadd'])->name('pendaftaran.add');
     Route::post('/batal', [PendaftaranController::class, 'pendaftaranbatal'])->name('pendaftaran.batal');
+    Route::post('/batal/pcare', [PendaftaranController::class, 'pendaftaranbatalpcare'])->name('pendaftaran.batal.pcare');
     Route::post('/dokterup', [PendaftaranController::class, 'pendaftaranupdokter'])->name('pendaftaran.dokter.update');
     Route::post('/hadir', [PendaftaranController::class, 'pendaftaranhadir'])->name('pendaftaran.hadir');
 });
@@ -590,27 +599,27 @@ Route::prefix('staff')->group(function () {
 
 // Menu Pendataan
 Route::prefix('pendataan')->group(function () {
-    Route::get('/antrian', [PendataanController::class,'pendataan_antrian'])->name('pendataan_antrian.get');
-    Route::post('/print/antrian', [PendataanController::class,'print_antrian'])->name('print_antrian');
+    Route::get('/antrian', [PendataanController::class, 'pendataan_antrian'])->name('pendataan_antrian.get');
+    Route::post('/print/antrian', [PendataanController::class, 'print_antrian'])->name('print_antrian');
 
-    Route::get('/pendaftaran', [PendataanController::class,'pendataan_pendaftaran'])->name('pendataan_pendaftaran.get');
-    Route::post('/print/pendaftaran', [PendataanController::class,'print_pendaftaran'])->name('print_pendaftaran');
+    Route::get('/pendaftaran', [PendataanController::class, 'pendataan_pendaftaran'])->name('pendataan_pendaftaran.get');
+    Route::post('/print/pendaftaran', [PendataanController::class, 'print_pendaftaran'])->name('print_pendaftaran');
 
-    Route::get('/soap-dokter', [PendataanController::class,'pendataan_dokter'])->name('pendataan_dokter.get');
-    Route::post('/print/dokter', [PendataanController::class,'print_dokter'])->name('print_dokter');
+    Route::get('/soap-dokter', [PendataanController::class, 'pendataan_dokter'])->name('pendataan_dokter.get');
+    Route::post('/print/dokter', [PendataanController::class, 'print_dokter'])->name('print_dokter');
 
-    Route::get('/so-perawat', [PendataanController::class,'pendataan_perawat'])->name('pendataan_perawat.get');
-    Route::post('/print/perawat', [PendataanController::class,'print_perawat'])->name('print_perawat');
+    Route::get('/so-perawat', [PendataanController::class, 'pendataan_perawat'])->name('pendataan_perawat.get');
+    Route::post('/print/perawat', [PendataanController::class, 'print_perawat'])->name('print_perawat');
 
-    Route::get('/stok-penyesuaian', [PendataanController::class,'laporan_stok_penyesuaian'])->name('laporan_stok_penyesuaian.get');
-    Route::post('/print/stok-penyesuaian', [PendataanController::class,'print_stok_penyesuaian'])->name('print_stok_penyesuaian');
+    Route::get('/stok-penyesuaian', [PendataanController::class, 'laporan_stok_penyesuaian'])->name('laporan_stok_penyesuaian.get');
+    Route::post('/print/stok-penyesuaian', [PendataanController::class, 'print_stok_penyesuaian'])->name('print_stok_penyesuaian');
 
-    Route::get('/stok-opname', [PendataanController::class,'stok_opname'])->name('stok_opname.get');
-    Route::post('/print/stok-opname', [PendataanController::class,'print_stok_opname'])->name('print_stok_opname');
+    Route::get('/stok-opname', [PendataanController::class, 'stok_opname'])->name('stok_opname.get');
+    Route::post('/print/stok-opname', [PendataanController::class, 'print_stok_opname'])->name('print_stok_opname');
 
     //Gudang utama
-    Route::get('/gudang-utama', [GudangUtamaController::class,'laporan_gudang_utama'])->name('laporan_gudang_utama.get');
-    Route::post('/print/gudang-utama', [GudangUtamaController::class,'print_gudang_utama'])->name('print_gudang_utama');
+    Route::get('/gudang-utama', [GudangUtamaController::class, 'laporan_gudang_utama'])->name('laporan_gudang_utama.get');
+    Route::post('/print/gudang-utama', [GudangUtamaController::class, 'print_gudang_utama'])->name('print_gudang_utama');
 });
 
 

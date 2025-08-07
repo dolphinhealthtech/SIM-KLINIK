@@ -153,11 +153,41 @@ class SatusehatController extends Controller
             }
         }
 
+        $responseBody = json_decode($response, true);
+
+        // Ambil ID Dokter
+        $doctorId = $responseBody['entry'][0]['resource']['id'] ?? null;
+
+        // Ambil STR dan tanggal expired
+        $strNumber = null;
+        $strEndDate = null;
+
+        $qualifications = $responseBody['entry'][0]['resource']['qualification'] ?? [];
+
+        foreach ($qualifications as $qualification) {
+            foreach ($qualification['identifier'] ?? [] as $identifier) {
+                if (
+                    isset($identifier['system']) &&
+                    $identifier['system'] === 'https://fhir.kemkes.go.id/id/str-kki-number'
+                ) {
+                    $strNumber = $identifier['value'] ?? null;
+                    $strEndDate = $qualification['period']['end'] ?? null;
+                    break 2;
+                }
+            }
+        }
+
+        // Kembalikan hanya data parsed di dalam key "data"
         return response()->json([
             "status" => "success",
-            "data" => $responseBody,
+            "data" => [
+                "id" => $doctorId,
+                "str_number" => $strNumber,
+                "str_expired" => $strEndDate
+            ],
             "response_time_ms" => $responseTime
         ]);
+
     }
 
 

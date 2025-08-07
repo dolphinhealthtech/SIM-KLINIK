@@ -7,10 +7,9 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Dokter</h1>
+                    <div class="col-sm-12">
+                        <h5 class="text-muted text-center">Selamat datang di modul Pendaftaran Dokter</h5>
                     </div><!-- /.col -->
-
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
         </div>
@@ -31,7 +30,7 @@
                                 <p>Total Dokter</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-person-add"></i>
+                                <i class="fas fa-user-md"></i>
                             </div>
                         </div>
                     </div>
@@ -45,7 +44,7 @@
                                 <p>Dokter Belun Verifikasi</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-pie-graph"></i>
+                                <i class="fas fa-exclamation-circle"></i>
                             </div>
                         </div>
                     </div>
@@ -67,57 +66,73 @@
                                 <table id="doktertabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
+                                            <th class="text-center">Status</th>
                                             <th class="text-center">Nama</th>
                                             <th class="text-center">Poli</th>
                                             <th class="text-center">tanggal Masuk</th>
-                                            <th class="text-center">status Pegawai</th>
-                                            <th class="text-center" width="25%">Action</th>
+                                            <th class="text-center">Posisi Pegawai</th>
+                                            <th class="text-center" width="25%">Tindakan</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($dokter as $dokterdata)
-                                            <tr class="{{ $dokterdata->verifikasi == 1 ? 'table-danger' : ($dokterdata->verifikasi == 2 ? 'table-success' : '') }}">
+                                            <tr>
+                                                <td class="text-center" >
+                                                    @if ($dokterdata->verifikasi == 1)
+                                                        <span class="position-relative d-inline-block">
+                                                            <i class="fas fa-user-md text-danger fa-fade" style="font-size: 24px;"></i>
+                                                            <i class="fas fa-xmark text-danger fa-beat position-absolute" style="top: -8px; right: -8px; font-size: 12px;"></i>
+                                                        </span> <br>
+                                                        <span class="badge badge-danger">Belum Verifikasi</span>
+                                                    @elseif ($dokterdata->verifikasi == 2)
+                                                        <span class="position-relative d-inline-block" title="Belum Verifikasi" style="cursor: pointer;">
+                                                            <i class="fas fa-user text-success fa-fade" style="font-size: 20px;"></i>
+                                                            <i class="fas fa-check text-success position-absolute" style="top: -6px; right: -6px; font-size: 10px;"></i>
+                                                        </span> <br>
+                                                        <span class="badge badge-success">Sudah Verifikasi</span>
+                                                    @else
+                                                        <i class="fas fa-user-slash text-warning fa-fade"  title="Tidak Aktif" style="cursor: pointer;"></i> <br>
+                                                        <span class="badge badge-warning">Tidak Aktif</span>
+                                                    @endif
+                                                </td>
                                                 <td class="text-center" >{{ $dokterdata->namauser->name }}</td>
                                                 <td class="text-center" >{{ $dokterdata->namapoli->nama }}</td>
                                                 <td class="text-center" >{{ $dokterdata->tgl_masuk }}</td>
                                                 <td class="text-center" >{{ $dokterdata->namastatuspegawai->nama }}</td>
                                                 <td class="text-center" >
+                                                   {{-- Jika dokter sudah verifikasi --}}
                                                     @if ($dokterdata->verifikasi == 1)
-                                                    <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
+                                                        <a class="btn btn-outline-info btn-sm rounded-pill lengkapi-btn"
+                                                        data-toggle="modal"
                                                         data-target="#lengkapiModal"
                                                         data-id="{{ $dokterdata->id }}">
-                                                        <i class="fa fa-exclamation-circle"></i> Lengkapi
-                                                    </a>
+                                                            <i class="fa fa-exclamation-circle"></i> Lengkapi
+                                                        </a>
                                                     @else
-                                                    <a class="btn btn-warning rounded-pill edit-btn" data-toggle="modal"
+                                                        <a class="btn btn-outline-warning btn-sm rounded-pill edit-btn"
+                                                        data-toggle="modal"
                                                         data-target="#editdokterModal"
                                                         data-id="{{ $dokterdata->id }}">
-                                                        <i class="fa-solid fa-user-pen"></i> Edit
-                                                    </a>
-                                                    @endif
-                                                    <a href="#" class="btn btn-danger rounded-pill delete-data-dokter"
-                                                        data-toggle="modal"data-id="{{ $dokterdata->id }}"
-                                                        data-nama-dokter="{{ $dokterdata->namauser->name }}"
-                                                        data-target="#deletedokterModal">
-                                                        <i class="fas fa-trash"></i> Delete
-                                                    </a>
+                                                            <i class="fa-solid fa-user-pen"></i> Edit
+                                                        </a>
 
-                                                    <a href="#" class="btn btn-info rounded-pill jadwal-data-dokter"
+                                                        <a class="btn btn-outline-primary btn-sm rounded-pill jadwal-data-dokter"
                                                         data-toggle="modal"
                                                         data-id="{{ $dokterdata->id }}"
                                                         data-nama-dokter-jadwal="{{ $dokterdata->namauser->name }}"
                                                         data-target="#jadwaldokterModal">
-                                                        <i class="far fa-clock"></i> Jadwal
-                                                    </a>
-
-                                                    @if(isset($is_bpjs_active) && $is_bpjs_active)
-                                                    <a href="{{ route('jadwal.sinkron', ['id' => $dokterdata->id]) }}"
-                                                        class="btn btn-info rounded-pill"
-                                                        onclick="return confirm('Yakin ingin singkronisasi jadwal dokter ini?')">
-                                                            <i class="far fa-clock"></i> Singkron Jadwal
-                                                    </a>
+                                                            <i class="far fa-clock"></i> Jadwal
+                                                        </a>
                                                     @endif
 
+                                                    {{-- Tombol Delete --}}
+                                                    <a class="btn btn-outline-danger btn-sm rounded-pill delete-data-dokter"
+                                                    data-toggle="modal"
+                                                    data-id="{{ $dokterdata->id }}"
+                                                    data-nama-dokter="{{ $dokterdata->namauser->name }}"
+                                                    data-target="#deletedokterModal">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -177,7 +192,7 @@
                                                 name="nama">
                                                 <option value="" disabled selected>Nama</option>
                                                 @foreach ($user as $userdata)
-                                                    <option value="{{ $userdata->id }}">{{ $userdata->name }}</option>
+                                                    <option value="{{ $userdata->id }}" data-name="{{ $userdata->name }}">{{ $userdata->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -209,7 +224,14 @@
                                         <div class="form-group">
                                             <label>Nomor NIK</label>
                                             <div class="input-group">
-                                                <input type="text" class="form-control text-center" id="nik" name="nik">
+                                                <input type="text" class="form-control text-center" id="nik" name="nik"
+                                                     required
+                                                    style="background-color: #f8f9fa; cursor: pointer; border: 1px solid #ced4da;">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="handleClick()" id="syncButton" title="Ambil NIK">
+                                                        <i id="syncIcon" class="fas fa-sync-alt"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -517,7 +539,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group">
-                                            <label>Status Kerja</label>
+                                            <label>Posisi Kerja</label>
                                             <select class="form-control select2bs4"  style="width: 100%;"  id="posker" name="posker">
                                                 <option value="" disabled selected>--- Pilih Posisi ---</option>
                                                 @foreach ($posker as $poskerd)
@@ -570,7 +592,7 @@
     {{-- modal Verifikasi Dokter --}}
     <div class="modal fade" id="lengkapiModal" tabindex="-1" role="dialog" aria-labelledby="lengkapiModalLabel">
         <div class="modal-dialog modal-xl">
-            <form id="lengkapiFormdokter" action="{{ route('dokter.verifikasi') }}" method="POST">
+            <form id="lengkapiFormdokter" action="{{ route('dokter.verifikasi') }}" method="POST" enctype="multipart/form-data">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="lengkapiModalLabel">Verifikasi Data dokter</h5>
@@ -721,7 +743,7 @@
                                                             name="nama_edit">
                                                             <option value="" disabled selected>Nama</option>
                                                             @foreach ($user as $userdata)
-                                                                <option value="{{ $userdata->id }}">{{ $userdata->name }}</option>
+                                                                <option value="{{ $userdata->id }}" data-name="{{ $userdata->name }}">{{ $userdata->name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -753,7 +775,14 @@
                                                     <div class="form-group">
                                                         <label>Nomor NIK</label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control text-center" id="nik_edit" name="nik_edit">
+                                                            <input type="text" class="form-control text-center" id="nik_edit" name="nik_edit"
+                                                                required
+                                                                style="background-color: #f8f9fa; cursor: pointer; border: 1px solid #ced4da;">
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-outline-secondary" type="button" onclick="handleClick_edit()" id="syncButton" title="Ambil NIK">
+                                                                    <i id="syncIcon" class="fas fa-sync-alt"></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1169,6 +1198,14 @@
 
                     </div>
                     <div class="modal-footer">
+                        @if(isset($is_bpjs_active) && $is_bpjs_active)
+                            <button type="button"
+                                    class="btn btn-info sinkron-jadwal-btn"
+                                    data-route-template="{{ route('jadwal.sinkron', ['id' => '__ID__']) }}">
+                                <i class="far fa-clock"></i> Sinkron Jadwal
+                            </button>
+
+                        @endif
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                     </div>
                 </div>
@@ -1317,11 +1354,157 @@
                 }, 200);
             });
 
+            $('.sinkron-jadwal-btn').on('click', function () {
+                if (!selectedDokterId) {
+                    Swal.fire('Gagal', 'ID Dokter tidak ditemukan.', 'error');
+                    return;
+                }
+
+                const routeTemplate = $(this).data('route-template');
+                const realRoute = routeTemplate.replace('__ID__', selectedDokterId);
+
+                Swal.fire({
+                    title: 'Sinkronisasi Jadwal?',
+                    text: 'Yakin ingin sinkronisasi jadwal dokter ini?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Sinkronkan',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(realRoute)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire('Berhasil', data.message || 'Jadwal berhasil disinkronkan.', 'success');
+                                    setTimeout(function () {
+                                        // Update source event sesuai ID dokter yang diklik
+                                        calendar.removeAllEvents();
+                                        calendar.refetchEvents(); // kalau pakai dynamic source
+                                        calendar.render();
+                                    }, 200)
+                                } else {
+                                    Swal.fire('Gagal', data.message || 'Terjadi kesalahan saat sinkronisasi.', 'error');
+                                }
+                            })
+                            .catch(error => {
+                                console.error(error);
+                                Swal.fire('Gagal', 'Gagal melakukan sinkronisasi.', 'error');
+                            });
+                    }
+                });
+            });
+
+
         });
     </script>
 
     <script>
+        function updateInputValue(inputElement, newValue) {
+            if (inputElement.value.trim() !== newValue) {
+                inputElement.value = newValue;
+            }
+        }
+        function handleClick() {
+            const icon = document.getElementById("syncIcon");
+            icon.classList.add('fa-spin'); // Start spinning icon
 
+            let nik = document.getElementById("nik").value;
+            let noihsApiUrl = `{{ route('satusehat.nik_practitione', ':nik') }}`.replace(':nik', nik);
+
+            fetch(noihsApiUrl, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+            .then(response => response.json())
+            .then(noihsData => {
+                let noihsInput = document.getElementById("kode_satu");
+                let strInput = document.getElementById("str");
+                let expstrInput = document.getElementById("expstr");
+
+                if (noihsData.status === "success" && noihsData.data) {
+                    updateInputValue(noihsInput, noihsData.data.id); // Set nilai IHS
+                    updateInputValue(strInput, noihsData.data.str_number); // Set nilai STR
+                    updateInputValue(expstrInput, noihsData.data.str_expired); // Set nilai Expired STR
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: "No IHS tidak ditemukan."
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Gagal mengambil No IHS:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Gagal mengambil No IHS dari API."
+                });
+            })
+            .finally(() => {
+                icon.classList.remove('fa-spin'); // Stop spinning
+            });
+        }
+
+    </script>
+
+    <script>
+        function updateInputValue_edit(inputElement, newValue) {
+            if (inputElement.value.trim() !== newValue) {
+                inputElement.value = newValue;
+            }
+        }
+        function handleClick_edit() {
+            const icon = document.getElementById("syncIcon");
+            icon.classList.add('fa-spin'); // Start spinning icon
+
+            let nik = document.getElementById("nik").value;
+            let noihsApiUrl = `{{ route('satusehat.nik_practitione', ':nik') }}`.replace(':nik', nik);
+
+            fetch(noihsApiUrl, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+            .then(response => response.json())
+            .then(noihsData => {
+                let noihsInput = document.getElementById("kode_satu_edit");
+                let strInput = document.getElementById("str_edit");
+                let expstrInput = document.getElementById("expstr_edit");
+
+                if (noihsData.status === "success" && noihsData.data) {
+                    updateInputValue_edit(noihsInput, noihsData.data.id); // Set nilai IHS
+                    updateInputValue_edit(strInput, noihsData.data.str_number); // Set nilai STR
+                    updateInputValue_edit(expstrInput, noihsData.data.str_expired); // Set nilai Expired STR
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: "No IHS tidak ditemukan."
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Gagal mengambil No IHS:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Gagal mengambil No IHS dari API."
+                });
+            })
+            .finally(() => {
+                icon.classList.remove('fa-spin'); // Stop spinning
+            });
+        }
+
+    </script>
+
+    <script>
         $(document).ready(function () {
 
             function loadKabupaten(provinsiID, selectedKabupaten = "", callback = null) {
@@ -1473,31 +1656,35 @@
                             });
                         });
                     }
-
                     let list = '';
-                    data.dokter.verifikasi.pendidikan.forEach((item, index) => {
-                        list += `
-                            <div class="row align-items-end mb-3">
-                                <input type="hidden" name="pendidikan[${index}][kode]" value="${item.kode}">
-                                <div class="col-md-6">
-                                    <label class="form-label">Nama Sekolah ${item.kode}</label>
-                                    <input type="text" name="pendidikan[${index}][nama_sekolah]" class="form-control" value="${item.nama_sekolah ?? ''}" required>
-                                </div>
-                                <div class="col-md-2">
-                                    <label class="form-label">Tahun Lulus ${item.kode}</label>
-                                    <input type="month" name="pendidikan[${index}][tahun_lulus]" class="form-control" value="${item.tahun_lulus ?? ''}" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Ijazah ${item.kode}</label>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="ijasah-${index}" name="pendidikan[${index}][ijasah]">
-                                        <label class="custom-file-label" for="ijasah-${index}">${item.ijasah ?? 'Pilih file'}</label>
+                    if (data.dokter && data.dokter.verifikasi && Array.isArray(data.dokter.verifikasi.pendidikan)) {
+                        data.dokter.verifikasi.pendidikan.forEach((item, index) => {
+                            list += `
+                                <div class="row align-items-end mb-3">
+                                    <input type="hidden" name="pendidikan[${index}][kode]" value="${item.kode}">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nama Sekolah ${item.kode}</label>
+                                        <input type="text" name="pendidikan[${index}][nama_sekolah]" class="form-control" value="${item.nama_sekolah ?? ''}" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Tahun Lulus ${item.kode}</label>
+                                        <input type="month" name="pendidikan[${index}][tahun_lulus]" class="form-control" value="${item.tahun_lulus ?? ''}" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Ijazah ${item.kode}</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="ijasah-${index}" name="pendidikan[${index}][ijasah]">
+                                            <label class="custom-file-label" for="ijasah-${index}">${item.ijasah ? item.ijasah.split('/').pop() : 'Pilih file'}</label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        `;
-                    });
-                    $('#editdokterModal .pendidikan-list_edit').html(list);
+                            `;
+                        });
+
+                        $('#editdokterModal .pendidikan-list_edit').html(list);
+                    } else {
+                        $('#editdokterModal .pendidikan-list_edit').html('<div class="text-muted">Belum ada data pendidikan.</div>');
+                    }
 
                     // Spesialis
                     let spesialisList = '';
@@ -1885,13 +2072,16 @@
         $('#lengkapiFormdokter').on('submit', function(e) {
             e.preventDefault();
 
-            let form = $(this);
-            let url = form.attr('action');
+            let form = $(this)[0];
+            let url = $(this).attr('action');
+            let formData = new FormData(form); // Kunci utamanya di sini
 
             $.ajax({
                 url: url,
                 type: "POST",
-                data: form.serialize(),
+                data: formData,
+                processData: false,  // <-- wajib untuk FormData
+                contentType: false,  // <-- wajib untuk FormData
                 success: function(response) {
                     if (response.success) {
                         $('#lengkapiModal').modal('hide');
@@ -1916,7 +2106,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Dokter!',
+                        text: 'Terjadi kesalahan saat Melengkapi Data Dokter. Silakan coba lagi!',
                     });
                 }
             });
@@ -2070,17 +2260,82 @@
     </script>
 
     <script>
+        let dokterApiMap_edit = {};
+
+        $(document).ready(function () {
+            // Ambil data dokter dari API BPJS
+            fetch("{{ route('pcare.dokter') }}")
+                .then(response => response.json())
+                .then(result => {
+                    result.data.list.forEach(dokter => {
+                        dokterApiMap_edit[dokter.nmDokter.toLowerCase()] = dokter.kdDokter;
+                    });
+                });
+
+            // Saat dokter dipilih dari select
+            $('#nama_edit').on('change', function () {
+                let selectedName = $(this).find(':selected').data('name').toLowerCase();
+
+                // Cari kecocokan nama di API
+                let matchedKode = null;
+                for (const namaApi in dokterApiMap_edit) {
+                    if (namaApi.includes(selectedName) || selectedName.includes(namaApi)) {
+                        matchedKode = dokterApiMap_edit[namaApi];
+                        break;
+                    }
+                }
+
+                $('#kode_edit').val(matchedKode ?? '');
+            });
+        });
+    </script>
+
+    <script>
+        let dokterApiMap = {};
+
+        $(document).ready(function () {
+            // Ambil data dokter dari API BPJS
+            fetch("{{ route('pcare.dokter') }}")
+                .then(response => response.json())
+                .then(result => {
+                    result.data.list.forEach(dokter => {
+                        dokterApiMap[dokter.nmDokter.toLowerCase()] = dokter.kdDokter;
+                    });
+                });
+
+            // Saat dokter dipilih dari select
+            $('#nama').on('change', function () {
+                let selectedName = $(this).find(':selected').data('name').toLowerCase();
+
+                // Cari kecocokan nama di API
+                let matchedKode = null;
+                for (const namaApi in dokterApiMap) {
+                    if (namaApi.includes(selectedName) || selectedName.includes(namaApi)) {
+                        matchedKode = dokterApiMap[namaApi];
+                        break;
+                    }
+                }
+
+                $('#kode').val(matchedKode ?? '');
+            });
+        });
+    </script>
+
+    <script>
         $(document).ready(function() {
             $("#doktertabel").DataTable({
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
-                "buttons": [
-                    "csv",
-                    "excel",
-                    "pdf",
-                    "print",
-                ]
+                "buttons": false,
+                "language": {
+                    "search": "Cari:",
+                    "lengthMenu": "Tampilkan _MENU_ data per halaman",
+                    "zeroRecords": "Tidak ada data yang ditemukan",
+                    "info": "Menampilkan halaman _PAGE_ dari _PAGES_",
+                    "infoEmpty": "Tidak ada data tersedia",
+                    "infoFiltered": "(difilter dari _MAX_ total data)",
+                }
             }).buttons().container().appendTo('#doktertabel_wrapper .col-md-6:eq(0)');
         });
     </script>

@@ -7,10 +7,9 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Pasien</h1>
+                    <div class="col-sm-12">
+                        <h5 class="text-muted text-center">Selamat datang di modul Pendaftaran Pasien</h5>
                     </div><!-- /.col -->
-
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
         </div>
@@ -30,7 +29,7 @@
                                 <p>Total Pasien lama</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-bag"></i>
+                                <i class="fas fa-user-clock "></i>
                             </div>
                         </div>
                     </div>
@@ -44,7 +43,7 @@
                                 <p>Total Pasien Baru Bulan ini</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-stats-bars"></i>
+                                <i class="fas fa-user-plus"></i>
                             </div>
                         </div>
                     </div>
@@ -58,7 +57,7 @@
                                 <p>Total Pasien</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-person-add"></i>
+                                <i class="fas fa-users"></i>
                             </div>
                         </div>
                     </div>
@@ -72,7 +71,7 @@
                                 <p>Pasien Belun Verifikasi</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-pie-graph"></i>
+                                <i class="fas fa-user-xmark"></i>
                             </div>
                         </div>
                     </div>
@@ -86,23 +85,36 @@
                                 <table id="userstabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">No RM</th>
+                                            <th class="text-center" width="10%">Status</th>
+                                            <th class="text-center">No.RM</th>
                                             <th class="text-center">Nama</th>
                                             <th class="text-center">Tanggal Lahir</th>
-                                            <th class="text-center">Nomor Kartu BPJS</th>
-                                            <th class="text-center">Nomor Telepon</th>
-                                            <th class="text-center" width="25%">Action</th>
+                                            <th class="text-center">No.Kartu BPJS</th>
+                                            <th class="text-center">No.Telepon</th>
+                                            <th class="text-center" width="25%">Tindakan</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($pasiens as $pasiensdata)
-                                            <tr class="{{ $pasiensdata->verifikasi == 1 ? 'table-danger' : ($pasiensdata->verifikasi == 2 ? 'table-success' : '') }}">
-                                                <td>{{ $pasiensdata->no_rm }}</td>
-                                                <td>{{ $pasiensdata->nama }}</td>
-                                                <td>{{ $pasiensdata->tanggal_lahir }}</td>
-                                                <td>{{ $pasiensdata->no_bpjs }}</td>
-                                                <td>{{ $pasiensdata->telepon }}</td>
-                                                <td>
+                                            <tr>
+                                                <td class="text-center" >
+                                                    @if ($pasiensdata->verifikasi == 1)
+                                                        <i class="fas fa-user-xmark text-danger fa-fade"  title="Belum Verifikasi" style="cursor: pointer;"></i> <br>
+                                                        <span class="badge badge-danger">Belum Verifikasi</span>
+                                                    @elseif ($pasiensdata->verifikasi == 2)
+                                                        <i class="fas fa-user-check text-success fa-fade"  title="Sudah Verifikasi" style="cursor: pointer;"></i> <br>
+                                                        <span class="badge badge-success">Sudah Verifikasi</span>
+                                                    @else
+                                                        <i class="fas fa-user-slash text-warning fa-fade"  title="Tidak Aktif" style="cursor: pointer;"></i> <br>
+                                                        <span class="badge badge-warning">Tidak Aktif</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center" >{{ $pasiensdata->no_rm }}</td>
+                                                <td class="text-center" >{{ $pasiensdata->nama }}</td>
+                                                <td class="text-center">{{ $pasiensdata->tanggal_lahir }}</td>
+                                                <td class="text-center">{{ $pasiensdata->no_bpjs }}</td>
+                                                <td class="text-center">{{ $pasiensdata->telepon }}</td>
+                                                <td class="text-center">
                                                     @if ($pasiensdata->verifikasi == 1)
                                                         <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
                                                             data-target="#lengkapiModal"
@@ -118,7 +130,7 @@
                                                             <i class="fa fa-bullhorn"></i> Panggil
                                                         </a>
                                                     @else
-                                                        <a class="btn btn-warning rounded-pill edit-btn" data-toggle="modal"
+                                                        <a class="btn btn-outline-warning btn-sm rounded-pill edit-btn" data-toggle="modal"
                                                             data-target="#EditModal"
                                                             data-id="{{ $pasiensdata->id }}">
                                                             <i class="fa-solid fa-user-pen"></i> Edit
@@ -219,7 +231,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('pasien.verifikasi') }}" method="POST">
+                    <form action="{{ route('pasien.verifikasi') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <style>
@@ -253,7 +265,7 @@
                                     <!-- Bingkai Gambar dengan Rasio 3:4 -->
                                     <label for="profileImageInput" class="d-block" style="cursor: pointer;">
                                         <div style="width: 100%;border: 2px solid #ccc; max-width: 180px; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 10px;  background: #f0f0f0; display: flex; align-items: center; margin-top: 75px;  justify-content: center;">
-                                            <img id="profileImage" class="img-fluid rounded" src="{{ asset('setting/' . ($setting->profile_image ?? 'default.png')) }}"
+                                            <img id="profileImage" class="img-fluid rounded"
                                                 alt="User profile picture" style="width: 100%; height: 100%; object-fit: cover;">
                                         </div>
                                     </label>
@@ -280,13 +292,19 @@
 
                                     <div class="col-sm-3">
                                         <div class="form-group">
-                                            <label>Nomor NIK <span class="text-danger">*</span></label>
+                                            <label>Nomor NIK</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik" name="nik"
-                                                    readonly onclick="handleClick()" required
-                                                    style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
+                                                     required
+                                                    style="background-color: #f8f9fa; cursor: pointer; border: 1px solid #ced4da;">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="handleClick()" id="syncButton" title="Ambil NIK">
+                                                        <i id="syncIcon" class="fas fa-sync-alt"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
+
                                     </div>
 
                                     <div class="col-sm-5">
@@ -668,9 +686,6 @@
                                             <label for="penjamin_3">Penjamin 3</label>
                                             <select class="form-control" name="penjamin_3" id="penjamin_3" disabled>
                                                 <option value="">-- Pilih Penjamin 3 --</option>
-                                                {{-- @foreach($pejamin as $penjamin)
-                                                    <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
-                                                @endforeach --}}
                                                 @foreach($asuransi as $asuransi3)
                                                     <option value="{{ $asuransi3->nama }}">{{ $asuransi3->nama }}</option>
                                                 @endforeach
@@ -716,7 +731,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('pasien.update') }}" method="POST">
+                    <form action="{{ route('pasien.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <style>
@@ -750,7 +765,7 @@
                                     <!-- Bingkai Gambar dengan Rasio 3:4 -->
                                     <label for="profileImageInput_edit" class="d-block" style="cursor: pointer;">
                                         <div style="width: 100%;border: 2px solid #ccc; max-width: 180px; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 10px;  background: #f0f0f0; display: flex; align-items: center; margin-top: 75px;  justify-content: center;">
-                                            <img id="profileImage_edit" class="img-fluid rounded" src="{{ asset('setting/' . ($setting->profile_image ?? 'default.png')) }}"
+                                            <img id="profileImage_edit" class="img-fluid rounded"
                                                 alt="User profile picture" style="width: 100%; height: 100%; object-fit: cover;">
                                         </div>
                                     </label>
@@ -781,8 +796,13 @@
                                             <label>Nomor NIK</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik_edit" name="nik_edit"
-                                                    readonly onclick="handleClick_edit()" value="{{ old('nik_edit') }}" required
-                                                    style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
+                                                     required
+                                                    style="background-color: #f8f9fa; cursor: pointer; border: 1px solid #ced4da;">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="handleClick_edit()" id="syncButton" title="Ambil NIK">
+                                                        <i id="syncIcon_edit" class="fas fa-sync-alt"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1133,9 +1153,6 @@
                                             <label for="penjamin_2_edit">Penjamin 2</label>
                                             <select class="form-control" name="penjamin_2_edit" id="penjamin_2_edit" disabled>
                                                 <option value="">-- Pilih Penjamin 2 --</option>
-                                                {{-- @foreach($pejamin as $penjamin)
-                                                    <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
-                                                @endforeach --}}
                                                 @foreach($asuransi as $asuransi2_edit)
                                                     <option value="{{ $asuransi2_edit->nama }}">{{ $asuransi2_edit->nama }}</option>
                                                 @endforeach
@@ -1166,9 +1183,6 @@
                                             <label for="penjamin_3_edit">Penjamin 3</label>
                                             <select class="form-control" name="penjamin_3_edit" id="penjamin_3_edit" disabled>
                                                 <option value="">-- Pilih Penjamin 3 --</option>
-                                                {{-- @foreach($pejamin as $penjamin)
-                                                    <option value="{{ $penjamin->nama }}">{{ $penjamin->nama }}</option>
-                                                @endforeach --}}
                                                 @foreach($asuransi as $asuransi_3_edit)
                                                     <option value="{{ $asuransi_3_edit->nama }}">{{ $asuransi_3_edit->nama }}</option>
                                                 @endforeach
@@ -1186,6 +1200,7 @@
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" id="user_edit" name="user_edit" value="{{ old('user_edit') }}">
                         <input type="hidden" id="kodeprovide_edit" name="kodeprovide_edit" value="{{ old('kodeprovide_edit') }}">
                         <input type="hidden" id="hubungan_keluarga_edit" name="hubungan_keluarga_edit" value="{{ old('hubungan_keluarga_edit') }}">
                         <input type="hidden" id="userinput" name="userinput" value="{{ auth()->user()->name }}">
@@ -1200,27 +1215,27 @@
             </div>
         </div>
     </div>
-<script>
-    $('#aktif_penjamin_2').on('change', function () {
-    const aktif = $(this).is(':checked');
-    $('#penjamin_2, #penjamin_2_info').prop('disabled', !aktif);
-});
+    <script>
+        $('#aktif_penjamin_2').on('change', function () {
+            const aktif = $(this).is(':checked');
+            $('#penjamin_2, #penjamin_2_info').prop('disabled', !aktif);
+        });
 
-$('#aktif_penjamin_3').on('change', function () {
-    const aktif = $(this).is(':checked');
-    $('#penjamin_3, #penjamin_3_info').prop('disabled', !aktif);
-});
-    $('#aktif_penjamin_2_edit').on('change', function () {
-    const aktif = $(this).is(':checked');
-    $('#penjamin_2_edit, #penjamin_2_info_edit').prop('disabled', !aktif);
-});
+        $('#aktif_penjamin_3').on('change', function () {
+            const aktif = $(this).is(':checked');
+            $('#penjamin_3, #penjamin_3_info').prop('disabled', !aktif);
+        });
+            $('#aktif_penjamin_2_edit').on('change', function () {
+            const aktif = $(this).is(':checked');
+            $('#penjamin_2_edit, #penjamin_2_info_edit').prop('disabled', !aktif);
+        });
 
-$('#aktif_penjamin_3_edit').on('change', function () {
-    const aktif = $(this).is(':checked');
-    $('#penjamin_3_edit, #penjamin_3_info_edit').prop('disabled', !aktif);
-});
+        $('#aktif_penjamin_3_edit').on('change', function () {
+            const aktif = $(this).is(':checked');
+            $('#penjamin_3_edit, #penjamin_3_info_edit').prop('disabled', !aktif);
+        });
 
-</script>
+    </script>
     <script>
         function formatDate_edit(dateString) {
                 let parts = dateString.split("-"); // Pisahkan berdasarkan "-"
@@ -1234,6 +1249,9 @@ $('#aktif_penjamin_3_edit').on('change', function () {
             }
 
             function handleClick_edit() {
+                const icon = document.getElementById("syncIcon_edit"); // Ambil ikon di dalam tombol
+                icon.classList.add('fa-spin'); // Mulai animasi putar
+
                 let nik = document.getElementById("nik_edit").value; // Ambil nilai NIK dari input
                 let apiUrl = `{{ route('pcare.nik', ':nik') }}`.replace(':nik', nik); // Perbaiki parameter
 
@@ -1310,8 +1328,9 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                             })
                             .catch(error => {
                                 console.error("Gagal mengambil No IHS:", error);
+                            }).finally(() => {
+                                icon.classList.remove('fa-spin'); // Stop animasi setelah proses selesai
                             });
-
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -1326,6 +1345,8 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                             title: 'Gagal!',
                             text: "Gagal mengambil data dari API."
                         });
+                                icon.classList.remove('fa-spin');
+
                 });
             }
     </script>
@@ -1445,8 +1466,6 @@ $('#aktif_penjamin_3_edit').on('change', function () {
 
                 $.get(`/api/get-pasien/${pasienId}`)
                     .done(function (data) {
-                        console.log("Data Pasien:", data);
-
                         $('#nomor_rm_edit').val(data.no_rm);
                         $('#nama_edit').val(data.nama);
                         $('#nik_edit').val(data.nik);
@@ -1470,10 +1489,20 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                         $('#pendidikan_edit').val(data.pendidikan).trigger('change');
                         $('#status_kerja_edit').val(data.pekerjaan).trigger('change');
                         $('#telepon_edit').val(data.telepon);
+                        $('#user_edit').val(data.users);
+                        $('#kodeprovide_edit').val(data.kodeprovide);
+                        $('#hubungan_keluarga_edit').val(data.hubungan_keluarga);
                         $('#suku_edit').val(data.suku).trigger('change');
                         $('#bangsa_edit').val(data.bangsa).trigger('change');
                         $('#bahasa_edit').val(data.bahasa).trigger('change');
                         $('#email_edit').val(data.getnama?.email ?? '');
+
+                        if (data.getnama?.profile) {
+                            $('#profileImage_edit').attr('src', `/profile/${data.getnama.profile}`);
+                        } else {
+                            // Gunakan default jika kosong
+                            $('#profileImage_edit').attr('src', `/profile/default.png`);
+                        }
 
                         // Load Provinsi, Kabupaten, Kecamatan, Desa secara berurutan
                         if (data.provinsi_kode) {
@@ -1516,6 +1545,13 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                     $('#bangsa').val(data.bangsa).trigger('change');
                     $('#bahasa').val(data.bahasa).trigger('change');
 
+                    if (data.getnama?.profile) {
+                        $('#profileImage').attr('src', `/profile/${data.getnama.profile}`);
+                    } else {
+                        // Gunakan default jika kosong
+                        $('#profileImage').attr('src', `/profile/default.png`);
+                    }
+
                     // generateCredentials();
                 }).fail(function (error) {
                     console.error("Gagal mengambil data pasien:", error);
@@ -1537,6 +1573,9 @@ $('#aktif_penjamin_3_edit').on('change', function () {
         }
 
         function handleClick() {
+            const icon = document.getElementById("syncIcon"); // Ambil ikon di dalam tombol
+            icon.classList.add('fa-spin'); // Mulai animasi putar
+
             let nik = document.getElementById("nik").value; // Ambil nilai NIK dari input
             let apiUrl = `{{ route('pcare.nik', ':nik') }}`.replace(':nik', nik); // Perbaiki parameter
 
@@ -1611,7 +1650,10 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                         })
                         .catch(error => {
                             console.error("Gagal mengambil No IHS:", error);
+                        }).finally(() => {
+                            icon.classList.remove('fa-spin'); // Stop animasi setelah proses selesai
                         });
+
 
                 } else {
                     Swal.fire({
@@ -1623,10 +1665,12 @@ $('#aktif_penjamin_3_edit').on('change', function () {
             })
             .catch(error => {
                 Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: "Gagal mengambil data dari API."
-                    });
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "Gagal mengambil data dari API."
+                });
+                icon.classList.remove('fa-spin');
+
             });
         }
     </script>
@@ -1719,100 +1763,18 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
-                "buttons": [
-                    "csv",
-                    "excel",
-                    "pdf",
-                    "print",
-                ]
+                "buttons": false,
+                "language": {
+                    "search": "Cari:",
+                    "lengthMenu": "Tampilkan _MENU_ entri",
+                    "zeroRecords": "Tidak ada data yang ditemukan",
+                    "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ entri",
+                    "infoEmpty": "Menampilkan 0 hingga 0 dari 0 entri",
+                    "infoFiltered": "(disaring dari _MAX_ total entri)",
+                }
             }).buttons().container().appendTo('#userstabel_wrapper .col-md-6:eq(0)');
         });
     </script>
-
-    {{-- <script>
-        // Validasi form untuk modal lengkapi
-        $(document).ready(function() {
-            $('#lengkapiModal form').on('submit', function(e) {
-                let isValid = true;
-                let firstInvalidField = null;
-
-                // Validasi semua field required
-                $(this).find('[required]').each(function() {
-                    if (!$(this).val()) {
-                        isValid = false;
-                        $(this).addClass('is-invalid');
-                        if (!firstInvalidField) {
-                            firstInvalidField = $(this);
-                        }
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                });
-
-                if (!isValid) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Data Belum Lengkap!',
-                        text: 'Mohon lengkapi semua field yang wajib diisi (ditandai dengan *)',
-                        confirmButtonText: 'OK'
-                    });
-
-                    // Scroll ke field pertama yang kosong
-                    if (firstInvalidField) {
-                        $('#lengkapiModal').scrollTop(0);
-                        firstInvalidField.focus();
-                    }
-                    return false;
-                }
-            });
-
-            // Validasi form untuk modal edit
-            $('#EditModal form').on('submit', function(e) {
-                let isValid = true;
-                let firstInvalidField = null;
-
-                // Validasi semua field required
-                $(this).find('[required]').each(function() {
-                    if (!$(this).val()) {
-                        isValid = false;
-                        $(this).addClass('is-invalid');
-                        if (!firstInvalidField) {
-                            firstInvalidField = $(this);
-                        }
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                });
-
-                if (!isValid) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Data Belum Lengkap!',
-                        text: 'Mohon lengkapi semua field yang wajib diisi (ditandai dengan *)',
-                        confirmButtonText: 'OK'
-                    });
-
-                    // Scroll ke field pertama yang kosong
-                    if (firstInvalidField) {
-                        $('#EditModal').scrollTop(0);
-                        firstInvalidField.focus();
-                    }
-                    return false;
-                }
-            });
-
-            // Hapus class is-invalid saat user mulai mengetik
-            $('input, select, textarea').on('input change', function() {
-                if ($(this).val()) {
-                    $(this).removeClass('is-invalid');
-                }
-            });
-        });
-    </script> --}}
-
-
 
 @endsection
 

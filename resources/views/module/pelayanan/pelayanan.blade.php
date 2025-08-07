@@ -43,9 +43,9 @@
                                                     @if ($pelayanandata->tindakan_button == 'panggil')
                                                         <span class="badge badge-warning rounded-pill">Belum Hadir</span>
                                                     @elseif ($pelayanandata->tindakan_button == 'soap')
-                                                        <span class="badge badge-primary rounded-pill">SOAP</span>
+                                                        <span class="badge badge-primary rounded-pill">Pemeriksaan</span>
                                                     @elseif ($pelayanandata->tindakan_button == 'edit')
-                                                        <span class="badge badge-info rounded-pill">Edit SOAP</span>
+                                                        <span class="badge badge-info rounded-pill">Menunggu Dokter</span>
                                                     @elseif ($pelayanandata->tindakan_button == 'Complete')
                                                         <span class="badge badge-success rounded-pill">Sudah Dicek Dokter</span>
                                                     @endif
@@ -57,45 +57,52 @@
                                                 <td class="text-center">{{ $pelayanandata->poli->nama }}</td>
                                                 <td class="text-center">{{ $pelayanandata->dokter->namauser->name }}</td>
                                                 <td class="text-center">
-                                                    <div class="btn-group">
-                                                        @if ($pelayanandata->tindakan_button == 'panggil')
-                                                            <a href="javascript:void(0);"
-                                                            class="btn btn-sm btn-warning rounded-pill shadow pasien-hadir"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-placement="top"
-                                                            title="Panggil pasien ke ruangan"
-                                                            data-url="{{ route('sopelayana.hadir', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}">
-                                                                <i class="fas fa-bell"></i> Panggil
-                                                            </a>
+                                                    @php
+                                                        $norawat = base64_encode($pelayanandata->nomor_register);
+                                                    @endphp
 
-                                                        @elseif ($pelayanandata->tindakan_button == 'soap')
-                                                            <a href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}"
-                                                            class="btn btn-sm btn-primary rounded-pill shadow"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-placement="top"
-                                                            title="Lanjutkan ke SOAP & Pemeriksaan">
-                                                                <i class="fas fa-file-medical-alt"></i> Pemeriksaan Pasien
-                                                            </a>
+                                                    @if ($pelayanandata->tindakan_button == 'panggil')
+                                                        <button type="button"
+                                                                class="btn btn-outline-warning btn-sm rounded-pill pasien-hadir"
+                                                                data-url="{{ route('sopelayana.hadir', ['norawat' => $norawat]) }}"
+                                                                data-bs-toggle="tooltip"
+                                                                data-bs-placement="top"
+                                                                title="Panggil pasien ke ruangan">
+                                                            <i class="fas fa-bell"></i> Panggil
+                                                        </button>
 
-                                                        @elseif ($pelayanandata->tindakan_button == 'edit')
-                                                            <a href="{{ route('sopelayana.get', ['norawat' => base64_encode($pelayanandata->nomor_register)]) }}"
-                                                            class="btn btn-sm btn-info rounded-pill shadow"
-                                                            data-bs-toggle="tooltip"
-                                                            data-bs-placement="top"
-                                                            title="Edit data SOAP yang sudah diisi">
-                                                                <i class="fas fa-edit"></i> Edit Pemeriksaan Pasien
-                                                            </a>
+                                                    @elseif ($pelayanandata->tindakan_button == 'soap')
+                                                        <button type="button"
+                                                                class="btn btn-outline-primary btn-sm rounded-pill"
+                                                                onclick="window.location.href='{{ route('sopelayana.get', ['norawat' => $norawat]) }}'"
+                                                                data-bs-toggle="tooltip"
+                                                                data-bs-placement="top"
+                                                                title="Lanjutkan ke SOAP & Pemeriksaan">
+                                                            <i class="fas fa-file-medical-alt"></i> Pemeriksaan
+                                                        </button>
 
-                                                        @elseif ($pelayanandata->tindakan_button == 'Complete')
-                                                            <span class="btn btn-sm btn-success rounded-pill shadow-sm disabled"
+                                                    @elseif ($pelayanandata->tindakan_button == 'edit')
+                                                        <button type="button"
+                                                                class="btn btn-outline-info btn-sm rounded-pill"
+                                                                onclick="window.location.href='{{ route('sopelayana.edit', ['norawat' => $norawat]) }}'"
+                                                                data-bs-toggle="tooltip"
+                                                                data-bs-placement="top"
+                                                                title="Edit data SOAP yang sudah diisi">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </button>
+                                                    @elseif ($pelayanandata->tindakan_button == 'Complete')
+                                                        <button type="button"
+                                                                class="btn btn-outline-success btn-sm rounded-pill disabled"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-placement="top"
                                                                 title="Sudah selesai diperiksa oleh dokter">
-                                                                <i class="fas fa-check-circle"></i> Dicek
-                                                            </span>
-                                                        @endif
-                                                    </div>
+                                                            <i class="fas fa-check-circle"></i> Dicek
+                                                        </button>
+                                                    @endif
                                                 </td>
+
+
+
                                             </tr>
                                         @endforeach
                                     </tbody>
