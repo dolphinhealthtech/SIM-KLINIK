@@ -301,7 +301,6 @@ class MenuSeeder extends Seeder
             }
         }
 
-
         // Submenu Obat dan Allkes
 $subMenuObatAllkes = [
     [
@@ -338,6 +337,10 @@ $subMenuObatAllkes = [
         'icon' => 'shopping-cart',
         'order' => 7,
     ],
+    ['name' => 'Mutasi Penyesuaian', 'url' => '/data-master-gudang/stok-penyesuaian-opname', 'icon' => 'fas fa-exchange-alt', 'order' => 8],
+    ['name' => 'Mutasi Penyesuaian Utama','url' => '/data-master-gudang/stok-penyesuaian-opname-utama','icon' => 'fas fa-exchange-alt','order' => 9],
+    ['name' => 'Kartu Stok', 'url' => '/data-master-gudang/kartu-stok', 'icon' => 'fas fa-clipboard-list', 'order' => 10],
+    ['name' => 'Kartu Stok Utama','url' => '/data-master-gudang/kartu-stok-utama','icon' => 'fas fa-id-card','order' => 11],
 
 ];
 
@@ -697,10 +700,7 @@ foreach ($subMenuObatAllkes as $subMenu) {
             ['name' => 'Daftar Harga Jual Utama','url' => '/data-master-gudang/harga-barang-jual-utama','icon' => 'fas fa-tags','order' => 7,],
             ['name' => 'Satuan Inventaris', 'url' => '/data-master-gudang/satuan-inventaris', 'icon' => 'fas fa-ruler-combined', 'order' => 8],
             ['name' => 'Kategori Inventaris', 'url' => '/data-master-gudang/kategori-inventaris', 'icon' => 'fas fa-layer-group', 'order' =>  9],
-            ['name' => 'Mutasi Penyesuaian', 'url' => '/data-master-gudang/stok-penyesuaian-opname', 'icon' => 'fas fa-exchange-alt', 'order' => 10],
-            ['name' => 'Mutasi Penyesuaian Utama','url' => '/data-master-gudang/stok-penyesuaian-opname-utama','icon' => 'fas fa-exchange-alt','order' => 11],
-            ['name' => 'Kartu Stok', 'url' => '/data-master-gudang/kartu-stok', 'icon' => 'fas fa-clipboard-list', 'order' => 12],
-            ['name' => 'Kartu Stok Utama','url' => '/data-master-gudang/kartu-stok-utama','icon' => 'fas fa-id-card','order' => 13],
+
         ];
 
         foreach ($subMenusDataMasterGudang as $subMenu) {

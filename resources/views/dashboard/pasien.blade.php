@@ -290,24 +290,22 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Nomor NIK</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik" name="nik"
-                                                     required
-                                                    style="background-color: #f8f9fa; cursor: pointer; border: 1px solid #ced4da;">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-outline-secondary" type="button" onclick="handleClick()" id="syncButton" title="Ambil NIK">
-                                                        <i id="syncIcon" class="fas fa-sync-alt"></i>
-                                                    </button>
-                                                </div>
+                                                    readonly onclick="handleClick()" required
+                                                    style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
+                                                <button type="button" onclick="handleClick()" class="btn btn-primary">
+                                                    <i class="fas fa-search"></i> Cek BPJS
+                                                </button>
                                             </div>
                                         </div>
 
                                     </div>
 
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Tempat & Tanggal Lahir</label>
                                             <div class="input-group">
@@ -791,23 +789,21 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Nomor NIK</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik_edit" name="nik_edit"
-                                                     required
-                                                    style="background-color: #f8f9fa; cursor: pointer; border: 1px solid #ced4da;">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-outline-secondary" type="button" onclick="handleClick_edit()" id="syncButton" title="Ambil NIK">
-                                                        <i id="syncIcon_edit" class="fas fa-sync-alt"></i>
-                                                    </button>
-                                                </div>
+                                                    readonly onclick="handleClick_edit()" value="{{ old('nik_edit') }}" required
+                                                    style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
+                                                <button type="button" onclick="handleClick_edit()" class="btn btn-primary">
+                                                    <i class="fas fa-search"></i> Cek BPJS
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Tempat & Tanggal Lahir</label>
                                             <div class="input-group">
@@ -1293,6 +1289,13 @@
                         }
                         updateInputValue_edit(namaInput, data.nama);
 
+                        // Langsung ubah warna background
+                        nokaInput.style.backgroundColor = '#fff9c4';
+                        jenisKartuInput.style.backgroundColor = '#fff9c4';
+                        kelasInput.style.backgroundColor = '#fff9c4';
+                        provideInput.style.backgroundColor = '#fff9c4';
+                        expbpjsInput.style.backgroundColor = '#fff9c4';
+
                         var ket = data.aktif || false;
 
                         if (ket === true) {
@@ -1324,6 +1327,7 @@
                                 let noihsInput = document.getElementById("noihs_edit"); // Ambil elemen input noihs
                                 if (noihsData.status === "success" && noihsData.data) {
                                     updateInputValue_edit(noihsInput, noihsData.data); // Update No IHS
+                                    noihsInput.style.backgroundColor = '#fff9c4';
                                 }
                             })
                             .catch(error => {
@@ -1617,6 +1621,13 @@
                     }
                     updateInputValue(namaInput, data.nama);
 
+                    // Langsung ubah warna background
+                    nokaInput.style.backgroundColor = '#fff9c4';
+                    jenisKartuInput.style.backgroundColor = '#fff9c4';
+                    kelasInput.style.backgroundColor = '#fff9c4';
+                    provideInput.style.backgroundColor = '#fff9c4';
+                    expbpjsInput.style.backgroundColor = '#fff9c4';
+
                     var ket = data.aktif || false;
                         if (ket === true) {
                             $('#bpjs_error').hide();
@@ -1646,6 +1657,7 @@
                             let noihsInput = document.getElementById("noihs"); // Ambil elemen input noihs
                             if (noihsData.status === "success" && noihsData.data) {
                                 updateInputValue(noihsInput, noihsData.data); // Update No IHS
+                                noihsInput.style.backgroundColor = '#fff9c4';
                             }
                         })
                         .catch(error => {

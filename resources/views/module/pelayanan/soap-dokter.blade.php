@@ -601,6 +601,7 @@
                                                                 <option value="s.q.d.d.c">s.q.d.d.c</option>
                                                                 <option value="haust">haust</option>
                                                                 <option value="s.i.m.m">s.i.m.m</option>
+                                                                <option value="cth">cth</option>
                                                                 </select>
                                                             </div>
                                                             </div>
