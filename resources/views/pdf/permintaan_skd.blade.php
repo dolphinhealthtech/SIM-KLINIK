@@ -105,6 +105,12 @@
         </tr>
 
         <tr>
+            <td class="info-label">No BPJS</td>
+            <td class="info-separator">:</td>
+            <td>{{ $no_bpjs }}</td>
+        </tr>
+
+        <tr>
             <td class="info-label">Umur</td>
             <td class="info-separator">:</td>
             <td>{{ $umur }}</td>
@@ -127,7 +133,7 @@
 
     <table class="info-table" style="width: 100%;">
         <tr>
-            <td class="info-label">Perawatan</td>
+            <td class="info-label">Diagnosa</td>
             <td class="info-separator">:</td>
             {{-- <td>{{ $diagnosa }}</td> --}}
             <td>{!! nl2br(e($diagnosa ?? '-')) !!}</td>
@@ -161,7 +167,7 @@
                 <td></td>
             </tr>
             <tr>
-                <td style="height: 20px;"></td>
+                <td style="height: 15px;"></td>
                 <td></td>
                 <td></td>
             </tr>

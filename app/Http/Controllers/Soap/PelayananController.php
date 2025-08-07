@@ -1067,6 +1067,7 @@ class PelayananController extends Controller
         $tanggal_lahir = $request->tanggal_lahir;
         $alamat = $request->alamat;
         $umur = $request->umur;
+        $no_bpjs = $request->no_bpjs;
         $now = Carbon::now();
 
         $tgl_awal_proses = Carbon::parse($request->tgl_awal_skd);
@@ -1095,6 +1096,7 @@ class PelayananController extends Controller
             'tanggal_lahir' => $tanggal_lahir,
             'alamat' => $alamat,
             'umur' => $umur,
+            'no_bpjs' => $no_bpjs,
             'now' => $now,
             'jumlah_hari' => $jumlah_hari,
             'namaKlinik' => $namaKlinik,

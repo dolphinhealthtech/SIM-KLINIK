@@ -88,6 +88,7 @@
                             </div>
 
                             <input type="hidden" id="alamat" name="alamat" value="{{ $pelayanan->pasien->alamat }}">
+                            <input type="hidden" id="no_bpjs" name="no_bpjs" value="{{ $pelayanan->pasien->no_bpjs ?? '-' }}">
                         </div>
                     </div>
                 </div>
@@ -768,6 +769,7 @@
         const tanggal_lahir = $('#tanggal_lahir').val();
         const alamat = $('#alamat').val();
         const umur = $('#umur').val();
+        const no_bpjs = $('#no_bpjs').val();
         const csrfToken = '{{ csrf_token() }}';
 
         if (!tgl_pemeriksaan || !tgl_awal || !tgl_akhir || !diagnosa || !kode_surat) {
@@ -810,6 +812,7 @@
                 form.append($('<input>', { type: 'hidden', name: 'tanggal_lahir', value: tanggal_lahir }));
                 form.append($('<input>', { type: 'hidden', name: 'alamat', value: alamat }));
                 form.append($('<input>', { type: 'hidden', name: 'umur', value: umur }));
+                form.append($('<input>', { type: 'hidden', name: 'no_bpjs', value: no_bpjs }));
 
                 $('body').append(form);
                 form.submit();
