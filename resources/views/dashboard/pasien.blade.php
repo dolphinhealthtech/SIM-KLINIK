@@ -278,18 +278,21 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Nomor NIK <span class="text-danger">*</span></label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik" name="nik"
                                                     readonly onclick="handleClick()" required
                                                     style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
+                                                <button type="button" onclick="handleClick()" class="btn btn-primary">
+                                                    <i class="fas fa-search"></i> Cek BPJS
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Tempat & Tanggal Lahir</label>
                                             <div class="input-group">
@@ -776,18 +779,21 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Nomor NIK</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik_edit" name="nik_edit"
                                                     readonly onclick="handleClick_edit()" value="{{ old('nik_edit') }}" required
                                                     style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
+                                                <button type="button" onclick="handleClick_edit()" class="btn btn-primary">
+                                                    <i class="fas fa-search"></i> Cek BPJS
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <label>Tempat & Tanggal Lahir</label>
                                             <div class="input-group">
@@ -1275,6 +1281,13 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                         }
                         updateInputValue_edit(namaInput, data.nama);
 
+                        // Langsung ubah warna background
+                        nokaInput.style.backgroundColor = '#fff9c4';
+                        jenisKartuInput.style.backgroundColor = '#fff9c4';
+                        kelasInput.style.backgroundColor = '#fff9c4';
+                        provideInput.style.backgroundColor = '#fff9c4';
+                        expbpjsInput.style.backgroundColor = '#fff9c4';
+
                         var ket = data.aktif || false;
 
                         if (ket === true) {
@@ -1306,6 +1319,7 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                                 let noihsInput = document.getElementById("noihs_edit"); // Ambil elemen input noihs
                                 if (noihsData.status === "success" && noihsData.data) {
                                     updateInputValue_edit(noihsInput, noihsData.data); // Update No IHS
+                                    noihsInput.style.backgroundColor = '#fff9c4';
                                 }
                             })
                             .catch(error => {
@@ -1578,6 +1592,13 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                     }
                     updateInputValue(namaInput, data.nama);
 
+                    // Langsung ubah warna background
+                    nokaInput.style.backgroundColor = '#fff9c4';
+                    jenisKartuInput.style.backgroundColor = '#fff9c4';
+                    kelasInput.style.backgroundColor = '#fff9c4';
+                    provideInput.style.backgroundColor = '#fff9c4';
+                    expbpjsInput.style.backgroundColor = '#fff9c4';
+
                     var ket = data.aktif || false;
                         if (ket === true) {
                             $('#bpjs_error').hide();
@@ -1607,6 +1628,7 @@ $('#aktif_penjamin_3_edit').on('change', function () {
                             let noihsInput = document.getElementById("noihs"); // Ambil elemen input noihs
                             if (noihsData.status === "success" && noihsData.data) {
                                 updateInputValue(noihsInput, noihsData.data); // Update No IHS
+                                noihsInput.style.backgroundColor = '#fff9c4';
                             }
                         })
                         .catch(error => {
