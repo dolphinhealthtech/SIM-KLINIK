@@ -295,11 +295,13 @@
                                             <label>Nomor NIK</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik" name="nik"
-                                                    readonly onclick="handleClick()" required
-                                                    style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
-                                                <button type="button" onclick="handleClick()" class="btn btn-primary">
-                                                    <i class="fas fa-search"></i> Cek BPJS
-                                                </button>
+                                                     required
+                                                    style="background-color: #f8f9fa; cursor: pointer; border: 1px solid #ced4da;">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="handleClick()" id="syncButton" title="Ambil NIK">
+                                                        <i id="syncIcon" class="fas fa-sync-alt"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -794,11 +796,13 @@
                                             <label>Nomor NIK</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control text-center" id="nik_edit" name="nik_edit"
-                                                    readonly onclick="handleClick_edit()" value="{{ old('nik_edit') }}" required
-                                                    style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #ced4da;">
-                                                <button type="button" onclick="handleClick_edit()" class="btn btn-primary">
-                                                    <i class="fas fa-search"></i> Cek BPJS
-                                                </button>
+                                                     required
+                                                    style="background-color: #f8f9fa; cursor: pointer; border: 1px solid #ced4da;">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="handleClick_edit()" id="syncButton" title="Ambil NIK">
+                                                        <i id="syncIcon_edit" class="fas fa-sync-alt"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

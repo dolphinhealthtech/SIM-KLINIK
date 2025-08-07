@@ -98,116 +98,167 @@
                                         value="{{ $pelayanan->poli->nama }}" readonly>
                                 </div>
 
+                                <input type="hidden" id="alamat" name="alamat"
+                                    value="{{ $pelayanan->pasien->alamat }}">
+                            </div>
+<<<<<<< HEAD
+=======
+
+                            <div class="form-group">
+                                <label for="poli">Poli</label>
+                                <input type="text" class="form-control bg-light" id="poli" name="poli" value="{{ $pelayanan->poli->nama }}" readonly>
+                            </div>
+
                             <input type="hidden" id="alamat" name="alamat" value="{{ $pelayanan->pasien->alamat }}">
+                            <input type="hidden" id="no_bpjs" name="no_bpjs" value="{{ $pelayanan->pasien->no_bpjs ?? '-' }}">
+>>>>>>> 3cad0420682845b323b1f78793004f6f88ae6a08
                         </div>
                     </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="card card-primary card-outline card-outline-tabs">
-                        <div class="card-header p-0 border-bottom-0">
-                        <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="custom-tabs-four-radiologi-tab" data-toggle="pill" href="#custom-tabs-four-radiologi" role="tab" aria-controls="custom-tabs-four-radiologi" aria-selected="true">Radiologi</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="custom-tabs-four-laboratorium-tab" data-toggle="pill" href="#custom-tabs-four-laboratorium" role="tab" aria-controls="custom-tabs-four-laboratorium" aria-selected="false">Laboratorium</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="custom-tabs-four-skd-tab" data-toggle="pill" href="#custom-tabs-four-skd" role="tab" aria-controls="custom-tabs-four-skd" aria-selected="false">Surat Keterangan Dokter</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body">
-                        <div class="tab-content" id="custom-tabs-four-tabContent">
-                            <div class="tab-pane fade show active" id="custom-tabs-four-radiologi" role="tabpanel" aria-labelledby="custom-tabs-four-radiologi-tab">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <input type="hidden" id="rad_table_hidden" name="rad_table_hidden">
-                                        <div style="border: 2px solid black; padding: 10px; width: 100%; max-width: auto; min-height: 255px;">
-                                            <div class="table-responsive" style="max-height: 255px; overflow-y: auto;">
-                                                <table class="table" id="rad_table" style="border: none;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width: 10%">No</th>
-                                                            <th style="width: 35%">Nama Pemeriksaan</th>
-                                                            <th style="width: 35%">Posisi</th>
-                                                            <th style="width: 20%">Metode</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {{-- DATA TERISI OTOMATIS NANTI --}}
-                                                    </tbody>
-                                                </table>
+                    <div class="col-md-8">
+                        <div class="card card-primary card-outline card-outline-tabs">
+                            <div class="card-header p-0 border-bottom-0">
+                                <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="custom-tabs-four-radiologi-tab" data-toggle="pill"
+                                            href="#custom-tabs-four-radiologi" role="tab"
+                                            aria-controls="custom-tabs-four-radiologi" aria-selected="true">Radiologi</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="custom-tabs-four-laboratorium-tab" data-toggle="pill"
+                                            href="#custom-tabs-four-laboratorium" role="tab"
+                                            aria-controls="custom-tabs-four-laboratorium"
+                                            aria-selected="false">Laboratorium</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="custom-tabs-four-skd-tab" data-toggle="pill"
+                                            href="#custom-tabs-four-skd" role="tab"
+                                            aria-controls="custom-tabs-four-skd" aria-selected="false">SKDP</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="custom-tabs-four-sakit-tab" data-toggle="pill"
+                                            href="#custom-tabs-four-sakit" role="tab"
+                                            aria-controls="custom-tabs-four-sakit" aria-selected="false">Surat Sakit</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="custom-tabs-four-sehat-tab" data-toggle="pill"
+                                            href="#custom-tabs-four-sehat" role="tab"
+                                            aria-controls="custom-tabs-four-sehat" aria-selected="false">Surat Sehat</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="custom-tabs-four-kematian-tab" data-toggle="pill"
+                                            href="#custom-tabs-four-kematian" role="tab"
+                                            aria-controls="custom-tabs-four-kematian" aria-selected="false">Surat
+                                            Kematian</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-four-tabContent">
+                                    <div class="tab-pane fade show active" id="custom-tabs-four-radiologi"
+                                        role="tabpanel" aria-labelledby="custom-tabs-four-radiologi-tab">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <input type="hidden" id="rad_table_hidden" name="rad_table_hidden">
+                                                <div
+                                                    style="border: 2px solid black; padding: 10px; width: 100%; max-width: auto; min-height: 255px;">
+                                                    <div class="table-responsive"
+                                                        style="max-height: 255px; overflow-y: auto;">
+                                                        <table class="table" id="rad_table" style="border: none;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="width: 10%">No</th>
+                                                                    <th style="width: 35%">Nama Pemeriksaan</th>
+                                                                    <th style="width: 35%">Posisi</th>
+                                                                    <th style="width: 20%">Metode</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {{-- DATA TERISI OTOMATIS NANTI --}}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group row align-items-center mt-3">
-                                            <div class="col-md-2">
-                                                <label for="pemeriksaan_radiologi" class="col-form-label">Pemeriksaan</label>
-                                            </div>
-                                            <div class="col-md-8">
-                                                <select class="form-control select2bs4" style="width: 100%;" id="pemeriksaan_radiologi" name="pemeriksaan_radiologi">
-                                                    <option value="" disabled selected>-- Pilih --</option>
-                                                    @foreach ($radiologi_pemeriksaan as $radiologi_pemeriksaan_item)
-                                                        <option value="{{ $radiologi_pemeriksaan_item->nama }}">{{ $radiologi_pemeriksaan_item->nama }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-primary w-100" id="btn-tambah-rad">Tambah</button>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row align-items-center mt-3">
-                                            <div class="col-md-2">
-                                                <label class="col-form-label">Posisi</label>
-                                            </div>
-                                            <div class="col-md-5">
-                                                <select class="form-control select2bs4" style="width: 100%;" id="jenis_posisi_radiologi" name="jenis_posisi_radiologi">
-                                                    <option value="" disabled selected>-- Pilih --</option>
-                                                    @foreach ($radiologi_jenis as $radiologi_jenis_item)
-                                                        <option value="{{ $radiologi_jenis_item->nama }}">{{ $radiologi_jenis_item->nama }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <select class="form-control select2bs4" style="width: 100%;" id="posisi_radiologi" name="posisi_radiologi">
-                                                    <option value="" disabled selected>-- Pilih --</option>
-                                                    <option value="R">R</option>
-                                                    <option value="L">L</option>
-                                                    <option value="Both">Both</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-danger w-100" id="btn-hapus-rad">Hapus</button>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row align-items-center mt-3">
-                                            <div class="col-md-2">
-                                                <label class="col-form-label">Metode</label>
-                                            </div>
-                                            <div class="col-md-5">
-                                                <select class="form-control select2bs4" style="width: 100%;" id="metode_radiologi" name="metode_radiologi">
-                                                    <option value="" disabled selected>-- Pilih --</option>
-                                                    <option value="Rutin">Rutin</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-5">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row mt-3">
-                                            <div class="col-md-2">
-                                                <label class="col-form-label">Diagnosa Referensi</label>
-                                            </div>
-                                            <div class="col-md-10">
-                                                <select class="form-control select2bs4" style="width: 100%;" id="diagnosa_radiologi" name="diagnosa_radiologi">
-                                                    <option value="" disabled selected>-- Pilih --</option>
-                                                    @foreach ($data_icd9 as $radiologi)
-                                                        <option value="({{$radiologi->kode_icd9}}) {{$radiologi->nama_icd9}}">({{$radiologi->kode_icd9}}) {{$radiologi->nama_icd9}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-12">
+                                                <div class="form-group row align-items-center mt-3">
+                                                    <div class="col-md-2">
+                                                        <label for="pemeriksaan_radiologi"
+                                                            class="col-form-label">Pemeriksaan</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <select class="form-control select2bs4" style="width: 100%;"
+                                                            id="pemeriksaan_radiologi" name="pemeriksaan_radiologi">
+                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                            @foreach ($radiologi_pemeriksaan as $radiologi_pemeriksaan_item)
+                                                                <option value="{{ $radiologi_pemeriksaan_item->nama }}">
+                                                                    {{ $radiologi_pemeriksaan_item->nama }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <button type="button" class="btn btn-primary w-100"
+                                                            id="btn-tambah-rad">Tambah</button>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row align-items-center mt-3">
+                                                    <div class="col-md-2">
+                                                        <label class="col-form-label">Posisi</label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <select class="form-control select2bs4" style="width: 100%;"
+                                                            id="jenis_posisi_radiologi" name="jenis_posisi_radiologi">
+                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                            @foreach ($radiologi_jenis as $radiologi_jenis_item)
+                                                                <option value="{{ $radiologi_jenis_item->nama }}">
+                                                                    {{ $radiologi_jenis_item->nama }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <select class="form-control select2bs4" style="width: 100%;"
+                                                            id="posisi_radiologi" name="posisi_radiologi">
+                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                            <option value="R">R</option>
+                                                            <option value="L">L</option>
+                                                            <option value="Both">Both</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <button type="button" class="btn btn-danger w-100"
+                                                            id="btn-hapus-rad">Hapus</button>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row align-items-center mt-3">
+                                                    <div class="col-md-2">
+                                                        <label class="col-form-label">Metode</label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <select class="form-control select2bs4" style="width: 100%;"
+                                                            id="metode_radiologi" name="metode_radiologi">
+                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                            <option value="Rutin">Rutin</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row mt-3">
+                                                    <div class="col-md-2">
+                                                        <label class="col-form-label">Diagnosa Referensi</label>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <select class="form-control select2bs4" style="width: 100%;"
+                                                            id="diagnosa_radiologi" name="diagnosa_radiologi">
+                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                            @foreach ($data_icd9 as $radiologi)
+                                                                <option
+                                                                    value="({{ $radiologi->kode_icd9 }}) {{ $radiologi->nama_icd9 }}">
+                                                                    ({{ $radiologi->kode_icd9 }})
+                                                                    {{ $radiologi->nama_icd9 }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-2">
 
                                                     </div>
                                                     <div class="col-md-10">
@@ -1087,12 +1138,21 @@
                 return;
             }
 
-            const newItem = {
-                pemeriksaan,
-                jenis_posisi: jenisPosisi,
-                posisi,
-                metode
-            };
+<script>
+    $('#btn-print-skd').on('click', function () {
+        const tgl_pemeriksaan = $('#tanggal_pemeriksaan_skd').val();
+        const kode_surat = $('#kode_surat_skd').val();
+        const tgl_awal = $('#tanggal_mulai_istirahat_skd').val();
+        const tgl_akhir = $('#tanggal_akhir_istirahat_skd').val();
+        const diagnosa = $('#diagnosa_skd').val();
+        const nama_pasien = $('#nama').val();
+        const dokter_pengirim = $('#dokter_pengirim').val();
+        const jenis_kelamin = $('#jenis_kelamin').val();
+        const tanggal_lahir = $('#tanggal_lahir').val();
+        const alamat = $('#alamat').val();
+        const umur = $('#umur').val();
+        const no_bpjs = $('#no_bpjs').val();
+        const csrfToken = '{{ csrf_token() }}';
 
             const isDuplicate = radData.some(item =>
                 item.pemeriksaan === newItem.pemeriksaan
@@ -1104,7 +1164,33 @@
                     title: 'Data Duplikat',
                     text: `Data "${pemeriksaan}" sudah ditambahkan ke dalam tabel.`,
                 });
-                return;
+
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: '_token',
+                    value: csrfToken
+                }));
+                form.append($('<input>', { type: 'hidden', name: 'tgl_pemeriksaan_skd', value: tgl_pemeriksaan }));
+                form.append($('<input>', { type: 'hidden', name: 'kode_surat_skd', value: kode_surat }));
+                form.append($('<input>', { type: 'hidden', name: 'tgl_awal_skd', value: tgl_awal }));
+                form.append($('<input>', { type: 'hidden', name: 'tgl_akhir_skd', value: tgl_akhir }));
+                form.append($('<input>', { type: 'hidden', name: 'diagnosa_skd', value: diagnosa }));
+                form.append($('<input>', { type: 'hidden', name: 'nama_pasien', value: nama_pasien }));
+                form.append($('<input>', { type: 'hidden', name: 'dokter_pengirim', value: dokter_pengirim }));
+                form.append($('<input>', { type: 'hidden', name: 'jenis_kelamin', value: jenis_kelamin }));
+                form.append($('<input>', { type: 'hidden', name: 'tanggal_lahir', value: tanggal_lahir }));
+                form.append($('<input>', { type: 'hidden', name: 'alamat', value: alamat }));
+                form.append($('<input>', { type: 'hidden', name: 'umur', value: umur }));
+                form.append($('<input>', { type: 'hidden', name: 'no_bpjs', value: no_bpjs }));
+
+                $('body').append(form);
+                form.submit();
+                form.remove();
+
+                // Setelah submit, redirect ke route dokter
+                setTimeout(() => {
+                    window.location.href = '{{ route("pelayanad.get") }}';
+                }, 1000); // delay 1 detik agar PDF sempat terbuka
             }
 
             radData.push(newItem);
@@ -1248,20 +1334,20 @@
         });
     </script>
 
-<script>
-    $('#btn-print-skd').on('click', function () {
-        const tgl_pemeriksaan = $('#tanggal_pemeriksaan_skd').val();
-        const kode_surat = $('#kode_surat_skd').val();
-        const tgl_awal = $('#tanggal_mulai_istirahat_skd').val();
-        const tgl_akhir = $('#tanggal_akhir_istirahat_skd').val();
-        const diagnosa = $('#diagnosa_skd').val();
-        const nama_pasien = $('#nama').val();
-        const dokter_pengirim = $('#dokter_pengirim').val();
-        const jenis_kelamin = $('#jenis_kelamin').val();
-        const tanggal_lahir = $('#tanggal_lahir').val();
-        const alamat = $('#alamat').val();
-        const umur = $('#umur').val();
-        const csrfToken = '{{ csrf_token() }}';
+    <script>
+        $('#btn-print-skd').on('click', function() {
+            const tgl_pemeriksaan = $('#tanggal_pemeriksaan_skd').val();
+            const kode_surat = $('#kode_surat_skd').val();
+            const tgl_awal = $('#tanggal_mulai_istirahat_skd').val();
+            const tgl_akhir = $('#tanggal_akhir_istirahat_skd').val();
+            const diagnosa = $('#diagnosa_skd').val();
+            const nama_pasien = $('#nama').val();
+            const dokter_pengirim = $('#dokter_pengirim').val();
+            const jenis_kelamin = $('#jenis_kelamin').val();
+            const tanggal_lahir = $('#tanggal_lahir').val();
+            const alamat = $('#alamat').val();
+            const umur = $('#umur').val();
+            const csrfToken = '{{ csrf_token() }}';
 
             if (!tgl_pemeriksaan || !tgl_awal || !tgl_akhir || !diagnosa || !kode_surat) {
                 Swal.fire({
@@ -1287,22 +1373,66 @@
                         target: '_blank'
                     });
 
-                form.append($('<input>', {
-                    type: 'hidden',
-                    name: '_token',
-                    value: csrfToken
-                }));
-                form.append($('<input>', { type: 'hidden', name: 'tgl_pemeriksaan_skd', value: tgl_pemeriksaan }));
-                form.append($('<input>', { type: 'hidden', name: 'kode_surat_skd', value: kode_surat }));
-                form.append($('<input>', { type: 'hidden', name: 'tgl_awal_skd', value: tgl_awal }));
-                form.append($('<input>', { type: 'hidden', name: 'tgl_akhir_skd', value: tgl_akhir }));
-                form.append($('<input>', { type: 'hidden', name: 'diagnosa_skd', value: diagnosa }));
-                form.append($('<input>', { type: 'hidden', name: 'nama_pasien', value: nama_pasien }));
-                form.append($('<input>', { type: 'hidden', name: 'dokter_pengirim', value: dokter_pengirim }));
-                form.append($('<input>', { type: 'hidden', name: 'jenis_kelamin', value: jenis_kelamin }));
-                form.append($('<input>', { type: 'hidden', name: 'tanggal_lahir', value: tanggal_lahir }));
-                form.append($('<input>', { type: 'hidden', name: 'alamat', value: alamat }));
-                form.append($('<input>', { type: 'hidden', name: 'umur', value: umur }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: '_token',
+                        value: csrfToken
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'tgl_pemeriksaan_skd',
+                        value: tgl_pemeriksaan
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'kode_surat_skd',
+                        value: kode_surat
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'tgl_awal_skd',
+                        value: tgl_awal
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'tgl_akhir_skd',
+                        value: tgl_akhir
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'diagnosa_skd',
+                        value: diagnosa
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'nama_pasien',
+                        value: nama_pasien
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'dokter_pengirim',
+                        value: dokter_pengirim
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'jenis_kelamin',
+                        value: jenis_kelamin
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'tanggal_lahir',
+                        value: tanggal_lahir
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'alamat',
+                        value: alamat
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'umur',
+                        value: umur
+                    }));
 
                     $('body').append(form);
                     form.submit();
