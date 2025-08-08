@@ -146,6 +146,11 @@
                                                                 </table>
                                                             </div>
                                                         </div>
+
+                                                        <div class="form-group">
+                                                            <label for="summernote_anamnesa" class="d-block">Anamnesa :</label>
+                                                            <textarea class="form-control" id="summernote_anamnesa" name="summernote_anamnesa" rows="3"></textarea>
+                                                        </div>
                                                     </div>
 
                                                     <div class="tab-pane fade" id="custom-tabs-four-objectiv" role="tabpanel" aria-labelledby="custom-tabs-four-objectiv-tab">
@@ -317,7 +322,7 @@
                                                                 <div class="form-group row align-items-center">
                                                                     <label for="icd10" class="ml-2 col-form-label">Diagnosa (ICD 10)</label>
                                                                     <div class="ml-1">
-                                                                        <button type="button" class="ml-2 btn btn-default" id="kodeICD10">KODE ICD 10</button>
+                                                                        <button type="button" class="ml-2 btn btn-default" id="kodeICD10" style="cursor: not-allowed;" data-toggle="tooltip" data-placement="top" title="Silahkan pilih pada kolom dibawah">KODE ICD 10</button>
                                                                         <button type="button" class="ml-2 btn btn-default dropdown-toggle" id="dropdownMenuButtonICD10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                             <span id="prioritas_icd_10" class="caret">Pilih</span>
                                                                         </button>
@@ -348,7 +353,7 @@
                                                                     <label for="icd9" class="ml-2 col-form-label">Tindakan (ICD 9)</label>
                                                                     <div class="ml-1">
                                                                         <!-- Tombol yang akan menampilkan kode ICD 9 -->
-                                                                        <button type="button" class="ml-2 btn btn-default" id="kodeICD9">KODE ICD 9</button>
+                                                                        <button type="button" class="ml-2 btn btn-default" id="kodeICD9" style="cursor: not-allowed;" data-toggle="tooltip" data-placement="top" title="Silahkan pilih pada kolom dibawah">KODE ICD 9</button>
                                                                     </div>
                                                                 </div>
 
@@ -846,7 +851,11 @@
     <!-- /.content -->
 </div>
 
-
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
 
 <!-- Modal Bootstrap -->
 <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
@@ -2744,6 +2753,11 @@ $('#acceptICD10').on('click', function () {
 {{-- sctipt untuk init summernote --}}
 <script>
     $(function () {
+
+        $('#summernote_anamnesa').summernote({
+            height: 100, // Tentukan tinggi editor (dalam px)
+            tabsize: 2
+        });
 
         $('#summernote').summernote({
             height: 300, // Tentukan tinggi editor (dalam px)
