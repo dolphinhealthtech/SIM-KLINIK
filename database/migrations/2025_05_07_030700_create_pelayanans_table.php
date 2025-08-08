@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('tanggal_kujungan');
             $table->string('poli_id');
             $table->string('dokter_id');
-            $table->string('kunjungan');
+            $table->string('kunjungan')->nullable();
             $table->timestamps();
         });
     }

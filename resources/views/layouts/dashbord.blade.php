@@ -14,11 +14,6 @@
         $settings = WebSetting::first();
     @endphp
     <div class="wrapper">
-        <!-- Preloader -->
-        <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="{{ asset('setting/' . ($settings->profile_image ?? 'default.jpg')) }}"
-                alt="AdminLTELogo" height="60" width="60">
-        </div>
 
         <!-- Navbar -->
         @include('components.dashboard.navbar')

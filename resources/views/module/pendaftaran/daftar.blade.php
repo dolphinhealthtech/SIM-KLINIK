@@ -6,8 +6,8 @@
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0">Data Pendaftaran Pasien</h1>
+                <div class="col-sm-12">
+                    <h5 class="text-muted text-center">Selamat datang di modul Pendaftaran Pasien</h5>                    
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -71,28 +71,24 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#addreispasienModal">
-                                    <i class="fas fa-plus"></i> Tambah
-                                </button>
-                            </div>
-                        </div>
                         <div class="card-body">
                             <table id="userstabel" class="table table-bordered table-striped">
+                                <!-- <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#addreispasienModal">
+                                    <i class="fas fa-plus"></i> Tambah
+                                </button> -->
                                 <thead>
                                     <tr>
-                                        <th class="text-center">Nama Pasien</th>
+                                        <th class="text-center">Pasien</th>
                                         <th class="text-center">Pendaftaran</th>
-                                        <th class="text-center">No Registrasi</th>
+                                        <th class="text-center">No.Registrasi</th>
                                         <th class="text-center">Tanggal Registrasi</th>
-                                        <th class="text-center">No RM</th>
-                                        <th class="text-center">No. Antrian</th>
-                                        <th class="text-center">Poli Tujuan</th>
+                                        <th class="text-center">No.RM</th>
+                                        <th class="text-center">No.Antrian</th>
+                                        <th class="text-center">Poli</th>
                                         <th class="text-center">Penjamin</th>
-                                        <th class="text-center">Nama Dokter</th>
-                                        <th class="text-center" width="15%">Action</th>
+                                        <th class="text-center">Dokter</th>
+                                        <th class="text-center" width="15%">Tindakan</th>
                                     </tr>
                                 </thead>
                                 @foreach ($pendaftaran as $pendaftarandata)
@@ -121,27 +117,36 @@
                                         <td class="text-center">{{ $pendaftarandata->penjamin->nama }}</td>
                                         <td class="text-center">{{ $pendaftarandata->dokter->namauser->name }}</td>
                                         <td class="text-center">
-                                            <div class="dropdown">
-                                                <button class="btn btn-success btn-flat dropdown-toggle dropdown-icon" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                                   Pilih Aksi
-                                                </button>
-                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                    <li><a class="dropdown-item batal-data-pasien" href="javascript:void(0)" data-id="{{ $pendaftarandata->status->id }}"
-                                                        data-nama-pasien="{{ $pendaftarandata->pasien->nama }}" ><i class="fas fa-trash"></i> Batal</a></li>
-                                                        @if ($pendaftarandata->status->status_pendaftaran == 1)
-                                                        <li>
-                                                            <a class="dropdown-item panggil-data-pasien"
-                                                               href="javascript:void(0)"
-                                                               data-id="{{ $pendaftarandata->status->id }}"
-                                                               data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
-                                                               <i class="fas fa-phone"></i> Hadir
-                                                            </a>
-                                                        </li>
-                                                    @endif
-                                                    <li><a class="dropdown-item dokter-data-pasien" href="javascript:void(0)" data-id="{{ $pendaftarandata->id }}" data-poli="{{ $pendaftarandata->poli_id }}" data-nama="{{ $pendaftarandata->pasien->nama }}"  data-tgl-kunjung="{{ $pendaftarandata->tanggal_kujungan }}"><i class="fas fa-edit"></i> Rubah Dokter</a></li>
-                                                </ul>
-                                            </div>
+                                            <!-- Batal -->
+                                            @if ($pendaftarandata->status->status_pendaftaran == 1)
+                                            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill batal-data-pasien me-1"
+                                                data-id="{{ $pendaftarandata->status->id }}"
+                                                data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
+                                                <i class="fas fa-times-circle"></i> Batal
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill panggil-data-pasien me-1"
+                                                data-id="{{ $pendaftarandata->status->id }}"
+                                                data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
+                                                <i class="fas fa-phone"></i> Hadir
+                                            </button>
+                                            @endif
+                                            @if ($pendaftarandata->status->status_pendaftaran == 2)
+                                            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill batal-data-pasien-pcare me-1"
+                                                data-id="{{ $pendaftarandata->status->id }}"
+                                                data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
+                                                <i class="fas fa-times-circle"></i> Batal
+                                            </button>
+                                            <!-- Ubah Dokter -->
+                                            <button type="button" class="btn btn-outline-warning btn-sm rounded-pill dokter-data-pasien"
+                                                data-id="{{ $pendaftarandata->id }}"
+                                                data-poli="{{ $pendaftarandata->poli_id }}"
+                                                data-nama="{{ $pendaftarandata->pasien->nama }}"
+                                                data-tgl-kunjung="{{ $pendaftarandata->tanggal_kujungan }}">
+                                                <i class="fas fa-user-md"></i> Ubah Dokter
+                                            </button>
+                                            @endif
                                         </td>
+
                                     </tbody>
                                     @endforeach
                             </table>
@@ -508,38 +513,28 @@
                             }
                         },
                         error: function(xhr, status, error) {
-                            let errorMessage = 'Terjadi kesalahan saat menyimpan data';
+                            let errorMessage = 'Terjadi kesalahan saat menyimpan data.';
 
-                            // Handle validation errors (422)
                             if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                                let errors = xhr.responseJSON.errors;
-                                let errorList = [];
-
-                                // Loop through each error field
-                                Object.keys(errors).forEach(function(field) {
-                                    errors[field].forEach(function(message) {
-                                        errorList.push(message);
-                                    });
+                                // Validasi Laravel
+                                let messages = [];
+                                Object.values(xhr.responseJSON.errors).forEach(msgArr => {
+                                    msgArr.forEach(msg => messages.push(msg));
                                 });
-
-                                errorMessage = errorList.join('<br>');
-                            }
-                            // Handle other types of errors
-                            else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = messages.join('<br>');
+                            } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                // Coba ambil dari "message"
                                 errorMessage = xhr.responseJSON.message;
-                            }
-                            // Handle server errors (500, etc)
-                            else if (xhr.status >= 500) {
-                                errorMessage = 'Terjadi kesalahan server. Silakan coba lagi.';
-                            }
-                            // Handle network errors
-                            else if (xhr.status === 0) {
-                                errorMessage = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
+                            } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                                // Ambil dari "error" (kasus kamu)
+                                errorMessage = xhr.responseJSON.error;
+                            } else if (xhr.status >= 500) {
+                                errorMessage = 'Terjadi kesalahan server.';
                             }
 
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Gagal Menyimpan Data!',
+                                title: 'Gagal!',
                                 html: errorMessage,
                                 confirmButtonText: 'OK'
                             });
@@ -717,12 +712,100 @@
             "lengthChange": false,
             "autoWidth": false,
             "buttons": [
-                "csv",
-                "excel",
-                "pdf",
-                "print",
-            ]
+            {
+                text: '<i class="fas fa-plus"></i> Tambah',
+                type: 'button',                
+                className: 'btn btn-primary',
+                action: function () {
+                $('#addreispasienModal').modal('show'); // <== Bootstrap 4-compatible
+                }
+            },
+            ],
+            "language": {
+                "search": "Cari:",
+                "lengthMenu": "Tampilkan _MENU_ entri",
+                "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ entri",
+                "infoEmpty": "Tidak ada entri yang tersedia",
+                "infoFiltered": "(difilter dari _MAX_ total entri)",
+            }
         }).buttons().container().appendTo('#userstabel_wrapper .col-md-6:eq(0)');
+    });
+
+    // SweetAlert untuk Batal Pendaftaran
+    $(document).on('click', '.batal-data-pasien-pcare', function() {
+        let id = $(this).data('id');
+        let name = $(this).data('nama-pasien');
+
+        Swal.fire({
+            title: 'Batal Pendaftaran PCare',    
+            html: `
+                <div class="text-left">
+                    <p>Apakah Anda yakin ingin membatalkan antrian pasien <strong>${name}</strong>?</p>                    
+                </div>
+            `,          
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Batalkan!',
+            cancelButtonText: 'Tidak',            
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Tampilkan loading
+                Swal.fire({
+                    title: 'Membatalkan...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
+
+                // Submit pembatalan
+                $.ajax({
+                    url: "{{ route('pendaftaran.batal.pcare') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        batalid_delete: id                        
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Pendaftaran berhasil dibatalkan',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMessage = 'Terjadi kesalahan saat membatalkan pendaftaran';
+
+                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                            let errors = xhr.responseJSON.errors;
+                            let errorList = [];
+                            Object.keys(errors).forEach(function(field) {
+                                errors[field].forEach(function(message) {
+                                    errorList.push(message);
+                                });
+                            });
+                            errorMessage = errorList.join('<br>');
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal Batalkan Pendaftaran!',
+                            html: errorMessage,
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        });
     });
 
     // SweetAlert untuk Batal Pendaftaran
@@ -731,7 +814,7 @@
         let name = $(this).data('nama-pasien');
 
         Swal.fire({
-            title: 'Batal Pendaftaran',
+            title: 'Batal Pendaftaran Antrian', 
             html: `
                 <div class="text-left">
                     <p>Apakah Anda yakin ingin membatalkan antrian pasien <strong>${name}</strong>?</p>
@@ -740,7 +823,7 @@
                         <input type="text" id="alasan_batal" class="form-control" placeholder="Masukkan alasan pembatalan" required>
                     </div>
                 </div>
-            `,
+            `,       
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#dc3545',

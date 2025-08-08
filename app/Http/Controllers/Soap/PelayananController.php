@@ -27,6 +27,7 @@ use App\Models\jenis_diet;
 use App\Models\nama_makanan;
 use App\Models\Pendaftaran_rawat_jalan;
 use App\Http\Controllers\PcareController;
+use App\Models\dokter;
 use App\Models\laboratorium_bidang;
 use App\Models\laboratorium_bidang_sub;
 use App\Models\radiologi_pemeriksaan;
@@ -59,14 +60,14 @@ class PelayananController extends Controller
             'pendaftaran.status',
             'pelayanan_soap'
         ])
-        ->whereDate('created_at', Carbon::today()) // Filter hanya hari ini
-        ->get()
-        ->filter(function ($item) {
-            $statusPanggil = $item->pendaftaran->status->status_panggil ?? null;
-            $soapExists = $item->pelayanan_soap && $item->pelayanan_soap->isNotEmpty();
+            ->whereDate('created_at', Carbon::today()) // Filter hanya hari ini
+            ->get()
+            ->filter(function ($item) {
+                $statusPanggil = $item->pendaftaran->status->status_panggil ?? null;
+                $soapExists = $item->pelayanan_soap && $item->pelayanan_soap->isNotEmpty();
 
-            return !($statusPanggil == 2 && $soapExists); // sembunyikan jika memenuhi syarat
-        });
+                return !($statusPanggil == 2 && $soapExists); // sembunyikan jika memenuhi syarat
+            });
 
 
         foreach ($pelayanan as $item) {
@@ -118,6 +119,38 @@ class PelayananController extends Controller
 
         $htt_pemeriksaan = htt_pemeriksaan::all();
         return view('module.pelayanan.so-perawat', compact('title', 'pelayanan', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
+    }
+
+    public function sopelayananedit($norawat)
+    {
+        $nomor_rawat = base64_decode($norawat);
+        $title = "Pelayanan";
+        $pelayanan = pelayanan::with('poli', 'dokter.namauser', 'pasien.kelamin', 'pendaftaran.penjamin')->where('nomor_register', $nomor_rawat)->first();
+        $pelayanan_soap = pelayanan_soap_perawat::where('no_rawat', $nomor_rawat)->first();
+
+        $tgl_lahir = Carbon::createFromFormat('Y-m-d', $pelayanan->pasien->tanggal_lahir);
+        $diff = $tgl_lahir->diff(Carbon::now());
+
+        $umurTahun = $diff->y;
+        $umurBulan = $diff->m;
+        $umurHari = $diff->d;
+
+        $umur = '';
+        if ($umurTahun > 0) {
+            $umur .= $umurTahun . ' Tahun ';
+        }
+        if ($umurBulan > 0 || $umurTahun > 0) {
+            $umur .= $umurBulan . ' Bulan ';
+        }
+        $umur .= $umurHari . ' Hari';
+
+        $gsc_eye = gcs_eye::all();
+        $gcs_verbal = gcs_verbal::all();
+        $gcs_motorik = gcs_motorik::all();
+        $gcs_kesadaran = gcs_kesadaran::all();
+
+        $htt_pemeriksaan = htt_pemeriksaan::all();
+        return view('module.pelayanan.so-perawat_edit', compact('title', 'pelayanan', 'pelayanan_soap', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
     }
 
     public function getSubPemeriksaan($id)
@@ -221,6 +254,62 @@ class PelayananController extends Controller
         }
     }
 
+    public function sopelayananupdate(Request $request)
+    {
+        try {
+            // Simpan data ke database
+            $pemeriksaan = pelayanan_soap_perawat::where('no_rawat', $request->no_rawat)->update([
+                'nomor_rm' => $request->nomor_rm,
+                'nama' => $request->nama,
+                'no_rawat' => $request->no_rawat,
+                'sex' => $request->sex,
+                'penjamin' => $request->penjamin,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'umur' => $request->umur,
+                'tableData' => json_encode($request->tableData),
+                'sistol' => $request->sistol,
+                'distol' => $request->distol,
+                'tensi' => $request->tensi,
+                'suhu' => $request->suhu,
+                'nadi' => $request->nadi,
+                'rr' => $request->rr,
+                'tinggi' => $request->tinggi,
+                'berat' => $request->berat,
+                'spo2' => $request->spo2,
+                'lingkar_perut' => $request->lingkar_perut,
+                'nilai_bmi' => $request->nilai_bmi,
+                'status_bmi' => $request->status_bmi,
+                'jenis_alergi' => $request->jenis_alergi,
+                'alergi' => $request->alergi,
+                'eye' => $request->eye,
+                'verbal' => $request->verbal,
+                'motorik' => $request->motorik,
+                'summernote' => $request->summernote,
+                'user_input_id' => Auth::user()->id,
+                'user_input_name' => Auth::user()->name,
+            ]);
+
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'pelayanan soap perawat berhasil ditambahkan!'
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'pelayanan soap perawat Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan pelayanan soap perawat!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function sopelayananpanggil($norawat)
     {
         $nomor_rawat = base64_decode($norawat);
@@ -252,14 +341,30 @@ class PelayananController extends Controller
     public function pelayana_dokter()
     {
         $title = "Pelayanan";
-        // $pelayanan = pelayanan::with('poli','dokter.namauser', 'pasien','pendaftaran.status')->whereHas('pelayanan_so')->get();
-        $pelayanan = Pelayanan::with('poli', 'dokter.namauser', 'pasien', 'pendaftaran.status')
-            ->whereHas('pelayanan_so')
+
+       $user = Auth::user(); // Ambil user yang login
+        $pelayananQuery = Pelayanan::with([
+                'poli',
+                'dokter.namauser',
+                'pasien',
+                'pendaftaran.status'
+            ])
+            ->whereHas('pelayanan_so') // Pastikan ada SOAP
             ->whereHas('pendaftaran.status', function ($query) {
                 $query->where('status_panggil', '!=', 3);
             })
-            // ->whereDate('created_at', Carbon::today()) // Filter hanya hari ini
-            ->get();
+            ->whereDate('created_at', Carbon::today());
+
+        // Tambahkan filter jika user adalah dokter
+        if ($user->hasRole('Dokter')) {
+            $dokterId = Dokter::where('users', $user->id)->value('id');
+
+            if ($dokterId) {
+                $pelayananQuery->where('dokter_id', $dokterId);
+            }
+        }
+
+        $pelayanan = $pelayananQuery->get();
 
 
         foreach ($pelayanan as $item) {
@@ -477,6 +582,49 @@ class PelayananController extends Controller
         return view('module.pelayanan.soap-dokter', compact('title', 'satuan', 'jenis_diete', 'obat', 'jenis_makanan_diet', 'tindakan', 'kategori', 'icd10', 'icd9', 'pelayanan', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
     }
 
+    public function soappelayananedit($norawat)
+    {
+        $nomor_rawat = base64_decode($norawat);
+        $title = "Pelayanan";
+        $pelayanan = pelayanan::with('poli', 'dokter.namauser', 'pasien.kelamin', 'pendaftaran.penjamin')->where('nomor_register', $nomor_rawat)->first();
+
+        $tgl_lahir = Carbon::createFromFormat('Y-m-d', $pelayanan->pasien->tanggal_lahir);
+        $diff = $tgl_lahir->diff(Carbon::now());
+
+        $umurTahun = $diff->y;
+        $umurBulan = $diff->m;
+        $umurHari = $diff->d;
+
+        $umur = '';
+        if ($umurTahun > 0) {
+            $umur .= $umurTahun . ' Tahun ';
+        }
+        if ($umurBulan > 0 || $umurTahun > 0) {
+            $umur .= $umurBulan . ' Bulan ';
+        }
+        $umur .= $umurHari . ' Hari';
+
+        $gsc_eye = gcs_eye::all();
+        $gcs_verbal = gcs_verbal::all();
+        $gcs_motorik = gcs_motorik::all();
+        $gcs_kesadaran = gcs_kesadaran::all();
+
+        $htt_pemeriksaan = htt_pemeriksaan::all();
+        $icd10 = icd10::all();
+        $icd9 = icd9::all();
+
+        $kategori = perawatan_kategori::all();
+        $tindakan = perawatan_tindakan::all();
+
+        $jenis_diete = jenis_diet::all();
+        $jenis_makanan_diet = nama_makanan::all();
+
+        $obat = gudang_barang::all();
+        $satuan = gudang_satuan::all();
+
+        return view('module.pelayanan.soap-dokter_edit', compact('title','satuan', 'jenis_diete', 'obat', 'jenis_makanan_diet', 'tindakan', 'kategori', 'icd10', 'icd9', 'pelayanan', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
+    }
+
     public function soappelayananandd(Request $request)
     {
         $request->validate([
@@ -652,9 +800,199 @@ class PelayananController extends Controller
         }
     }
 
+    public function soappelayananupdate(Request $request)
+    {
+        $request->validate([
+            'nomor_rm' => 'required|string',
+            'nama' => 'required|string',
+            'no_rawat' => 'required|string',
+            'sex' => 'required|string',
+            'penjamin' => 'required|string',
+            'tanggal_lahir' => 'required|date',
+            'umur' => 'nullable|string',
+            'tableData' => 'nullable|string',
+            'sistol' => 'nullable|numeric',
+            'distol' => 'nullable|numeric',
+            'tensi' => 'nullable|string',
+            'suhu' => 'nullable|numeric',
+            'nadi' => 'nullable|numeric',
+            'rr' => 'nullable|numeric',
+            'tinggi' => 'nullable|numeric',
+            'berat' => 'nullable|numeric',
+            'spo2' => 'nullable|numeric',
+            'jenis_alergi' => 'nullable|string',
+            'alergi' => 'nullable|string',
+            'lingkar_perut' => 'nullable|numeric',
+            'nilai_bmi' => 'nullable|numeric',
+            'status_bmi' => 'nullable|string',
+            'eye' => 'nullable|numeric',
+            'verbal' => 'nullable|numeric',
+            'motorik' => 'nullable|numeric',
+            'summernote' => 'nullable|string',
+            'summernote2' => 'nullable|string',
+            'summernote3' => 'nullable|string',
+            'summernote4' => 'nullable|string',
+            'summernote5' => 'nullable|string',
+            'icd10_code' => 'nullable|array',
+            'icd10_name' => 'nullable|array',
+            'icd10_priority' => 'nullable|array',
+            'icd9_code' => 'nullable|array',
+            'icd9_name' => 'nullable|array',
+            'diet_jenis' => 'nullable|array',
+            'diet_anjuran' => 'nullable|array',
+            'diet_pantangan' => 'nullable|array',
+            'tindakan_nama' => 'nullable|array',
+            'tindakan_pelaksana' => 'nullable|array',
+            'tindakan_harga' => 'nullable|array',
+            'resep_data' => 'nullable|string',
+        ]);
+
+        try {
+            // Simpan data ke database
+            $pemeriksaan = pelayanan_soap_dokter::where('no_rawat', $request->no_rawat)->update([
+                'nomor_rm' => $request->nomor_rm,
+                'nama' => $request->nama,
+                'no_rawat' => $request->no_rawat,
+                'sex' => $request->sex,
+                'penjamin' => $request->penjamin,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'umur' => $request->umur,
+                'tableData' => json_encode($request->tableData),
+                'sistol' => $request->sistol,
+                'distol' => $request->distol,
+                'tensi' => $request->tensi,
+                'suhu' => $request->suhu,
+                'nadi' => $request->nadi,
+                'rr' => $request->rr,
+                'tinggi' => $request->tinggi,
+                'berat' => $request->berat,
+                'spo2' => $request->spo2,
+                'lingkar_perut' => $request->lingkar_perut,
+                'nilai_bmi' => $request->nilai_bmi,
+                'status_bmi' => $request->status_bmi,
+                'jenis_alergi' => $request->jenis_alergi,
+                'alergi' => $request->alergi,
+                'eye' => $request->eye,
+                'verbal' => $request->verbal,
+                'motorik' => $request->motorik,
+                'htt' => $request->summernote,
+                'assesmen' => $request->summernote2,
+                'evaluasi' => $request->summernote3,
+                'plan' => $request->summernote4,
+                'expertise' => $request->summernote5,
+                'status_apotek' => '0',
+            ]);
+
+            // Simpan tindakan
+            $namaTindakan = is_array($request->tindakan_nama) ? $request->tindakan_nama[0] : $request->tindakan_nama;
+            $pelaksana = is_array($request->tindakan_pelaksana) ? implode(', ', $request->tindakan_pelaksana) : $request->tindakan_pelaksana;
+            $harga = is_array($request->tindakan_harga) ? implode(', ', $request->tindakan_harga) : $request->tindakan_harga;
+
+            pelayanan_soap_dokter_tindakan::where('no_rawat', $request->no_rawat)->update([
+                'nomor_rm' => $request->nomor_rm,
+                'nama' => $request->nama,
+                'no_rawat' => $request->no_rawat,
+                'sex' => $request->sex,
+                'penjamin' => $request->penjamin,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'Jenis_tindakan' => $namaTindakan,
+                'jenis_pelaksana' => $pelaksana,
+                'harga' => $harga,
+                'status_kasir' => 0,
+            ]);
+
+
+
+            // Gabungkan array ICD-10 jadi string
+            $namaIcd10 = is_array($request->icd10_name) ? implode(', ', $request->icd10_name) : null;
+            $kodeIcd10 = is_array($request->icd10_code) ? implode(', ', $request->icd10_code) : null;
+            $priorityIcd10 = is_array($request->icd10_priority) ? implode(', ', $request->icd10_priority) : null;
+
+            // Gabungkan array ICD-9 jadi string
+            $namaIcd9 = is_array($request->icd9_name) ? implode(', ', $request->icd9_name) : null;
+            $kodeIcd9 = is_array($request->icd9_code) ? implode(', ', $request->icd9_code) : null;
+
+            $pemeriksaan = pelayanan_soap_dokter_icd::where('no_rawat', $request->no_rawat)->update([
+                'nomor_rm' => $request->nomor_rm,
+                'nama' => $request->nama,
+                'no_rawat' => $request->no_rawat,
+                'sex' => $request->sex,
+                'penjamin' => $request->penjamin,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'nama_icd10' => $namaIcd10,
+                'kode_icd10' => $kodeIcd10,
+                'priority_icd10' => $priorityIcd10,
+                'nama_icd9' => $namaIcd9,
+                'kode_icd9' => $kodeIcd9,
+            ]);
+
+            $jenis = is_array($request->diet_jenis) ? implode(', ', $request->diet_jenis) : $request->diet_jenis;
+            $anjuran = is_array($request->diet_anjuran) ? implode(', ', $request->diet_anjuran) : $request->diet_anjuran;
+            $pantangan = is_array($request->diet_pantangan) ? implode(', ', $request->diet_pantangan) : $request->diet_pantangan;
+
+            pelayanan_soap_dokter_diet::where('no_rawat', $request->no_rawat)->update([
+                'nomor_rm' => $request->nomor_rm,
+                'nama' => $request->nama,
+                'no_rawat' => $request->no_rawat,
+                'sex' => $request->sex,
+                'penjamin' => $request->penjamin,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'Jenis_diet' => $jenis,
+                'jenis_diet_makanan' => $anjuran,
+                'jenis_diet_makanan_tidak' => $pantangan,
+            ]);
+
+
+            pelayanan_soap_dokter_obat::where('no_rawat', $request->no_rawat)->update([
+                'nomor_rm' => $request->nomor_rm,
+                'nama' => $request->nama,
+                'no_rawat' => $request->no_rawat,
+                'sex' => $request->sex,
+                'penjamin' => $request->penjamin,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'Resep_obat' => $request->resep_data,
+            ]);
+
+            // Return response JSON untuk AJAX
+            return response()->json([
+                'success' => true,
+                'message' => 'Pelayanan soap dokter berhasil ditambahkan!'
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pelayanan soap dokter Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan pelayanan soap dokter!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function soappelayanandata($nomor_rawat)
     {
         $data = pelayanan_soap_perawat::where('no_rawat', $nomor_rawat)->first();
+        return response()->json($data);
+    }
+
+    public function soappelayanandataedit($nomor_rawat)
+    {
+        $data = pelayanan_soap_dokter::where('no_rawat', $nomor_rawat)->first();
+        return response()->json($data);
+    }
+
+    public function soappelayanandataicd($nomor_rawat)
+    {
+        $data = pelayanan_soap_dokter_icd::where('no_rawat', $nomor_rawat)->get();
+        return response()->json($data);
+    }
+    public function soappelayanandatadiet($nomor_rawat)
+    {
+        $data = pelayanan_soap_dokter_diet::where('no_rawat', $nomor_rawat)->get();
         return response()->json($data);
     }
 
@@ -917,6 +1255,202 @@ class PelayananController extends Controller
         ])->setPaper('a6', 'portrait');
 
         return $pdf->download('resep-obat.pdf'); // akan dibuka lewat blob di JS
+    }
+
+    public function suratSakitPrint(Request $request)
+    {
+        $diagnosis_utama = $request->diagnosis_utama;
+        $diagnosis_penyerta_1 = $request->diagnosis_penyerta_1;
+        $diagnosis_penyerta_2 = $request->diagnosis_penyerta_2;
+        $diagnosis_penyerta_3 = $request->diagnosis_penyerta_3;
+        $komplikasi_1 = $request->komplikasi_1;
+        $komplikasi_2 = $request->komplikasi_2;
+        $komplikasi_3 = $request->komplikasi_3;
+        $lama_istirahat = $request->lama_istirahat;
+        $terhitung_mulai = $request->terhitung_mulai;
+        $nama_pasien = $request->nama_pasien;
+        $dokter_pengirim = $request->dokter_pengirim;
+        $jenis_kelamin = $request->jenis_kelamin;
+        $tanggal_lahir = $request->tanggal_lahir;
+        $alamat = $request->alamat;
+        $umur = $request->umur;
+        $now = Carbon::now();
+
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = PDF::loadView('pdf.surat_sakit', [
+            'diagnosis_utama' => $diagnosis_utama,
+            'diagnosis_penyerta_1' => $diagnosis_penyerta_1,
+            'diagnosis_penyerta_2' => $diagnosis_penyerta_2,
+            'diagnosis_penyerta_3' => $diagnosis_penyerta_3,
+            'komplikasi_1' => $komplikasi_1,
+            'komplikasi_2' => $komplikasi_2,
+            'komplikasi_3' => $komplikasi_3,
+            'lama_istirahat' => $lama_istirahat,
+            'terhitung_mulai' => $terhitung_mulai,
+            'nama_pasien' => $nama_pasien,
+            'dokter_pengirim' => $dokter_pengirim,
+            'jenis_kelamin' => $jenis_kelamin,
+            'tanggal_lahir' => $tanggal_lahir,
+            'alamat' => $alamat,
+            'umur' => $umur,
+            'now' => $now,
+            'namaKlinik' => $namaKlinik,
+            'alamatKlinik' => $alamatKlinik,
+        ])->setPaper('a6', 'portrait');
+
+        $filename = 'surat_sakit_' . $nama_pasien . '.pdf';
+
+        return $pdf->stream($filename);
+    }
+
+    public function suratSehatPrint(Request $request)
+    {
+        $tgl_periksa = $request->tgl_periksa_sehat;
+        $sistole = $request->sistole;
+        $diastole = $request->diastole;
+        $suhu = $request->suhu;
+        $berat = $request->berat;
+        $respiratory_rate = $request->respiratory_rate;
+        $nadi = $request->nadi;
+        $tinggi = $request->tinggi;
+        $buta_warna_status = $request->buta_warna_status;
+        $nama_pasien = $request->nama_pasien;
+        $dokter_pengirim = $request->dokter_pengirim;
+        $jenis_kelamin = $request->jenis_kelamin;
+        $tanggal_lahir = $request->tanggal_lahir;
+        $alamat = $request->alamat;
+        $umur = $request->umur;
+        $now = Carbon::now();
+
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = PDF::loadView('pdf.surat_sehat', [
+            'tgl_periksa' => $tgl_periksa,
+            'sistole' => $sistole,
+            'diastole' => $diastole,
+            'suhu' => $suhu,
+            'berat' => $berat,
+            'respiratory_rate' => $respiratory_rate,
+            'nadi' => $nadi,
+            'tinggi' => $tinggi,
+            'buta_warna_status' => $buta_warna_status,
+            'nama_pasien' => $nama_pasien,
+            'dokter_pengirim' => $dokter_pengirim,
+            'jenis_kelamin' => $jenis_kelamin,
+            'tanggal_lahir' => $tanggal_lahir,
+            'alamat' => $alamat,
+            'umur' => $umur,
+            'now' => $now,
+            'namaKlinik' => $namaKlinik,
+            'alamatKlinik' => $alamatKlinik,
+        ])->setPaper('a6', 'portrait');
+
+        $filename = 'surat_sehat_' . $nama_pasien . '.pdf';
+
+        return $pdf->stream($filename);
+    }
+
+    public function suratKematianPrint(Request $request)
+    {
+        $tgl_periksa = $request->tgl_periksa_kematian;
+        $dokter_kematian = $request->dokter_kematian;
+        $penandatangan = $request->penandatangan;
+        $tanggal_meninggal = $request->tanggal_meninggal;
+        $jam_meninggal = $request->jam_meninggal;
+        $ref_tgl_jam = $request->ref_tgl_jam;
+        $penyebab_kematian = $request->penyebab_kematian;
+        $penyebab_lainnya = $request->penyebab_lainnya;
+        $nama_pasien = $request->nama_pasien;
+        $dokter_pengirim = $request->dokter_pengirim;
+        $jenis_kelamin = $request->jenis_kelamin;
+        $tanggal_lahir = $request->tanggal_lahir;
+        $alamat = $request->alamat;
+        $umur = $request->umur;
+        $now = Carbon::now();
+
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = PDF::loadView('pdf.surat_kematian', [
+            'tgl_periksa' => $tgl_periksa,
+            'dokter_kematian' => $dokter_kematian,
+            'penandatangan' => $penandatangan,
+            'tanggal_meninggal' => $tanggal_meninggal,
+            'jam_meninggal' => $jam_meninggal,
+            'ref_tgl_jam' => $ref_tgl_jam,
+            'penyebab_kematian' => $penyebab_kematian,
+            'penyebab_lainnya' => $penyebab_lainnya,
+            'nama_pasien' => $nama_pasien,
+            'dokter_pengirim' => $dokter_pengirim,
+            'jenis_kelamin' => $jenis_kelamin,
+            'tanggal_lahir' => $tanggal_lahir,
+            'alamat' => $alamat,
+            'umur' => $umur,
+            'now' => $now,
+            'namaKlinik' => $namaKlinik,
+            'alamatKlinik' => $alamatKlinik,
+        ])->setPaper('a6', 'portrait');
+
+        $filename = 'surat_kematian_' . $nama_pasien . '.pdf';
+
+        return $pdf->stream($filename);
+    }
+
+    public function skdpPrint(Request $request)
+    {
+        $tanggal_pemeriksaan = $request->tanggal_pemeriksaan_skd;
+        $kode_surat = $request->kode_surat_skd;
+        $jenis_skdp = $request->jenis_skdp;
+        $sep_bpjs = $request->sep_bpjs;
+        $no_kartu = $request->no_kartu;
+        $untuk_skdp = $request->untuk_skdp;
+        $pada_skdp = $request->pada_skdp;
+        $poli_unit_skdp = $request->poli_unit_skdp;
+        $alasan1_skdp = $request->alasan1_skdp;
+        $alasan2_skdp = $request->alasan2_skdp;
+        $rencana1_skdp = $request->rencana1_skdp;
+        $rencana2_skdp = $request->rencana2_skdp;
+        $nama_pasien = $request->nama_pasien;
+        $dokter_pengirim = $request->dokter_pengirim;
+        $jenis_kelamin = $request->jenis_kelamin;
+        $tanggal_lahir = $request->tanggal_lahir;
+        $alamat = $request->alamat;
+        $umur = $request->umur;
+        $now = Carbon::now();
+
+        $namaKlinik = WebSetting::value('nama');
+        $alamatKlinik = WebSetting::value('alamat');
+
+        $pdf = PDF::loadView('pdf.skdp', [
+            'tanggal_pemeriksaan' => $tanggal_pemeriksaan,
+            'kode_surat' => $kode_surat,
+            'jenis_skdp' => $jenis_skdp,
+            'sep_bpjs' => $sep_bpjs,
+            'no_kartu' => $no_kartu,
+            'untuk_skdp' => $untuk_skdp,
+            'pada_skdp' => $pada_skdp,
+            'poli_unit_skdp' => $poli_unit_skdp,
+            'alasan1_skdp' => $alasan1_skdp,
+            'alasan2_skdp' => $alasan2_skdp,
+            'rencana1_skdp' => $rencana1_skdp,
+            'rencana2_skdp' => $rencana2_skdp,
+            'nama_pasien' => $nama_pasien,
+            'dokter_pengirim' => $dokter_pengirim,
+            'jenis_kelamin' => $jenis_kelamin,
+            'tanggal_lahir' => $tanggal_lahir,
+            'alamat' => $alamat,
+            'umur' => $umur,
+            'now' => $now,
+            'namaKlinik' => $namaKlinik,
+            'alamatKlinik' => $alamatKlinik,
+        ])->setPaper('a6', 'portrait');
+
+        $filename = 'skdp_' . $nama_pasien . '.pdf';
+
+        return $pdf->stream($filename);
     }
 
     public function pelayana_permintaan($norawat)

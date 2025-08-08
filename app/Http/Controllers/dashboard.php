@@ -35,7 +35,7 @@ class dashboard extends Controller
             ->where('end', '>=', $now)
             ->with('dokter')
             ->get()
-            ->filter(fn($item) => $item->dokter->verifikasi == 2)
+            ->filter(fn($item) => $item->dokter && $item->dokter->verifikasi == 2)
             ->map(function ($item) {
                 return (object)[
                     'nama' => $item->dokter->namauser->name,
@@ -45,9 +45,16 @@ class dashboard extends Controller
                 ];
             });
 
-        $datadokter = $dokterHariIni->count();
+        $datadokter = $dokterHariIni->isEmpty() ? 0 : $dokterHariIni->count();
 
-        $datakunjungan = Pendaftaran_rawat_jalan::whereDate('tanggal_kujungan', $today)->count();
+
+
+
+        $datakunjungan = Pendaftaran_rawat_jalan::whereDate('tanggal_kujungan', $today)
+        ->whereHas('status', function ($query) {
+            $query->where('status_pendaftaran', '!=', 0);
+        })
+        ->count();
 
         // ================================
         // 2. Pendapatan Harian
@@ -139,6 +146,9 @@ class dashboard extends Controller
         // Ambil data kunjungan per hari
         $kunjungan = Pendaftaran_rawat_jalan::selectRaw('DATE(tanggal_kujungan) as tanggal, COUNT(*) as jumlah')
             ->whereBetween('tanggal_kujungan', [$start, $end])
+            ->whereHas('status', function ($query) {
+                $query->where('status_pendaftaran', '!=', 0);
+            })
             ->groupBy('tanggal')
             ->orderBy('tanggal')
             ->get()
