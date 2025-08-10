@@ -307,13 +307,11 @@
                     let tarifDokter = parseRupiah($('#tarif_dokter').val());
                     let tarifPerawat = parseRupiah($('#tarif_perawat').val());
                     let tarifTotal = parseRupiah($('#tarif_total').val());
-                    let tarifTindakan = parseRupiah($('#tarif_all').val());
 
                     // Set kembali input dengan angka murni
                     $('#tarif_dokter').val(tarifDokter);
                     $('#tarif_perawat').val(tarifPerawat);
                     $('#tarif_total').val(tarifTotal);
-                    $('#tarif_all').val(tarifTindakan);
 
                     $.ajax({
                         url: form.attr('action'),
@@ -364,7 +362,6 @@
             var tarif_dokter = $(this).data('tarif_dokter-perawatan_tindakan');
             var tarif_perawat = $(this).data('tarif_perawat-perawatan_tindakan');
             var tarif_total = $(this).data('tarif_total-perawatan_tindakan');
-            var tarif_all = $(this).data('tarif_all-perawatan_tindakan');
 
             $('#perawatan_tindakanid_edit').val(id);
             $('#nama_edit').val(nama);
@@ -372,7 +369,6 @@
             $('#tarif_dokter_edit').val(tarif_dokter).trigger('input');
             $('#tarif_perawat_edit').val(tarif_perawat).trigger('input');
             $('#tarif_total_edit').val(tarif_total).trigger('input');
-            $('#tarif_all_edit').val(tarif_all).trigger('input');
         });
 
         $('#editFormperawatan_tindakan').on('submit', function(e) {
@@ -385,13 +381,11 @@
             let tarifDokterEdit = parseRupiah($('#tarif_dokter_edit').val());
             let tarifPerawatEdit = parseRupiah($('#tarif_perawat_edit').val());
             let tarifTotalEdit = parseRupiah($('#tarif_total_edit').val());
-            let tarifTindakanEdit = parseRupiah($('#tarif_all_edit').val());
 
             // Set kembali input dengan angka murni
             $('#tarif_dokter_edit').val(tarifDokterEdit);
             $('#tarif_perawat_edit').val(tarifPerawatEdit);
             $('#tarif_total_edit').val(tarifTotalEdit);
-            $('#tarif_all_edit').val(tarifTindakanEdit);
 
             $.ajax({
                 url: url,

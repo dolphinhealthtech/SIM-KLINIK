@@ -40,7 +40,6 @@ class PerawatanTindakanController extends Controller
                  "tarif_dokter" => 'required|string',
                  "tarif_perawat" => 'required|string',
                  "tarif_total" => 'required|string',
-                 "tarif_all" => 'required|string',
              ]);
 
              $perawatan_tindakan = perawatan_tindakan::create([
@@ -50,7 +49,6 @@ class PerawatanTindakanController extends Controller
                  'tarif_dokter' => $request->tarif_dokter,
                  'tarif_perawat' => $request->tarif_perawat,
                  'tarif_total' => $request->tarif_total,
-                 'tarif_all' => $request->tarif_all,
              ]);
 
              return response()->json([
