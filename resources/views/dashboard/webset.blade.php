@@ -416,7 +416,6 @@
                         $('#toggleBPJS').prop('checked', states.is_bpjs_active == 1);
                         $('#toggleSatusehat').prop('checked', states.is_satusehat_active == 1);
                         $('#toggleGudangutama').prop('checked', states.is_gudangutama_active == 1);
-                        $('#toggleTindakanAll').prop('checked', states.is_tindakan_active == 1);
                     }
                 },
                 error: function(xhr) {

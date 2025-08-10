@@ -19,12 +19,6 @@
             </div><!-- /.container-fluid -->
         </div>
         <!-- /.content-header -->
-        @php
-            use App\Models\WebSetting;
-
-            $setting = WebSetting::first();
-            $isTindakanActive = $setting->is_tindakan_active ?? true;
-        @endphp
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
@@ -58,12 +52,8 @@
                                             <th class="text-center">Kode</th>
                                             <th class="text-center">Nama</th>
                                             <th class="text-center">Kategori</th>
-                                            @if($isTindakanActive)
-                                                <th class="text-center">Tarif Tindakan</th>
-                                            @else
-                                                <th class="text-center">Tarif Dokter</th>
-                                                <th class="text-center">Tarif Perawat</th>
-                                            @endif
+                                            <th class="text-center">Tarif Dokter</th>
+                                            <th class="text-center">Tarif Perawat</th>
                                             <th class="text-center">Total Tarif</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
@@ -75,12 +65,8 @@
                                                 <td class="text-center">{{ $perawatan_tindakandata->kode }}</td>
                                                 <td class="text-center">{{ $perawatan_tindakandata->nama }}</td>
                                                 <td class="text-center">{{ $perawatan_tindakandata->perawatan_kategori->nama }}</td>
-                                                @if($isTindakanActive)
-                                                    <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_all, 0, ',', '.') }}</td>
-                                                @else
-                                                    <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_dokter, 0, ',', '.') }}</td>
-                                                    <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_perawat, 0, ',', '.') }}</td>
-                                                @endif
+                                                <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_dokter, 0, ',', '.') }}</td>
+                                                <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_perawat, 0, ',', '.') }}</td>
                                                 <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_total, 0, ',', '.') }}</td>
                                                 <td class="text-center">
                                                     <a href="#" class="btn btn-warning btn-sm edit-data-perawatan_tindakan"
