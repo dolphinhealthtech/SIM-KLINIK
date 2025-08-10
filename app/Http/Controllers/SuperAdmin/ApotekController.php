@@ -28,7 +28,7 @@ class ApotekController extends Controller
     {
         $title = "Apotek";
         $data_soap = pelayanan_soap_dokter::with('resep', 'pendaftaran', 'pasien')
-            ->where('status_apotek', '0')
+            ->where('status_apotek', '=', "0")
             ->whereHas('resep', function ($query) {
                 $query->whereNotNull('Resep_obat');
             })

@@ -7,10 +7,9 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Staff</h1>
+                    <div class="col-sm-12">
+                        <h5 class="text-muted text-center">Selamat datang di modul Pendaftaran Staff</h5>
                     </div><!-- /.col -->
-
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
         </div>
@@ -31,7 +30,7 @@
                                 <p>Total Staff</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-person-add"></i>
+                                <i class="fas fa-user"></i>
                             </div>
                         </div>
                     </div>
@@ -45,7 +44,7 @@
                                 <p>Staff Belun Verifikasi</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-pie-graph"></i>
+                                <i class="fas fa-exclamation-circle"></i>
                             </div>
                         </div>
                     </div>
@@ -54,19 +53,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#adddokterModal">
-                                        <i class="fas fa-plus"></i> Tambah
-                                    </button>
-                                </div>
-                            </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="doktertabel" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
+                                            <th class="text-center">Status</th>
                                             <th class="text-center">Nama</th>
                                             <th class="text-center">tanggal Masuk</th>
                                             <th class="text-center">status Pegawai</th>
@@ -75,28 +67,52 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($dokter as $dokterdata)
-                                            <tr class="{{ $dokterdata->verifikasi == 1 ? 'table-danger' : ($dokterdata->verifikasi == 2 ? 'table-success' : '') }}">
+                                            <tr>
+                                                <td class="text-center" >
+                                                    @if ($dokterdata->verifikasi == 1)
+                                                        <span class="position-relative d-inline-block">
+                                                            <i class="fas fa-user text-danger fa-fade" style="font-size: 24px;"></i>
+                                                            <i class="fas fa-xmark text-danger fa-beat position-absolute" style="top: -8px; right: -8px; font-size: 12px;"></i>
+                                                        </span> <br>
+                                                        <span class="badge badge-danger">Belum Verifikasi</span>
+                                                    @elseif ($dokterdata->verifikasi == 2)
+                                                        <span class="position-relative d-inline-block" title="Belum Verifikasi" style="cursor: pointer;">
+                                                            <i class="fas fa-user text-success fa-fade" style="font-size: 20px;"></i>
+                                                            <i class="fas fa-check text-success position-absolute" style="top: -6px; right: -6px; font-size: 10px;"></i>
+                                                        </span> <br>
+                                                        <span class="badge badge-success">Sudah Verifikasi</span>
+                                                    @else
+                                                        <i class="fas fa-user-slash text-warning fa-fade"  title="Tidak Aktif" style="cursor: pointer;"></i> <br>
+                                                        <span class="badge badge-warning">Tidak Aktif</span>
+                                                    @endif
+                                                </td>
                                                 <td class="text-center" >{{ $dokterdata->namauser->name }}</td>
                                                 <td class="text-center" >{{ $dokterdata->tgl_masuk }}</td>
                                                 <td class="text-center" >{{ $dokterdata->namastatuspegawai->nama }}</td>
                                                 <td class="text-center" >
+                                                    {{-- Jika dokter sudah verifikasi --}}
                                                     @if ($dokterdata->verifikasi == 1)
-                                                    <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
+                                                        <a class="btn btn-outline-info btn-sm rounded-pill lengkapi-btn"
+                                                        data-toggle="modal"
                                                         data-target="#lengkapiModal"
                                                         data-id="{{ $dokterdata->id }}">
-                                                        <i class="fa fa-exclamation-circle"></i> Lengkapi
-                                                    </a>
+                                                            <i class="fa fa-exclamation-circle"></i> Lengkapi
+                                                        </a>
                                                     @else
-                                                    <a class="btn btn-warning rounded-pill edit-btn" data-toggle="modal"
+                                                        <a class="btn btn-outline-warning btn-sm rounded-pill edit-btn"
+                                                        data-toggle="modal"
                                                         data-target="#editdokterModal"
                                                         data-id="{{ $dokterdata->id }}">
-                                                        <i class="fa-solid fa-user-pen"></i> Edit
-                                                    </a>
+                                                            <i class="fa-solid fa-user-pen"></i> Edit
+                                                        </a>
                                                     @endif
-                                                    <a href="#" class="btn btn-danger rounded-pill delete-data-dokter"
-                                                        data-toggle="modal"data-id="{{ $dokterdata->id }}"
-                                                        data-nama-dokter="{{ $dokterdata->namauser->name }}"
-                                                        data-target="#deletedokterModal">
+
+                                                    {{-- Tombol Delete --}}
+                                                    <a class="btn btn-outline-danger btn-sm rounded-pill delete-data-dokter"
+                                                    data-toggle="modal"
+                                                    data-id="{{ $dokterdata->id }}"
+                                                    data-nama-dokter="{{ $dokterdata->namauser->name }}"
+                                                    data-target="#deletedokterModal">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </a>
                                                 </td>
@@ -1637,11 +1653,23 @@
                 "lengthChange": false,
                 "autoWidth": false,
                 "buttons": [
-                    "csv",
-                    "excel",
-                    "pdf",
-                    "print",
-                ]
+                    {
+                        text: '<i class="fas fa-plus"></i> Tambah',
+                        type: 'button',
+                        className: 'btn btn-primary',
+                        action: function () {
+                                $('#adddokterModal').modal('show'); // <== Bootstrap 4-compatible
+                        }
+                    }
+                ],
+                "language": {
+                    "search": "Cari:",
+                    "lengthMenu": "Tampilkan _MENU_ data per halaman",
+                    "zeroRecords": "Tidak ada data yang ditemukan",
+                    "info": "Menampilkan halaman _PAGE_ dari _PAGES_",
+                    "infoEmpty": "Tidak ada data tersedia",
+                    "infoFiltered": "(difilter dari _MAX_ total data)",
+                }
             }).buttons().container().appendTo('#doktertabel_wrapper .col-md-6:eq(0)');
         });
     </script>

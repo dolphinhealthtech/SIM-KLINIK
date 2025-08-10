@@ -117,6 +117,15 @@ class PasienController extends Controller
         return $nomorAntrian;
     }
 
+    public function pasiens_time_line($norm)
+    {
+        $title = "Time Line";
+        $normAsli = base64_decode($norm);
+        $datapasien = pasien::where('no_rm', $normAsli)->first();
+
+        return view('dashboard.pasien-time-line', compact('title', 'datapasien'));
+    }
+
     public function pasiens()
     {
         $title = "Pasien";

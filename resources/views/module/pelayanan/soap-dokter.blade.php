@@ -81,7 +81,7 @@
                                                         <a class="nav-link" id="custom-tabs-four-assesmen-tab" data-toggle="pill" href="#custom-tabs-four-assesmen" role="tab" aria-controls="custom-tabs-four-assesmen" aria-selected="false">Assesmen</a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" id="custom-tabs-four-diag-tab" data-toggle="pill" href="#custom-tabs-four-diag" role="tab" aria-controls="custom-tabs-four-diag" aria-selected="false">Diagnosis ICD</a>
+                                                        <a class="nav-link" id="custom-tabs-four-diag-tab" data-toggle="pill" href="#custom-tabs-four-diag" role="tab" aria-controls="custom-tabs-four-diag" aria-selected="false">Diagnosis</a>
                                                     </li>
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-plan-tab" data-toggle="pill" href="#custom-tabs-four-plan" role="tab" aria-controls="custom-tabs-four-plan" aria-selected="false">Plan</a>
@@ -419,17 +419,17 @@
                                                     <div class="tab-pane fade" id="custom-tabs-four-plan" role="tabpanel" aria-labelledby="custom-tabs-four-plan-tab">
                                                         <div class="form-group row">
                                                             <div class="col-md-12">
-                                                                <label for="summernote5">expertise</label>
+                                                                <label for="summernote5">Expertise</label>
                                                                 <textarea class="form-control" id="summernote5" name="summernote5" rows="3"></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-6">
-                                                                <label for="summernote3">evaluasi</label>
+                                                                <label for="summernote3">Evaluasi</label>
                                                                 <textarea class="form-control" id="summernote3" name="summernote3" rows="3"></textarea>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <label for="summernote4">plan</label>
+                                                                <label for="summernote4">Rencana Tindakan</label>
                                                                 <textarea class="form-control" id="summernote4" name="summernote4" rows="3"></textarea>
                                                             </div>
                                                         </div>
@@ -507,22 +507,12 @@
                                                                     <option value="">Tindakan</option>
                                                                 </select>
                                                             </div>
-                                                            @php
-                                                                use App\Models\WebSetting;
-
-                                                                $setting = WebSetting::first();
-                                                                $isTindakanActive = $setting->is_tindakan_active ?? true;
-                                                            @endphp
                                                             <div class="col-md-3 mb-2">
                                                                 <select class="form-control" id="pelaksana">
                                                                     <option value="">Pelaksana</option>
-                                                                    @if ($isTindakanActive)
-                                                                        <option value="pemeriksa" selected>Pemeriksa</option>
-                                                                    @else
                                                                         <option value="dokter">Dokter</option>
                                                                         <option value="perawat">Perawat</option>
-                                                                        <option value="keduanya">Keduanya</option>
-                                                                    @endif
+                                                                        <option value="keduanya">Dokter + Perawat</option>
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3 mb-2">
@@ -665,7 +655,7 @@
 
                                                             <button type="submit" class="btn btn-primary">Submit</button>
                                                     </div>
-
+                                                    {{-- poli gigi only --}}
                                                     <div class="tab-pane fade" id="custom-tabs-four-odo" role="tabpanel" aria-labelledby="custom-tabs-four-odo-tab">
                                                         <style>
                                                             .svg-container {
@@ -1131,8 +1121,6 @@
     });
 </script>
 
-
-
 {{-- Script load data --}}
 <script>
     const soapRoute = "{{ route('pelayana_dokter_data.get', ':id') }}";
@@ -1555,8 +1543,6 @@
             } else if (pelaksana === 'keduanya') {
                 pelaksanaList.push({ pelaksana: 'Dokter', harga: tindakanData.tarif_dokter });
                 pelaksanaList.push({ pelaksana: 'Perawat', harga: tindakanData.tarif_perawat });
-            } else {
-                pelaksanaList.push({ pelaksana: 'Tindakan', harga: tindakanData.tarif_all });
             }
 
             const newEntry = { nama: tindakanData.nama, pelaksana: pelaksanaList, _id: 'tindakan_' + Date.now() };
@@ -1751,90 +1737,90 @@
         let selectedICD9 = null, selectedPriorityICD9 = null;
 
         function hasPrimary(tbodySelector) {
-    let found = false;
-    $(`${tbodySelector} tr`).each(function () {
-        const prioritasText = $(this).find('td:eq(2)').text().trim();
-        if (prioritasText === 'Primary') {
-            found = true;
-            return false; // Break the loop
-        }
+        let found = false;
+        $(`${tbodySelector} tr`).each(function () {
+            const prioritasText = $(this).find('td:eq(2)').text().trim();
+            if (prioritasText === 'Primary') {
+                found = true;
+                return false; // Break the loop
+            }
+        });
+        return found;
+    }
+
+    function isDuplicate(tbodySelector, code) {
+        let found = false;
+        $(`${tbodySelector} tr`).each(function () {
+            const kodeText = $(this).find('td:eq(0)').text().trim();
+            if (kodeText === code) {
+                found = true;
+                return false; // Break the loop
+            }
+        });
+        return found;
+    }
+
+    // ICD10 - dropdown
+    $('#icd10').on('change', function () {
+        const opt = $(this).find('option:selected');
+        selectedICD10 = { code: opt.val(), name: opt.data('nama') };
+        $('#kodeICD10').text(selectedICD10.code);
     });
-    return found;
-}
 
-function isDuplicate(tbodySelector, code) {
-    let found = false;
-    $(`${tbodySelector} tr`).each(function () {
-        const kodeText = $(this).find('td:eq(0)').text().trim();
-        if (kodeText === code) {
-            found = true;
-            return false; // Break the loop
-        }
+    $('#dropdownMenuButtonICD10').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
+        selectedPriorityICD10 = $(this).data('value');
+        $('#prioritas_icd_10').text(selectedPriorityICD10);
     });
-    return found;
-}
 
-// ICD10 - dropdown
-$('#icd10').on('change', function () {
-    const opt = $(this).find('option:selected');
-    selectedICD10 = { code: opt.val(), name: opt.data('nama') };
-    $('#kodeICD10').text(selectedICD10.code);
-});
+    $('#acceptICD10').on('click', function () {
+        console.log('Accept clicked'); // Debug log
+        console.log('selectedICD10:', selectedICD10); // Debug log
+        console.log('selectedPriorityICD10:', selectedPriorityICD10); // Debug log
 
-$('#dropdownMenuButtonICD10').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
-    selectedPriorityICD10 = $(this).data('value');
-    $('#prioritas_icd_10').text(selectedPriorityICD10);
-});
+        // Validasi 1: Cek apakah diagnosa dan prioritas sudah dipilih
+        if (!selectedICD10 || !selectedPriorityICD10) {
+            console.log('Validation failed: Missing data'); // Debug log
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: 'Pilih Diagnosa dan Prioritas!',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
 
-$('#acceptICD10').on('click', function () {
-    console.log('Accept clicked'); // Debug log
-    console.log('selectedICD10:', selectedICD10); // Debug log
-    console.log('selectedPriorityICD10:', selectedPriorityICD10); // Debug log
+        // Validasi 2: Cek duplikasi data
+        if (isDuplicate('.icd_10 tbody', selectedICD10.code)) {
+            console.log('Validation failed: Duplicate data'); // Debug log
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Data sudah ada!',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
 
-    // Validasi 1: Cek apakah diagnosa dan prioritas sudah dipilih
-    if (!selectedICD10 || !selectedPriorityICD10) {
-        console.log('Validation failed: Missing data'); // Debug log
-        Swal.fire({
-            icon: 'warning',
-            title: 'Oops...',
-            text: 'Pilih Diagnosa dan Prioritas!',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
+        // Validasi 3: Cek primary hanya boleh satu
+        if (selectedPriorityICD10 === 'Primary' && hasPrimary('.icd_10 tbody')) {
+            console.log('Validation failed: Primary already exists'); // Debug log
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Primary hanya boleh satu.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
 
-    // Validasi 2: Cek duplikasi data
-    if (isDuplicate('.icd_10 tbody', selectedICD10.code)) {
-        console.log('Validation failed: Duplicate data'); // Debug log
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Data sudah ada!',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
+        console.log('All validations passed, adding data'); // Debug log
 
-    // Validasi 3: Cek primary hanya boleh satu
-    if (selectedPriorityICD10 === 'Primary' && hasPrimary('.icd_10 tbody')) {
-        console.log('Validation failed: Primary already exists'); // Debug log
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Primary hanya boleh satu.',
-            confirmButtonText: 'OK'
-        });
-        return;
-    }
-
-    console.log('All validations passed, adding data'); // Debug log
-
-    // Jika semua validasi berhasil, tambahkan data
-    $('.icd_10 tbody').append(generateRow(selectedICD10, selectedPriorityICD10, 'ICD10'));
-    resetFields('#icd10', '#kodeICD10', '#prioritas_icd_10');
-    selectedICD10 = selectedPriorityICD10 = null;
-    updateTableState();
-});
+        // Jika semua validasi berhasil, tambahkan data
+        $('.icd_10 tbody').append(generateRow(selectedICD10, selectedPriorityICD10, 'ICD10'));
+        resetFields('#icd10', '#kodeICD10', '#prioritas_icd_10');
+        selectedICD10 = selectedPriorityICD10 = null;
+        updateTableState();
+    });
 
         // ICD9 - dropdown
         $('#icd9').on('change', function () {
@@ -1954,7 +1940,6 @@ $('#acceptICD10').on('click', function () {
         updateTableState();
     });
 </script>
-
 
 {{-- Script jenis alergi --}}
 <script>
@@ -2744,7 +2729,6 @@ $('#acceptICD10').on('click', function () {
 {{-- sctipt untuk init summernote --}}
 <script>
     $(function () {
-
         $('#summernote').summernote({
             height: 300, // Tentukan tinggi editor (dalam px)
             tabsize: 2,

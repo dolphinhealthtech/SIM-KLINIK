@@ -81,7 +81,7 @@
                                                         <a class="nav-link" id="custom-tabs-four-assesmen-tab" data-toggle="pill" href="#custom-tabs-four-assesmen" role="tab" aria-controls="custom-tabs-four-assesmen" aria-selected="false">Assesmen</a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" id="custom-tabs-four-diag-tab" data-toggle="pill" href="#custom-tabs-four-diag" role="tab" aria-controls="custom-tabs-four-diag" aria-selected="false">Diagnosis ICD</a>
+                                                        <a class="nav-link" id="custom-tabs-four-diag-tab" data-toggle="pill" href="#custom-tabs-four-diag" role="tab" aria-controls="custom-tabs-four-diag" aria-selected="false">Diagnosis</a>
                                                     </li>
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-plan-tab" data-toggle="pill" href="#custom-tabs-four-plan" role="tab" aria-controls="custom-tabs-four-plan" aria-selected="false">Plan</a>
@@ -98,6 +98,9 @@
 
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-odo-tab" data-toggle="pill" href="#custom-tabs-four-odo" role="tab" aria-controls="custom-tabs-four-odo" aria-selected="false">Odontogram </a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-cppt-tab" data-toggle="pill" href="#custom-tabs-four-cppt" role="tab" aria-controls="custom-tabs-four-cppt" aria-selected="false">cppt </a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -419,17 +422,17 @@
                                                     <div class="tab-pane fade" id="custom-tabs-four-plan" role="tabpanel" aria-labelledby="custom-tabs-four-plan-tab">
                                                         <div class="form-group row">
                                                             <div class="col-md-12">
-                                                                <label for="summernote5">expertise</label>
+                                                                <label for="summernote5">Expertise</label>
                                                                 <textarea class="form-control" id="summernote5" name="summernote5" rows="3"></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-6">
-                                                                <label for="summernote3">evaluasi</label>
+                                                                <label for="summernote3">Evaluasi</label>
                                                                 <textarea class="form-control" id="summernote3" name="summernote3" rows="3"></textarea>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <label for="summernote4">plan</label>
+                                                                <label for="summernote4">Rencana Tindakan</label>
                                                                 <textarea class="form-control" id="summernote4" name="summernote4" rows="3"></textarea>
                                                             </div>
                                                         </div>
@@ -507,22 +510,14 @@
                                                                     <option value="">Tindakan</option>
                                                                 </select>
                                                             </div>
-                                                            @php
-                                                                use App\Models\WebSetting;
-
-                                                                $setting = WebSetting::first();
-                                                                $isTindakanActive = $setting->is_tindakan_active ?? true;
-                                                            @endphp
                                                             <div class="col-md-3 mb-2">
                                                                 <select class="form-control" id="pelaksana">
                                                                     <option value="">Pelaksana</option>
-                                                                    @if ($isTindakanActive)
-                                                                        <option value="pemeriksa" selected>Pemeriksa</option>
-                                                                    @else
+
                                                                         <option value="dokter">Dokter</option>
                                                                         <option value="perawat">Perawat</option>
                                                                         <option value="keduanya">Keduanya</option>
-                                                                    @endif
+
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3 mb-2">
@@ -566,43 +561,43 @@
 
                                                             <!-- Input Obat & Dosis -->
                                                             <div class="form-row align-items-end mb-3">
-                                                            <div class="col-md-4">
-                                                                <label for="nama-obat">Nama Obat</label>
-                                                                <select class="form-control" id="nama-obat">
-                                                                <option value="">-- Pilih Obat --</option>
-                                                                @foreach ($obat as $obatdata)
-                                                                    <option value="{{ $obatdata->nama_barang }}" data-satuan="{{ $obatdata->satuan_kecil }}">{{ $obatdata->nama_barang }}</option>
-                                                                @endforeach
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Qty / Jumlah</label>
-                                                                <div class="form-row">
-                                                                    <div class="col">
-                                                                    <input type="text" id="dosis1" class="form-control" placeholder="Contoh: 500">
-                                                                    </div>
-                                                                    <div class="col">
-                                                                    <input type="text" id="dosis2" class="form-control" readonly>
+                                                                <div class="col-md-4">
+                                                                    <label for="nama-obat">Nama Obat</label>
+                                                                    <select class="form-control" id="nama-obat">
+                                                                    <option value="">-- Pilih Obat --</option>
+                                                                    @foreach ($obat as $obatdata)
+                                                                        <option value="{{ $obatdata->nama_barang }}" data-satuan="{{ $obatdata->satuan_kecil }}">{{ $obatdata->nama_barang }}</option>
+                                                                    @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label>Qty / Jumlah</label>
+                                                                    <div class="form-row">
+                                                                        <div class="col">
+                                                                        <input type="text" id="dosis1" class="form-control" placeholder="Contoh: 500">
+                                                                        </div>
+                                                                        <div class="col">
+                                                                        <input type="text" id="dosis2" class="form-control" readonly>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
 
-                                                            <div class="col-md-4">
-                                                                <label for="instruksi">Instruksi</label>
-                                                                <select class="form-control" id="instruksi">
-                                                                <option value="">-- Pilih Instruksi --</option>
-                                                                <option value="CITO">CITO</option>
-                                                                <option value="ITER">ITER</option>
-                                                                <option value="Equal qs">Equal qs</option>
-                                                                <option value="m.f pulv da in caps">m.f pulv da in caps</option>
-                                                                <option value="s.u.e">s.u.e</option>
-                                                                <option value="m.f pulv dtd no X">m.f pulv dtd no X</option>
-                                                                <option value="m.f pulv dtd no XV">m.f pulv dtd no XV</option>
-                                                                <option value="s.q.d.d.c">s.q.d.d.c</option>
-                                                                <option value="haust">haust</option>
-                                                                <option value="s.i.m.m">s.i.m.m</option>
-                                                                </select>
-                                                            </div>
+                                                                <div class="col-md-4">
+                                                                    <label for="instruksi">kode instruksi resep</label>
+                                                                    <select class="form-control select2bs4" id="instruksi">
+                                                                    <option value="">-- Pilih Instruksi --</option>
+                                                                        <option value="CITO">CITO</option>
+                                                                        <option value="ITER">ITER</option>
+                                                                        <option value="Equal qs">Equal qs</option>
+                                                                        <option value="m.f pulv da in caps">m.f pulv da in caps</option>
+                                                                        <option value="s.u.e">s.u.e</option>
+                                                                        <option value="m.f pulv dtd no X">m.f pulv dtd no X</option>
+                                                                        <option value="m.f pulv dtd no XV">m.f pulv dtd no XV</option>
+                                                                        <option value="s.q.d.d.c">s.q.d.d.c</option>
+                                                                        <option value="haust">haust</option>
+                                                                        <option value="s.i.m.m">s.i.m.m</option>
+                                                                    </select>
+                                                                </div>
                                                             </div>
 
                                                             <!-- Input Signa -->
@@ -633,8 +628,8 @@
 
                                                                 <div class="col-md-3">
                                                                     <div style="visibility: hidden;"><label for="signa-satuan2">Signa Satuan 2</label></div>
-                                                                    <select class="form-control" id="signa-satuan2">
-                                                                        <option value="">-- Pilih Satuan --</option>
+                                                                    <select class="form-control select2bs4" id="signa-satuan2">
+                                                                        <option value="">-- Pilih Instruksi penggunaan --</option>
                                                                         <option value="SEBELUM MAKAN">SEBELUM MAKAN</option>
                                                                         <option value="SESUDAH MAKAN">SESUDAH MAKAN</option>
                                                                         <option value="SEBELUM/SESUDAH MAKAN">SEBELUM/SESUDAH MAKAN</option>
@@ -828,6 +823,112 @@
 
                                                     </div>
 
+                                                    <div class="tab-pane fade" id="custom-tabs-four-cppt" role="tabpanel" aria-labelledby="custom-tabs-four-cppt-tab">
+                                                        <div class="timeline">
+                                                            @foreach ($pelayana_data as $pelayanan)
+                                                                {{-- Tanggal CPPT --}}
+                                                                <div class="time-label">
+                                                                    <span class="bg-primary text-white px-3 py-1 rounded">
+                                                                        {{ $pelayanan->tanggal_kujungan}}
+                                                                    </span>
+                                                                </div>
+
+                                                                {{-- Data SOAP Perawat --}}
+                                                                @foreach ($pelayanan->pelayanan_so as $prawat)
+                                                                    <div>
+                                                                        <i class="fas fa-user-nurse bg-info"></i> {{-- Icon berbeda utk perawat --}}
+                                                                        <div class="timeline-item">
+                                                                            <span class="time"><i class="fas fa-clock"></i> </span>
+                                                                            <h3 class="timeline-header mb-2">
+                                                                                {{ $prawat->user_input_name ?? 'Perawat tidak diketahui' }} – Perawat
+                                                                            </h3>
+                                                                            <div class="timeline-body">
+                                                                                <!-- Nav Tabs -->
+                                                                                <ul class="nav nav-tabs" role="tablist" id="tabs-prawat-{{ $prawat->id }}">
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link active" id="soap-s-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-s-prawat-{{ $prawat->id }}" role="tab">S</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-o-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-o-prawat-{{ $prawat->id }}" role="tab">O</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-a-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-a-prawat-{{ $prawat->id }}" role="tab">A</a>
+                                                                                    </li>
+                                                                                </ul>
+
+                                                                                <!-- Tab Content -->
+                                                                                <div class="tab-content border rounded-bottom p-3" id="tab-content-prawat-{{ $prawat->id }}">
+                                                                                    <div class="tab-pane fade show active" id="soap-s-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-s-tab-prawat-{{ $prawat->id }}">
+                                                                                        <p><strong>Subjektif:</strong> {{ $prawat->tableData ?? '-' }}</p>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-o-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-o-tab-prawat-{{ $prawat->id }}">
+                                                                                        <p><strong>Objektif:</strong> {{ $prawat->lingkar_perut ?? '-' }}</p>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-a-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-a-tab-prawat-{{ $prawat->id }}">
+                                                                                        <p><strong>Asesmen:</strong> {{ $prawat->summernote ?? '-' }}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+
+                                                                {{-- Data SOAP Dokter --}}
+                                                                @foreach ($pelayanan->pelayanan_soap as $dokterSoap)
+                                                                    <div>
+                                                                        <i class="fas fa-user-md bg-success"></i>
+                                                                        <div class="timeline-item">
+                                                                            <span class="time"><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($dokterSoap->created_at)->format('H:i') }}</span>
+                                                                            <h3 class="timeline-header mb-2">
+                                                                                {{ $pelayanan->dokter->namauser->name ?? 'Dokter tidak diketahui' }} – Dokter
+                                                                            </h3>
+                                                                            <div class="timeline-body">
+                                                                                <!-- Nav Tabs -->
+                                                                                <ul class="nav nav-tabs" role="tablist" id="tabs-dokter-{{ $dokterSoap->id }}">
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link active" id="soap-s-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-s-dokter-{{ $dokterSoap->id }}" role="tab">S</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-o-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-o-dokter-{{ $dokterSoap->id }}" role="tab">O</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-a-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-a-dokter-{{ $dokterSoap->id }}" role="tab">A</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-p-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-p-dokter-{{ $dokterSoap->id }}" role="tab">P</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-i-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-i-dokter-{{ $dokterSoap->id }}" role="tab">Instruksi</a>
+                                                                                    </li>
+                                                                                </ul>
+
+                                                                                <!-- Tab Content -->
+                                                                                <div class="tab-content border rounded-bottom p-3" id="tab-content-dokter-{{ $dokterSoap->id }}">
+                                                                                    <div class="tab-pane fade show active" id="soap-s-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-s-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <p><strong>Subjektif:</strong> {{ $dokterSoap->s ?? '-' }}</p>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-o-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-o-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <p><strong>Objektif:</strong> {{ $dokterSoap->o ?? '-' }}</p>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-a-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-a-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <p><strong>Asesmen:</strong> {{ $dokterSoap->a ?? '-' }}</p>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-p-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-p-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <p><strong>Planning:</strong> {{ $dokterSoap->p ?? '-' }}</p>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-i-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-i-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <p><strong>Instruksi:</strong> {{ $dokterSoap->instruksi ?? '-' }}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                            @endforeach
+                                                        </div>
+
+                                                    </div>
+
                                                 </div>
                                             </div>
                                             <!-- /.card -->
@@ -890,6 +991,7 @@
       </div>
     </div>
 </div>
+
 
 <script>
     let selectedBox = null;
@@ -1024,7 +1126,6 @@
     });
 </script>
 
-
 <script>
     document.getElementById('saveDentalForm').addEventListener('click', function () {
         // Ambil nilai input DMF
@@ -1129,8 +1230,6 @@
         });
     });
 </script>
-
-
 
 {{-- Script load data --}}
 <script>
@@ -1239,7 +1338,6 @@
     }
 </script>
 
-{{-- Script resep --}}
 <script>
     $(function () {
         let resepList = [];
@@ -1248,22 +1346,57 @@
         function renderResep() {
             let html = "";
             resepList.forEach((line, i) => {
-            html += `<div class="resep-line d-flex justify-content-between align-items-center"
-                    data-index="${i}" style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #ddd; ${i === selectedIndex ? 'background:#d1ecf1;' : ''}">
-                <span class="resep-text">${$('<div>').html(line.replace(/\n/g, "<br>")).html()}</span>`;
-            if (i === selectedIndex) {
-                html += `<div class="btn-group btn-group-sm ml-2">
-                        <button type="button" class="btn btn-warning btn-up">▲</button>
-                        <button type="button" class="btn btn-warning btn-down">▼</button>
-                        <button type="button" class="btn btn-success btn-edit">✎</button>
-                        <button type="button" class="btn btn-danger btn-delete">✖</button>
-                        </div>`;
-            }
-            html += `</div>`;
+                html += `<div class="resep-line d-flex justify-content-between align-items-center"
+                        data-index="${i}" style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #ddd; ${i === selectedIndex ? 'background:#d1ecf1;' : ''}">
+                    <span class="resep-text">${$('<div>').html(line.replace(/\n/g, "<br>")).html()}</span>`;
+                if (i === selectedIndex) {
+                    html += `<div class="btn-group btn-group-sm ml-2">
+                            <button type="button" class="btn btn-warning btn-up">▲</button>
+                            <button type="button" class="btn btn-warning btn-down">▼</button>
+                            <button type="button" class="btn btn-success btn-edit">✎</button>
+                            <button type="button" class="btn btn-danger btn-delete">✖</button>
+                            </div>`;
+                }
+                html += `</div>`;
             });
             $("#summernote-resep").html(html);
             $("#resep-data").val(JSON.stringify(resepList));
         }
+
+        // Load data resep dari server dengan idRawat dari input #no_rawat
+        function loadResepFromServer() {
+            const idRawat = $("#no_rawat").val();
+            if (!idRawat) return;
+
+            const url = "{{ route('pelayana_dokter_data_obat.get', ':id') }}".replace(":id", idRawat);
+            $.get(url)
+                .done(function(response) {
+                    if (Array.isArray(response) && response.length > 0 && response[0].Resep_obat) {
+                        try {
+                            resepList = JSON.parse(response[0].Resep_obat);
+                        } catch (e) {
+                            console.error('Gagal parsing Resep_obat:', e);
+                            resepList = [];
+                        }
+                    } else if (Array.isArray(response)) {
+                        resepList = response;
+                    } else {
+                        resepList = [];
+                    }
+                    selectedIndex = -1;
+                    renderResep();
+                })
+                .fail(function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Gagal memuat data resep dari server.',
+                    });
+                });
+        }
+
+        // Panggil load saat dokumen siap
+        loadResepFromServer();
 
         $("#btn-r-action").click(function () {
             const text = $("#r-text").val().trim();
@@ -1272,7 +1405,7 @@
             renderResep();
         });
 
-    $("#btn-add-obat").click(function () {
+        $("#btn-add-obat").click(function () {
             const nama = $("#nama-obat").val();
             const dosis1 = $("#dosis1").val().trim();
             const dosis2 = $("#dosis2").val().trim();
@@ -1295,14 +1428,12 @@
             let line = `${nama}`;
             if (dosis1) line += ` ${dosis1}`;
             if (dosis2) line += ` ${dosis2}`;
-
             line += "\n";
 
             if (instruksi) {
                 line += `${instruksi}\n`;
             }
 
-            // Susun signa walau tidak lengkap
             if (signaJumlah1 && signaJumlah2) {
                 line += `${signaJumlah1} x ${signaJumlah2}`;
                 if (dosis3) line += ` ${dosis3}`;
@@ -1312,7 +1443,7 @@
             resepList.push(line);
             renderResep();
 
-            // Reset input
+            // Reset form input
             $("#nama-obat").val("");
             $("#dosis1").val("");
             $("#dosis2").val("");
@@ -1323,19 +1454,20 @@
             $("#signa-satuan2").val("");
         });
 
-
-        // Auto isi dosis2
+        // Auto isi dosis2 berdasarkan data satuan obat
         $("#nama-obat").on("change", function () {
             const satuan = $(this).find(":selected").data("satuan");
             $("#dosis2").val(satuan ?? "");
         });
 
+        // Event click pada resep line untuk select/deselect
         $("#summernote-resep").on("click", ".resep-line", function () {
             const idx = $(this).data("index");
             selectedIndex = selectedIndex === idx ? -1 : idx;
             renderResep();
         });
 
+        // Delete resep
         $("#summernote-resep").on("click", ".btn-delete", function (e) {
             e.stopPropagation();
             const idx = $(this).closest(".resep-line").data("index");
@@ -1344,32 +1476,35 @@
             renderResep();
         });
 
+        // Pindah naik resep
         $("#summernote-resep").on("click", ".btn-up", function (e) {
             e.stopPropagation();
             const idx = $(this).closest(".resep-line").data("index");
             if (idx > 0) {
-            [resepList[idx - 1], resepList[idx]] = [resepList[idx], resepList[idx - 1]];
-            selectedIndex = idx - 1;
-            renderResep();
+                [resepList[idx - 1], resepList[idx]] = [resepList[idx], resepList[idx - 1]];
+                selectedIndex = idx - 1;
+                renderResep();
             }
         });
 
+        // Pindah turun resep
         $("#summernote-resep").on("click", ".btn-down", function (e) {
             e.stopPropagation();
             const idx = $(this).closest(".resep-line").data("index");
             if (idx < resepList.length - 1) {
-            [resepList[idx + 1], resepList[idx]] = [resepList[idx], resepList[idx + 1]];
-            selectedIndex = idx + 1;
-            renderResep();
+                [resepList[idx + 1], resepList[idx]] = [resepList[idx], resepList[idx + 1]];
+                selectedIndex = idx + 1;
+                renderResep();
             }
         });
 
+        // Edit resep
         $("#summernote-resep").on("click", ".btn-edit", function (e) {
             e.stopPropagation();
             const idx = $(this).closest(".resep-line").data("index");
             const line = resepList[idx];
 
-            // Reset form yang pasti diisi (nama & dosis)
+            // Reset input form
             $("#nama-obat").val("");
             $("#dosis1").val("");
             $("#dosis2").val("");
@@ -1381,18 +1516,14 @@
             $("#r-text").val("");
 
             if (line.startsWith("R:/")) {
-                // Jika ini resep bebas
                 const content = line.replace(/^R:\/*\s*/, "");
                 $("#r-text").val(content);
             } else {
-                // Pisah berdasarkan newline, hilangkan baris kosong
                 const parts = line.split("\n").map(p => p.trim()).filter(p => p.length > 0);
 
-                // === PARSING BARIS 1: nama obat + dosis1 + dosis2 ===
                 if (parts.length > 0) {
                     const tokens = parts[0].split(" ");
                     if (tokens.length >= 3) {
-                        // Ambil 2 terakhir sebagai dosis
                         $("#dosis2").val(tokens.pop());
                         $("#dosis1").val(tokens.pop());
                         $("#nama-obat").val(tokens.join(" "));
@@ -1404,13 +1535,10 @@
                     }
                 }
 
-                // === PARSING BARIS 2: instruksi (opsional) ===
                 if (parts.length > 1 && !/^\d+\s*x\s*\d+/.test(parts[1])) {
-                    // Pastikan ini bukan signa
                     $("#instruksi").val(parts[1]);
                 }
 
-                // === PARSING BARIS 3 atau BARIS 2 (jika tidak ada instruksi): signa ===
                 const signaLine = parts.find(p => /^\d+\s*x\s*\d+/.test(p));
                 if (signaLine) {
                     const signaRegex = /^(\d+)\s*x\s*(\d+)(?:\s+(\S+))?(?:\s+(.*))?$/;
@@ -1424,14 +1552,13 @@
                 }
             }
 
-            // Hapus item yang sedang diedit dan render ulang
+            // Hapus item yang diedit dan refresh UI
             resepList.splice(idx, 1);
             selectedIndex = -1;
             renderResep();
         });
 
-
-
+        // Cetak resep via AJAX
         $("#btn-print-resep-ajax").click(function () {
             const resepData = JSON.stringify(resepList);
 
@@ -1443,14 +1570,14 @@
                     _token: '{{ csrf_token() }}'
                 },
                 xhrFields: {
-                    responseType: 'blob' // penting agar bisa buka PDF dari binary
+                    responseType: 'blob'
                 },
-                success: function (response, status, xhr) {
+                success: function (response) {
                     const blob = new Blob([response], { type: 'application/pdf' });
                     const url = window.URL.createObjectURL(blob);
                     window.open(url, '_blank');
                 },
-                error: function (xhr) {
+                error: function () {
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal',
@@ -1464,53 +1591,107 @@
 
 {{-- Script tindakan --}}
 <script>
-    const perawatanTindakan = @json($tindakan);
-
-    let tindakanList = [];
-    let editingData = null;
-    let editingIndex = null;
-
-    function renderTable() {
-        const tbody = $('#tabel-tindakan tbody');
-        tbody.empty();
-
-        tindakanList.forEach((group, index) => {
-            const pelaksanaRows = group.pelaksana;
-            pelaksanaRows.forEach((p, i) => {
-                const row = $('<tr>');
-                if (i === 0) {
-                    row.append(`<td rowspan="${pelaksanaRows.length}" class="align-middle text-center">${group.nama}</td>`);
-                }
-                row.append(`<td class="align-middle text-center">${p.pelaksana}</td>`);
-                row.append(`<td class="align-middle text-center">Rp ${p.harga.toLocaleString('id-ID')}</td>`);
-                if (i === 0) {
-                    row.append(`
-                        <td rowspan="${pelaksanaRows.length}" class="align-middle text-center">
-                            <button type="button" class="btn btn-sm btn-warning btn-edit" data-index="${index}">Edit</button>
-                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-index="${index}">Hapus</button>
-                        </td>
-                    `);
-                }
-                tbody.append(row);
-            });
-        });
-    }
-
-    function resetForm() {
-        $('#jenis-tindakan').val('');
-        $('#tindakan').empty().append('<option value="">Pilih Tindakan</option>');
-        $('#pelaksana').val('');
-        $('#tambah-tindakan').text('Tambah').removeData('edit-index');
-
-        if (editingData !== null && editingIndex !== null) {
-            tindakanList.splice(editingIndex, 0, editingData);
-            editingData = null;
-            editingIndex = null;
-            renderTable();
-        }
-    }
-
     $(document).ready(function () {
+        const perawatanTindakan = @json($tindakan);
+
+        let tindakanList = [];
+        let editingData = null;
+        let editingIndex = null;
+
+        function renderTable() {
+            const tbody = $('#tabel-tindakan tbody');
+            tbody.empty();
+
+            tindakanList.forEach((group, index) => {
+                const pelaksanaRows = group.pelaksana;
+                pelaksanaRows.forEach((p, i) => {
+                    const row = $('<tr>');
+                    if (i === 0) {
+                        row.append(`<td rowspan="${pelaksanaRows.length}" class="align-middle text-center">${group.nama}</td>`);
+                    }
+                    row.append(`<td class="align-middle text-center">${p.pelaksana}</td>`);
+                    row.append(`<td class="align-middle text-center">Rp ${p.harga.toLocaleString('id-ID')}</td>`);
+                    if (i === 0) {
+                        row.append(`
+                            <td rowspan="${pelaksanaRows.length}" class="align-middle text-center">
+                                <button type="button" class="btn btn-sm btn-warning btn-edit" data-index="${index}">Edit</button>
+                                <button type="button" class="btn btn-sm btn-danger btn-delete" data-index="${index}">Hapus</button>
+                            </td>
+                        `);
+                    }
+                    tbody.append(row);
+                });
+            });
+
+            const hiddenInputs = $('#hiddenTindakanInputs');
+            hiddenInputs.empty();
+
+            tindakanList.forEach(item => {
+                hiddenInputs.append(`
+                    <input type="hidden" name="tindakan_nama[]" value="${item.nama}" data-id="${item._id}">
+                `);
+                item.pelaksana.forEach(p => {
+                    hiddenInputs.append(`
+                        <input type="hidden" name="tindakan_pelaksana[]" value="${p.pelaksana}" data-id="${item._id}">
+                        <input type="hidden" name="tindakan_harga[]" value="${p.harga ?? 0}" data-id="${item._id}">
+                    `);
+                });
+            });
+        }
+
+        function resetForm() {
+            $('#jenis-tindakan').val('');
+            $('#tindakan').empty().append('<option value="">Pilih Tindakan</option>');
+            $('#pelaksana').val('');
+            $('#tambah-tindakan').text('Tambah').removeData('edit-index');
+
+            if (editingData !== null && editingIndex !== null) {
+                tindakanList.splice(editingIndex, 0, editingData);
+                editingData = null;
+                editingIndex = null;
+                renderTable();
+            }
+        }
+
+        function parseHarga(harga) {
+            if (typeof harga === 'string') {
+                // ganti koma jadi titik lalu parse float lalu bulatkan
+                const num = parseFloat(harga.replace(',', '.'));
+                if (isNaN(num)) return 0;
+                return Math.round(num);
+            }
+            if (typeof harga === 'number') {
+                return Math.round(harga);
+            }
+            return 0;
+        }
+
+
+        // Load tindakan dari server jika no_rawat tersedia
+        const noRawat = $('#no_rawat').val();
+        if (noRawat) {
+            const urlTindakan = "{{ route('pelayana_dokter_data_tindakan.get', ':norawat') }}".replace(':norawat', noRawat);
+
+            $.get(urlTindakan)
+                .done(function(response) {
+                    tindakanList = (response || []).map(function(item) {
+                        const pelaksanaStrings = (item.jenis_pelaksana || '-').split(',').map(p => p.trim());
+                        const hargaParsed = parseHarga(item.harga);
+                        const pelaksana = pelaksanaStrings.map(pel => ({
+                            pelaksana: pel,
+                            harga: hargaParsed
+                        }));
+                        return {
+                            nama: item.Jenis_tindakan || item.nama || '-',
+                            pelaksana: pelaksana,
+                            _id: 'tindakan_' + (item.id || Math.random().toString(36).substr(2, 9))
+                        };
+                    });
+                    renderTable();
+                });
+
+        }
+
         $('#jenis-tindakan').change(function () {
             const kategoriId = parseInt($(this).val());
             const tindakanSelect = $('#tindakan').empty().append('<option value="">Pilih Tindakan</option>');
@@ -1653,7 +1834,6 @@
     });
 </script>
 
-
 {{-- Script Diet --}}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -1664,7 +1844,7 @@
     });
 
     function loadDietFromAPI(noRawat) {
-        const apiUrl = "{{ route('pelayana_dokter_data_icd.get', ':norawat') }}".replace(':norawat', noRawat);
+        const apiUrl = "{{ route('pelayana_dokter_data_diet.get', ':norawat') }}".replace(':norawat', noRawat);
         fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
@@ -2044,7 +2224,6 @@
         updateTableState();
     });
 </script>
-
 
 {{-- Script jenis alergi --}}
 <script>

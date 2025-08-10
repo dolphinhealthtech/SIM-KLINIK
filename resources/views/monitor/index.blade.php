@@ -249,7 +249,7 @@
                                 </div>
                             </div>
                             <div class="bs-stepper-content">
-                                <form id="daftarForm" action="{{ route('pasien.store') }}" method="POST" enctype="multipart/form-data">
+                                <form id="daftarForm" action="{{ route('monitor.add.pasien') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <!-- your steps content here -->
                                     <div id="biodata" class="content" role="tabpanel" aria-labelledby="biodata-trigger">
@@ -295,8 +295,6 @@
                                                     <textarea class="form-control" id="address" name="address" rows="3" placeholder="Masukkan alamat lengkap"></textarea>
                                                 </div>
                                             </div>
-                                            <input type="hidden" id="timestamp" name="timestamp">
-
                                         </div>
                                         <button type="button" class="btn btn-primary" onclick="stepper.next()">Selanjutnya</button>
                                     </div>
@@ -383,6 +381,30 @@
             </div>
     </div>
 
+    <!-- Modal Kamera -->
+    <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cameraModalLabel">Ambil Foto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <video id="cameraPreview" autoplay></video>
+                    <canvas id="capturedCanvas" style="display: none;"></canvas>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-success" onclick="capturePhoto()">Ambil Foto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <script>
         $(document).ready(function() {
             let sudahRequest = false;
@@ -419,29 +441,6 @@
             });
         });
     </script>
-
-
-        <!-- Modal Kamera -->
-        <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="cameraModalLabel">Ambil Foto</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <video id="cameraPreview" autoplay></video>
-                        <canvas id="capturedCanvas" style="display: none;"></canvas>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
-                        <button type="button" class="btn btn-success" onclick="capturePhoto()">Ambil Foto</button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <script>
             let video = document.getElementById('cameraPreview');
@@ -667,6 +666,7 @@
                 window.stepper = new Stepper(document.querySelector('.bs-stepper'))
             })
         </script>
+
         <script>
             $(document).ready(function() {
                 // Add novalidate attribute to your form to disable browser validation

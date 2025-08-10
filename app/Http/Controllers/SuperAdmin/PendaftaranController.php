@@ -117,7 +117,9 @@ class PendaftaranController extends Controller
             return response()->json(['error' => 'Loket tidak ditemukan untuk poli ini'], 404);
         }
 
+        $today = Carbon::today();
         $last = Pendaftaran_rawat_jalan::where('antrian', 'like', $antrian->nama . '-%')
+            ->whereDate('created_at', $today)
             ->orderBy('created_at', 'desc')
             ->first();
         $nextNumber = $last ? ((int) str_replace($antrian->nama . '-', '', $last->antrian)) + 1 : 1;
@@ -274,7 +276,7 @@ class PendaftaranController extends Controller
             ], 422);
         }
     }
-    
+
     public function pendaftaranbatal(Request $request)
     {
         try {
@@ -423,13 +425,13 @@ class PendaftaranController extends Controller
                 try {
                     $response = $this->PcareController->post_pendaftaran_bpjs($pendaftaranpcare);
 
-                    if ($response->getStatusCode() === 200 || $response->getStatusCode() === 201) {
+                    if (in_array((int)$response->getStatusCode(), [200, 201])) {
                         $data = json_decode($response->getContent(), true);
 
                         if (isset($data['data']['message'])) {
                             $no_urut = $data['data']['message'];
 
-                            $pendaftaran_nourut = Pendaftaran_rawat_jalan::where('nomor_register', $pendaftaran->nomor_register)                                
+                            $pendaftaran_nourut = Pendaftaran_rawat_jalan::where('nomor_register', $pendaftaran->nomor_register)
                                 ->first();
 
                             Log::info('Data pendaftaran_nourut dan no_urut', [
@@ -461,7 +463,7 @@ class PendaftaranController extends Controller
                         }
                     } else {
                         // Tangani jika status bukan 200/201
-                        
+
 
                         return response()->json([
                             'success' => false,

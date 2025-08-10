@@ -488,6 +488,7 @@ Route::get('/monitor', [MonitorController::class, 'monitor'])->name('monitor.get
 Route::post('/monitor/add/bpjs', [MonitorController::class, 'monitor_bpjs'])->name('monitor.add.bpjs');
 Route::post('/monitor/add/nobpjs', [MonitorController::class, 'monitor_nobpjs'])->name('monitor.add.nobpjs');
 Route::get('/monitor/loket-antrian', [MonitorController::class, 'loketAntrian'])->name('monitor.loket.antrian');
+Route::post('/monitor/add/pasien', [PasienController::class, 'pasiensadd'])->name('monitor.add.pasien');
 
 // Menu Panggil Pasien
 Route::middleware('auth')->prefix('pasien-selesai')->group(function () {
@@ -499,6 +500,7 @@ Route::get('/rme/{norawat}', [PelayananController::class, 'pelayana_rme_selesai'
 
 Route::middleware(['auth'])->prefix('pasien')->group(function () {
     Route::get('/', [PasienController::class, 'pasiens'])->name('pasien.get');
+    Route::get('/time-line/{norm}', [PasienController::class, 'pasiens_time_line'])->name('pasiens_time_line.get');
     Route::post('/add', [PasienController::class, 'pasiensadd'])->name('pasien.store');
     Route::post('/verifikasi', [PasienController::class, 'pasienvefiv'])->name('pasien.verifikasi');
     Route::post('/update', [PasienController::class, 'pasienupdate'])->name('pasien.update');
@@ -529,10 +531,9 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::post('/laboratorium/print', [PelayananController::class, 'laboratoriumPrint'])->name('laboratorium.print');
     Route::post('/radiologi/print', [PelayananController::class, 'radiologiPrint'])->name('radiologi.print');
     Route::post('/skd/print', [PelayananController::class, 'skdPrint'])->name('skd.print');
-    Route::post('/surat-sakit/print', [PelayananController::class, 'suratSakitPrint'])->name('surat.sakit.print');
-    Route::post('/surat-sehat/print', [PelayananController::class, 'suratSehatPrint'])->name('surat.sehat.print');
-    Route::post('/surat-kematian/print', [PelayananController::class, 'suratKematianPrint'])->name('surat.kematian.print');
-    Route::post('/skdp/print', [PelayananController::class, 'skdpPrint'])->name('skdp.print');
+    Route::post('/permintaan-sakit/print', [PelayananController::class, 'permintaanSakitPrint'])->name('permintaan.sakit.print');
+    Route::post('/permintaan-sehat/print', [PelayananController::class, 'permintaanSehatPrint'])->name('permintaan.sehat.print');
+    Route::post('/permintaan-kematian/print', [PelayananController::class, 'permintaanKematianPrint'])->name('permintaan.kematian.print');
     Route::post('/dokter/so/odontogram/add', [OdoController::class, 'odontogramadd'])->name('odontogram.add');
     Route::post('/dokter/so/odontogram/details/add', [OdoController::class, 'odontogramdetailsadd'])->name('odontogram.details.add');
 

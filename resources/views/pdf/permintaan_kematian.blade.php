@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 7px;
+            font-size: 9px;
             margin: 0mm;
             padding: 0;
         }
@@ -18,7 +18,7 @@
         }
 
         .document-title {
-            font-size: 9px;
+            font-size: 11px;
             font-weight: bold;
             margin: 0;
             text-align: center;
@@ -33,7 +33,7 @@
 
         .footer {
             position: fixed;
-            bottom: 5px;
+            bottom: 2px;
             width: 100%;
         }
 
@@ -44,9 +44,9 @@
 
         .signature-line {
             border-top: 1px solid #000;
-            width: 120px;
+            width: 100px;
             margin: 0 auto;
-            margin-top: 40px;
+            margin-top: 20px;
         }
 
         .page-break {
@@ -73,6 +73,14 @@
             width: 10px;
             text-align: center;
         }
+
+        .footer-text {
+            font-size: 8px;
+        }
+
+        .signature-spacing {
+            height: 10px;
+        }
     </style>
 </head>
 
@@ -84,10 +92,10 @@
                     style="width: 50px; height: 50px; border-radius: 50%;">
             </td>
             <td style="text-align: center;">
-                <div style="font-size: 11px; font-weight: bold; margin: 0;">
+                <div style="font-size: 14px; font-weight: bold; margin: 0;">
                     {{ $namaKlinik }}
                 </div>
-                <div style="font-size: 7px; line-height: 1.3; margin: 0;">
+                <div style="font-size: 9px; line-height: 1.3; margin: 0;">
                     {!! nl2br(e($alamatKlinik)) !!}
                 </div>
             </td>
@@ -98,7 +106,7 @@
 
     <div class="document-title">SURAT KEMATIAN</div>
 
-    <p class="teks">Yang bertanda tangan dibawah ini, menerangkan bahwa : </p>
+    <p class="teks">Yang bertanda tangan dibawah ini, menerangkan bahwa :</p>
 
     <table class="info-table" style="width: 100%;">
         <tr>
@@ -173,17 +181,17 @@
     <div class="footer">
         <table class="signature-table">
             <tr>
-                <td>Tangerang, {{ $now->format('d-m-Y') }}</td>
+                <td class="footer-text">Tangerang, {{ $now->format('d-m-Y') }}</td>
                 <td></td>
                 <td></td>
             </tr>
             <tr>
-                <td style="font-weight: bold;">Dokter Pemeriksa</td>
+                <td class="footer-text" style="font-weight: bold;">Dokter Pemeriksa</td>
                 <td></td>
                 <td></td>
             </tr>
             <tr>
-                <td style="height: 20px;"></td>
+                <td class="signature-spacing"></td>
                 <td></td>
                 <td></td>
             </tr>
@@ -195,7 +203,7 @@
                 <td></td>
             </tr>
             <tr>
-                <td>{{ $dokter_pengirim ?? (auth()->user()->name ?? 'Petugas') }}</td>
+                <td class="footer-text">{{ $dokter_pengirim ?? (auth()->user()->name ?? 'Petugas') }}</td>
                 <td></td>
                 <td></td>
             </tr>

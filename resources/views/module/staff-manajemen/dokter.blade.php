@@ -53,14 +53,6 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#adddokterModal">
-                                        <i class="fas fa-plus"></i> Tambah
-                                    </button>
-                                </div>
-                            </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="doktertabel" class="table table-bordered table-striped">
@@ -192,8 +184,11 @@
                                                 name="nama">
                                                 <option value="" disabled selected>Nama</option>
                                                 @foreach ($user as $userdata)
-                                                    <option value="{{ $userdata->id }}" data-name="{{ $userdata->name }}">{{ $userdata->name }}</option>
+                                                    @if ($userdata->roles->contains('name', 'Dokter'))
+                                                        <option value="{{ $userdata->id }}" data-name="{{ $userdata->name }}">{{ $userdata->name }}</option>
+                                                    @endif
                                                 @endforeach
+
                                             </select>
                                         </div>
                                         @error('nama')
@@ -2327,7 +2322,16 @@
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
-                "buttons": false,
+                "buttons": [
+                    {
+                        text: '<i class="fas fa-plus"></i> Tambah',
+                        type: 'button',
+                        className: 'btn btn-primary',
+                        action: function () {
+                                $('#adddokterModal').modal('show'); // <== Bootstrap 4-compatible
+                        }
+                    }
+                ],
                 "language": {
                     "search": "Cari:",
                     "lengthMenu": "Tampilkan _MENU_ data per halaman",

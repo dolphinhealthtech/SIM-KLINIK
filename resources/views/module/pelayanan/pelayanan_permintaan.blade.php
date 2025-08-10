@@ -100,18 +100,9 @@
 
                                 <input type="hidden" id="alamat" name="alamat"
                                     value="{{ $pelayanan->pasien->alamat }}">
+                                <input type="hidden" id="no_bpjs" name="no_bpjs"
+                                    value="{{ $pelayanan->pasien->no_bpjs ?? '-' }}">
                             </div>
-<<<<<<< HEAD
-=======
-
-                            <div class="form-group">
-                                <label for="poli">Poli</label>
-                                <input type="text" class="form-control bg-light" id="poli" name="poli" value="{{ $pelayanan->poli->nama }}" readonly>
-                            </div>
-
-                            <input type="hidden" id="alamat" name="alamat" value="{{ $pelayanan->pasien->alamat }}">
-                            <input type="hidden" id="no_bpjs" name="no_bpjs" value="{{ $pelayanan->pasien->no_bpjs ?? '-' }}">
->>>>>>> 3cad0420682845b323b1f78793004f6f88ae6a08
                         </div>
                     </div>
                     <div class="col-md-8">
@@ -456,13 +447,6 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-3">
-                                                <label class="col-md-3 col-form-label">No Kartu</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" class="form-control"
-                                                        value="{{ $pelayanan->pasien->no_bpjs }}" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row mt-3">
                                                 <label class="col-md-3 col-form-label">Untuk</label>
                                                 <div class="col-md-9">
                                                     <select class="form-control" name="untuk_skdp">
@@ -489,11 +473,6 @@
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-3">
-                                                <div class="col-md-3"></div>
-                                                <div class="col-md-9">
-                                                    <button type="button" class="btn btn-secondary mb-2" disabled>Cek
-                                                        Jadwal HFIS</button>
-                                                </div>
                                             </div>
                                             <div class="form-group row mt-3">
                                                 <label class="col-md-3 col-form-label">Belum dapat dikembalikan ke FKTP
@@ -603,12 +582,12 @@
                                                         <div class="col-md-6">
                                                             <input type="number" class="form-control" name="sistole"
                                                                 placeholder="Sistole"
-                                                                value="{{ $pelayanan->vital_signs->sistol ?? '' }}">
+                                                                value="{{ $pelayanan->pelayanan_so->sistol ?? '' }}">
                                                         </div>
                                                         <div class="col-md-6">
                                                             <input type="number" class="form-control" name="diastole"
                                                                 placeholder="Diastole"
-                                                                value="{{ $pelayanan->vital_signs->distol ?? '' }}">
+                                                                value="{{ $pelayanan->pelayanan_so->distol ?? '' }}">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -617,7 +596,7 @@
                                                     <div class="input-group">
                                                         <input type="number" step="0.1" class="form-control"
                                                             name="suhu" placeholder="Suhu"
-                                                            value="{{ $pelayanan->vital_signs->suhu ?? '' }}">
+                                                            value="{{ $pelayanan->pelayanan_so->suhu ?? '' }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
@@ -625,7 +604,7 @@
                                                     <div class="input-group">
                                                         <input type="number" step="0.1" class="form-control"
                                                             name="berat" placeholder="Berat"
-                                                            value="{{ $pelayanan->vital_signs->berat ?? '' }}">
+                                                            value="{{ $pelayanan->pelayanan_so->berat ?? '' }}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -635,20 +614,20 @@
                                                     <label for="rr">RR (/mnt)</label>
                                                     <input type="number" class="form-control" name="respiratory_rate"
                                                         placeholder="Respiratory Rate"
-                                                        value="{{ $pelayanan->vital_signs->rr ?? '' }}">
+                                                        value="{{ $pelayanan->pelayanan_so->rr ?? '' }}">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="nadi">Nadi (/mnt)</label>
                                                     <input type="number" class="form-control" name="nadi"
                                                         placeholder="Nadi"
-                                                        value="{{ $pelayanan->vital_signs->nadi ?? '' }}">
+                                                        value="{{ $pelayanan->pelayanan_so->nadi ?? '' }}">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="tinggi">Tinggi (Cm)</label>
                                                     <div class="input-group">
                                                         <input type="number" class="form-control" name="tinggi"
                                                             placeholder="Tinggi"
-                                                            value="{{ $pelayanan->vital_signs->tinggi ?? '' }}">
+                                                            value="{{ $pelayanan->pelayanan_so->tinggi ?? '' }}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -1128,97 +1107,146 @@
         }
 
         $('#btn-tambah-rad').on('click', function() {
-            const pemeriksaan = $('#pemeriksaan_radiologi').val();
-            const jenisPosisi = $('#jenis_posisi_radiologi').val();
-            const posisi = $('#posisi_radiologi').val();
-            const metode = $('#metode_radiologi').val();
+                    const pemeriksaan = $('#pemeriksaan_radiologi').val();
+                    const jenisPosisi = $('#jenis_posisi_radiologi').val();
+                    const posisi = $('#posisi_radiologi').val();
+                    const metode = $('#metode_radiologi').val();
 
-            if (!pemeriksaan || !jenisPosisi || !posisi || !metode) {
-                Swal.fire('Lengkapi semua field hingga metode sebelum menambah data.', '', 'warning');
-                return;
-            }
+                    if (!pemeriksaan || !jenisPosisi || !posisi || !metode) {
+                        Swal.fire('Lengkapi semua field hingga metode sebelum menambah data.', '', 'warning');
+                        return;
+                    }
 
-<script>
-    $('#btn-print-skd').on('click', function () {
-        const tgl_pemeriksaan = $('#tanggal_pemeriksaan_skd').val();
-        const kode_surat = $('#kode_surat_skd').val();
-        const tgl_awal = $('#tanggal_mulai_istirahat_skd').val();
-        const tgl_akhir = $('#tanggal_akhir_istirahat_skd').val();
-        const diagnosa = $('#diagnosa_skd').val();
-        const nama_pasien = $('#nama').val();
-        const dokter_pengirim = $('#dokter_pengirim').val();
-        const jenis_kelamin = $('#jenis_kelamin').val();
-        const tanggal_lahir = $('#tanggal_lahir').val();
-        const alamat = $('#alamat').val();
-        const umur = $('#umur').val();
-        const no_bpjs = $('#no_bpjs').val();
-        const csrfToken = '{{ csrf_token() }}';
+                    <
+                    script >
+                        $('#btn-print-skd').on('click', function() {
+                            const tgl_pemeriksaan = $('#tanggal_pemeriksaan_skd').val();
+                            const kode_surat = $('#kode_surat_skd').val();
+                            const tgl_awal = $('#tanggal_mulai_istirahat_skd').val();
+                            const tgl_akhir = $('#tanggal_akhir_istirahat_skd').val();
+                            const diagnosa = $('#diagnosa_skd').val();
+                            const nama_pasien = $('#nama').val();
+                            const dokter_pengirim = $('#dokter_pengirim').val();
+                            const jenis_kelamin = $('#jenis_kelamin').val();
+                            const tanggal_lahir = $('#tanggal_lahir').val();
+                            const alamat = $('#alamat').val();
+                            const umur = $('#umur').val();
+                            const no_bpjs = $('#no_bpjs').val();
+                            const csrfToken = '{{ csrf_token() }}';
 
-            const isDuplicate = radData.some(item =>
-                item.pemeriksaan === newItem.pemeriksaan
-            );
+                            const isDuplicate = radData.some(item =>
+                                item.pemeriksaan === newItem.pemeriksaan
+                            );
 
-            if (isDuplicate) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Data Duplikat',
-                    text: `Data "${pemeriksaan}" sudah ditambahkan ke dalam tabel.`,
-                });
+                            if (isDuplicate) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Data Duplikat',
+                                    text: `Data "${pemeriksaan}" sudah ditambahkan ke dalam tabel.`,
+                                });
 
-                form.append($('<input>', {
-                    type: 'hidden',
-                    name: '_token',
-                    value: csrfToken
-                }));
-                form.append($('<input>', { type: 'hidden', name: 'tgl_pemeriksaan_skd', value: tgl_pemeriksaan }));
-                form.append($('<input>', { type: 'hidden', name: 'kode_surat_skd', value: kode_surat }));
-                form.append($('<input>', { type: 'hidden', name: 'tgl_awal_skd', value: tgl_awal }));
-                form.append($('<input>', { type: 'hidden', name: 'tgl_akhir_skd', value: tgl_akhir }));
-                form.append($('<input>', { type: 'hidden', name: 'diagnosa_skd', value: diagnosa }));
-                form.append($('<input>', { type: 'hidden', name: 'nama_pasien', value: nama_pasien }));
-                form.append($('<input>', { type: 'hidden', name: 'dokter_pengirim', value: dokter_pengirim }));
-                form.append($('<input>', { type: 'hidden', name: 'jenis_kelamin', value: jenis_kelamin }));
-                form.append($('<input>', { type: 'hidden', name: 'tanggal_lahir', value: tanggal_lahir }));
-                form.append($('<input>', { type: 'hidden', name: 'alamat', value: alamat }));
-                form.append($('<input>', { type: 'hidden', name: 'umur', value: umur }));
-                form.append($('<input>', { type: 'hidden', name: 'no_bpjs', value: no_bpjs }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: '_token',
+                                    value: csrfToken
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'tgl_pemeriksaan_skd',
+                                    value: tgl_pemeriksaan
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'kode_surat_skd',
+                                    value: kode_surat
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'tgl_awal_skd',
+                                    value: tgl_awal
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'tgl_akhir_skd',
+                                    value: tgl_akhir
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'diagnosa_skd',
+                                    value: diagnosa
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'nama_pasien',
+                                    value: nama_pasien
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'dokter_pengirim',
+                                    value: dokter_pengirim
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'jenis_kelamin',
+                                    value: jenis_kelamin
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'tanggal_lahir',
+                                    value: tanggal_lahir
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'alamat',
+                                    value: alamat
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'umur',
+                                    value: umur
+                                }));
+                                form.append($('<input>', {
+                                    type: 'hidden',
+                                    name: 'no_bpjs',
+                                    value: no_bpjs
+                                }));
 
-                $('body').append(form);
-                form.submit();
-                form.remove();
+                                $('body').append(form);
+                                form.submit();
+                                form.remove();
 
-                // Setelah submit, redirect ke route dokter
-                setTimeout(() => {
-                    window.location.href = '{{ route("pelayanad.get") }}';
-                }, 1000); // delay 1 detik agar PDF sempat terbuka
-            }
+                                // Setelah submit, redirect ke route dokter
+                                setTimeout(() => {
+                                    window.location.href = '{{ route('pelayanad.get') }}';
+                                }, 1000); // delay 1 detik agar PDF sempat terbuka
+                            }
 
-            radData.push(newItem);
-            refreshRadTable();
+                            radData.push(newItem);
+                            refreshRadTable();
 
-            // Reset input
-            $('#pemeriksaan_radiologi').val(null).trigger('change');
-            $('#jenis_posisi_radiologi').val(null).trigger('change');
-            $('#posisi_radiologi').val(null).trigger('change');
-            $('#metode_radiologi').val(null).trigger('change');
-        });
+                            // Reset input
+                            $('#pemeriksaan_radiologi').val(null).trigger('change');
+                            $('#jenis_posisi_radiologi').val(null).trigger('change');
+                            $('#posisi_radiologi').val(null).trigger('change');
+                            $('#metode_radiologi').val(null).trigger('change');
+                        });
 
-        $(document).on('click', '.rad-row', function() {
-            $('.rad-row').removeClass('table-primary');
-            $(this).addClass('table-primary');
-            selectedRadRow = $(this).data('index');
-        });
+                    $(document).on('click', '.rad-row', function() {
+                        $('.rad-row').removeClass('table-primary');
+                        $(this).addClass('table-primary');
+                        selectedRadRow = $(this).data('index');
+                    });
 
-        $('#btn-hapus-rad').on('click', function() {
-            if (selectedRadRow === null) {
-                Swal.fire('Pilih baris yang ingin dihapus.', '', 'info');
-                return;
-            }
+                    $('#btn-hapus-rad').on('click', function() {
+                        if (selectedRadRow === null) {
+                            Swal.fire('Pilih baris yang ingin dihapus.', '', 'info');
+                            return;
+                        }
 
-            radData.splice(selectedRadRow, 1);
-            selectedRadRow = null;
-            refreshRadTable();
-        });
+                        radData.splice(selectedRadRow, 1);
+                        selectedRadRow = null;
+                        refreshRadTable();
+                    });
     </script>
 
     <script>
@@ -1485,7 +1513,7 @@
                 if (result.isConfirmed) {
                     const form = $('<form>', {
                         method: 'POST',
-                        action: '{{ route('surat.sakit.print') }}',
+                        action: '{{ route('permintaan.sakit.print') }}',
                         target: '_blank'
                     });
 
@@ -1619,7 +1647,7 @@
                 if (result.isConfirmed) {
                     const form = $('<form>', {
                         method: 'POST',
-                        action: '{{ route('surat.sehat.print') }}',
+                        action: '{{ route('permintaan.sehat.print') }}',
                         target: '_blank'
                     });
 
@@ -1752,7 +1780,7 @@
                 if (result.isConfirmed) {
                     const form = $('<form>', {
                         method: 'POST',
-                        action: '{{ route('surat.kematian.print') }}',
+                        action: '{{ route('permintaan.kematian.print') }}',
                         target: '_blank'
                     });
 
@@ -1884,7 +1912,7 @@
                 if (result.isConfirmed) {
                     const form = $('<form>', {
                         method: 'POST',
-                        action: '{{ route('skdp.print') }}',
+                        action: '{{ route('skd.print') }}',
                         target: '_blank'
                     });
 

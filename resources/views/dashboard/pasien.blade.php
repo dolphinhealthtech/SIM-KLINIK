@@ -135,6 +135,12 @@
                                                             data-id="{{ $pasiensdata->id }}">
                                                             <i class="fa-solid fa-user-pen"></i> Edit
                                                         </a>
+                                                        <a class="btn btn-outline-info btn-sm rounded-pill time-line-btn"
+                                                            href="{{ route('pasiens_time_line.get',['norm' => base64_encode($pasiensdata->no_rm)]) }}"
+                                                            role="button">
+                                                            <i class="fa-solid fa-user-clock"></i> Time Line
+                                                        </a>
+
                                                     @endif
                                                 </td>
                                             </tr>

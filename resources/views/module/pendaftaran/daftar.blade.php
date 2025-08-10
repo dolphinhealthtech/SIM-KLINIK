@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h5 class="text-muted text-center">Selamat datang di modul Pendaftaran Pasien</h5>                    
+                    <h5 class="text-muted text-center">Selamat datang di modul Pendaftaran Pasien</h5>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -73,10 +73,6 @@
                     <div class="card">
                         <div class="card-body">
                             <table id="userstabel" class="table table-bordered table-striped">
-                                <!-- <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#addreispasienModal">
-                                    <i class="fas fa-plus"></i> Tambah
-                                </button> -->
                                 <thead>
                                     <tr>
                                         <th class="text-center">Pasien</th>
@@ -714,7 +710,7 @@
             "buttons": [
             {
                 text: '<i class="fas fa-plus"></i> Tambah',
-                type: 'button',                
+                type: 'button',
                 className: 'btn btn-primary',
                 action: function () {
                 $('#addreispasienModal').modal('show'); // <== Bootstrap 4-compatible
@@ -737,18 +733,18 @@
         let name = $(this).data('nama-pasien');
 
         Swal.fire({
-            title: 'Batal Pendaftaran PCare',    
+            title: 'Batal Pendaftaran PCare',
             html: `
                 <div class="text-left">
-                    <p>Apakah Anda yakin ingin membatalkan antrian pasien <strong>${name}</strong>?</p>                    
+                    <p>Apakah Anda yakin ingin membatalkan antrian pasien <strong>${name}</strong>?</p>
                 </div>
-            `,          
+            `,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#dc3545',
             cancelButtonColor: '#6c757d',
             confirmButtonText: 'Ya, Batalkan!',
-            cancelButtonText: 'Tidak',            
+            cancelButtonText: 'Tidak',
         }).then((result) => {
             if (result.isConfirmed) {
                 // Tampilkan loading
@@ -767,7 +763,7 @@
                     method: 'POST',
                     data: {
                         _token: "{{ csrf_token() }}",
-                        batalid_delete: id                        
+                        batalid_delete: id
                     },
                     success: function(response) {
                         Swal.fire({
@@ -814,7 +810,7 @@
         let name = $(this).data('nama-pasien');
 
         Swal.fire({
-            title: 'Batal Pendaftaran Antrian', 
+            title: 'Batal Pendaftaran Antrian',
             html: `
                 <div class="text-left">
                     <p>Apakah Anda yakin ingin membatalkan antrian pasien <strong>${name}</strong>?</p>
@@ -823,7 +819,7 @@
                         <input type="text" id="alasan_batal" class="form-control" placeholder="Masukkan alasan pembatalan" required>
                     </div>
                 </div>
-            `,       
+            `,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#dc3545',
