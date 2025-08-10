@@ -133,30 +133,18 @@
                                 </select>
                             </div>
                         </div>
-                        @if($isTindakanActive)
-                            <input type="hidden" class="form-control rupiah" id="tarif_dokter" name="tarif_dokter" value="0" >
-                            <input type="hidden" class="form-control rupiah" id="tarif_perawat" name="tarif_perawat" value="0">
-                            <div class="col-sm-8">
-                                <div class="form-group">
-                                    <label>Tarif Tindakan</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_all" name="tarif_all" required>
-                                </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tarif Dokter</label>
+                                <input type="text" class="form-control rupiah" id="tarif_dokter" name="tarif_dokter" required>
                             </div>
-                        @else
-                           <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label>Tarif Dokter</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_dokter" name="tarif_dokter" required>
-                                </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tarif Perawat</label>
+                                <input type="text" class="form-control rupiah" id="tarif_perawat" name="tarif_perawat" required>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label>Tarif Perawat</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_perawat" name="tarif_perawat" required>
-                                </div>
-                            </div>
-                            <input type="hidden" class="form-control rupiah" id="tarif_all" name="tarif_all" value="0">
-                        @endif
+                        </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Total Tarif</label>
@@ -205,30 +193,18 @@
                                 </select>
                             </div>
                         </div>
-                        @if($isTindakanActive)
-                            <input type="hidden" class="form-control rupiah" id="tarif_dokter_edit" name="tarif_dokter_edit">
-                            <input type="hidden" class="form-control rupiah" id="tarif_perawat_edit" name="tarif_perawat_edit">
-                            <div class="col-sm-8">
-                                <div class="form-group">
-                                    <label>Tarif Tindakan</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_all_edit" name="tarif_all_edit" required>
-                                </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tarif Dokter</label>
+                                <input type="text" class="form-control rupiah" id="tarif_dokter_edit" name="tarif_dokter_edit" required>
                             </div>
-                        @else
-                            <input type="hidden" class="form-control rupiah" id="tarif_all_edit" name="tarif_all_edit">
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label>Tarif Dokter</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_dokter_edit" name="tarif_dokter_edit" required>
-                                </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tarif Perawat</label>
+                                <input type="text" class="form-control rupiah" id="tarif_perawat_edit" name="tarif_perawat_edit" required>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label>Tarif Perawat</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_perawat_edit" name="tarif_perawat_edit" required>
-                                </div>
-                            </div>
-                        @endif
+                        </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Total Tarif</label>
@@ -538,34 +514,19 @@
         }
 
         $(document).ready(function () {
-            $('#tarif_dokter, #tarif_perawat, #tarif_all').on('input', function () {
-                const isTindakanActive = $('#tarif_all').is(':visible') || $('#tarif_all').attr('type') === 'text';
-
+            $('#tarif_dokter, #tarif_perawat').on('input', function () {
                 let total = 0;
-
-                if (isTindakanActive) {
-                    total = parseRupiah($('#tarif_all').val());
-                } else {
-                    let dokter = parseRupiah($('#tarif_dokter').val());
-                    let perawat = parseRupiah($('#tarif_perawat').val());
-                    total = dokter + perawat;
-                }
-
+                let dokter = parseRupiah($('#tarif_dokter').val());
+                let perawat = parseRupiah($('#tarif_perawat').val());
+                total = dokter + perawat;
                 $('#tarif_total').val(formatRupiah(total.toString()));
             });
 
-            $('#tarif_dokter_edit, #tarif_perawat_edit, #tarif_all_edit').on('input', function () {
-                const isTindakanActive = $('#tarif_all_edit').is(':visible') || $('#tarif_all_edit').attr('type') === 'text';
+            $('#tarif_dokter_edit, #tarif_perawat_edit').on('input', function () {
                 let total_edit = 0;
-
-                if (isTindakanActive) {
-                    total_edit = parseRupiah($('#tarif_all_edit').val());
-                } else {
-                    let dokter_edit = parseRupiah($('#tarif_dokter_edit').val());
-                    let perawat_edit = parseRupiah($('#tarif_perawat_edit').val());
-                    total_edit = dokter_edit + perawat_edit;
-                }
-
+                let dokter_edit = parseRupiah($('#tarif_dokter_edit').val());
+                let perawat_edit = parseRupiah($('#tarif_perawat_edit').val());
+                total_edit = dokter_edit + perawat_edit;
                 $('#tarif_total_edit').val(formatRupiah(total_edit.toString()));
             });
         });
