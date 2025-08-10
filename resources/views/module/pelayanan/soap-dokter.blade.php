@@ -106,23 +106,25 @@
                                                     <div class="tab-pane fade show active" id="custom-tabs-four-subyektif" role="tabpanel" aria-labelledby="custom-tabs-four-subyektif-tab">
                                                         <div class="form-group">
                                                             <label>Keluhan :</label>
-                                                            <div class="row">
-                                                                <div class="col-md-5">
-                                                                    <input type="text" class="form-control" id="penyakit" placeholde="Masukan Keluhan">
+                                                            <div class="row align-items-stretch">
+                                                                <div class="col-md-6">
+                                                                    <textarea class="form-control" id="penyakit" placeholder="Masukan Keluhan"></textarea>
                                                                 </div>
                                                                 <div class="col-md-5 d-flex align-items-center">
-                                                                    <label class="mr-3 mb-0">Sejak</label>
+                                                                    <label class="mr-4 mb-0">Sejak</label>
                                                                     <input type="number" class="form-control mr-2" id="durasi" placeholder="Masukkan durasi">
                                                                     <select class="form-control select2bs4" id="waktu" name="waktu">
-                                                                        <option value="" disabled selected>-- Pilih Hari --</option>
+                                                                        <option value="" disabled selected>-- Pilih waktu --</option>
+                                                                        <option value="Menit">Menit</option>
+                                                                        <option value="Jam">Jam</option>
                                                                         <option value="Hari">Hari</option>
                                                                         <option value="Minggu">Minggu</option>
                                                                         <option value="Bulan">Bulan</option>
                                                                         <option value="Tahun">Tahun</option>
                                                                     </select>
-                                                                </div>
-                                                                <div class="col-md-2 d-flex justify-content-end">
-                                                                    <button type="button" class="btn btn-primary" onclick="addData()">Tambahkan</button>
+                                                                    <div class="col-md-2">
+                                                                        <button type="button" class="btn btn-primary" onclick="addData()">Tambahkan</button>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -439,7 +441,7 @@
                                                         <div class="row">
                                                             <div class="col-md-3">
                                                                 <label>Jenis Diet</label>
-                                                                <select id="jenisDiet" class="form-control">
+                                                                <select id="jenisDiet" class="form-control select2bs4">
                                                                     <option value="">-- Pilih Jenis Diet --</option>
                                                                     @foreach ($jenis_diete as $jenis_dietedata)
                                                                         <option value="{{ $jenis_dietedata->nama }}">{{ $jenis_dietedata->nama }}</option>
@@ -449,7 +451,7 @@
 
                                                             <div class="col-md-4">
                                                                 <label>Makanan Dianjurkan</label>
-                                                                <select id="makananAnjuran" class="form-control">
+                                                                <select id="makananAnjuran" class="form-control select2bs4">
                                                                     <option value="">-- Pilih Makanan Dianjurkan --</option>
                                                                     @foreach ($jenis_makanan_diet as $jenis_makanan_dietdata)
                                                                         <option value="{{ $jenis_makanan_dietdata->nama }}">{{ $jenis_makanan_dietdata->nama }}</option>
@@ -459,7 +461,7 @@
 
                                                             <div class="col-md-4">
                                                                 <label>Makanan Tidak Boleh</label>
-                                                                <select id="makananPantangan" class="form-control">
+                                                                <select id="makananPantangan" class="form-control select2bs4">
                                                                     <option value="">-- Pilih Makanan Tidak Boleh --</option>
                                                                     @foreach ($jenis_makanan_diet as $jenis_makanan_dietdata)
                                                                         <option value="{{ $jenis_makanan_dietdata->nama }}">{{ $jenis_makanan_dietdata->nama }}</option>
@@ -495,7 +497,7 @@
                                                     <div class="tab-pane fade" id="custom-tabs-four-tindakan" role="tabpanel" aria-labelledby="custom-tabs-four-tindakan-tab">
                                                         <div class="form-row align-items-center mb-3" id="form-tindakan">
                                                             <div class="col-md-3 mb-2">
-                                                                <select class="form-control" id="jenis-tindakan">
+                                                                <select class="form-control select2bs4" id="jenis-tindakan">
                                                                     <option value="">Jenis Tindakan</option>
                                                                     @foreach($kategori as $kat)
                                                                         <option value="{{ $kat->id }}">{{ $kat->nama }}</option>
@@ -503,12 +505,12 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3 mb-2">
-                                                                <select class="form-control" id="tindakan">
+                                                                <select class="form-control select2bs4" id="tindakan">
                                                                     <option value="">Tindakan</option>
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3 mb-2">
-                                                                <select class="form-control" id="pelaksana">
+                                                                <select class="form-control select2bs4" id="pelaksana">
                                                                     <option value="">Pelaksana</option>
                                                                         <option value="dokter">Dokter</option>
                                                                         <option value="perawat">Perawat</option>
@@ -558,7 +560,7 @@
                                                             <div class="form-row align-items-end mb-3">
                                                             <div class="col-md-4">
                                                                 <label for="nama-obat">Nama Obat</label>
-                                                                <select class="form-control" id="nama-obat">
+                                                                <select class="form-control select2bs4" id="nama-obat">
                                                                 <option value="">-- Pilih Obat --</option>
                                                                 @foreach ($obat as $obatdata)
                                                                     <option value="{{ $obatdata->nama_barang }}" data-satuan="{{ $obatdata->satuan_kecil }}">{{ $obatdata->nama_barang }}</option>
@@ -579,7 +581,7 @@
 
                                                             <div class="col-md-4">
                                                                 <label for="instruksi">Instruksi</label>
-                                                                <select class="form-control" id="instruksi">
+                                                                <select class="form-control select2bs4" id="instruksi">
                                                                 <option value="">-- Pilih Instruksi --</option>
                                                                 <option value="CITO">CITO</option>
                                                                 <option value="ITER">ITER</option>
@@ -615,7 +617,7 @@
 
                                                                 <div class="col-md-3">
                                                                     <div style="visibility: hidden;"><label for="signa-satuan1">Signa Satuan 1</label></div>
-                                                                    <select class="form-control" id="dosis3">
+                                                                    <select class="form-control select2bs4" id="dosis3">
                                                                         @foreach ($satuan as $satuandata)
                                                                             <option value="{{ $satuandata->nama }}">{{ $satuandata->nama }}</option>
                                                                         @endforeach
@@ -624,7 +626,7 @@
 
                                                                 <div class="col-md-3">
                                                                     <div style="visibility: hidden;"><label for="signa-satuan2">Signa Satuan 2</label></div>
-                                                                    <select class="form-control" id="signa-satuan2">
+                                                                    <select class="form-control select2bs4" id="signa-satuan2">
                                                                         <option value="">-- Pilih Satuan --</option>
                                                                         <option value="SEBELUM MAKAN">SEBELUM MAKAN</option>
                                                                         <option value="SESUDAH MAKAN">SESUDAH MAKAN</option>

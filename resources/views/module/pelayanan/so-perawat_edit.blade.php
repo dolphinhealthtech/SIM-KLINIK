@@ -95,9 +95,9 @@
                                               <div id="Subyektif-part" class="content" role="tabpanel" aria-labelledby="Subyektif-part-trigger">
                                                 <div class="form-group">
                                                     <label>Keluhan :</label>
-                                                    <div class="row">
-                                                        <div class="col-md-5">
-                                                            <input type="text" class="form-control" id="penyakit" placeholde="Masukan Keluhan">
+                                                    <div class="row align-items-stretch">
+                                                        <div class="col-md-6">
+                                                            <textarea class="form-control" id="penyakit" placeholder="Masukan Keluhan"></textarea>
                                                         </div>
                                                         <div class="col-md-5 d-flex align-items-center">
                                                             <label class="mr-4 mb-0">Sejak</label>
@@ -111,9 +111,9 @@
                                                                 <option value="Bulan">Bulan</option>
                                                                 <option value="Tahun">Tahun</option>
                                                             </select>
-                                                        </div>
-                                                        <div class="col-md-2 d-flex justify-content-end">
-                                                            <button type="button" class="btn btn-primary" onclick="addData()">Tambahkan</button>
+                                                            <div class="col-md-2">
+                                                                <button type="button" class="btn btn-primary" onclick="addData()">Tambahkan</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -237,7 +237,7 @@
                                                         <select class="form-control select2bs4" style="width: 100%;" id="verbal" name="verbal">
                                                             <option value="" disabled {{ is_null($pelayanan_soap->verbal) ? 'selected' : '' }}>-- Pilih --</option>
                                                             @foreach ($gcs_verbal as $gcs_verbaldata)
-                                                                <option value="{{ $gcs_verbaldata->skor }}" 
+                                                                <option value="{{ $gcs_verbaldata->skor }}"
                                                                     {{ $pelayanan_soap->verbal == $gcs_verbaldata->skor ? 'selected' : '' }}>
                                                                     {{ $gcs_verbaldata->nama }}
                                                                 </option>
@@ -250,7 +250,7 @@
                                                         <select class="form-control select2bs4" style="width: 100%;" id="motorik" name="motorik">
                                                             <option value="" disabled {{ is_null($pelayanan_soap->motorik) ? 'selected' : '' }}>-- Pilih --</option>
                                                             @foreach ($gcs_motorik as $gcs_motorikdata)
-                                                                <option value="{{ $gcs_motorikdata->skor }}" 
+                                                                <option value="{{ $gcs_motorikdata->skor }}"
                                                                     {{ $pelayanan_soap->motorik == $gcs_motorikdata->skor ? 'selected' : '' }}>
                                                                     {{ $gcs_motorikdata->nama }}
                                                                 </option>
@@ -585,7 +585,7 @@
         }
     }
 
-    
+
 </script>
 
 {{-- RR Script --}}
@@ -1141,7 +1141,7 @@
         });
     })
 
-    
+
 </script>
 
 <script>
@@ -1149,10 +1149,10 @@
         // Tangkap form submit
         document.getElementById('formSoapPerawat').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             // Ambil data form
             var formData = new FormData(this);
-            
+
             // Kirim dengan fetch API
             fetch(this.action, {
                 method: 'POST',
@@ -1164,7 +1164,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                
+
                 // Tampilkan SweetAlert sukses
                 Swal.fire({
                     icon: 'success',
@@ -1178,7 +1178,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                
+
                 // Tampilkan SweetAlert error
                 Swal.fire({
                     icon: 'error',

@@ -95,9 +95,9 @@
                                               <div id="Subyektif-part" class="content" role="tabpanel" aria-labelledby="Subyektif-part-trigger">
                                                 <div class="form-group">
                                                     <label>Keluhan :</label>
-                                                    <div class="row">
-                                                        <div class="col-md-5">
-                                                            <input type="text" class="form-control" id="penyakit" placeholde="Masukan Keluhan">
+                                                    <div class="row align-items-stretch">
+                                                        <div class="col-md-6">
+                                                            <textarea class="form-control" id="penyakit" placeholder="Masukan Keluhan"></textarea>
                                                         </div>
                                                         <div class="col-md-5 d-flex align-items-center">
                                                             <label class="mr-4 mb-0">Sejak</label>
@@ -111,9 +111,9 @@
                                                                 <option value="Bulan">Bulan</option>
                                                                 <option value="Tahun">Tahun</option>
                                                             </select>
-                                                        </div>
-                                                        <div class="col-md-2 d-flex justify-content-end">
-                                                            <button type="button" class="btn btn-primary" onclick="addData()">Tambahkan</button>
+                                                            <div class="col-md-2">
+                                                                <button type="button" class="btn btn-primary" onclick="addData()">Tambahkan</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

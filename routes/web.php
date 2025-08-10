@@ -514,7 +514,7 @@ Route::post('/pembelian/add', [PembelianController::class, 'pembelianadd'])->nam
 Route::get('/pembelian/cetak/{nomor_faktur}', [PembelianController::class, 'cetakPembelianPdf'])->name('pembelian.cetak');
 
 // Menu Pemeriksaan
-Route::prefix('pemeriksaan')->group(function () {
+Route::middleware('auth')->prefix('pemeriksaan')->group(function () {
     Route::get('/dokter', [PelayananController::class, 'pelayana_dokter'])->name('pelayanad.get');
     Route::get('/dokter/so/{norawat}', [PelayananController::class, 'soappelayanan'])->name('pelayana_dokter.get');
     Route::get('/dokter/so/edit/{norawat}', [PelayananController::class, 'soappelayananedit'])->name('pelayana_dokter.edit');
@@ -543,11 +543,12 @@ Route::prefix('pemeriksaan')->group(function () {
     Route::get('/perawat/so/edit/{norawat}', [PelayananController::class, 'sopelayananedit'])->name('sopelayana.edit');
     Route::post('/perawat/so/add', [PelayananController::class, 'sopelayanandd'])->name('sopelayana.add');
     Route::post('/perawat/so/update', [PelayananController::class, 'sopelayananupdate'])->name('sopelayana.update');
+    Route::post('/perawat/dokter/update', [PelayananController::class, 'pendaftaranupdokter'])->name('sopelayana.dokter.update');
     Route::get('/perawat/so/hadir/{norawat}', [PelayananController::class, 'sopelayananpanggil'])->name('sopelayana.hadir');
 });
 
 // Menu Pendaftaran
-Route::prefix('pendaftaran')->group(function () {
+Route::middleware('auth')->prefix('pendaftaran')->group(function () {
     Route::get('/', [PendaftaranController::class, 'pendaftaran'])->name('pendaftaran.get');
     Route::post('/add', [PendaftaranController::class, 'pendaftaranadd'])->name('pendaftaran.add');
     Route::post('/batal', [PendaftaranController::class, 'pendaftaranbatal'])->name('pendaftaran.batal');
@@ -589,7 +590,7 @@ Route::middleware('auth')->prefix('setting')->group(function () {
 });
 
 // Menu Staff
-Route::prefix('staff')->group(function () {
+Route::middleware('auth')->prefix('staff')->group(function () {
     // Menu Pasien
     Route::get('/', [StaffController::class, 'staff'])->name('staff.get');
     Route::post('/add', [StaffController::class, 'staffadd'])->name('staff.store');
@@ -599,7 +600,7 @@ Route::prefix('staff')->group(function () {
 });
 
 // Menu Pendataan
-Route::prefix('pendataan')->group(function () {
+Route::middleware('auth')->prefix('pendataan')->group(function () {
     Route::get('/antrian', [PendataanController::class, 'pendataan_antrian'])->name('pendataan_antrian.get');
     Route::post('/print/antrian', [PendataanController::class, 'print_antrian'])->name('print_antrian');
 

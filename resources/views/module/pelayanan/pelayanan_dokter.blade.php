@@ -34,6 +34,7 @@
                                             <th class="text-center">Status</th>
                                             <th class="text-center">No.RM</th>
                                             <th class="text-center">Pasien</th>
+                                            <th class="text-center">No.Antrian</th>
                                             <th class="text-center">No.Registrasi</th>
                                             <th class="text-center">Tanggal Kunjungan</th>
                                             <th class="text-center">Poli</th>
@@ -55,6 +56,7 @@
                                                 </td>
                                                 <td class="text-center">{{ $pelayanandata->nomor_rm }}</td>
                                                 <td class="text-center">{{ $pelayanandata->pasien->nama }}</td>
+                                                <td class="text-center">{{ $pelayanandata->pendaftaran->antrian }}</td>
                                                 <td class="text-center">{{ $pelayanandata->nomor_register }}</td>
                                                 <td class="text-center">{{ \Carbon\Carbon::parse($pelayanandata->tanggal_kujungan)->format('d-m-Y') }}</td>
                                                 <td class="text-center">{{ $pelayanandata->poli->nama }}</td>

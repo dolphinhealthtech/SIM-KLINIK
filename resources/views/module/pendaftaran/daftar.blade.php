@@ -132,14 +132,6 @@
                                                 data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
                                                 <i class="fas fa-times-circle"></i> Batal
                                             </button>
-                                            <!-- Ubah Dokter -->
-                                            <button type="button" class="btn btn-outline-warning btn-sm rounded-pill dokter-data-pasien"
-                                                data-id="{{ $pendaftarandata->id }}"
-                                                data-poli="{{ $pendaftarandata->poli_id }}"
-                                                data-nama="{{ $pendaftarandata->pasien->nama }}"
-                                                data-tgl-kunjung="{{ $pendaftarandata->tanggal_kujungan }}">
-                                                <i class="fas fa-user-md"></i> Ubah Dokter
-                                            </button>
                                             @endif
                                         </td>
 
@@ -582,123 +574,6 @@
                 }
             });
         });
-
-    $(document).on('click', '.dokter-data-pasien', function() {
-        let id = $(this).data('id');
-        let tanggal = $(this).data('tgl-kunjung');
-        let poli = $(this).data('poli');
-        let nama = $(this).data('nama');
-
-        // SweetAlert untuk konfirmasi rubah dokter
-        Swal.fire({
-            title: 'Rubah Dokter',
-            html: `
-                <div class="text-left">
-                    <p><strong>Pasien:</strong> ${nama}</p>
-                    <div class="form-group">
-                        <label for="dokter_select">Pilih Dokter Baru:</label>
-                        <select id="dokter_select" class="form-control" style="width: 100%;">
-                            <option value="">Memuat dokter...</option>
-                        </select>
-                    </div>
-                </div>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Update',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#17a2b8',
-            cancelButtonColor: '#6c757d',
-            preConfirm: () => {
-                const dokterId = document.getElementById('dokter_select').value;
-                if (!dokterId) {
-                    Swal.showValidationMessage('Silakan pilih dokter terlebih dahulu');
-                    return false;
-                }
-                return dokterId;
-            },
-            didOpen: () => {
-                // Load dokter berdasarkan poli dan tanggal
-                if (poli && tanggal) {
-                    let formattedDatetime = tanggal.replace('T', ' ') + ':00';
-
-                    $.ajax({
-                        url: `/api/get-dokter-by-poli/${poli}`,
-                        method: 'GET',
-                        data: { datetime: formattedDatetime },
-                        success: function (data) {
-                            let select = document.getElementById('dokter_select');
-                            select.innerHTML = '<option value="">Pilih Dokter</option>';
-                            data.forEach(function (dokter) {
-                                select.innerHTML += `<option value="${dokter.id}">${dokter.namauser.name}</option>`;
-                            });
-                        },
-                        error: function (xhr, status, error) {
-                            document.getElementById('dokter_select').innerHTML = '<option value="">Gagal memuat dokter</option>';
-                        }
-                    });
-                }
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Tampilkan loading
-                Swal.fire({
-                    title: 'Mengupdate...',
-                    text: 'Mohon tunggu sebentar',
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading()
-                    }
-                });
-
-                // Submit update dokter
-                $.ajax({
-                    url: "{{ route('pendaftaran.dokter.update') }}",
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        rubahdokter_id: id,
-                        poli_id_update: poli,
-                        tanggal_kunjungan_update: tanggal,
-                        dokter_id_update: result.value
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: 'Dokter berhasil diupdate',
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        let errorMessage = 'Terjadi kesalahan saat mengupdate dokter';
-
-                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                            let errors = xhr.responseJSON.errors;
-                            let errorList = [];
-                            Object.keys(errors).forEach(function(field) {
-                                errors[field].forEach(function(message) {
-                                    errorList.push(message);
-                                });
-                            });
-                            errorMessage = errorList.join('<br>');
-                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        }
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal Update Dokter!',
-                            html: errorMessage,
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                });
-            }
-        });
-    });
 </script>
 
 <script>

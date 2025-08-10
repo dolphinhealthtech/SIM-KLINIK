@@ -1953,12 +1953,13 @@ class PcareController extends Controller
         $attempt = 0;
         $data = null;
         $responseTime = 0;
+        $tokenData = $this->get_token();
+
         try {
             $startTime = microtime(true);
-            // Assuming $this->generateHeaders() returns an array of headers
             $headers = array_merge([
                 'Content-Type' => 'text/plain; charset=utf-8'
-            ], $this->get_token()['headers']);
+            ], $tokenData['headers']);
 
             $response = Http::withHeaders($headers)
                 ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $datapost);
@@ -1972,7 +1973,7 @@ class PcareController extends Controller
             $encryptedString = $responseBody['response'];
 
             // Decrypt the string using AES-256-CBC
-            $key = $this->get_token()['key_decrypt'];
+            $key = $tokenData['key_decrypt'];
             $encrypt_method = 'AES-256-CBC';
             $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
             $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
@@ -1990,7 +1991,7 @@ class PcareController extends Controller
                 base64_decode($encryptedString),
                 $encrypt_method,
                 $key_hash,
-                OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
+                OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
                 $iv
             );
 

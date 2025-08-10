@@ -333,32 +333,6 @@ class PendaftaranController extends Controller
         }
     }
 
-    public function pendaftaranupdokter(Request $request)
-    {
-        try {
-
-            $pendaftaran = Pendaftaran_rawat_jalan::find($request->rubahdokter_id);
-
-            // Pastikan data ditemukan
-            if (!$pendaftaran) {
-                return redirect()->back()->with('error', 'Pendaftaran tidak ditemukan.');
-            }
-
-            // Perbarui status_pendaftaran menjadi 0 (batal)
-            $pendaftaran->dokter_id = $request->dokter_id_update;
-            $pendaftaran->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data pasien berhasil disimpan.'
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'errors' => $e->errors()
-            ], 422);
-        }
-    }
-
     public function pendaftaranhadir(Request $request)
     {
         try {
@@ -443,17 +417,16 @@ class PendaftaranController extends Controller
                                 $pendaftaran_nourut->update([
                                     'no_urut' => $no_urut
                                 ]);
+                                // Update status_pendaftaran jika sukses
+                                $pendaftaran->update([
+                                    'status_pendaftaran' => 2
+                                ]);
                             } else {
                                 Log::warning('Data pendaftaran tidak ditemukan untuk update no_urut', [
                                     'nomor_register' => $pendaftaran->nomor_register,
                                     'tanggal_kujungan' => $pendaftaran->tanggal_kunjungan
                                 ]);
                             }
-
-                            // Update status_pendaftaran jika sukses
-                            $pendaftaran->update([
-                                'status_pendaftaran' => 2
-                            ]);
                         } else {
                             Log::warning('Pcare response tidak memiliki message.', $data);
                             return response()->json([
@@ -462,9 +435,6 @@ class PendaftaranController extends Controller
                             ], 500);
                         }
                     } else {
-                        // Tangani jika status bukan 200/201
-
-
                         return response()->json([
                             'success' => false,
                             'message' => 'Gagal mendaftarkan ke BPJS. Status: ' . $response->getStatusCode()

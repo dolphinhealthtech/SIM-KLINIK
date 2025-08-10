@@ -115,6 +115,40 @@ class PelayananController extends Controller
         return view('module.pelayanan.so-perawat', compact('title', 'pelayanan', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
     }
 
+    public function pendaftaranupdokter(Request $request)
+    {
+        try {
+            $pelayanan = Pelayanan::with('pendaftaran')->find($request->rubahdokter_id);
+
+            if (!$pelayanan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data pelayanan tidak ditemukan.'
+                ], 404);
+            }
+
+            // Pastikan relasi pendaftaran ada
+            if ($pelayanan->pendaftaran) {
+                $pelayanan->pendaftaran->dokter_id = $request->dokter_id_update;
+                $pelayanan->pendaftaran->save();
+            }
+
+            // Update di tabel pelayanan juga
+            $pelayanan->dokter_id = $request->dokter_id_update;
+            $pelayanan->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data dokter berhasil diupdate.'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors()
+            ], 422);
+        }
+    }
+
     public function sopelayananedit($norawat)
     {
         $nomor_rawat = base64_decode($norawat);

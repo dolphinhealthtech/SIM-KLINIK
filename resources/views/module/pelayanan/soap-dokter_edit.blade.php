@@ -838,7 +838,7 @@
                                                                     <div>
                                                                         <i class="fas fa-user-nurse bg-info"></i> {{-- Icon berbeda utk perawat --}}
                                                                         <div class="timeline-item">
-                                                                            <span class="time"><i class="fas fa-clock"></i> </span>
+                                                                            <span class="time"><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($prawat->created_at)->format('H:i') }}</span>
                                                                             <h3 class="timeline-header mb-2">
                                                                                 {{ $prawat->user_input_name ?? 'Perawat tidak diketahui' }} – Perawat
                                                                             </h3>
@@ -846,26 +846,177 @@
                                                                                 <!-- Nav Tabs -->
                                                                                 <ul class="nav nav-tabs" role="tablist" id="tabs-prawat-{{ $prawat->id }}">
                                                                                     <li class="nav-item">
-                                                                                        <a class="nav-link active" id="soap-s-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-s-prawat-{{ $prawat->id }}" role="tab">S</a>
+                                                                                        <a class="nav-link active" id="soap-s-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-s-prawat-{{ $prawat->id }}" role="tab">Subyektif</a>
                                                                                     </li>
                                                                                     <li class="nav-item">
-                                                                                        <a class="nav-link" id="soap-o-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-o-prawat-{{ $prawat->id }}" role="tab">O</a>
+                                                                                        <a class="nav-link" id="soap-o-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-o-prawat-{{ $prawat->id }}" role="tab">Objektif</a>
                                                                                     </li>
                                                                                     <li class="nav-item">
-                                                                                        <a class="nav-link" id="soap-a-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-a-prawat-{{ $prawat->id }}" role="tab">A</a>
+                                                                                        <a class="nav-link" id="soap-a-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-a-prawat-{{ $prawat->id }}" role="tab">Head To Toe</a>
                                                                                     </li>
                                                                                 </ul>
 
                                                                                 <!-- Tab Content -->
                                                                                 <div class="tab-content border rounded-bottom p-3" id="tab-content-prawat-{{ $prawat->id }}">
                                                                                     <div class="tab-pane fade show active" id="soap-s-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-s-tab-prawat-{{ $prawat->id }}">
-                                                                                        <p><strong>Subjektif:</strong> {{ $prawat->tableData ?? '-' }}</p>
+                                                                                        @php
+                                                                                            $subjektifData = json_decode($prawat->tableData, true);
+                                                                                        @endphp
+
+                                                                                        <table class="table table-bordered">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th>No</th>
+                                                                                                    <th>Subyektif</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @if(is_array($subjektifData) && count($subjektifData) > 0)
+                                                                                                    @foreach($subjektifData as $index => $item)
+                                                                                                        <tr>
+                                                                                                            <td>{{ $index + 1 }}</td>
+                                                                                                            <td>
+                                                                                                                pasien mengeluhkan {{ strtolower($item['penyakit']) }}
+                                                                                                                sejak {{ $item['durasi'] }} {{ $item['waktu'] }}
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    @endforeach
+                                                                                                @else
+                                                                                                    <tr>
+                                                                                                        <td colspan="2">-</td>
+                                                                                                    </tr>
+                                                                                                @endif
+                                                                                            </tbody>
+                                                                                        </table>
                                                                                     </div>
                                                                                     <div class="tab-pane fade" id="soap-o-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-o-tab-prawat-{{ $prawat->id }}">
-                                                                                        <p><strong>Objektif:</strong> {{ $prawat->lingkar_perut ?? '-' }}</p>
+                                                                                        <div class="row">
+                                                                                           <div class="col-md-2">
+                                                                                                <label>Tensi (mmHg)</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" id="sistol" name="sistol" value="{{$prawat->sistol}}" readonly>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                                                                                        <span>/</span> <!-- Menambahkan pemisah / -->
+                                                                                                    </div>
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" id="distol" name="distol" onchange="updateTensi()" value="{{$prawat->distol}}" readonly>
+                                                                                                    </div>
+                                                                                                    <input type="hidden" id="tensi" name="tensi">
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="suhu">Suhu (°C)</label>
+                                                                                                <input type="text" class="form-control" id="suhu" name="suhu" value="{{$prawat->suhu}}°C" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="nadi">Nadi (/mnt)</label>
+                                                                                                <input type="text" class="form-control" id="nadi" name="nadi" value="{{$prawat->nadi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="rr">RR (/mnt)</label>
+                                                                                                <input type="text" class="form-control" id="rr" name="rr"  value="{{$prawat->rr}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="tinggi">Tinggi (Cm)</label>
+                                                                                                <input type="text" class="form-control" id="tinggi" name="tinggi" value="{{$prawat->tinggi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="berat">Berat (/Kg)</label>
+                                                                                                <input type="text" class="form-control" id="berat" name="berat" value="{{$prawat->berat}}" readonly>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="row mt-2">
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="spo2">SpO2</label>
+                                                                                                <input type="text" class="form-control" id="spo2" name="spo2" value="{{$prawat->spo2}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Alergi dan jenis</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="jenis_alergi_cppt" name="jenis_alergi_cppt" disabled>
+                                                                                                            <option value="" disabled {{ empty($prawat->jenis_alergi) ? 'selected' : '' }}>-- Pilih --</option>
+                                                                                                            <option value="00" {{ $prawat->jenis_alergi == '00' ? 'selected' : '' }}>tidak ada</option>
+                                                                                                            <option value="01" {{ $prawat->jenis_alergi == '01' ? 'selected' : '' }}>makanan</option>
+                                                                                                            <option value="02" {{ $prawat->jenis_alergi == '02' ? 'selected' : '' }}>obat</option>
+                                                                                                            <option value="03" {{ $prawat->jenis_alergi == '03' ? 'selected' : '' }}>udara</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="alergi_cppt" name="alergi_cppt" disabled>
+                                                                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="lingkar_perut">Lingkar Perut</label>
+                                                                                                <input type="text" class="form-control" id="lingkar_perut" name="lingkar_perut" value="{{$prawat->lingkar_perut}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Data BMI</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-4">
+                                                                                                        <input type="text" class="form-control" id="nilai_bmi" name="nilai_bmi" readonly value="{{$prawat->nilai_bmi}}">
+                                                                                                    </div>
+                                                                                                    <div class="col-md-8">
+                                                                                                        <input type="text" class="form-control" id="status_bmi" name="status_bmi" readonly value="{{$prawat->status_bmi}}">
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="form-group row">
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="eye">EYE</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="eye_cppt" name="eye_cppt"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gsc_eye as $gsc_eyedata_cppt)
+                                                                                                        <option value="{{$gsc_eyedata_cppt->skor}}">{{$gsc_eyedata_cppt->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="verbal">VERBAL</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="verbal_cppt" name="verbal_cppt"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_verbal as $gcs_verbaldata_cppt)
+                                                                                                        <option value="{{$gcs_verbaldata_cppt->skor}}">{{$gcs_verbaldata_cppt->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="motorik">MOTORIK</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="motorik_cppt" name="motorik_cppt"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_motorik as $gcs_motorikdata_cppt)
+                                                                                                        <option value="{{$gcs_motorikdata_cppt->skor}}">{{$gcs_motorikdata_cppt->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="sadar">Kesadaran</label>
+                                                                                                <select class="form-control" style="width: 100%;" id="sadar_cppt" name="sadar_cppt" disabled>
+                                                                                                    <option value="" disabled selected> </option>
+                                                                                                    @foreach ($gcs_kesadaran as $gcs_kesadarandata_cppt)
+                                                                                                        <option value="{{ $gcs_kesadarandata_cppt->skor }}">{{ $gcs_kesadarandata_cppt->nama }}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                     <div class="tab-pane fade" id="soap-a-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-a-tab-prawat-{{ $prawat->id }}">
-                                                                                        <p><strong>Asesmen:</strong> {{ $prawat->summernote ?? '-' }}</p>
+                                                                                        @php
+                                                                                            $asesmen = preg_replace('/<p><br><\/p>/i', '', $prawat->summernote ?? '-');
+                                                                                        @endphp
+
+                                                                                        <p><strong>Head To Toe:</strong></p>
+                                                                                        {!! $asesmen !!}
+
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -892,32 +1043,191 @@
                                                                                         <a class="nav-link" id="soap-o-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-o-dokter-{{ $dokterSoap->id }}" role="tab">O</a>
                                                                                     </li>
                                                                                     <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-ht-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-ht-dokter-{{ $dokterSoap->id }}" role="tab">HTT</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
                                                                                         <a class="nav-link" id="soap-a-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-a-dokter-{{ $dokterSoap->id }}" role="tab">A</a>
                                                                                     </li>
                                                                                     <li class="nav-item">
-                                                                                        <a class="nav-link" id="soap-p-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-p-dokter-{{ $dokterSoap->id }}" role="tab">P</a>
+                                                                                        <a class="nav-link" id="soap-d-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-d-dokter-{{ $dokterSoap->id }}" role="tab">D</a>
                                                                                     </li>
                                                                                     <li class="nav-item">
-                                                                                        <a class="nav-link" id="soap-i-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-i-dokter-{{ $dokterSoap->id }}" role="tab">Instruksi</a>
+                                                                                        <a class="nav-link" id="soap-p-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-p-dokter-{{ $dokterSoap->id }}" role="tab">P</a>
                                                                                     </li>
                                                                                 </ul>
 
                                                                                 <!-- Tab Content -->
                                                                                 <div class="tab-content border rounded-bottom p-3" id="tab-content-dokter-{{ $dokterSoap->id }}">
                                                                                     <div class="tab-pane fade show active" id="soap-s-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-s-tab-dokter-{{ $dokterSoap->id }}">
-                                                                                        <p><strong>Subjektif:</strong> {{ $dokterSoap->s ?? '-' }}</p>
+                                                                                        @php
+                                                                                            $subjektifData = json_decode($dokterSoap->tableData, true);
+                                                                                        @endphp
+
+                                                                                        <table class="table table-bordered">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th>No</th>
+                                                                                                    <th>Subyektif</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @if(is_array($subjektifData) && count($subjektifData) > 0)
+                                                                                                    @foreach($subjektifData as $index => $item)
+                                                                                                        <tr>
+                                                                                                            <td>{{ $index + 1 }}</td>
+                                                                                                            <td>
+                                                                                                                pasien mengeluhkan {{ strtolower($item['penyakit']) }}
+                                                                                                                sejak {{ $item['durasi'] }} {{ $item['waktu'] }}
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    @endforeach
+                                                                                                @else
+                                                                                                    <tr>
+                                                                                                        <td colspan="2">-</td>
+                                                                                                    </tr>
+                                                                                                @endif
+                                                                                            </tbody>
+                                                                                        </table>
                                                                                     </div>
                                                                                     <div class="tab-pane fade" id="soap-o-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-o-tab-dokter-{{ $dokterSoap->id }}">
-                                                                                        <p><strong>Objektif:</strong> {{ $dokterSoap->o ?? '-' }}</p>
+                                                                                        <div class="row">
+                                                                                           <div class="col-md-2">
+                                                                                                <label>Tensi (mmHg)</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" id="sistol" name="sistol" value="{{$dokterSoap->sistol}}" readonly>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                                                                                        <span>/</span> <!-- Menambahkan pemisah / -->
+                                                                                                    </div>
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" id="distol" name="distol" value="{{$dokterSoap->distol}}" readonly>
+                                                                                                    </div>
+                                                                                                    <input type="hidden" id="tensi" name="tensi">
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="suhu">Suhu (°C)</label>
+                                                                                                <input type="text" class="form-control" id="suhu" name="suhu" value="{{$dokterSoap->suhu}}°C" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="nadi">Nadi (/mnt)</label>
+                                                                                                <input type="text" class="form-control" id="nadi" name="nadi" value="{{$dokterSoap->nadi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="rr">RR (/mnt)</label>
+                                                                                                <input type="text" class="form-control" id="rr" name="rr"  value="{{$dokterSoap->rr}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="tinggi">Tinggi (Cm)</label>
+                                                                                                <input type="text" class="form-control" id="tinggi" name="tinggi" value="{{$dokterSoap->tinggi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="berat">Berat (/Kg)</label>
+                                                                                                <input type="text" class="form-control" id="berat" name="berat" value="{{$dokterSoap->berat}}" readonly>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row mt-2">
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="spo2">SpO2</label>
+                                                                                                <input type="text" class="form-control" id="spo2" name="spo2" value="{{$dokterSoap->spo2}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Alergi dan jenis</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="jenis_alergi_cpptd" name="jenis_alergi_cpptd" disabled>
+                                                                                                            <option value="" disabled {{ empty($dokterSoap->jenis_alergi) ? 'selected' : '' }}>-- Pilih --</option>
+                                                                                                            <option value="00" {{ $dokterSoap->jenis_alergi == '00' ? 'selected' : '' }}>tidak ada</option>
+                                                                                                            <option value="01" {{ $dokterSoap->jenis_alergi == '01' ? 'selected' : '' }}>makanan</option>
+                                                                                                            <option value="02" {{ $dokterSoap->jenis_alergi == '02' ? 'selected' : '' }}>obat</option>
+                                                                                                            <option value="03" {{ $dokterSoap->jenis_alergi == '03' ? 'selected' : '' }}>udara</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="alergi_cpptd" name="alergi_cpptd" disabled>
+                                                                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="lingkar_perut">Lingkar Perut</label>
+                                                                                                <input type="text" class="form-control" id="lingkar_perut" name="lingkar_perut" value="{{$dokterSoap->lingkar_perut}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Data BMI</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-4">
+                                                                                                        <input type="text" class="form-control" id="nilai_bmi" name="nilai_bmi" readonly value="{{$dokterSoap->nilai_bmi}}">
+                                                                                                    </div>
+                                                                                                    <div class="col-md-8">
+                                                                                                        <input type="text" class="form-control" id="status_bmi" name="status_bmi" readonly value="{{$dokterSoap->status_bmi}}">
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="form-group row">
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="eye">EYE</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="eye_cpptd" name="eye_cpptd"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gsc_eye as $gsc_eyedata_cpptd)
+                                                                                                        <option value="{{$gsc_eyedata_cpptd->skor}}">{{$gsc_eyedata_cpptd->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="verbal">VERBAL</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="verbal_cpptd" name="verbal_cpptd"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_verbal as $gcs_verbaldata_cpptd)
+                                                                                                        <option value="{{$gcs_verbaldata_cpptd->skor}}">{{$gcs_verbaldata_cpptd->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="motorik">MOTORIK</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="motorik_cpptd" name="motorik_cpptd"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_motorik as $gcs_motorikdata_cpptd)
+                                                                                                        <option value="{{$gcs_motorikdata_cpptd->skor}}">{{$gcs_motorikdata_cpptd->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="sadar">Kesadaran</label>
+                                                                                                <select class="form-control" style="width: 100%;" id="sadar_cpptd" name="sadar_cpptd" disabled>
+                                                                                                    <option value="" disabled selected> </option>
+                                                                                                    @foreach ($gcs_kesadaran as $gcs_kesadarandata_cpptd)
+                                                                                                        <option value="{{ $gcs_kesadarandata_cpptd->skor }}">{{ $gcs_kesadarandata_cpptd->nama }}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-ht-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-ht-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        @php
+                                                                                            $htt = preg_replace('/<p><br><\/p>/i', '', $dokterSoap->htt ?? '-');
+                                                                                        @endphp
+
+                                                                                        <p><strong>Head To Toe:</strong></p>
+                                                                                        {!! $htt !!}
                                                                                     </div>
                                                                                     <div class="tab-pane fade" id="soap-a-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-a-tab-dokter-{{ $dokterSoap->id }}">
-                                                                                        <p><strong>Asesmen:</strong> {{ $dokterSoap->a ?? '-' }}</p>
+                                                                                        @php
+                                                                                            $asesmen = preg_replace('/<p><br><\/p>/i', '', $dokterSoap->assesmen ?? '-');
+                                                                                        @endphp
+
+                                                                                        <p><strong>Head To Toe:</strong></p>
+                                                                                        {!! $asesmen !!}
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-d-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-d-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <p><strong>Planning:</strong> {{ $dokterSoap->p ?? '-' }}</p>
                                                                                     </div>
                                                                                     <div class="tab-pane fade" id="soap-p-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-p-tab-dokter-{{ $dokterSoap->id }}">
                                                                                         <p><strong>Planning:</strong> {{ $dokterSoap->p ?? '-' }}</p>
-                                                                                    </div>
-                                                                                    <div class="tab-pane fade" id="soap-i-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-i-tab-dokter-{{ $dokterSoap->id }}">
-                                                                                        <p><strong>Instruksi:</strong> {{ $dokterSoap->instruksi ?? '-' }}</p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -992,6 +1302,116 @@
     </div>
 </div>
 
+
+<script>
+    $(document).ready(function() {
+        // Ambil nilai dari database
+        const eyeCPPT = parseInt("{{ $prawat->eye }}") || 0;
+        const verbalCPPT = parseInt("{{ $prawat->verbal }}") || 0;
+        const motorikCPPT = parseInt("{{ $prawat->motorik }}") || 0;
+
+        // Set langsung ke dropdown (meskipun disabled, tetap bisa via JS)
+        $('#eye_cppt').val(eyeCPPT);
+        $('#verbal_cppt').val(verbalCPPT);
+        $('#motorik_cppt').val(motorikCPPT);
+
+        // Hitung total skor
+        let totalScore = eyeCPPT + verbalCPPT + motorikCPPT;
+
+        // Set ke select kesadaran
+        $('#sadar_cppt').val(totalScore);
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Ambil nilai dari database
+        const eyeCPPTd = parseInt("{{ $dokterSoap->eye }}") || 0;
+        const verbalCPPTd = parseInt("{{ $dokterSoap->verbal }}") || 0;
+        const motorikCPPTd = parseInt("{{ $dokterSoap->motorik }}") || 0;
+
+        // Set langsung ke dropdown (meskipun disabled, tetap bisa via JS)
+        $('#eye_cpptd').val(eyeCPPTd);
+        $('#verbal_cpptd').val(verbalCPPTd);
+        $('#motorik_cpptd').val(motorikCPPTd);
+
+        // Hitung total skor
+        let totalScored = eyeCPPTd + verbalCPPTd + motorikCPPTd;
+
+        // Set ke select kesadaran
+        $('#sadar_cpptd').val(totalScored);
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        const jenisAlergiCPPT = "{{ $prawat->jenis_alergi }}"; // dari database
+        const alergiCPPT = "{{ $prawat->alergi }}"; // dari database
+
+        // Set dropdown jenis alergi langsung
+        $('#jenis_alergi_cppt').val(jenisAlergiCPPT);
+
+        // Load dropdown alergi sesuai jenis
+        if (jenisAlergiCPPT) {
+            $.ajax({
+                url: '/api/alergi/by-jenis/' + jenisAlergiCPPT,
+                method: 'GET',
+                success: function(response) {
+                    const select2 = $('#alergi_cppt');
+                    select2.empty().append('<option value="" disabled>-- Pilih Data Alergi --</option>');
+
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function(item) {
+                            select2.append(`<option value="${item.kode_alergi}">${item.nama_jenis_alergi}</option>`);
+                        });
+
+                        // Pilih alergi yang sesuai database
+                        if (alergiCPPT) {
+                            select2.val(alergiCPPT);
+                        }
+                    } else {
+                        select2.append('<option value="00">Tidak ada data</option>');
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        const jenisAlergiCPPT = "{{ $dokterSoap->jenis_alergi }}"; // dari database
+        const alergiCPPT = "{{ $dokterSoap->alergi }}"; // dari database
+
+        // Set dropdown jenis alergi langsung
+        $('#jenis_alergi_cpptd').val(jenisAlergiCPPT);
+
+        // Load dropdown alergi sesuai jenis
+        if (jenisAlergiCPPT) {
+            $.ajax({
+                url: '/api/alergi/by-jenis/' + jenisAlergiCPPT,
+                method: 'GET',
+                success: function(response) {
+                    const select2 = $('#alergi_cpptd');
+                    select2.empty().append('<option value="" disabled>-- Pilih Data Alergi --</option>');
+
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function(item) {
+                            select2.append(`<option value="${item.kode_alergi}">${item.nama_jenis_alergi}</option>`);
+                        });
+
+                        // Pilih alergi yang sesuai database
+                        if (alergiCPPT) {
+                            select2.val(alergiCPPT);
+                        }
+                    } else {
+                        select2.append('<option value="00">Tidak ada data</option>');
+                    }
+                }
+            });
+        }
+    });
+</script>
 
 <script>
     let selectedBox = null;
