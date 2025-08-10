@@ -146,11 +146,6 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-
-                                                        <div class="form-group">
-                                                            <label for="summernote_anamnesa" class="d-block">Anamnesa :</label>
-                                                            <textarea class="form-control" id="summernote_anamnesa" name="summernote_anamnesa" rows="3"></textarea>
-                                                        </div>
                                                     </div>
 
                                                     <div class="tab-pane fade" id="custom-tabs-four-objectiv" role="tabpanel" aria-labelledby="custom-tabs-four-objectiv-tab">
