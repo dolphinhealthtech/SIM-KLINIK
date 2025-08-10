@@ -169,15 +169,6 @@
                                                         Gudang Utama</label>
                                                 </div>
                                             </div>
-
-                                            <div class="form-group">
-                                                <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" id="toggleTindakanAll"
-                                                        name="toggleTindakanAll" checked>
-                                                    <label class="custom-control-label" for="toggleTindakanAll">Aktifkan Fitur
-                                                        Tindakan Pemeriksaan</label>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
