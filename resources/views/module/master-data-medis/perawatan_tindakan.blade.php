@@ -76,7 +76,6 @@
                                                         data-tarif_dokter-perawatan_tindakan="{{ $perawatan_tindakandata->tarif_dokter }}"
                                                         data-tarif_perawat-perawatan_tindakan="{{ $perawatan_tindakandata->tarif_perawat }}"
                                                         data-tarif_total-perawatan_tindakan="{{ $perawatan_tindakandata->tarif_total }}"
-                                                        data-tarif_all-perawatan_tindakan="{{ $perawatan_tindakandata->tarif_all }}"
                                                         data-target="#editperawatan_tindakanModa">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </a>

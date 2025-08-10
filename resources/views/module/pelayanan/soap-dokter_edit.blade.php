@@ -2160,8 +2160,6 @@
             } else if (pelaksana === 'keduanya') {
                 pelaksanaList.push({ pelaksana: 'Dokter', harga: tindakanData.tarif_dokter });
                 pelaksanaList.push({ pelaksana: 'Perawat', harga: tindakanData.tarif_perawat });
-            } else {
-                pelaksanaList.push({ pelaksana: 'Tindakan', harga: tindakanData.tarif_all });
             }
 
             const newEntry = { nama: tindakanData.nama, pelaksana: pelaksanaList, _id: 'tindakan_' + Date.now() };
