@@ -378,9 +378,7 @@ class PelayananController extends Controller
             'pendaftaran.status'
         ])
             ->whereHas('pelayanan_so') // Pastikan ada SOAP
-            ->whereHas('pendaftaran.status', function ($query) {
-                $query->where('status_panggil', '!=', 3);
-            })
+            ->whereHas('pendaftaran.status')
             ->whereDate('created_at', Carbon::today());
 
         // Tambahkan filter jika user adalah dokter
@@ -406,6 +404,8 @@ class PelayananController extends Controller
                 $item->tindakan_button = 'soap';
             } elseif ($status == 2 && $soap) {
                 $item->tindakan_button = 'edit';
+            } elseif ($status == 3) {
+                $item->tindakan_button = 'Complete';
             }
         }
         return view('module.pelayanan.pelayanan_dokter', compact('title', 'pelayanan'));
@@ -518,21 +518,31 @@ class PelayananController extends Controller
                 "rujukLanjut" => null,
                 "kdTacc" => 0,
                 "alasanTacc" => null,
-                "anamnesa" => strip_tags($pelayanan->assesmen),
+                "anamnesa" => $output,
                 "alergiMakan" => $pelayanan->alergi_makanan ?? '00',
                 "alergiUdara" => $pelayanan->alergi_udara ?? '00',
                 "alergiObat" => $pelayanan->alergi_obat ?? '00',
                 "kdPrognosa" => "01",
-                "terapiObat" => $pelayanan->terapi_obat ?? null,
-                "terapiNonObat" => $pelayanan->terapi_nonobat ?? null,
+                "terapiObat" => $pelayanan->terapi_obat ?? "tidak ada",
+                "terapiNonObat" => $pelayanan->terapi_nonobat ?? "tidak ada",
                 "bmhp" => $soap->bmhp ?? '',
                 "suhu" => $soap->suhu ?? " 0",
             ], $dataDiag);
 
-            // Kirim ke BPJS
             try {
                 $response = $this->PcareController->post_kunjungan_bpjs($kunjunganPayload);
-                $noKunjungan = $response->response->message ?? null;
+
+                // Ambil content dan decode JSON
+                $content = $response->getContent();
+                $data = json_decode($content, true);
+
+                // Ambil nomor kunjungan sesuai struktur response BPJS
+                if (isset($data['data']) && is_array($data['data']) && count($data['data']) > 0) {
+                    $noKunjungan = $data['data'][0]['message'] ?? null;
+                } else {
+                    $noKunjungan = null;
+                }
+
             } catch (\Exception $e) {
                 return response()->json([
                     'success' => false,
@@ -540,19 +550,22 @@ class PelayananController extends Controller
                     'error' => $e->getMessage()
                 ], 500);
             }
-        } else {
-            $noKunjungan = null;
+
         }
 
-        // Simpan status selesai
+
+        // Simpan status selesai dan nomor kunjungan ke database
         if ($pelayanan->pendaftaran && $pelayanan->pendaftaran->status) {
             $pelayanan->pendaftaran->status->status_panggil = 3;
-            $pelayanan->kunjungan = $noKunjungan;
             $pelayanan->pendaftaran->status->save();
+
+            $pelayanan->kunjungan = $noKunjungan;
+            $pelayanan->save();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Status panggil berhasil diperbarui.'
+                'message' => 'Status panggil berhasil diperbarui.',
+                'data' => $noKunjungan
             ]);
         } else {
             return response()->json([

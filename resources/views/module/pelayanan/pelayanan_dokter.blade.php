@@ -51,6 +51,8 @@
                                                     @elseif ($pelayanandata->tindakan_button == 'soap')
                                                         <span class="badge badge-primary rounded-pill">Pemeriksaan</span>
                                                     @elseif ($pelayanandata->tindakan_button == 'edit')
+                                                        <span class="badge badge-info rounded-pill">Selesai Cek</span>
+                                                    @elseif ($pelayanandata->tindakan_button == 'Complete')
                                                         <span class="badge badge-info rounded-pill">Selesai</span>
                                                     @endif
                                                 </td>
@@ -114,11 +116,11 @@
                                                             <i class="fas fa-file-alt"></i> Permintaan
                                                         </button>
                                                         <button type="button"
-                                                                class="btn btn-outline-success btn-sm rounded-pill"
+                                                                class="btn btn-outline-success btn-sm rounded-pill pasien-selesai"
                                                                 onclick="window.location.href='{{ route('pelayana_dokter.selesai', ['norawat' => $norawat]) }}'"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-placement="top"
-                                                                title="Edit data SOAP yang sudah diisi">
+                                                                title="Pasien Selesai">
                                                             <i class="fas fa-user-check"></i> Selesai
                                                         </button>
                                                     @elseif ($pelayanandata->tindakan_button == 'Complete')

@@ -167,11 +167,11 @@ class RujukanController extends Controller
                 "rujukLanjut" => [],
                 "kdTacc" => (int) $request->input('kategori_rujukan', -1),
                 "alasanTacc" => $request->input('alasanTacc', null),
-                "anamnesa" => $request->input('anamnesa', null),
+                "anamnesa" => $output,
                 "alergiMakan" => $pelayanan->alergi_makanan ?? "00",
                 "alergiUdara" => $pelayanan->alergi_udara ?? "00",
                 "alergiObat" => $pelayanan->alergi_obat ?? "00",
-                "kdPrognosa" => $request->input('kdPrognosa'),
+                "kdPrognosa" => '01',
                 "terapiObat" => $pelayanan->terapi_obat ?? "tidak ada",
                 "terapiNonObat" => $pelayanan->terapi_nonobat ?? "tidak ada",
                 "bmhp" => $request->input('bmhp') ?? null,
@@ -209,7 +209,17 @@ class RujukanController extends Controller
         // Kirim ke BPJS
         try {
             $response = $this->PcareController->post_kunjungan_bpjs($kunjunganPayload);
-            $noKunjungan = $response->response->message ?? null;
+
+            // Ambil content dan decode JSON
+            $content = $response->getContent();
+            $data = json_decode($content, true);
+
+            // Ambil nomor kunjungan sesuai struktur response BPJS
+            if (isset($data['data']) && is_array($data['data']) && count($data['data']) > 0) {
+                $noKunjungan = $data['data'][0]['message'] ?? null;
+            } else {
+                $noKunjungan = null;
+            }
 
             // Simpan ke DB
             pelayanan_rujukan::create([
@@ -224,18 +234,25 @@ class RujukanController extends Controller
                 'sub_spesialis' => $request->input('sub_spesialis') ?? $request->input('subspesialis_khusus'),
             ]);
 
-            pelayanan::where('nomor_register', $pelayanan->nomor_register)
-                ->update(['kunjungan' => $noKunjungan]);
+             // Simpan status selesai dan nomor kunjungan ke database
+            if ($pelayanan->pendaftaran && $pelayanan->pendaftaran->status) {
+                $pelayanan->pendaftaran->status->status_panggil = 3;
+                $pelayanan->pendaftaran->status->save();
 
-            $pelayanan->pendaftaran->status->status_panggil = 3;
-            $pelayanan->pendaftaran->status->save();
+                $pelayanan->kunjungan = $noKunjungan;
+                $pelayanan->save();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data rujukan berhasil disimpan & dikirim ke BPJS',
-                'no_kunjungan' => $noKunjungan,
-                'data' => $pelayanan
-            ]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data rujukan berhasil disimpan & dikirim ke BPJS.',
+                    'data' => $noKunjungan
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data status tidak ditemukan.'
+                ], 404);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

@@ -322,6 +322,7 @@ class PendaftaranController extends Controller
                 $pemeriksaan->delete();
             }
 
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data pasien berhasil disimpan.'
