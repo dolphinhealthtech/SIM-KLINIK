@@ -257,7 +257,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menonaktifkan Users!',
+                'message' => $e->getMessage(),
                 'error' => $e->getMessage()
             ], 500);
         }
