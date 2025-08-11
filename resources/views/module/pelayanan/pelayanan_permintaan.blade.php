@@ -575,19 +575,25 @@
                                                 </div>
                                             </div>
 
+                                            @php
+                                                $firstSoap = $pelayanan->pelayanan_so->first();
+                                            @endphp
                                             <div class="form-group row mt-3">
                                                 <div class="col-md-4">
                                                     <label>Tensi (mmHg)</label>
                                                     <div class="row">
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-5">
                                                             <input type="number" class="form-control" name="sistole"
                                                                 placeholder="Sistole"
-                                                                value="{{ $pelayanan->pelayanan_so->sistol ?? '' }}">
+                                                                value="{{ $firstSoap->sistol ?? '' }}">
                                                         </div>
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                                            <span>/</span> <!-- Menambahkan pemisah / -->
+                                                        </div>
+                                                        <div class="col-md-5">
                                                             <input type="number" class="form-control" name="diastole"
                                                                 placeholder="Diastole"
-                                                                value="{{ $pelayanan->pelayanan_so->distol ?? '' }}">
+                                                                value="{{ $firstSoap->distol ?? '' }}">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -596,7 +602,7 @@
                                                     <div class="input-group">
                                                         <input type="number" step="0.1" class="form-control"
                                                             name="suhu" placeholder="Suhu"
-                                                            value="{{ $pelayanan->pelayanan_so->suhu ?? '' }}">
+                                                            value="{{ $firstSoap->suhu ?? '' }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
@@ -604,7 +610,7 @@
                                                     <div class="input-group">
                                                         <input type="number" step="0.1" class="form-control"
                                                             name="berat" placeholder="Berat"
-                                                            value="{{ $pelayanan->pelayanan_so->berat ?? '' }}">
+                                                            value="{{ $firstSoap->berat ?? '' }}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -614,20 +620,20 @@
                                                     <label for="rr">RR (/mnt)</label>
                                                     <input type="number" class="form-control" name="respiratory_rate"
                                                         placeholder="Respiratory Rate"
-                                                        value="{{ $pelayanan->pelayanan_so->rr ?? '' }}">
+                                                        value="{{ $firstSoap->rr ?? '' }}">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="nadi">Nadi (/mnt)</label>
                                                     <input type="number" class="form-control" name="nadi"
                                                         placeholder="Nadi"
-                                                        value="{{ $pelayanan->pelayanan_so->nadi ?? '' }}">
+                                                        value="{{ $firstSoap->nadi ?? '' }}">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="tinggi">Tinggi (Cm)</label>
                                                     <div class="input-group">
                                                         <input type="number" class="form-control" name="tinggi"
                                                             placeholder="Tinggi"
-                                                            value="{{ $pelayanan->pelayanan_so->tinggi ?? '' }}">
+                                                            value="{{ $firstSoap->tinggi ?? '' }}">
                                                     </div>
                                                 </div>
                                             </div>
