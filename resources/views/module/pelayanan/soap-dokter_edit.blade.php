@@ -111,7 +111,7 @@
                                                             <label>Keluhan :</label>
                                                             <div class="row">
                                                                 <div class="col-md-5">
-                                                                    <input type="text" class="form-control" id="penyakit" placeholde="Masukan Keluhan">
+                                                                    <textarea class="form-control" id="penyakit" placeholder="Masukan Keluhan"></textarea>
                                                                 </div>
                                                                 <div class="col-md-5 d-flex align-items-center">
                                                                     <label class="mr-3 mb-0">Sejak</label>
