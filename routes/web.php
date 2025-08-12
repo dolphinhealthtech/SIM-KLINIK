@@ -488,6 +488,8 @@ Route::get('/monitor', [MonitorController::class, 'monitor'])->name('monitor.get
 Route::post('/monitor/add/bpjs', [MonitorController::class, 'monitor_bpjs'])->name('monitor.add.bpjs');
 Route::post('/monitor/add/nobpjs', [MonitorController::class, 'monitor_nobpjs'])->name('monitor.add.nobpjs');
 Route::get('/monitor/loket-antrian', [MonitorController::class, 'loketAntrian'])->name('monitor.loket.antrian');
+// Endpoint JSON untuk polling monitor loket (tanpa reload)
+Route::get('/monitor/loket-antrian/data', [MonitorController::class, 'loketAntrianData'])->name('monitor.loket.antrian.data');
 Route::post('/monitor/add/pasien', [PasienController::class, 'pasiensadd'])->name('monitor.add.pasien');
 
 // Menu Panggil Pasien
