@@ -117,7 +117,7 @@
                                                         </button>
                                                         <button type="button"
                                                                 class="btn btn-outline-success btn-sm rounded-pill pasien-selesai"
-                                                                onclick="window.location.href='{{ route('pelayana_dokter.selesai', ['norawat' => $norawat]) }}'"
+                                                                data-url="{{ route('pelayana_dokter.selesai', ['norawat' => $norawat]) }}"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-placement="top"
                                                                 title="Pasien Selesai">
@@ -167,9 +167,7 @@
         });
         $('.pasien-selesai').on('click', function(e) {
             e.preventDefault();
-
             let url = $(this).data('url');
-
             $.ajax({
                 url: url,
                 type: "GET",

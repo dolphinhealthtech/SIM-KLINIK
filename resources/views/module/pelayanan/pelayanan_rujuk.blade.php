@@ -200,18 +200,18 @@
                                                         <div class="col-md-6">
                                                             <label for="kategori_rujukan">Kategori Rujukan</label>
                                                             <select id="kategori_rujukan" name="kategori_rujukan" class="form-control select2bs4">
-                                                            <option value="" disabled selected>-- Pilih Kategori --</option>
-                                                                <option value="-1">Tanpa Alasan</option>
-                                                                <option value="1">Time</option>
-                                                                <option value="2">Age</option>
-                                                                <option value="3">Complication</option>
-                                                                <option value="4">Comorbidity</option>
+                                                                <option value="" disabled selected>-- Pilih Kategori --</option>
+                                                                @foreach ($Ref_TACC as $kategori)
+                                                                    <option value="{{ $kategori['kdTacc'] }}">{{ $kategori['nmTacc'] }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
 
                                                         <div class="col-md-6">
                                                             <label for="alasan_rujukan">Alasan Rujukan Spesialis</label>
-                                                            <input type="text" id="alasan_rujukan" name="alasan_rujukan" class="form-control" placeholder="Masukkan alasan rujukan" disabled />
+                                                            <select id="alasan_rujukan" name="alasan_rujukan" class="form-control select2bs4" disabled>
+                                                                <option value="" disabled selected>-- Pilih Alasan --</option>
+                                                            </select>
                                                         </div>
 
                                                         <div class="col-md-6">
@@ -273,6 +273,30 @@
         </section>
     <!-- /.content -->
 </div>
+
+
+<script>
+    const Ref_TACC = @json($Ref_TACC);
+
+    $(document).ready(function () {
+        $('#kategori_rujukan').on('change', function () {
+            const selectedValue = $(this).val();
+            const alasanSelect = $('#alasan_rujukan');
+            alasanSelect.empty().append('<option value="" disabled selected>-- Pilih Alasan --</option>');
+
+            const kategori = Ref_TACC.find(k => k.kdTacc === selectedValue);
+
+            if (kategori && kategori.alasanTacc.length > 0) {
+                alasanSelect.prop('disabled', false);
+                kategori.alasanTacc.forEach(alasan => {
+                    alasanSelect.append(`<option value="${alasan}">${alasan}</option>`);
+                });
+            } else {
+            alasanSelect.prop('disabled', true);
+        }
+    });
+});
+</script>
 
 <script>
 $(document).ready(function () {

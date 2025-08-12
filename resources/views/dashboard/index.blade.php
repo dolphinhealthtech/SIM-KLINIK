@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <h5 class="text-muted text-center">Selamat datang di Dashboard</h5>                    
+                        <h5 class="text-muted text-center">Selamat datang di Dashboard</h5>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -79,8 +79,8 @@
                                     <i class="fas fa-money-bill-wave fa-2x opacity-50"></i>
                                 </div>
                             </div>
-                            <div class="card-footer text-white clearfix small z-1">
-                                <a href="#" class="text-white" data-toggle="modal" data-target="#modalPendapatan">
+                            <div class="card-footer text-white clearfix small z-1" data-toggle="modal" data-target="#modalPendapatan">
+                                <a href="#" class="text-white">
                                     Rincian <i class="fas fa-arrow-circle-right float-right"></i>
                                 </a>
                             </div>

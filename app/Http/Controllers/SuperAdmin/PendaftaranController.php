@@ -71,9 +71,64 @@ class PendaftaranController extends Controller
         $jumlahDokter = $rekapPerPoliDokter->count(); // Banyaknya dokter unik
         $totalPasien = $rekapPerPoliDokter->sum('jumlah'); // Total pasien dari semua dokter
 
-        // dd($rekapPerPoliDokter,$jumlahDokter,$totalPasien);
+        $rekapPerDokter = Pendaftaran_rawat_jalan::with(['dokter.namauser', 'poli', 'status'])
+        ->whereDate('tanggal_kujungan', $today) // filter kunjungan hari ini
+        ->whereHas('dokter.jadwal', function ($query) use ($today) {
+            $query->whereDate('start', '=', $today);
+        })
+        ->whereHas('status', function ($query) {
+            $query->whereIn('status_panggil', [0, 1, 2, 3]);
+        })
 
-        return view('module.pendaftaran.daftar', compact('title', 'jumlahDokter', 'totalPasien', 'rekapPerPoliDokter', 'pendaftaran', 'pasiens', 'penjamin', 'poli', 'pasienallnewnow', 'pasienallold'));
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->groupBy('dokter_id')
+        ->map(function ($group) {
+            $jumlahMenunggu = $group->filter(function ($item) {
+                return $item->status && in_array($item->status->status_panggil, [0,1]) && $item->status->status_pendaftaran == 2;
+            })->count();
+
+            $jumlahDilayani = $group->filter(function ($item) {
+                return $item->status && $item->status->status_panggil == 3;
+            })->count();
+
+            // Cari nomor antrian untuk status 2 atau 3
+            $pasienAktif = $group->filter(function ($item) {
+                return $item->status && in_array($item->status->status_panggil, [2]);
+            })->sortBy('antrian')->first();
+
+            $noAntrian = $pasienAktif ? $pasienAktif->antrian : '-';
+
+            $latest = $group->first();
+
+            // Tentukan status_periksa
+            $statusPeriksa = '-';
+            if ($latest && $latest->status) {
+                if ($group->contains(function ($item) {
+                    return $item->status && in_array($item->status->status_panggil, [0,1]) && $item->status->status_pendaftaran == 2;
+                })) {
+                    $statusPeriksa = 1; //menungu
+                } elseif ($group->contains(function ($item) {
+                    return $item->status && $item->status->status_panggil == 2;
+                })) {
+                    $statusPeriksa = 2; //periksa
+                }
+                else {
+                    $statusPeriksa = 3; //kosong
+                }
+            }
+
+            return (object) [
+                'dokter'         => $latest->dokter,
+                'poli'           => $latest->poli,
+                'menunggu'       => $jumlahMenunggu,
+                'dilayani'       => $jumlahDilayani,
+                'no_antrian'     => $noAntrian,
+                'status_periksa' => $statusPeriksa
+            ];
+        });
+
+        return view('module.pendaftaran.daftar', compact('title','rekapPerDokter' ,'jumlahDokter', 'totalPasien', 'rekapPerPoliDokter', 'pendaftaran', 'pasiens', 'penjamin', 'poli', 'pasienallnewnow', 'pasienallold'));
     }
 
     public function getByPoli($id, Request $request)
@@ -197,16 +252,13 @@ class PendaftaranController extends Controller
             }
 
 
-            // Perbarui status_pendaftaran menjadi 0 (batal)
-            $pendaftaran->status_pendaftaran = 0;
-            $pendaftaran->save();
-
-            $pemeriksaan = pelayanan::where('nomor_register', $pendaftaran->nomor_register)
+             $pemeriksaan = pelayanan::where('nomor_register', $pendaftaran->nomor_register)
                 ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
                 ->where('pasien_id', $pendaftaran->pasien_id)
                 ->first();
 
             if ($pemeriksaan) {
+                $pemeriksaan->pendaftaran?->delete();
                 $pemeriksaan->delete();
             }
 
@@ -253,18 +305,21 @@ class PendaftaranController extends Controller
             }
 
 
-            // Perbarui status_pendaftaran menjadi 0 (batal)
-            $pendaftaran->status_pendaftaran = 0;
-            $pendaftaran->save();
-
-            $pemeriksaan = pelayanan::where('nomor_register', $pendaftaran->nomor_register)
+           $pemeriksaan = Pendaftaran_rawat_jalan::where('nomor_register', $pendaftaran->nomor_register)
                 ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
                 ->where('pasien_id', $pendaftaran->pasien_id)
                 ->first();
 
             if ($pemeriksaan) {
+                // Hapus status terkait
+                $pemeriksaan->status()?->delete();
+
+                // Hapus pendaftaran
                 $pemeriksaan->delete();
             }
+
+
+
 
 
             return response()->json([
@@ -402,6 +457,40 @@ class PendaftaranController extends Controller
                 'success' => true,
                 'message' => 'Data pasien berhasil disimpan.'
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors()
+            ], 422);
+        }
+    }
+
+    public function pendaftaranupdokter(Request $request)
+    {
+        try {
+            $pelayanan = Pelayanan::with('pendaftaran')->find($request->rubahdokter_id);
+
+            if (!$pelayanan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data pelayanan tidak ditemukan.'
+                ], 404);
+            }
+
+            // Pastikan relasi pendaftaran ada
+            if ($pelayanan->pendaftaran) {
+                $pelayanan->pendaftaran->dokter_id = $request->dokter_id_update;
+                $pelayanan->pendaftaran->save();
+            }
+
+            // Update di tabel pelayanan juga
+            $pelayanan->dokter_id = $request->dokter_id_update;
+            $pelayanan->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data dokter berhasil diupdate.'
+            ]);
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'errors' => $e->errors()

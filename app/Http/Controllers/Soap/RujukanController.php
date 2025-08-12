@@ -53,7 +53,53 @@ class RujukanController extends Controller
         $spesialis = spesialis::all();
         $subspesialis = subspesialis::all();
 
-        return view('module.pelayanan.pelayanan_rujuk', compact('title', 'pelayanan', 'umur', 'sarana', 'spesialis', 'subspesialis'));
+
+
+        // Ambil ICD dengan priority Primary untuk nomor rawat ini
+        $alasanComplication = pelayanan_soap_dokter_icd::where('no_rawat', $nomor_rawat)
+            ->where('priority_icd10', 'Primary')
+            ->get()
+            ->map(function ($item) {
+                return $item->kode_icd10 . ' - ' . $item->nama_icd10;
+            })
+            ->toArray();
+
+        $Ref_TACC = [
+            [
+                "kdTacc" => "-1",
+                "nmTacc" => "Tanpa TACC",
+                "alasanTacc" => []
+            ],
+            [
+                "kdTacc" => "1",
+                "nmTacc" => "Time",
+                "alasanTacc" => ["< 3 Hari", ">= 3 - 7 Hari", ">= 7 Hari"]
+            ],
+            [
+                "kdTacc" => "2",
+                "nmTacc" => "Age",
+                "alasanTacc" => [
+                    "< 1 Bulan",
+                    ">= 1 Bulan s/d < 12 Bulan",
+                    ">= 1 Tahun s/d < 5 Tahun",
+                    ">= 5 Tahun s/d < 12 Tahun",
+                    ">= 12 Tahun s/d < 55 Tahun",
+                    ">= 55 Tahun"
+                ]
+            ],
+            [
+                "kdTacc" => "3",
+                "nmTacc" => "Complication",
+                "alasanTacc" => $alasanComplication
+            ],
+            [
+                "kdTacc" => "4",
+                "nmTacc" => "Comorbidity",
+                "alasanTacc" => ["< 3 Hari", ">= 3 - 7 Hari", ">= 7 Hari"]
+            ]
+        ];
+
+        return view('module.pelayanan.pelayanan_rujuk', compact('title', 'Ref_TACC','pelayanan', 'umur', 'sarana', 'spesialis', 'subspesialis'));
     }
 
     public function getSubSpesialis($kode)

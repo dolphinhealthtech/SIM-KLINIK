@@ -895,43 +895,42 @@
                                                                                                 <label>Tensi (mmHg)</label>
                                                                                                 <div class="row">
                                                                                                     <div class="col-md-5">
-                                                                                                        <input type="text" class="form-control" id="sistol" name="sistol" value="{{$prawat->sistol}}" readonly>
+                                                                                                        <input type="text" class="form-control" value="{{$prawat->sistol}}" readonly>
                                                                                                     </div>
                                                                                                     <div class="col-md-1 d-flex justify-content-center align-items-center">
                                                                                                         <span>/</span> <!-- Menambahkan pemisah / -->
                                                                                                     </div>
                                                                                                     <div class="col-md-5">
-                                                                                                        <input type="text" class="form-control" id="distol" name="distol" onchange="updateTensi()" value="{{$prawat->distol}}" readonly>
+                                                                                                        <input type="text" class="form-control" value="{{$prawat->distol}}" readonly>
                                                                                                     </div>
-                                                                                                    <input type="hidden" id="tensi" name="tensi">
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div class="col-md-2">
-                                                                                                <label for="suhu">Suhu (°C)</label>
-                                                                                                <input type="text" class="form-control" id="suhu" name="suhu" value="{{$prawat->suhu}}°C" readonly>
+                                                                                                <label for="suhu_cppt1">Suhu (°C)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->suhu}}°C" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-2">
-                                                                                                <label for="nadi">Nadi (/mnt)</label>
-                                                                                                <input type="text" class="form-control" id="nadi" name="nadi" value="{{$prawat->nadi}}" readonly>
+                                                                                                <label for="nadi_cppt1">Nadi (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->nadi}}" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-2">
-                                                                                                <label for="rr">RR (/mnt)</label>
-                                                                                                <input type="text" class="form-control" id="rr" name="rr"  value="{{$prawat->rr}}" readonly>
+                                                                                                <label for="rr_cppt1">RR (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->rr}}" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-2">
-                                                                                                <label for="tinggi">Tinggi (Cm)</label>
-                                                                                                <input type="text" class="form-control" id="tinggi" name="tinggi" value="{{$prawat->tinggi}}" readonly>
+                                                                                                <label for="tinggi_cppt1">Tinggi (Cm)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->tinggi}}" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-2">
-                                                                                                <label for="berat">Berat (/Kg)</label>
-                                                                                                <input type="text" class="form-control" id="berat" name="berat" value="{{$prawat->berat}}" readonly>
+                                                                                                <label for="berat_cppt1">Berat (/Kg)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->berat}}" readonly>
                                                                                             </div>
                                                                                         </div>
 
                                                                                         <div class="row mt-2">
                                                                                             <div class="col-md-2">
-                                                                                                <label for="spo2">SpO2</label>
-                                                                                                <input type="text" class="form-control" id="spo2" name="spo2" value="{{$prawat->spo2}}" readonly>
+                                                                                                <label for="spo2_cppt1">SpO2</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->spo2}}" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-4">
                                                                                                 <label>Alergi dan jenis</label>
@@ -954,17 +953,17 @@
                                                                                             </div>
 
                                                                                             <div class="col-md-2">
-                                                                                                <label for="lingkar_perut">Lingkar Perut</label>
-                                                                                                <input type="text" class="form-control" id="lingkar_perut" name="lingkar_perut" value="{{$prawat->lingkar_perut}}" readonly>
+                                                                                                <label for="lingkar_perut_cppt1">Lingkar Perut</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->lingkar_perut}}" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-4">
                                                                                                 <label>Data BMI</label>
                                                                                                 <div class="row">
                                                                                                     <div class="col-md-4">
-                                                                                                        <input type="text" class="form-control" id="nilai_bmi" name="nilai_bmi" readonly value="{{$prawat->nilai_bmi}}">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$prawat->nilai_bmi}}">
                                                                                                     </div>
                                                                                                     <div class="col-md-8">
-                                                                                                        <input type="text" class="form-control" id="status_bmi" name="status_bmi" readonly value="{{$prawat->status_bmi}}">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$prawat->status_bmi}}">
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
@@ -1095,42 +1094,41 @@
                                                                                                 <label>Tensi (mmHg)</label>
                                                                                                 <div class="row">
                                                                                                     <div class="col-md-5">
-                                                                                                        <input type="text" class="form-control" id="sistol" name="sistol" value="{{$dokterSoap->sistol}}" readonly>
+                                                                                                        <input type="text" class="form-control" value="{{$dokterSoap->sistol}}" readonly>
                                                                                                     </div>
                                                                                                     <div class="col-md-1 d-flex justify-content-center align-items-center">
                                                                                                         <span>/</span> <!-- Menambahkan pemisah / -->
                                                                                                     </div>
                                                                                                     <div class="col-md-5">
-                                                                                                        <input type="text" class="form-control" id="distol" name="distol" value="{{$dokterSoap->distol}}" readonly>
+                                                                                                        <input type="text" class="form-control" value="{{$dokterSoap->distol}}" readonly>
                                                                                                     </div>
-                                                                                                    <input type="hidden" id="tensi" name="tensi">
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div class="col-md-2">
-                                                                                                <label for="suhu">Suhu (°C)</label>
-                                                                                                <input type="text" class="form-control" id="suhu" name="suhu" value="{{$dokterSoap->suhu}}°C" readonly>
+                                                                                                <label for="suhu_cppt">Suhu (°C)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->suhu}}°C" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-2">
-                                                                                                <label for="nadi">Nadi (/mnt)</label>
-                                                                                                <input type="text" class="form-control" id="nadi" name="nadi" value="{{$dokterSoap->nadi}}" readonly>
+                                                                                                <label for="nadi_cppt">Nadi (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->nadi}}" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-2">
-                                                                                                <label for="rr">RR (/mnt)</label>
-                                                                                                <input type="text" class="form-control" id="rr" name="rr"  value="{{$dokterSoap->rr}}" readonly>
+                                                                                                <label for="rr_cppt">RR (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->rr}}" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-2">
-                                                                                                <label for="tinggi">Tinggi (Cm)</label>
-                                                                                                <input type="text" class="form-control" id="tinggi" name="tinggi" value="{{$dokterSoap->tinggi}}" readonly>
+                                                                                                <label for="tinggi_cppt">Tinggi (Cm)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->tinggi}}" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-2">
-                                                                                                <label for="berat">Berat (/Kg)</label>
-                                                                                                <input type="text" class="form-control" id="berat" name="berat" value="{{$dokterSoap->berat}}" readonly>
+                                                                                                <label for="berat_cppt">Berat (/Kg)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->berat}}" readonly>
                                                                                             </div>
                                                                                         </div>
                                                                                         <div class="row mt-2">
                                                                                             <div class="col-md-2">
-                                                                                                <label for="spo2">SpO2</label>
-                                                                                                <input type="text" class="form-control" id="spo2" name="spo2" value="{{$dokterSoap->spo2}}" readonly>
+                                                                                                <label for="spo2_cppt">SpO2</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->spo2}}" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-4">
                                                                                                 <label>Alergi dan jenis</label>
@@ -1153,17 +1151,17 @@
                                                                                             </div>
 
                                                                                             <div class="col-md-2">
-                                                                                                <label for="lingkar_perut">Lingkar Perut</label>
-                                                                                                <input type="text" class="form-control" id="lingkar_perut" name="lingkar_perut" value="{{$dokterSoap->lingkar_perut}}" readonly>
+                                                                                                <label for="lingkar_perut_cppt">Lingkar Perut</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->lingkar_perut}}" readonly>
                                                                                             </div>
                                                                                             <div class="col-md-4">
                                                                                                 <label>Data BMI</label>
                                                                                                 <div class="row">
                                                                                                     <div class="col-md-4">
-                                                                                                        <input type="text" class="form-control" id="nilai_bmi" name="nilai_bmi" readonly value="{{$dokterSoap->nilai_bmi}}">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$dokterSoap->nilai_bmi}}">
                                                                                                     </div>
                                                                                                     <div class="col-md-8">
-                                                                                                        <input type="text" class="form-control" id="status_bmi" name="status_bmi" readonly value="{{$dokterSoap->status_bmi}}">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$dokterSoap->status_bmi}}">
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
