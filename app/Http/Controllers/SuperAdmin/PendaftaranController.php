@@ -92,135 +92,79 @@ class PendaftaranController extends Controller
     }
 
     public function pendaftaranadd(Request $request)
-{
-    try {
-        $data = $request->validate([
-            'pasien' => 'required',
-            'poli_id' => 'required',
-            'tanggal_kunjungan' => 'required',
-            'dokter_id' => 'required',
-            'penjamin_id' => 'required',
-        ]);
+    {
+        try {
+            $data = $request->validate([
+                'pasien' => 'required',
+                'poli_id' => 'required',
+                'tanggal_kunjungan' => 'required',
+                'dokter_id' => 'required',
+                'penjamin_id' => 'required',
+            ]);
 
-        $pasien = Pasien::find($request->pasien);
-        if (!$pasien) {
-            return response()->json(['error' => 'Pasien tidak ditemukan'], 404);
-        }
-
-        $tanggal = Carbon::parse($request->tanggal_kunjungan);
-        $tanggalKode = $tanggal->format('y') . str_pad($tanggal->dayOfYear, 3, '0', STR_PAD_LEFT);
-        $angkaAcak = mt_rand(1000, 9999);
-        $no_registrasi = $angkaAcak . '-' . $tanggalKode;
-
-        $antrian = Loket::where('poli_id', $request->poli_id)->first();
-        if (!$antrian) {
-            return response()->json(['error' => 'Loket tidak ditemukan untuk poli ini'], 404);
-        }
-
-        $today = Carbon::today();
-        $last = Pendaftaran_rawat_jalan::where('antrian', 'like', $antrian->nama . '-%')
-            ->whereDate('created_at', $today)
-            ->orderBy('created_at', 'desc')
-            ->first();
-        $nextNumber = $last ? ((int) str_replace($antrian->nama . '-', '', $last->antrian)) + 1 : 1;
-        $antrianBaru = $antrian->nama . '-' . $nextNumber;
-
-        $penjamin = penjamin::find($request->penjamin_id);
-        if (!$penjamin) {
-            return response()->json(['error' => 'Penjamin tidak ditemukan'], 404);
-        }
-
-        // Proses BPJS dikirim terlebih dahulu
-        if ($penjamin->nama == 'BPJS') {
-            $poli = poli::find($request->poli_id);
-            if (!$poli) {
-                return response()->json(['error' => 'Poli tidak ditemukan'], 404);
+            $pasien = Pasien::find($request->pasien);
+            if (!$pasien) {
+                return response()->json(['error' => 'Pasien tidak ditemukan'], 404);
             }
 
-            $tanggalKunjungan = $tanggal->format('Y-m-d');
-            $dokter = Dokter::with(['namauser', 'jadwal' => function ($query) use ($tanggalKunjungan) {
-                $query->whereDate('start', $tanggalKunjungan);
-            }])->find($request->dokter_id);
+            $tanggal = Carbon::parse($request->tanggal_kunjungan);
+            $tanggalKode = $tanggal->format('y') . str_pad($tanggal->dayOfYear, 3, '0', STR_PAD_LEFT);
+            $angkaAcak = mt_rand(1000, 9999);
+            $no_registrasi = $angkaAcak . '-' . $tanggalKode;
 
-            if (!$dokter || !$dokter->namauser) {
-                return response()->json(['error' => 'Dokter atau user dokter tidak ditemukan'], 404);
+            $antrian = Loket::where('poli_id', $request->poli_id)->first();
+            if (!$antrian) {
+                return response()->json(['error' => 'Loket tidak ditemukan untuk poli ini'], 404);
             }
 
-            $jadwal = $dokter->jadwal->first();
-            $jamPraktek = $jadwal
-                ? Carbon::parse($jadwal->start)->format('H:i') . '-' . Carbon::parse($jadwal->end)->format('H:i')
-                : '-';
+            $today = Carbon::today();
+            $last = Pendaftaran_rawat_jalan::where('antrian', 'like', $antrian->nama . '-%')
+                ->whereDate('created_at', $today)
+                ->orderBy('created_at', 'desc')
+                ->first();
+            $nextNumber = $last ? ((int) str_replace($antrian->nama . '-', '', $last->antrian)) + 1 : 1;
+            $antrianBaru = $antrian->nama . '-' . $nextNumber;
 
-            $databpjs = [
-                "nomorkartu"     => $pasien->no_bpjs,
-                "nik"            => $pasien->nik,
-                "nohp"           => $pasien->telepon,
-                "kodepoli"       => $poli->kode,
-                "namapoli"       => $poli->nama,
-                "norm"           => $pasien->no_rm,
-                "tanggalperiksa" => $tanggalKunjungan,
-                "kodedokter"     => $dokter->kode,
-                "namadokter"     => $dokter->namauser->name,
-                "jampraktek"     => $jamPraktek,
-                "nomorantrean"   => $antrianBaru,
-                "angkaantrean"   => $nextNumber,
-                "keterangan"     => "",
-            ];
+            // Simpan ke database
+            $pendaftaran = Pendaftaran_rawat_jalan::create([
+                'nomor_rm' => $pasien->no_rm,
+                'pasien_id' => $request->pasien,
+                'poli_id' => $request->poli_id,
+                'tanggal_kujungan' => $request->tanggal_kunjungan,
+                'dokter_id' => $request->dokter_id,
+                'Penjamin' => $request->penjamin_id,
+                'nomor_register' => $no_registrasi,
+                'antrian' => $antrianBaru,
+            ]);
 
-            $responseBpjs = $this->PcareController->post_ws_antria_bpjs($databpjs);
-            // Ambil isi responsenya sebagai array
-            $responseData = $responseBpjs->getData(true); // true = kembalikan sebagai array
+            Pendaftaran_rawat_jalan_status::create([
+                'nomor_rm' => $pasien->no_rm,
+                'pasien_id' => $request->pasien,
+                'nomor_register' => $no_registrasi,
+                'tanggal_kujungan' => $request->tanggal_kunjungan,
+                'register_id' => $pendaftaran->id,
+                'status_panggil' => 0,
+                'status_pendaftaran' => 1,
+                'Status_aplikasi' => 1,
+            ]);
 
-            if (isset($responseData['metadata']['code']) && $responseData['metadata']['code'] != '200') {
-                return response()->json([
-                    'error' => 'Gagal kirim data ke BPJS',
-                    'bpjs_response' => $responseData
-                ], 500);
-            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Pasien berhasil didaftarkan.',
+                'noantrian' => $antrianBaru,
+                'data' => $data
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Terjadi kesalahan pada server',
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        // Simpan ke database
-        $pendaftaran = Pendaftaran_rawat_jalan::create([
-            'nomor_rm' => $pasien->no_rm,
-            'pasien_id' => $request->pasien,
-            'poli_id' => $request->poli_id,
-            'tanggal_kujungan' => $request->tanggal_kunjungan,
-            'dokter_id' => $request->dokter_id,
-            'Penjamin' => $request->penjamin_id,
-            'nomor_register' => $no_registrasi,
-            'antrian' => $antrianBaru,
-        ]);
-
-        Pendaftaran_rawat_jalan_status::create([
-            'nomor_rm' => $pasien->no_rm,
-            'pasien_id' => $request->pasien,
-            'nomor_register' => $no_registrasi,
-            'tanggal_kujungan' => $request->tanggal_kunjungan,
-            'register_id' => $pendaftaran->id,
-            'status_panggil' => 0,
-            'status_pendaftaran' => 1,
-            'Status_aplikasi' => 1,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Pasien berhasil didaftarkan.',
-            'noantrian' => $antrianBaru,
-            'data' => $data
-        ]);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'errors' => $e->errors()
-        ], 422);
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => 'Terjadi kesalahan pada server',
-            'message' => $e->getMessage()
-        ], 500);
     }
-}
-
-
 
     public function pendaftaranbatalpcare(Request $request)
     {
@@ -377,7 +321,9 @@ class PendaftaranController extends Controller
                     "waktu" => $newTimestamp,
                 ];
 
-                $this->PcareController->update_ws_antria_bpjs($databpjs);
+                if((int)$pendaftaran->Status_aplikasi === 2){
+                    $this->PcareController->update_ws_antria_bpjs($databpjs);
+                }
 
                 $pendaftaranpcare = [
                     "kdProviderPeserta" => $datapendaftaran->pasien->kodeprovide,

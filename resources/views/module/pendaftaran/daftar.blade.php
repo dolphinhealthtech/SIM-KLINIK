@@ -187,8 +187,9 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label>Jadwal Kunjungan</label>
-                                <input type="datetime-local" class="form-control" id="tanggal_kunjungan" name="tanggal_kunjungan">
+                                <input type="text" class="form-control datetimepicker-input" id="tanggal_kunjungan" name="tanggal_kunjungan" data-toggle="datetimepicker" data-target="#tanggal_kunjungan"/>
                             </div>
+
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -341,17 +342,25 @@
     </div>
 </div>
 
-
+<script>
+$(function () {
+    $('#tanggal_kunjungan').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm', // Format 24 jam
+        icons: { time: 'far fa-clock' } // Tidak muncul icon di input
+    });
+});
+</script>
 <script>
     $(document).ready(function () {
-        // Jika poli atau tanggal berubah
-        $('#poli_id, #tanggal_kunjungan').on('change', function () {
+        $('#poli_id').on('change', ambilDokter);
+        $('#tanggal_kunjungan').on('change.datetimepicker', ambilDokter);
+
+        function ambilDokter() {
             let poliId = $('#poli_id').val();
             let datetime = $('#tanggal_kunjungan').val();
 
             if (poliId && datetime) {
-                let formattedDatetime = datetime.replace('T', ' ') + ':00';
-
+                let formattedDatetime = datetime + ':00';
                 console.log("Mengambil dokter...");
                 console.log("Poli ID:", poliId);
                 console.log("Datetime:", formattedDatetime);
@@ -366,9 +375,7 @@
                             $('#dokter_id').append(`<option value="${dokter.id}">${dokter.namauser.name}</option>`);
                         });
                     },
-                    error: function (xhr, status, error) {
-                        console.error("AJAX Error:", error);
-                        console.error("Response Text:", xhr.responseText);
+                    error: function (xhr) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
@@ -377,7 +384,8 @@
                     }
                 });
             }
-        });
+        }
+
 
         // Form submit untuk tambah pasien dengan SweetAlert
         $('#addFormsuku').on('submit', function(e) {

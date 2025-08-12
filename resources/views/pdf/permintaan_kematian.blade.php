@@ -153,7 +153,7 @@
                 @if ($penyebab_kematian == 'Sakit')
                     Sakit
                 @elseif($penyebab_kematian == 'Lainnya')
-                    Lainnya: {{ $penyebab_lainnya ?? '-' }}
+                    {{ $penyebab_lainnya ?? '-' }}
                 @elseif($penyebab_kematian == 'DOA')
                     DOA (Death on Arrival)
                 @else
@@ -166,12 +166,6 @@
             <td class="info-label">Referensi</td>
             <td class="info-separator">:</td>
             <td>{{ $ref_tgl_jam ?? '-' }}</td>
-        </tr>
-
-        <tr>
-            <td class="info-label">Penandatangan</td>
-            <td class="info-separator">:</td>
-            <td>{{ $penandatangan ?? '-' }}</td>
         </tr>
     </table>
 

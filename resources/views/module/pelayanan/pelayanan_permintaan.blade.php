@@ -110,22 +110,6 @@
                             <div class="card-header p-0 border-bottom-0">
                                 <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active" id="custom-tabs-four-radiologi-tab" data-toggle="pill"
-                                            href="#custom-tabs-four-radiologi" role="tab"
-                                            aria-controls="custom-tabs-four-radiologi" aria-selected="true">Radiologi</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="custom-tabs-four-laboratorium-tab" data-toggle="pill"
-                                            href="#custom-tabs-four-laboratorium" role="tab"
-                                            aria-controls="custom-tabs-four-laboratorium"
-                                            aria-selected="false">Laboratorium</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="custom-tabs-four-skd-tab" data-toggle="pill"
-                                            href="#custom-tabs-four-skd" role="tab"
-                                            aria-controls="custom-tabs-four-skd" aria-selected="false">SKDP</a>
-                                    </li>
-                                    <li class="nav-item">
                                         <a class="nav-link" id="custom-tabs-four-sakit-tab" data-toggle="pill"
                                             href="#custom-tabs-four-sakit" role="tab"
                                             aria-controls="custom-tabs-four-sakit" aria-selected="false">Surat Sakit</a>
@@ -140,6 +124,23 @@
                                             href="#custom-tabs-four-kematian" role="tab"
                                             aria-controls="custom-tabs-four-kematian" aria-selected="false">Surat
                                             Kematian</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="custom-tabs-four-skd-tab" data-toggle="pill"
+                                            href="#custom-tabs-four-skd" role="tab"
+                                            aria-controls="custom-tabs-four-skd" aria-selected="false">Surat Keterangan
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="custom-tabs-four-radiologi-tab" data-toggle="pill"
+                                            href="#custom-tabs-four-radiologi" role="tab"
+                                            aria-controls="custom-tabs-four-radiologi" aria-selected="true">Radiologi</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="custom-tabs-four-laboratorium-tab" data-toggle="pill"
+                                            href="#custom-tabs-four-laboratorium" role="tab"
+                                            aria-controls="custom-tabs-four-laboratorium"
+                                            aria-selected="false">Laboratorium</a>
                                     </li>
                                 </ul>
                             </div>
@@ -587,7 +588,8 @@
                                                                 placeholder="Sistole"
                                                                 value="{{ $firstSoap->sistol ?? '' }}">
                                                         </div>
-                                                        <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                                        <div
+                                                            class="col-md-1 d-flex justify-content-center align-items-center">
                                                             <span>/</span> <!-- Menambahkan pemisah / -->
                                                         </div>
                                                         <div class="col-md-5">
@@ -625,15 +627,13 @@
                                                 <div class="col-md-4">
                                                     <label for="nadi">Nadi (/mnt)</label>
                                                     <input type="number" class="form-control" name="nadi"
-                                                        placeholder="Nadi"
-                                                        value="{{ $firstSoap->nadi ?? '' }}">
+                                                        placeholder="Nadi" value="{{ $firstSoap->nadi ?? '' }}">
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label for="tinggi">Tinggi (Cm)</label>
                                                     <div class="input-group">
                                                         <input type="number" class="form-control" name="tinggi"
-                                                            placeholder="Tinggi"
-                                                            value="{{ $firstSoap->tinggi ?? '' }}">
+                                                            placeholder="Tinggi" value="{{ $firstSoap->tinggi ?? '' }}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -676,30 +676,6 @@
                                                         name="tgl_periksa_kematian">
                                                 </div>
                                             </div>
-
-                                            <div class="form-group row mt-3">
-                                                <label class="col-md-3 col-form-label">Dokter</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" class="form-control" name="dokter_kematian"
-                                                        value="{{ auth()->user()->name ?? '' }}">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group row align-items-center">
-                                                <label class="col-md-3 col-form-label">Penandatangan</label>
-                                                <div class="col-md-9 d-flex align-items-center gap-2">
-                                                    <input type="checkbox" class="form-check-input me-2"
-                                                        id="penandatangan_check">
-                                                    <select class="form-control flex-grow-1" id="penandatangan">
-                                                        <option value="">-- Pilih Penandatangan --</option>
-                                                        <option value="Dokter">Dokter</option>
-                                                        <option value="Perawat">Perawat</option>
-                                                        <option value="Keluarga">Keluarga</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-
 
                                             <div class="form-group row">
                                                 <label class="col-md-3 col-form-label">Tanggal / Jam Meninggal</label>
