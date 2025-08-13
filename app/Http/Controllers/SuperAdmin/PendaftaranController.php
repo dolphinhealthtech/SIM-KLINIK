@@ -348,7 +348,6 @@ class PendaftaranController extends Controller
                 ->where('tanggal_kujungan', $pendaftaran->tanggal_kujungan)
                 ->first();
 
-
             pelayanan::updateOrCreate([
                 'nomor_rm' => $datapendaftaran->nomor_rm,
                 'pasien_id' => $datapendaftaran->pasien_id,
@@ -362,7 +361,8 @@ class PendaftaranController extends Controller
 
             if ($penjamin->nama == 'BPJS') {
 
-                $poli = poli::find($datapendaftaran->poli_id)->first();
+                $poli = poli::where('id', $datapendaftaran->poli_id)->first();
+
 
                 date_default_timezone_set('UTC');
                 $Timestamp = strval(time() - strtotime('1970-01-01 00:00:00'));
