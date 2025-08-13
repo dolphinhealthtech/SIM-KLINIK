@@ -339,7 +339,9 @@ class PasienController extends Controller
                 'is_active' => 1
             ]);
             // Update data pasien
-            $pasien->update([
+            $pasien->updateOrCreate(
+                ['no_rm' => $request->nomor_rm],
+                [
                 'nama' => $request->nama,
                 'nik' => $request->nik,
                 'tempat_lahir' => $request->tempat_lahir,
