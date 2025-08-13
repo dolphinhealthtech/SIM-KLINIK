@@ -330,7 +330,7 @@ class PasienController extends Controller
             $pass = $request->tgllahir;
             $passformad = date('dmY', strtotime($pass));
 
-            $users = User::updateOrCreate([
+            $users = User::create([
                 'name' => $request->nama,
                 'username' => $request->nik,
                 'email' => $request->email,
@@ -339,7 +339,7 @@ class PasienController extends Controller
                 'is_active' => 1
             ]);
             // Update data pasien
-            $pasien->updateOrCreate([
+            $pasien->update([
                 'no_rm' => $request->nomor_rm,
                 'nama' => $request->nama,
                 'nik' => $request->nik,
