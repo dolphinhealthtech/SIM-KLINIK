@@ -340,7 +340,6 @@ class PasienController extends Controller
             ]);
             // Update data pasien
             $pasien->update([
-                'no_rm' => $request->nomor_rm,
                 'nama' => $request->nama,
                 'nik' => $request->nik,
                 'tempat_lahir' => $request->tempat_lahir,
