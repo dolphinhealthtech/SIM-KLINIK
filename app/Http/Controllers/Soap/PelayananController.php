@@ -487,11 +487,16 @@ class PelayananController extends Controller
                 ->pluck('kode_icd10')
                 ->toArray();
 
-            $diagnosa = array_slice($icds, 0, 3);
+
+            // Gabungkan semua kode ICD menjadi satu string, lalu pisahkan per koma
+            $allCodes = implode(',', $icds);
+            $diagnosa = array_slice(array_map('trim', explode(',', $allCodes)), 0, 3);
+
             $dataDiag = [];
             foreach ($diagnosa as $i => $kode) {
                 $dataDiag["kdDiag" . ($i + 1)] = $kode;
             }
+
             if (empty($dataDiag)) {
                 $dataDiag['kdDiag1'] = 'Z00.0'; // Diagnosa default
             }
