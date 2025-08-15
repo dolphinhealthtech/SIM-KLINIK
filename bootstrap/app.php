@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CacheControl;
 use App\Http\Middleware\LogExecutionTime;
+use App\Http\Middleware\Logs_app_Middleware;
 use App\Http\Middleware\LogUserActivity;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -15,8 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->append(LogUserActivity::class);
-        $middleware->append(LogExecutionTime::class);
+        $middleware->append(Logs_app_Middleware::class);
+        // $middleware->append(LogUserActivity::class);
+        // $middleware->append(LogExecutionTime::class);
         // $middleware->append(CacheControl::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -17,7 +17,7 @@ class LogUserActivity
      */
     public function handle(Request $request, Closure $next): Response
     {
-                $response = $next($request);
+        $response = $next($request);
 
         if (Auth::check()) {
             DB::table('user_activity_logs')->insert([

@@ -1,14 +1,11 @@
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-light-teal elevation-4">
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a class="brand-link">
-        <img src="{{ asset('setting/' . ($settings->profile_image ?? 'default.jpg')) }}"
-             alt="AdminLTE Logo"
+        <img src="{{ asset('setting/default.webp') }}"
              class="brand-image img-circle elevation-3"
              style="opacity: .8">
-        <strong class="brand-text font-weight-light" style="color: #6c757d;">
-            {{ $settings->nama ?? '' }}
-        </strong>
+        <span class="brand-text font-weight-light">Dolphin Health Tech</span>
     </a>
 
     <!-- Sidebar -->
@@ -70,12 +67,11 @@
                     @endphp
 
                     <li class="nav-item {{ $isActive ? 'menu-open' : '' }}">
-                        <a href="{{ $menu->url ? url($menu->url) : '#' }}"
-                           class="nav-link {{ $isActive ? 'active' : '' }}">
+                        <a href="{{ $menu->url ? url($menu->url) : '#' }}" class="nav-link {{ $isActive ? 'active' : '' }}">
                             <i class="nav-icon fa fa-{{ $menu->icon }}"
-                               {{ $isActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
+                                {{ $isActive ? 'color:#1e40af;font-weight:600;' : 'color:#374151;'}}>
                             </i>
-                            <p {{ $isActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
+                            <p {{ $isActive ?  'color:#1e40af;font-weight:600;' : 'color:#374151;'}}>
                                 {{ $menu->name }}
                                 @if ($menu->children->isNotEmpty())
                                     <i class="right fa fa-angle-left"></i>
@@ -101,9 +97,9 @@
                                             <a href="{{ $child->url ? url($child->url) : '#' }}"
                                                class="nav-link {{ request()->is(trim($child->url, '/')) ? 'active' : '' }}">
                                                 <i class="fa fa-{{ $child->icon }} nav-icon"
-                                                   {{ $isChildActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
+                                                   {{ $isChildActive ? 'color:#1e40af;font-weight:600;' : 'color:#374151;' }}>
                                                 </i>
-                                                <p {{ $isChildActive ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
+                                                <p {{ $isChildActive ? 'color:#1e40af;font-weight:600;' : 'color:#374151;' }}>
                                                     {{ $child->name }}
                                                     @if ($child->children->isNotEmpty())
                                                         <i class="right fa fa-angle-left"></i>
@@ -124,9 +120,9 @@
                                                                 <a href="{{ url($grandchild->url) }}"
                                                                    class="nav-link {{ request()->is($grandchildUrl) ? 'active' : '' }}">
                                                                     <i class="fa fa-{{ $grandchild->icon }} nav-icon"
-                                                                       {{ request()->is($grandchildUrl) ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
+                                                                       {{ request()->is($grandchildUrl) ? 'color:#1e40af;font-weight:600;' : 'color:#374151;' }}>
                                                                     </i>
-                                                                    <p {{ request()->is($grandchildUrl) ? 'style=color:#487a9d;' : 'style=color:#6c757d;' }}>
+                                                                    <p {{ request()->is($grandchildUrl) ? 'color:#1e40af;font-weight:600;' : 'color:#374151;' }}>
                                                                         {{ $grandchild->name }}
                                                                     </p>
                                                                 </a>

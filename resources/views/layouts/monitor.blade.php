@@ -16,13 +16,17 @@
     <div class="wrapper">
 
         <!-- Navbar -->
-        @include('components.monitor.navbar')
+        {{-- @include('components.monitor.navbar') --}}
 
 
         @yield('content')
 
         @include('components.monitor.footer')
         @include('components.monitor.script')
+
+        <script src="{{ asset('js/monitor-fullscreen.js') }}"></script>
+
+
         @if (session('berhasil'))
             <script>
                 Swal.fire({

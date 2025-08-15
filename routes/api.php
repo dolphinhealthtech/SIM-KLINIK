@@ -168,6 +168,96 @@ Route::get('/pendapatan-hari-ini', [dashboard::class, 'getPendapatanHariIni']);
 Route::get('/pendapatan-bulanan', [dashboard::class, 'getPendapatanBulanan']);
 Route::get('/pendapatan-detail', [dashboard::class, 'getPendapatanDetail']);
 
+// Dashboard Administrasi (dipakai oleh view module/dashboard/administrasi)
+Route::prefix('admin-dashboard')->group(function () {
+    Route::get('/summary', [dashboard::class, 'ringkasanAdministrasi']);
+    Route::get('/schedule-today', [dashboard::class, 'jadwalKunjunganHariIni']);
+    Route::get('/payment-status', [dashboard::class, 'statusPembayaranHariIni']);
+    Route::get('/incomplete-data', [dashboard::class, 'dataBelumLengkap']);
+});
+
+// Dashboard Dokter
+Route::prefix('dokter-dashboard')->group(function () {
+    Route::get('/ringkasan', [dashboard::class, 'ringkasanDokter']);
+    Route::get('/jadwal-hari-ini', [dashboard::class, 'jadwalDokterHariIni']);
+    Route::get('/antrian-hari-ini', [dashboard::class, 'antrianDokterHariIni']);
+    Route::get('/rme-terbaru', [dashboard::class, 'rmeTerbaruDokter']);
+    Route::get('/rujukan-terbaru', [dashboard::class, 'rujukanTerbaruDokter']);
+});
+
+// Dashboard Apoteker
+Route::prefix('apoteker-dashboard')->group(function () {
+    Route::get('/ringkasan', [dashboard::class, 'ringkasanApoteker']);
+    Route::get('/penjualan-bulanan', [dashboard::class, 'penjualanBulananApoteker']);
+    Route::get('/top-obat-hari-ini', [dashboard::class, 'topObatHariIni']);
+    Route::get('/resep-menunggu', [dashboard::class, 'resepMenungguApotek']);
+});
+
+// Dashboard Gudang
+Route::prefix('gudang-dashboard')->group(function () {
+    Route::get('/ringkasan', [dashboard::class, 'ringkasanGudang']);
+    Route::get('/pergerakan-hari-ini', [dashboard::class, 'pergerakanGudangHariIni']);
+    Route::get('/low-stock', [dashboard::class, 'gudangLowStockTop']);
+    Route::get('/permintaan-terbaru', [dashboard::class, 'gudangPermintaanTerbaru']);
+});
+
+// Dashboard Gudang Utama
+Route::prefix('gudang-utama-dashboard')->group(function () {
+    Route::get('/ringkasan', [dashboard::class, 'ringkasanGudangUtama']);
+    Route::get('/pergerakan-hari-ini', [dashboard::class, 'pergerakanGudangUtamaHariIni']);
+    Route::get('/low-stock', [dashboard::class, 'gudangUtamaLowStockTop']);
+    Route::get('/pengiriman-terbaru', [dashboard::class, 'gudangUtamaPengirimanTerbaru']);
+});
+
+// Dashboard Pasien
+Route::prefix('pasien-dashboard')->group(function () {
+    Route::get('/ringkasan', [dashboard::class, 'ringkasanPasien']);
+    Route::get('/distribusi-kelamin', [dashboard::class, 'distribusiKelaminPasien']);
+    Route::get('/pasien-baru-bulanan', [dashboard::class, 'pasienBaruBulanan']);
+    Route::get('/terbaru', [dashboard::class, 'pasienTerbaru']);
+});
+
+// Dashboard Manajemen
+Route::prefix('manajemen-dashboard')->group(function () {
+    Route::get('/ringkasan', [dashboard::class, 'ringkasanManajemen']);
+    Route::get('/pendapatan-bulanan', [dashboard::class, 'pendapatanBulananManajemen']);
+    Route::get('/komposisi-hari-ini', [dashboard::class, 'komposisiPendapatanHariIni']);
+    Route::get('/kunjungan-per-poli', [dashboard::class, 'kunjunganPerPoli']);
+    Route::get('/top-dokter-30-hari', [dashboard::class, 'topDokter30Hari']);
+});
+
+// Dashboard Kasir
+Route::prefix('kasir-dashboard')->group(function () {
+    Route::get('/summary', [dashboard::class, 'ringkasanKasir']);
+    Route::get('/komposisi-hari-ini', [dashboard::class, 'komposisiPendapatanHariIni']);
+    Route::get('/bulanan', [dashboard::class, 'pendapatanBulananKasir']);
+    Route::get('/transaksi-terbaru', [dashboard::class, 'transaksiTerbaruKasir']);
+});
+
+// Dashboard Registrasi
+Route::prefix('registrasi-dashboard')->group(function () {
+    Route::get('/summary', [dashboard::class, 'ringkasanRegistrasi']);
+    Route::get('/jadwal-hari-ini', [dashboard::class, 'jadwalKunjunganHariIni']);
+    Route::get('/kunjungan-per-poli', [dashboard::class, 'kunjunganPerPoli']);
+    Route::get('/registrasi-terbaru', [dashboard::class, 'registrasiTerbaru']);
+});
+
+// Dashboard Perawat
+Route::prefix('perawat-dashboard')->group(function () {
+    Route::get('/ringkasan', [dashboard::class, 'ringkasanPerawat']);
+    Route::get('/antrian-hari-ini', [dashboard::class, 'antrianPerawatHariIni']);
+    Route::get('/soap-terbaru', [dashboard::class, 'soapPerawatTerbaru']);
+    Route::get('/jadwal-hari-ini', [dashboard::class, 'jadwalKunjunganHariIni']);
+});
+
+// Dashboard Personalia
+Route::prefix('personalia-dashboard')->group(function () {
+    Route::get('/ringkasan', [dashboard::class, 'ringkasanPersonalia']);
+    Route::get('/distribusi-status', [dashboard::class, 'komposisiStatusPegawai']);
+    Route::get('/rekrut-bulanan', [dashboard::class, 'rekrutBulananStaff']);
+    Route::get('/staf-terbaru', [dashboard::class, 'staffTerbaru']);
+});
+
 Route::prefix('m_jkn')->group(function () {
     Route::get('/token', [Mobile_JknController::class, 'get_token'])->name('get_token.m_jkn');
     Route::post('/get_antrian', [Mobile_JknController::class, 'get_antrian'])->name('get_antrian.m_jkn');

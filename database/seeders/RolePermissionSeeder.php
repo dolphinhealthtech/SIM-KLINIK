@@ -11,8 +11,21 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        $permissions = ['add', 'edit', 'delete'];
-        $roles = ['Super-admin', 'Administrasi', 'Apoteker', 'Perawat', 'Dokter', 'Manajemen', 'User', 'Gudang', 'Personalia', 'Registrasi', 'Kasir'];
+        $permissions = ['tambah', 'rubah', 'hapus', 'lihat'];
+        $roles = [
+            'Super Admin',         // akses penuh semua modul & setting
+            'Administrasi',        // Data Master
+            'Registrasi',          // pendaftaran pasien & input data awal
+            'Perawat',             // pelayanan keperawatan & input SOAP
+            'Dokter',              // pemeriksaan & diagnosis pasien
+            'Apoteker',            // pengelolaan obat & resep
+            'Kasir',               // pembayaran & tagihan pasien
+            'Gudang',         // stok & logistik alat kesehatan
+            'Gudang utama',        // stok & logistik alat kesehatan
+            'Manajemen',           // laporan, analisis, pengambilan keputusan
+            'Personalia',          // SDM, jadwal pegawai
+            'Pasien'               // akses pasien / login umum
+        ];
 
         // Membuat Permissions (hindari duplikat)
         foreach ($permissions as $permission) {

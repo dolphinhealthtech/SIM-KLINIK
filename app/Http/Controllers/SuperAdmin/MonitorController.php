@@ -45,15 +45,13 @@ class MonitorController extends Controller
 
     public function monitor()
     {
-        $title = "Pelayanan tiket";
+        $title = "Pendaftaran Pasien";
         $goldar = goldar::all();
         $kelamin = kelamin::all();
         $poli = poli::all();
         $pernikaha = pernikahan::all();
-        $webSetting = WebSetting::first();
-        $is_bpjs_active = $webSetting ? $webSetting->is_bpjs_active : false;
 
-        return view('monitor.index', compact('title', 'poli', 'goldar', 'kelamin', 'pernikaha', 'is_bpjs_active'));
+        return view('module.mesin-antrian.index', compact('title', 'poli', 'goldar', 'kelamin', 'pernikaha'));
     }
 
     public function monitor_bpjs(Request $request)

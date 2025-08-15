@@ -1372,7 +1372,7 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
-                                    Swal.fire('Berhasil', data.message || 'Jadwal berhasil disinkronkan.', 'success');
+                                    Swal.fire('Berhasil', 'Sinkron jadwal berhasil dilakukan.', 'success');
                                     setTimeout(function () {
                                         // Update source event sesuai ID dokter yang diklik
                                         calendar.removeAllEvents();
