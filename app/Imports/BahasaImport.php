@@ -15,7 +15,7 @@ class BahasaImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
-        return new bahasa([
+        return bahasa::updateOrCreate([
             'nama'  => $row[0], // Ambil dari kolom pertama
         ]);
     }

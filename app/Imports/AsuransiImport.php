@@ -15,7 +15,7 @@ class AsuransiImport implements ToModel,WithStartRow
     */
     public function model(array $row)
     {
-        return new asuransi([
+        return asuransi::updateOrCreate([
             'nama'              => $row[0],
             'kode'              => $row[1],
             'jenis_asuransi'    => $row[2],

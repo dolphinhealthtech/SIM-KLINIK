@@ -15,10 +15,15 @@ class GoldarImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
+        $resus = trim($row[1]); // ambil data dan hilangkan spasi
+        $resus = strtolower($resus); // ubah ke huruf kecil
+        $resus = ($resus === 'null' || $resus === '-' || $resus === '') ? null : $row[1];
+
         return Goldar::updateOrCreate(
-            ['nama' => $row[0]], // Kolom yang digunakan untuk mencari record
-            ['resus' => strtolower(trim($row[1])) === 'null' ? null : $row[1]]
+            ['nama' => $row[0]],
+            ['resus' => $resus]
         );
+
 
     }
 

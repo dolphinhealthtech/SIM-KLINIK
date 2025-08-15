@@ -592,30 +592,6 @@ class MenuSeeder extends Seeder
 
 
 
-
-
-
-
-
-
-
-
-        $loket = menu::create([
-            'name' => 'Loket',
-            'url' => '/data-master/loket',
-            'icon' => 'door-open',
-            'parent_id' => $menuDataMaster->id,
-            'order' => 1,
-        ]);
-
-        if ($roleSuperAdmin) {
-            $loket->roles()->attach($roleSuperAdmin->id);
-        }
-
-        if ($roleAdministrasi) {
-            $loket->roles()->attach($roleAdministrasi->id);
-        }
-
         // 1. Buat submenu Data Master Umum di bawah Data Master
         $dataMasterUmum = menu::create([
             'name' => 'Data Master Umum',
@@ -647,6 +623,7 @@ class MenuSeeder extends Seeder
             ['name' => 'Penjamin', 'url' => '/data-master/umum/penjamin', 'icon' => 'money-bill-alt', 'order' => 10],
             ['name' => 'Bank', 'url' => '/data-master/umum/bank', 'icon' => 'university', 'order' => 11],
             ['name' => 'Asuransi','url' => '/data-master/umum/asuransi','icon' => 'file-medical','order' => 12,],
+            ['name' => 'Loket','url' => '/data-master/umum/loket','icon' => 'door-open','order' => 13,],
         ];
 
         foreach ($subMenusDataMasterUmum as $subMenu) {

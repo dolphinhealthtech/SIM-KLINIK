@@ -1,5 +1,5 @@
 {{-- modal Add Sarana --}}
-<div class="modal fade" id="addpoliModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+<div class="modal fade" id="addspoliModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,14 +9,19 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addFormpoli">
+                <form id="addsFormpoli" action="{{ route('sarana.add') }}" method="POST" >
                     @csrf
                     <div class="row">
-                        <div class="col-sm-12">
-                            <div id="loadingContainer" class="progress" style="display: none; height: 25px;">
-                                <div id="loadingBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: 0%;">
-                                    <span id="loadingText" style="font-weight: bold; color: white; display: block; text-align: center;">0%</span>
-                                </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Nama Sarana</label>
+                                <input type="text" class="form-control" id="nama" name="nama">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Kode Sarana</label>
+                                <input type="text" class="form-control" id="kode" name="kode">
                             </div>
                         </div>
                     </div>

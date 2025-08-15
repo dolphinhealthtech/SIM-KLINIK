@@ -15,7 +15,7 @@ class PekerjaanImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
-        return new pekerjaan([
+        return pekerjaan::updateOrCreate([
             'nama'  => $row[0], // Ambil dari kolom pertama
         ]);
     }

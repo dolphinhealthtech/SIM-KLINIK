@@ -116,7 +116,7 @@
                                                 <td class="text-center">{{ $pasiensdata->telepon }}</td>
                                                 <td class="text-center">
                                                     @if ($pasiensdata->verifikasi == 1)
-                                                        @can('lengkapi')
+                                                        {{-- @can('lengkapi') --}}
                                                             <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
                                                                 data-target="#lengkapiModal"
                                                                 data-id="{{ $pasiensdata->id }}">
@@ -130,15 +130,15 @@
                                                                 data-nama="{{ $pasiensdata->nama }}">
                                                                 <i class="fa fa-bullhorn"></i> Panggil
                                                             </a>
-                                                        @endcan
+                                                        {{-- @endcan --}}
                                                     @else
-                                                        @can('rubah')
+                                                        {{-- @can('rubah') --}}
                                                             <a class="btn btn-outline-warning btn-sm rounded-pill edit-btn" data-toggle="modal"
                                                                 data-target="#EditModal"
                                                                 data-id="{{ $pasiensdata->id }}">
                                                                 <i class="fa-solid fa-user-pen"></i> Edit
                                                             </a>
-                                                        @endcan
+                                                        {{-- @endcan --}}
 
                                                         <a class="btn btn-outline-info btn-sm rounded-pill time-line-btn"
                                                             href="{{ route('pasiens_time_line.get',['norm' => base64_encode($pasiensdata->no_rm)]) }}"

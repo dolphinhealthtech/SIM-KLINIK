@@ -15,7 +15,7 @@ class AgamaImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
-        return new agama([
+        return agama::updateOrCreate([
             'nama'  => $row[0], // Ambil dari kolom pertama
         ]);
     }

@@ -16,7 +16,7 @@ class Manajemen_Controller extends Controller
     {
         $title = "Master Posisi Kerja";
         $posker = posker::all();
-        return view('module.master-data-manajemen.posker', compact('title','posker'));
+        return view('module.master-data.manajemen.posker.index', compact('title','posker'));
     }
 
     public function posisi_kerjaadd(Request $request)

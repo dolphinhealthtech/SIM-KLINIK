@@ -25,7 +25,7 @@ class Kelamin_Controller extends Controller
         try {
             $request->validate([
                 "nama" => 'required|string|unique:kelamins,nama',
-                "urutan" => 'required|string|unique:kelamins,kode',
+                "kode" => 'required|string|unique:kelamins,kode',
             ]);
 
             $kelamin = kelamin::create([

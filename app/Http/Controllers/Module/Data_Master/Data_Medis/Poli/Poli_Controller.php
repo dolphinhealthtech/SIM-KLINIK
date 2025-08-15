@@ -28,7 +28,41 @@ class Poli_Controller extends Controller
         return view('module.master-data.medis.poli.index', compact('title', 'poli'));
     }
 
-    public function poliadd()
+    public function poliadd(Request $request)
+    {
+        try {
+            $request->validate([
+                "nama" => 'required|string',
+                "kode" => 'required|string',
+                "jenis" => 'required|string',
+            ]);
+
+            $poli = poli::create([
+                'nama' => $request->nama,
+                'kode' => $request->kode,
+                'jenis' => $request->jenis
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'poli berhasil ditambahkan!',
+                'data' => $poli
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'poli Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan poli!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function polising()
     {
 
         $response = $this->PcareController->get_poli_fktp_bpjs();

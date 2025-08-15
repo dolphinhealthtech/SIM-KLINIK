@@ -15,7 +15,7 @@ class PernikahanImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
-        return new pernikahan([
+        return pernikahan::updateOrCreate([
             'nama'  => $row[0], // Ambil dari kolom pertama
         ]);
     }

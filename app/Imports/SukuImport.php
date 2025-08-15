@@ -15,7 +15,7 @@ class SukuImport implements ToModel ,WithStartRow
     */
     public function model(array $row)
     {
-        return new suku([
+        return suku::updateOrCreate([
             'nama'  => $row[0], // Ambil dari kolom pertama
         ]);
     }

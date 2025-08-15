@@ -15,7 +15,7 @@ class PenjaminImport implements ToModel,WithStartRow
     */
     public function model(array $row)
     {
-        return new penjamin([
+        return penjamin::updateOrCreate([
             'nama'  => $row[0] // Ambil dari kolom pertama
         ]);
     }

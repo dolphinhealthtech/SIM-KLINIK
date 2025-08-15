@@ -27,10 +27,16 @@ class Goldar_Controller extends Controller
                 'nama' => 'required|string',
                 'rhesus' => 'string|nullable'
             ]);
+            $resus = $request->input('rhesus');
+
+            // Jika dikirim string kosong atau 'null', simpan sebagai NULL
+            $resus = ($resus === '' || $resus === 'null') ? null : $resus;
+
             $goldar = goldar::create([
                 'nama' => $request->input('nama'),
-                'resus' => $request->input('rhesus')
+                'resus' => $resus
             ]);
+
 
             // Return response JSON untuk AJAX
             return response()->json([

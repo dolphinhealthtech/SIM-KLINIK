@@ -15,7 +15,7 @@ class LoketImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
-        return new loket([
+        return loket::updateOrCreate([
             'nama'  => $row[0], // Ambil dari kolom pertama
             'poli_id' => $row[1], // Ambil dari kolom kedua
         ]);

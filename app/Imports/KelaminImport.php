@@ -15,7 +15,7 @@ class KelaminImport implements ToModel,WithStartRow
     */
     public function model(array $row)
     {
-        return new kelamin([
+        return kelamin::updateOrCreate([
             'nama'  => $row[0], // Ambil dari kolom pertama
             'kode' => $row[1], // Ambil dari kolom kedua
         ]);

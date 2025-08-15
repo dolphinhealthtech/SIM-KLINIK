@@ -27,24 +27,6 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">sarana</h3>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#addpoliModal">
-                                        <i class="fas fa-plus"></i> Sinkron
-                                    </button>
-
-                                    <!-- Tombol Import (Memunculkan Modal) -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importpoliModal">
-                                        <i class="fas fa-file-upload"></i> Import
-                                    </button>
-                                    <!-- Tombol Export -->
-                                    <a href="{{ route('sarana.export') }}" class="btn btn-success">
-                                        <i class="fas fa-file-download"></i> Export
-                                    </a>
-                                </div>
-                            </div>
                             <div class="card-body">
                                 <table id="politabel" class="table table-bordered table-striped">
                                     <thead>
@@ -81,6 +63,7 @@
     <!-- /.content -->
 </div>
 
+    @include('module.master-data.medis.sarana.components.modal-sing')
     @include('module.master-data.medis.sarana.components.modal-add')
     @include('module.master-data.medis.sarana.components.modal-delete')
     @include('module.master-data.medis.sarana.components.modal-import')

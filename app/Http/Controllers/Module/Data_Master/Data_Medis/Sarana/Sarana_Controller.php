@@ -29,7 +29,39 @@ class Sarana_Controller extends Controller
         return view('module.master-data.medis.sarana.index', compact('title', 'poli'));
     }
 
-    public function saranaadd()
+    public function saranaadd(Request $request)
+    {
+        try {
+            $request->validate([
+                "nama" => 'required|string',
+                "kode" => 'required|string'
+            ]);
+
+            $Sarana = sarana::create([
+                'nama' => $request->nama,
+                'kode' => $request->kode,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sarana berhasil ditambahkan!',
+                'data' => $Sarana
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sarana Sudah ada!',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan Sarana!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function saranasing()
     {
 
         $response = $this->PcareController->get_sarana_bpjs();

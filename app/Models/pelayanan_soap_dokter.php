@@ -17,7 +17,6 @@ class pelayanan_soap_dokter extends Model
         'tanggal_lahir',
         'umur',
         'tableData',
-        'anamnesa',
         'sistol',
         'distol',
         'tensi',

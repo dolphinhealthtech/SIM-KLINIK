@@ -80,8 +80,11 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             const eventId = info.event.id;
+                            let url = "{{ route('dokter.jadwal.hapus', ['id' => ':id']) }}";
+                            url = url.replace(':id', eventId);
 
-                            fetch(`/dokter/jadwal/hapus/${eventId}`, {
+
+                            fetch(url, {
                                 method: "DELETE",
                                 headers: {
                                     "Content-Type": "application/json",

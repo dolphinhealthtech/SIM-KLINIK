@@ -4,7 +4,40 @@
             "responsive": true,
             "lengthChange": false,
             "autoWidth": false,
-            "buttons": ["csv","excel","pdf","print"]
+            "buttons": [
+                {
+                    text: '<i class="fas fa-plus"></i> Tambah',
+                    type: 'button',
+                    className: 'btn btn-info mr-2',
+                    action: function () {
+                        $('#addkelaminModal').modal('show');
+                    }
+                },
+                {
+                    text: '<i class="fas fa-file-download"></i> Export',
+                    type: 'button',
+                    className: 'btn btn-success mr-2',
+                    action: function () {
+                        window.location.href = "{{ route('kelamin.export') }}";
+                    }
+                },
+                {
+                    text: '<i class="fas fa-file-upload"></i> Import',
+                    type: 'button',
+                    className: 'btn btn-warning', // tombol terakhir tidak perlu margin
+                    action: function () {
+                        $('#importkelaminModal').modal('show');
+                    }
+                }
+            ],
+            "language": {
+                "search": "Cari:",
+                "lengthMenu": "Tampilkan _MENU_ entri",
+                "zeroRecords": "Tidak ada data yang ditemukan",
+                "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ entri",
+                "infoEmpty": "Menampilkan 0 hingga 0 dari 0 entri",
+                "infoFiltered": "(disaring dari _MAX_ total entri)",
+            }
         }).buttons().container().appendTo('#kelamintabel_wrapper .col-md-6:eq(0)');
     });
 

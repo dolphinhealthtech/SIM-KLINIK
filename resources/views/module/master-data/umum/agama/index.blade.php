@@ -7,10 +7,8 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">Agama</h1>
-                    </div><!-- /.col -->
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <h5 class="text-muted text-center">Selamat datang di modul data master Agama</h5>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -24,25 +22,6 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">agama</h3>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#addagamaModal">
-                                        <i class="fas fa-plus"></i> Tambah
-                                    </button>
-                                    <!-- Tombol Export -->
-                                    <a href="{{ route('agama.export') }}" class="btn btn-success">
-                                        <i class="fas fa-file-download"></i> Export
-                                    </a>
-
-                                    <!-- Tombol Import (Memunculkan Modal) -->
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importagamaModal">
-                                        <i class="fas fa-file-upload"></i> Import
-                                    </button>
-
-                                </div>
-                            </div>
                             <div class="card-body">
                                 <table id="agamatabel" class="table table-bordered table-striped">
                                     <thead>

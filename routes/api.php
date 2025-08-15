@@ -32,19 +32,57 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Brijing_Intergrasi\Pcare_Controller;
 use App\Http\Controllers\Brijing_Intergrasi\Satusehat_Controller;
 
+use App\Http\Controllers\Module\Pasien\Pasien_Api_Controller;
+use App\Http\Controllers\Module\Pelayanan\Pelayanan_Api_Controller;
+use App\Http\Controllers\Module\Pendaftaran\Pendaftaran_Api_Controller;
+
+use App\Http\Controllers\Module\SDM\Dokter\Dokter_Api_Controller;
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/get-pasien/{id}', [PasienController::class, 'getPasien']);
-Route::post('/get-pasien-nikornoka', [PasienController::class, 'cariNikNoka']);
-Route::post('/get-pasien-nikornama', [PasienController::class, 'cariNikNama']);
-Route::get('/get-dokter/{id}', [DokterController::class, 'getDokter']);
+
+//dokter
+Route::get('/get-dokter/{id}', [Dokter_Api_Controller::class, 'getDokter']);
+Route::get('/get-dokter-all/{id}', [Dokter_Api_Controller::class, 'getDokterEdit']);
+Route::get('/jadwal/json/{id}', [Dokter_Api_Controller::class, 'dokterjadwaljson']);
+Route::get('/sinkron-jadwal-dokter/{id}', [Dokter_Api_Controller::class, 'jadwal_dokter'])->name('jadwal.sinkron');
+
+
+//pasien
+Route::get('/get-pasien/{id}', [Pasien_Api_Controller::class, 'get_pasien']);
+Route::post('/get-pasien-nikornoka', [Pasien_Api_Controller::class, 'search_nik_noka']);
+Route::post('/get-pasien-nikornama', [Pasien_Api_Controller::class, 'search_nik_nama']);
+
+//pendaftaran
+Route::get('/get-dokter-by-poli/{id}', [Pendaftaran_Api_Controller::class, 'getByPoli']);
+
+//pelayanan perawat
+Route::get('/so/hadir/{norawat}', [Pelayanan_Api_Controller::class, 'sopelayananpanggil'])->name('sopelayana.hadir');
+Route::get('/alergi/by-jenis/{id}', [Pelayanan_Api_Controller::class, 'getByJenis']);
+
+//pelayanan dokter
+Route::get('/so/hadir/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayananpanggil'])->name('pelayana_dokter.hadir');
+Route::get('/dokter/data/so/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayanandata'])->name('pelayana_dokter_data.get');
+Route::post('/odontogram/load-details', [Pelayanan_Api_Controller::class, 'odontogramdetailsload']);
+Route::get('/odontogram/load', [Pelayanan_Api_Controller::class, 'odontogramload']);
+Route::post('/so/odontogram/add', [Pelayanan_Api_Controller::class, 'odontogramadd'])->name('odontogram.add');
+Route::post('/so/odontogram/details/add', [Pelayanan_Api_Controller::class, 'odontogramdetailsadd'])->name('odontogram.details.add');
+Route::get('/dokter/data/so/edit/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayanandataedit'])->name('pelayana_dokter_data_edit.get');
+Route::get('/dokter/data/so/icd/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayanandataicd'])->name('pelayana_dokter_data_icd.get');
+Route::get('/dokter/data/so/diet/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayanandatadiet'])->name('pelayana_dokter_data_diet.get');
+Route::get('/dokter/data/so/obat/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayanandataobat'])->name('pelayana_dokter_data_obat.get');
+Route::get('/dokter/data/so/tindakan/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayanandatatindakan'])->name('pelayana_dokter_data_tindakan.get');
+
+
+
+
 Route::get('/get-staff/{id}', [StaffController::class, 'getStaff']);
-Route::get('/get-dokter-all/{id}', [DokterController::class, 'getDokterEdit']);
+
 Route::get('/get-staff-all/{id}', [StaffController::class, 'getStaffEdit']);
-Route::get('/jadwal/json/{id}', [DokterController::class, 'dokterjadwaljson']);
-Route::get('/get-dokter-by-poli/{id}', [PendaftaranController::class, 'getByPoli']);
+
+
 Route::get('/generate-kode-data-barang', [DabarController::class, 'generateKodeDataBarang'])->name('generateKodeDataBarang');
 Route::get('/generate-kode-data-barang-utama', [DabarController::class, 'generateKodeDataBarangUtama'])->name('generateKodeDataBarangUtama');
 Route::get('/generate-faktur-pembelian', [PembelianController::class, 'generateFakturPembelian'])->name('generateFakturPembelian');
@@ -52,20 +90,15 @@ Route::get('/generate-kode-inventaris', [InventarisController::class, 'generateK
 Route::get('/generate-kode-pembelian-inventaris', [InventarisController::class, 'generatePembelianInventaris'])->name('generatePembelianInventaris');
 
 Route::get('/sub-pemeriksaan/{id}', [PelayananController::class, 'getSubPemeriksaan']);
-Route::get('/alergi/by-jenis/{id}', [PelayananController::class, 'getByJenis']);
-Route::get('/dokter/data/so/{norawat}', [PelayananController::class, 'soappelayanandata'])->name('pelayana_dokter_data.get');
-Route::get('/dokter/data/so/edit/{norawat}', [PelayananController::class, 'soappelayanandataedit'])->name('pelayana_dokter_data_edit.get');
-Route::get('/dokter/data/so/icd/{norawat}', [PelayananController::class, 'soappelayanandataicd'])->name('pelayana_dokter_data_icd.get');
-Route::get('/dokter/data/so/diet/{norawat}', [PelayananController::class, 'soappelayanandatadiet'])->name('pelayana_dokter_data_diet.get');
-Route::get('/dokter/data/so/obat/{norawat}', [PelayananController::class, 'soappelayanandataobat'])->name('pelayana_dokter_data_obat.get');
-Route::get('/dokter/data/so/tindakan/{norawat}', [PelayananController::class, 'soappelayanandatatindakan'])->name('pelayana_dokter_data_tindakan.get');
+
+
 
 Route::get('/get-subspesialis/{kode}', [RujukanController::class, 'getSubSpesialis']);
 
 Route::get('/get-pemeriksaan-laboratorium/{id}', [PelayananController::class, 'getSubBidangLab']);
 
-Route::get('/odontogram/load', [OdoController::class, 'odontogramload']);
-Route::post('/odontogram/load-details', [OdoController::class, 'odontogramdetailsload']);
+
+
 
 
 Route::prefix('lokasi')->group(function () {

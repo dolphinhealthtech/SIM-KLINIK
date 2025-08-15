@@ -368,14 +368,14 @@
                 "lengthChange": false,
                 "autoWidth": false,
                 "buttons": [
-                {
-                    text: '<i class="fas fa-plus"></i> Tambah',
-                    type: 'button',
-                    className: 'btn btn-primary',
-                    action: function () {
-                    $('#addreispasienModal').modal('show'); // <== Bootstrap 4-compatible
-                    }
-                },
+                    {
+                        text: '<i class="fas fa-plus"></i> Tambah',
+                        type: 'button',
+                        className: 'btn btn-primary',
+                        action: function () {
+                        $('#addreispasienModal').modal('show'); // <== Bootstrap 4-compatible
+                        }
+                    },
                 ],
                 "language": {
                     "search": "Cari:",

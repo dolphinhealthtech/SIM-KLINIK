@@ -89,6 +89,7 @@ use App\Http\Controllers\DataMaster\main\AsuransiController;
 use App\Http\Controllers\DataMaster\main\PenjaminController;
 use App\Http\Controllers\DataMaster\main\LoketController;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Harga_Jual\Harga_Jual_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Manajemen\Manajemen_Controller;
 // Data Master Umum
 use App\Http\Controllers\Module\Data_Master\Data_Umum\Agama_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Umum\Asuransi_Controller;
@@ -334,8 +335,8 @@ Route::prefix('sdm')->group(function () {
         Route::post('/verifikasi', [Dokter_Controller::class, 'dokterverifikasi'])->name('dokter.verifikasi');
         Route::post('/update', [Dokter_Controller::class, 'dokteredit'])->name('dokter.update');
         Route::post('/jadwal/store', [Dokter_Controller::class, 'dokterjadwal'])->name('dokter.jadwal');
-        Route::delete('/jadwal/hapus/{id}', [Dokter_Controller::class, 'dokterjadwalhapus']);
-        Route::get('/sinkron-jadwal-dokter/{id}', [Dokter_Controller::class, 'jadwal_dokter'])->name('jadwal.sinkron');
+        Route::delete('/jadwal/hapus/{id}', [Dokter_Controller::class, 'dokterjadwalhapus'])->name('dokter.jadwal.hapus');
+
     });
     //
     // Menu Staff
@@ -353,15 +354,13 @@ Route::prefix('sdm')->group(function () {
 Route::middleware('auth')->prefix('pasien-pelayanan')->group(function () {
     Route::prefix('dokter')->group(function () {
         Route::get('/', [Pelayanan_Dokter_Controller::class, 'pelayana_dokter'])->name('pelayanad.get');
-        Route::get('/so/hadir/{norawat}', [Pelayanan_Dokter_Controller::class, 'soappelayananpanggil'])->name('pelayana_dokter.hadir');  //api
         Route::get('/so/{norawat}', [Pelayanan_Dokter_Controller::class, 'soappelayanan'])->name('pelayana_dokter.get');
-        Route::get('/so/edit/{norawat}', [PelayananController::class, 'soappelayananedit'])->name('pelayana_dokter.edit');
+        Route::get('/so/edit/{norawat}', [Pelayanan_Dokter_Controller::class, 'soappelayananedit'])->name('pelayana_dokter.edit');
         Route::post('/so/add', [Pelayanan_Dokter_Controller::class, 'soappelayananandd'])->name('pelayana_dokter.add');
         Route::post('/so/update', [Pelayanan_Dokter_Controller::class, 'soappelayananupdate'])->name('pelayana_dokter.update');
         Route::get('/so/selesai/{norawat}', [Pelayanan_Dokter_Controller::class, 'soappelayananselesai'])->name('pelayana_dokter.selesai');
 
-        Route::post('/so/odontogram/add', [OdoController::class, 'odontogramadd'])->name('odontogram.add'); //api
-        Route::post('/so/odontogram/details/add', [OdoController::class, 'odontogramdetailsadd'])->name('odontogram.details.add'); //api
+
 
 
         Route::prefix('surat')->group(function () {
@@ -380,7 +379,6 @@ Route::middleware('auth')->prefix('pasien-pelayanan')->group(function () {
     // Menu Pasien
     Route::prefix('perawat')->group(function () {
         Route::get('/', [Pelayanan_Perawat_Controller::class, 'pelayana'])->name('pelayana.get');
-        Route::get('/so/hadir/{norawat}', [Pelayanan_Perawat_Controller::class, 'sopelayananpanggil'])->name('sopelayana.hadir'); //api
         Route::get('/so/{norawat}', [Pelayanan_Perawat_Controller::class, 'sopelayanan'])->name('sopelayana.get');
         Route::get('/so/edit/{norawat}', [Pelayanan_Perawat_Controller::class, 'sopelayananedit'])->name('sopelayana.edit');
         Route::post('/so/add', [Pelayanan_Perawat_Controller::class, 'sopelayanandd'])->name('sopelayana.add');
@@ -514,7 +512,8 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
 
         Route::prefix('poli')->group(function () {
             Route::get('/', [Poli_Controller::class, 'poli'])->name('poli.get');
-            Route::get('/sync', [Poli_Controller::class, 'poliadd'])->name('poli.sync');
+            Route::post('/add', [Poli_Controller::class, 'poliadd'])->name('poli.add');
+            Route::get('/sync', [Poli_Controller::class, 'polising'])->name('poli.sync');
             Route::post('/delete', [Poli_Controller::class, 'polidelete'])->name('poli.destroy');
             Route::get('/export', [Poli_Controller::class, 'poliexport'])->name('poli.export');
             Route::post('/import', [Poli_Controller::class, 'poliimport'])->name('poli.import');
@@ -522,7 +521,8 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
 
         Route::prefix('sarana')->group(function () {
             Route::get('/', [Sarana_Controller::class, 'sarana'])->name('sarana.get');
-            Route::get('/sync', [Sarana_Controller::class, 'saranaadd'])->name('sarana.sync');
+            Route::post('/add', [Sarana_Controller::class, 'saranaadd'])->name('sarana.add');
+            Route::get('/sync', [Sarana_Controller::class, 'saranasing'])->name('sarana.sync');
             Route::post('/delete', [Sarana_Controller::class, 'saranadelete'])->name('sarana.destroy');
             Route::get('/export', [Sarana_Controller::class, 'saranaexport'])->name('sarana.export');
             Route::post('/import', [Sarana_Controller::class, 'saranaimport'])->name('sarana.import');
@@ -748,12 +748,12 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     Route::prefix('manajemen')->group(function () {
         // Menu Poli
         Route::prefix('posker')->group(function () {
-            Route::get('/', [DataMasterManajemenController::class, 'posisi_kerja'])->name('posker.get');
-            Route::post('/add', [DataMasterManajemenController::class, 'posisi_kerjaadd'])->name('posker.store');
-            Route::post('/update', [DataMasterManajemenController::class, 'posisi_kerjaedit'])->name('posker.update');
-            Route::post('/delete', [DataMasterManajemenController::class, 'posisi_kerjadelete'])->name('posker.destroy');
-            Route::get('/export', [DataMasterManajemenController::class, 'posisi_kerjaexport'])->name('posker.export');
-            Route::post('/import', [DataMasterManajemenController::class, 'posisi_kerjaimport'])->name('posker.import');
+            Route::get('/', [Manajemen_Controller::class, 'posisi_kerja'])->name('posker.get');
+            Route::post('/add', [Manajemen_Controller::class, 'posisi_kerjaadd'])->name('posker.store');
+            Route::post('/update', [Manajemen_Controller::class, 'posisi_kerjaedit'])->name('posker.update');
+            Route::post('/delete', [Manajemen_Controller::class, 'posisi_kerjadelete'])->name('posker.destroy');
+            Route::get('/export', [Manajemen_Controller::class, 'posisi_kerjaexport'])->name('posker.export');
+            Route::post('/import', [Manajemen_Controller::class, 'posisi_kerjaimport'])->name('posker.import');
         });
     });
 });

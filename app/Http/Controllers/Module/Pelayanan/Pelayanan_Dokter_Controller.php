@@ -93,33 +93,7 @@ class Pelayanan_Dokter_Controller extends Controller
         return view('module.pelayanan.pelayanan-dokter.index', compact('title', 'pelayanan'));
     }
 
-    public function soappelayananpanggil($norawat)
-    {
-        $nomor_rawat = base64_decode($norawat);
 
-        $pelayanan = Pelayanan::with('pendaftaran.status')->where('nomor_register', $nomor_rawat)->first();
-
-        if ($pelayanan && $pelayanan->pendaftaran && $pelayanan->pendaftaran->status) {
-            $pelayanan->pendaftaran->status->status_panggil = 2;
-            $pelayanan->pendaftaran->status->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Status panggil berhasil diperbarui.'
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data status tidak ditemukan.'
-            ], 404);
-        }
-
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Data tidak ditemukan atau belum memiliki status.'
-        ], 404);
-    }
 
     public function soappelayananselesai($norawat)
     {
@@ -372,7 +346,6 @@ class Pelayanan_Dokter_Controller extends Controller
             'tanggal_lahir' => 'required|date',
             'umur' => 'nullable|string',
             'tableData' => 'nullable|string',
-            'anamnesa' => 'nullable|string',
             'sistol' => 'nullable|numeric',
             'distol' => 'nullable|numeric',
             'tensi' => 'nullable|string',
@@ -420,7 +393,6 @@ class Pelayanan_Dokter_Controller extends Controller
                 'tanggal_lahir' => $request->tanggal_lahir,
                 'umur' => $request->umur,
                 'tableData' => $request->tableData,
-                'anamnesa' => $request->anamnesa,
                 'sistol' => $request->sistol,
                 'distol' => $request->distol,
                 'tensi' => $request->tensi,

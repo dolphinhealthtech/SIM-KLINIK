@@ -15,7 +15,7 @@ class BangsaImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
-        return new bangsa([
+        return bangsa::updateOrCreate([
             'nama'  => $row[0], // Ambil dari kolom pertama
         ]);
     }

@@ -15,7 +15,7 @@ class PoliImport implements ToModel,WithStartRow
     */
     public function model(array $row)
     {
-        return new poli([
+        return poli::updateOrCreate([
             'nama'  => $row[0], // Ambil dari kolom pertama
             'kode'  => $row[1], // Ambil dari kolom pertama
             'jenis'  => $row[2], // Ambil dari kolom pertama

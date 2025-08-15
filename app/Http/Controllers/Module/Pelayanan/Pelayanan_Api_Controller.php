@@ -159,6 +159,33 @@ class Pelayanan_Api_Controller extends Controller
         return response()->json($subSpesialis);
     }
 
+    public function soappelayananpanggil($norawat)
+    {
+        $nomor_rawat = base64_decode($norawat);
+
+        $pelayanan = Pelayanan::with('pendaftaran.status')->where('nomor_register', $nomor_rawat)->first();
+
+        if ($pelayanan && $pelayanan->pendaftaran && $pelayanan->pendaftaran->status) {
+            $pelayanan->pendaftaran->status->status_panggil = 2;
+            $pelayanan->pendaftaran->status->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status panggil berhasil diperbarui.'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data status tidak ditemukan.'
+            ], 404);
+        }
+
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Data tidak ditemukan atau belum memiliki status.'
+        ], 404);
+    }
 
     public function sopelayananpanggil($norawat)
     {
