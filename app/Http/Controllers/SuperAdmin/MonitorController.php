@@ -18,7 +18,7 @@ use App\Models\Set_Bpjs;
 use App\Models\Set_Sehat;
 use App\Models\WebSetting;
 use App\Models\dokter;
-use App\Http\Controllers\PcareController;
+use App\Http\Controllers\Brijing_Intergrasi\Pcare_Controller;
 use App\Models\external_database;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -28,7 +28,7 @@ class MonitorController extends Controller
 {
     protected $PcareController;
 
-    public function __construct(PcareController $PcareController)
+    public function __construct(Pcare_Controller $PcareController)
     {
         $this->PcareController = $PcareController;
     }

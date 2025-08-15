@@ -139,7 +139,7 @@ class WebSettingController extends Controller
             'org_id' => 'string',
             'client_id' => 'string',
             'client_secret' => 'string',
-            'SCREET_KEY' => 'string',
+
             'SATUSEHAT_BASE_URL' => 'string',
         ]);
 

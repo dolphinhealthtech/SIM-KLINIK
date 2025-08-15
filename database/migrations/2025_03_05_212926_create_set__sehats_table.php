@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('org_id');
             $table->string('client_id');
             $table->string('client_secret');
-            $table->string('SCREET_KEY'); // Corrected from 'SCREET' to match your input
             $table->string('SATUSEHAT_BASE_URL');
             $table->timestamps();
         });

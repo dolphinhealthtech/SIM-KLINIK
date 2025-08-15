@@ -37,13 +37,13 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\Brijing_Intergrasi\Pcare_Controller;
 
 class Pelayanan_Dokter_Controller extends Controller
 {
     protected $PcareController;
 
-    public function __construct(PcareController $PcareController)
+    public function __construct(Pcare_Controller $PcareController)
     {
         $this->PcareController = $PcareController;
     }

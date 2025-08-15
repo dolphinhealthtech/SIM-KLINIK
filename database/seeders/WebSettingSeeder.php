@@ -14,27 +14,26 @@ class WebSettingSeeder extends Seeder
     public function run(): void
     {
         DB::table('set__bpjs')->insert([
-            'CONSID'            => '123456789',
-            'USERNAME'          => 'admin',
-            'PASSWORD'          => bcrypt('password123'),
-            'SCREET_KEY'        => 'your-secret-key',
-            'USER_KEY'          => 'your-user-key',
-            'APP_CODE'          => 'APP001',
-            'BASE_URL'          => 'https://example.com/api',
-            'SERVICE'           => 'service-name',
-            'SERVICE_ANTREAN'   => 'service-antrean',
-            'KPFK'              => 'kpfk-value',
+            'CONSID'            => '10791',
+            'USERNAME'          => 'ecodumy',
+            'PASSWORD'          => 'Asdf123#',
+            'SCREET_KEY'        => '4iJAEE30E7',
+            'USER_KEY'          => 'cf03a8d46531a8ee3d1575196d31a443',
+            'APP_CODE'          => '095',
+            'BASE_URL'          => 'https://apijkn-dev.bpjs-kesehatan.go.id',
+            'SERVICE'           => 'pcare-rest-dev',
+            'SERVICE_ANTREAN'   => 'antreanfktp_dev',
+            'KPFK'              => '0221B252',
             'created_at'        => now(),
             'updated_at'        => now(),
         ]);
 
         // Seed kedua: Table kedua
         DB::table('set__sehats')->insert([
-            'org_id'             => 'ORG123',
-            'client_id'          => 'your-client-id',
-            'client_secret'      => 'your-client-secret',
-            'SCREET_KEY'         => 'another-secret-key',
-            'SATUSEHAT_BASE_URL' => 'https://api.satusehat.kemkes.go.id',
+            'org_id'             => '100021907',
+            'client_id'          => 'f9P1MFTYAF453MLbBx5y5sqQPM1xU3zLGrKiGptYCEhWgtvk',
+            'client_secret'      => 'd4yvu7PgVlZe2pZhAvpeFDMKhnTfVAkkwLP4cqSbZgdNi2rqeJPVYoLDDnWpOXbS',
+            'SATUSEHAT_BASE_URL' => 'https://api-satusehat.kemkes.go.id',
             'created_at'         => now(),
             'updated_at'         => now(),
         ]);
@@ -44,6 +43,8 @@ class WebSettingSeeder extends Seeder
             'nama'          => 'Tekno App',
             'alamat'        => 'Jl. Merdeka No. 123, Jakarta',
             'profile_image' => 'default.png',
+            'profile_image' => 'default.png',
+            'kode_klinik'   => '0000',
             'created_at'    => now(),
             'updated_at'    => now(),
         ]);

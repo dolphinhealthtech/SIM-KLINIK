@@ -36,39 +36,30 @@ class dashboard extends Controller
         $user = Auth::user();
 
         if ($user) {
-            if ($user->hasAnyRole(['Administrasi'])) {
+            if (isset($user->role) && $user->role === 'Administrasi') {
                 return view('module.dashboard.administrasi.index');
-            }
-            if ($user->hasAnyRole(['Apoteker'])) {
+            } elseif (isset($user->role) && $user->role === 'Apoteker') {
                 return view('module.dashboard.apoteker.index');
-            }
-            if ($user->hasAnyRole(['Dokter'])) {
-                $dokterId = dokter::where('users', $user->id)->value('id');
-                return view('module.dashboard.dokter.index', compact('dokterId'));
-            }
-            if ($user->hasAnyRole(['Gudang'])) {
+            } elseif (isset($user->role) && $user->role === 'Dokter') {
+                return view('module.dashboard.dokter.index');
+            } elseif (isset($user->role) && $user->role === 'Gudang') {
                 return view('module.dashboard.gudang.index');
-            }
-            if ($user->hasAnyRole(['Gudang Utama', 'Gudang_Utama', 'GudangUtama'])) {
+            } elseif (isset($user->role) && $user->role === 'Gudang Utama') {
                 return view('module.dashboard.gudang-utama.index');
-            }
-            if ($user->hasAnyRole(['Kasir'])) {
+            } elseif (isset($user->role) && $user->role === 'Kasir') {
                 return view('module.dashboard.kasir.index');
-            }
-            if ($user->hasAnyRole(['Manajemen'])) {
+            } elseif (isset($user->role) && $user->role === 'Manajemen') {
                 return view('module.dashboard.manajemen.index');
-            }
-            if ($user->hasAnyRole(['Pasien'])) {
+            } elseif (isset($user->role) && $user->role === 'Pasien') {
                 return view('module.dashboard.pasien.index');
-            }
-            if ($user->hasAnyRole(['Perawat'])) {
+            } elseif (isset($user->role) && $user->role === 'Perawat') {
                 return view('module.dashboard.perawat.index');
-            }
-            if ($user->hasAnyRole(['Personalia'])) {
+            } elseif (isset($user->role) && $user->role === 'Personalia') {
                 return view('module.dashboard.personalia.index');
-            }
-            if ($user->hasAnyRole(['Registrasi'])) {
+            } elseif (isset($user->role) && $user->role === 'Registrasi') {
                 return view('module.dashboard.registrasi.index');
+            } elseif (isset($user->role) && $user->role === 'Super Admin') {
+                return view('module.dashboard.super-admin.index');
             }
         }
 
@@ -790,7 +781,11 @@ class dashboard extends Controller
             ->orderByDesc('sp.created_at')
             ->limit(10)
             ->get([
-                'sp.no_rawat', 'sp.nomor_rm', 'ps.nama as pasien', 'sp.created_at', 'sp.user_input_name'
+                'sp.no_rawat',
+                'sp.nomor_rm',
+                'ps.nama as pasien',
+                'sp.created_at',
+                'sp.user_input_name'
             ])
             ->map(function ($row) {
                 return [
@@ -872,7 +867,11 @@ class dashboard extends Controller
             ->orderByDesc('s.created_at')
             ->limit(10)
             ->get([
-                'u.name as nama', 's.nik', 'p.nama as status', 's.tgl_masuk', 's.created_at'
+                'u.name as nama',
+                's.nik',
+                'p.nama as status',
+                's.tgl_masuk',
+                's.created_at'
             ])
             ->map(function ($row) {
                 return [
@@ -926,7 +925,7 @@ class dashboard extends Controller
         foreach ($rows as $row) {
             $bulanan[(int) $row->bulan] = (float) $row->total;
         }
-        $labels = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         $data = array_values($bulanan);
         return response()->json(['labels' => $labels, 'data' => $data]);
     }
@@ -1157,7 +1156,7 @@ class dashboard extends Controller
             ->get();
         $bulanan = array_fill(1, 12, 0);
         foreach ($rows as $row) $bulanan[(int)$row->bulan] = (int)$row->jumlah;
-        $labels = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         return response()->json(['labels' => $labels, 'data' => array_values($bulanan)]);
     }
 
@@ -1166,7 +1165,7 @@ class dashboard extends Controller
         $rows = DB::table('pasiens')
             ->orderByDesc('created_at')
             ->limit(10)
-            ->get(['no_rm','nik','nama','seks','created_at'])
+            ->get(['no_rm', 'nik', 'nama', 'seks', 'created_at'])
             ->map(function ($row) {
                 return [
                     'no_rm' => $row->no_rm,
@@ -1187,10 +1186,10 @@ class dashboard extends Controller
         $hariIni = Carbon::today();
         $pendapatanHariIni = DB::table('kasirs')->whereDate('created_at', $hariIni)->sum('total');
         $kunjunganHariIni = Pendaftaran_rawat_jalan::whereDate('tanggal_kujungan', $hariIni)
-            ->whereHas('status', fn($q) => $q->where('status_pendaftaran','!=',0))
+            ->whereHas('status', fn($q) => $q->where('status_pendaftaran', '!=', 0))
             ->count();
         $pasienBaruHariIni = DB::table('pasiens')->whereDate('created_at', $hariIni)->count();
-        $resepMenunggu = DB::table('pelayanan_soap_dokters')->where('status_apotek','0')->count();
+        $resepMenunggu = DB::table('pelayanan_soap_dokters')->where('status_apotek', '0')->count();
 
         return response()->json([
             'pendapatan_hari_ini' => (float) $pendapatanHariIni,
@@ -1210,7 +1209,7 @@ class dashboard extends Controller
             ->get();
         $bulanan = array_fill(1, 12, 0.0);
         foreach ($rows as $row) $bulanan[(int)$row->bulan] = (float) $row->total;
-        $labels = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         return response()->json(['labels' => $labels, 'data' => array_values($bulanan)]);
     }
 

@@ -22,7 +22,7 @@ class MenuSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         // Ambil semua role (existing + new)
-        $superAdminRole = Role::where('name', 'Super-admin')->first();
+        $superAdminRole = Role::where('name', 'Super Admin')->first();
         $dokterRole = Role::where('name', 'Dokter')->first();
         $resepsionisRole = Role::where('name', 'Resepsionis')->first();
         $perawatRole = Role::where('name', 'Perawat')->first();
@@ -43,17 +43,9 @@ class MenuSeeder extends Seeder
             'order' => 1,
         ]);
 
-        $antrian = menu::create([
-            'name' => 'Dashboard Antrian',
-            'url' => '#',
-            'icon' => 'users-cog',
-            'parent_id' => null,
-            'order' => 2,
-        ]);
-
         $pasien = menu::create([
             'name' => 'Pasien',
-            'url' => '/pasien',
+            'url' => '/data-pasien',
             'icon' => 'hospital-user',
             'parent_id' => null,
             'order' => 3,
@@ -61,7 +53,7 @@ class MenuSeeder extends Seeder
 
         $pendaftaran = menu::create([
             'name' => 'Pendaftaran',
-            'url' => '/pendaftaran',
+            'url' => '/pendaftaran-offline',
             'icon' => 'clipboard-list',
             'parent_id' => null,
             'order' => 4,
@@ -153,7 +145,6 @@ class MenuSeeder extends Seeder
         // Super-admin gets access to everything
         if ($superAdminRole) {
             $dashboard->roles()->attach($superAdminRole->id);
-            $antrian->roles()->attach($superAdminRole->id);
             $pasien->roles()->attach($superAdminRole->id);
             $pendaftaran->roles()->attach($superAdminRole->id);
             $pemeriksaan->roles()->attach($superAdminRole->id);
@@ -171,7 +162,7 @@ class MenuSeeder extends Seeder
         // User Registrasi: Dashboard Antrian, Pasien, Pendaftaran, Laporan (Antrian + Pendaftaran)
         if ($registrasiRole) {
             $dashboard->roles()->attach($registrasiRole->id);
-            $antrian->roles()->attach($registrasiRole->id);
+
             $pasien->roles()->attach($registrasiRole->id);
             $pendaftaran->roles()->attach($registrasiRole->id);
             $pendataan->roles()->attach($registrasiRole->id); // For Laporan
@@ -228,7 +219,7 @@ class MenuSeeder extends Seeder
         // Legacy role assignments (keeping existing functionality)
         if ($resepsionisRole) {
             $dashboard->roles()->attach($resepsionisRole->id);
-            $antrian->roles()->attach($resepsionisRole->id);
+
             $pasien->roles()->attach($resepsionisRole->id);
             $pendaftaran->roles()->attach($resepsionisRole->id);
         }
@@ -243,8 +234,8 @@ class MenuSeeder extends Seeder
 
         // Submenu Pemeriksaan
         $subMenusPemeriksaan = [
-            ['name' => 'Dokter', 'url' => '/pemeriksaan/dokter', 'icon' => 'user-md', 'order' => 1],
-            ['name' => 'Perawat', 'url' => '/pemeriksaan/perawat', 'icon' => 'user-nurse', 'order' => 2],
+            ['name' => 'Dokter', 'url' => '/pasien-pelayanan/dokter', 'icon' => 'user-md', 'order' => 1],
+            ['name' => 'Perawat', 'url' => '/pasien-pelayanan/perawat', 'icon' => 'user-nurse', 'order' => 2],
         ];
 
         foreach ($subMenusPemeriksaan as $subMenu) {
@@ -268,36 +259,6 @@ class MenuSeeder extends Seeder
             // Assign submenu Perawat to Perawat role
             if ($subMenu['name'] === 'Perawat' && $perawatRole) {
                 $menu->roles()->attach($perawatRole->id);
-            }
-        }
-
-        //submenu dashboard antrian
-        $subMenusAntrian = [
-            ['name' => 'Antrian', 'url' => '/monitor', 'icon' => 'users', 'order' => 1],
-            ['name' => 'Loket Antrian', 'url' => '/monitor/loket-antrian', 'icon' => 'desktop', 'order' => 2],
-        ];
-
-        foreach ($subMenusAntrian as $subMenu) {
-            $menu = menu::create([
-                'name' => $subMenu['name'],
-                'url' => $subMenu['url'],
-                'icon' => $subMenu['icon'],
-                'parent_id' => $antrian->id,
-                'order' => $subMenu['order'],
-            ]);
-
-            if ($superAdminRole) {
-                $menu->roles()->attach($superAdminRole->id);
-            }
-
-            // Assign to Registrasi role
-            if ($registrasiRole) {
-                $menu->roles()->attach($registrasiRole->id);
-            }
-
-            // Legacy assignment for Resepsionis
-            if ($resepsionisRole) {
-                $menu->roles()->attach($resepsionisRole->id);
             }
         }
 

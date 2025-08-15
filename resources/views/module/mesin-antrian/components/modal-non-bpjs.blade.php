@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="nonBpjsForm" action="{{ route('monitor.add.nobpjs') }}" method="POST">
+                <form id="nonBpjsForm" action="{{ route('pendaftaran-online.add.nobpjs') }}" method="POST">
                     @csrf
                     <div class="row">
                         <div class="col-sm-12">

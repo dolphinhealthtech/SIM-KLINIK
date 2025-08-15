@@ -24,9 +24,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
-use App\Http\Controllers\SatusehatController;
+use App\Http\Controllers\Brijing_Intergrasi\Satusehat_Controller;
 use App\Http\Controllers\Module\Pasien\Pasien_Api_Controller;
-use App\Http\Controllers\PcareController;
+use App\Http\Controllers\Brijing_Intergrasi\Pcare_Controller;
 
 
 class Pasien_Controller extends Controller
@@ -35,16 +35,15 @@ class Pasien_Controller extends Controller
     protected $pcare;
     protected $pasien_api;
 
-    public function __construct(SatusehatController $SatusehatController, Pasien_Api_Controller $pasien_api, PcareController $pcare)
+    public function __construct(Satusehat_Controller $SatusehatController, Pasien_Api_Controller $pasien_api, Pcare_Controller $pcare)
     {
         $this->SatusehatController = $SatusehatController;
         $this->pasien_api = $pasien_api;
         $this->pcare = $pcare;
-
     }
     /**
-    * Tampilan Time Line Pasien
-    */
+     * Tampilan Time Line Pasien
+     */
     public function pasiens_time_line($norm)
     {
         $title = "Time Line";
@@ -54,8 +53,8 @@ class Pasien_Controller extends Controller
         return view('dashboard.pasien-time-line', compact('title', 'datapasien'));
     }
     /**
-    * Tampilan Data Pasien
-    */
+     * Tampilan Data Pasien
+     */
     public function pasiens()
     {
         $title = "Pasien";
@@ -81,11 +80,11 @@ class Pasien_Controller extends Controller
 
         $asuransi = asuransi::all();
 
-        return view('module.pasien.index', compact('title', 'pejamin','kodefasyankes', 'pasiens', 'provinsi', 'kelamin', 'goldar', 'agama', 'pernikahan', 'suku', 'bangsa', 'bahasa', 'pendidikan', 'pekerjaan', 'pasiennoverif', 'pasienall', 'pasienallnewnow', 'pasienallold', 'asuransi'));
+        return view('module.pasien.index', compact('title', 'pejamin', 'kodefasyankes', 'pasiens', 'provinsi', 'kelamin', 'goldar', 'agama', 'pernikahan', 'suku', 'bangsa', 'bahasa', 'pendidikan', 'pekerjaan', 'pasiennoverif', 'pasienall', 'pasienallnewnow', 'pasienallold', 'asuransi'));
     }
     /**
-    * Menambahkan Data Pasien
-    */
+     * Menambahkan Data Pasien
+     */
     public function pasiensadd(Request $request)
     {
         try {
@@ -167,8 +166,8 @@ class Pasien_Controller extends Controller
         }
     }
     /**
-    * Melengkapi Data Pasien
-    */
+     * Melengkapi Data Pasien
+     */
     public function pasienvefiv(Request $request)
     {
         $request->validate([
@@ -298,7 +297,6 @@ class Pasien_Controller extends Controller
                 'success' => true,
                 'message' => 'Data pasien berhasil dilengkapi.'
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'errors' => $e->errors()
@@ -310,8 +308,8 @@ class Pasien_Controller extends Controller
         }
     }
     /**
-    * Nerubah Data Pasien
-    */
+     * Nerubah Data Pasien
+     */
     public function pasienupdate(Request $request)
     {
         $request->validate([
@@ -433,5 +431,4 @@ class Pasien_Controller extends Controller
 
         return redirect()->route('pasien.get')->with('success', 'Data Pasien Berhasil Diperbarui');
     }
-
 }

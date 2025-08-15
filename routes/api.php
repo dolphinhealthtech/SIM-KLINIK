@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Brijing_Intergrasi\Mobile_Jkn_Controller;
 use App\Http\Controllers\dashboard;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\PcareController;
@@ -26,6 +27,10 @@ use App\Http\Controllers\Soap\RujukanController;
 use App\Http\Controllers\Mobile_JknController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+
+use App\Http\Controllers\Brijing_Intergrasi\Pcare_Controller;
+use App\Http\Controllers\Brijing_Intergrasi\Satusehat_Controller;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -69,37 +74,37 @@ Route::prefix('lokasi')->group(function () {
     Route::get('/kelurahan', [LokasiController::class, 'getKelurahan'])->name('get.kelurahan');
 });
 Route::prefix('satusehat')->group(function () {
-    Route::get('/token', [SatusehatController::class, 'get_token'])->name('satusehat.token'); // di privat fungsi nya
-    Route::get('/nik/{nomor}', [SatusehatController::class, 'get_nik_satusehat'])->name('satusehat.nik'); // di privat fungsi nya
-    Route::get('/nik-practitioner/{nomor}', [SatusehatController::class, 'get_nik_practitioner_satusehat'])->name('satusehat.nik_practitione'); // di privat fungsi nya
-    Route::get('/kfa/{nama}', [SatusehatController::class, 'get_kfa_satusehat'])->name('satusehat.kfa'); // di privat fungsi nya
+    Route::get('/token', [Satusehat_Controller::class, 'get_token'])->name('satusehat.token'); // di privat fungsi nya
+    Route::get('/nik/{nomor}', [Satusehat_Controller::class, 'get_nik_satusehat'])->name('satusehat.nik'); // di privat fungsi nya
+    Route::get('/nik-practitioner/{nomor}', [Satusehat_Controller::class, 'get_nik_practitioner_satusehat'])->name('satusehat.nik_practitione'); // di privat fungsi nya
+    Route::get('/kfa/{nama}', [Satusehat_Controller::class, 'get_kfa_satusehat'])->name('satusehat.kfa'); // di privat fungsi nya
 });
 Route::prefix('pcare')->group(function () {
     // pcare
-    Route::get('/token', [PcareController::class, 'get_token'])->name('pcare.token'); // di privat fungsi nya
-    Route::get('/noka/{nomor}', [PcareController::class, 'get_noka_bpjs'])->name('pcare.noka');
-    Route::get('/nik/{nomor}', [PcareController::class, 'get_nik_bpjs'])->name('pcare.nik');
-    Route::get('/poli', [PcareController::class, 'get_poli_fktp_bpjs'])->name('pcare.poli');
-    Route::get('/dokter', [PcareController::class, 'get_dokter_bpjs'])->name('pcare.dokter');
-    Route::get('/spesialis', [PcareController::class, 'get_spesialis_bpjs'])->name('pcare.spesialis');
-    Route::get('/sub-spesialis/{nama}', [PcareController::class, 'get_sub_spesialis_bpjs'])->name('pcare.subspesialis');
-    Route::get('/diagnosis/{nama}', [PcareController::class, 'get_diagnosis_bpjs'])->name('pcare.diagnosis');
-    Route::get('/statpul/{nama}', [PcareController::class, 'get_statpul_bpjs'])->name('pcare.statpul');
-    Route::get('/kesadaran', [PcareController::class, 'get_kesadaran_bpjs'])->name('pcare.kesadaran');
-    Route::get('/provider', [PcareController::class, 'get_provider_bpjs'])->name('pcare.provider');
-    Route::get('/khusus', [PcareController::class, 'get_khusus_bpjs'])->name('pcare.khusus');
-    Route::get('/dpho/{nama}', [PcareController::class, 'get_dphoobat_bpjs'])->name('pcare.dpho');
-    Route::get('/prognosa', [PcareController::class, 'get_prognosa_bpjs'])->name('pcare.prognosa');
-    Route::get('/alergi/{kode}', [PcareController::class, 'get_alergi_bpjs'])->name('pcare.alergi');
-    Route::get('/sarana', [PcareController::class, 'get_sarana_bpjs'])->name('pcare.sarana');
-    Route::get('/provide_rujuk/{spesialis}/{sarana}/{tanggal}', [PcareController::class, 'get_rujukan_spesialis_bpjs'])->name('pcare.provide_rujuk');
-    Route::get('/provide_rujuk_husus/{spesialis}/{noKartu}/{tanggal}', [PcareController::class, 'get_rujukan_husus_bpjs'])->name('pcare.provide_rujuk_husus');
-    Route::get('/provide_rujuk_husus_subspesialis/{husus}/{spesialis}/{noKartu}/{tanggal}', [PcareController::class, 'get_rujukan_husus_subspesialis_bpjs'])->name('pcare.provide_rujuk_husus_subspesialis');
-    Route::get('/jadwal/{kodepoli}/{tanggal}', [PcareController::class, 'get_jadwal_dokter_bpjs'])->name('pcare.jadwal');
-    Route::get('/poli/{tanggal}', [PcareController::class, 'get_ws_poli_bpjs'])->name('pcare.poli_ws');
-    Route::get('/get-dekrip-bpjs', [PcareController::class, 'bpjs_dekrip'])->name('pcare.dekrip_bpjs');
-    Route::get('/get-pendaftaran-nomor/{nomor}/{tanggal}', [PcareController::class, 'get_pendaftaran_nomor'])->name('pcare.pendaftaran_nomor');
-    Route::get('/get-pendaftaran-provide/{tanggal}', [PcareController::class, 'get_pendaftaran_provide'])->name('pcare.pendaftaran_provide');
+    Route::get('/token', [Pcare_Controller::class, 'get_token'])->name('pcare.token'); // di privat fungsi nya
+    Route::get('/noka/{nomor}', [Pcare_Controller::class, 'get_noka_bpjs'])->name('pcare.noka');
+    Route::get('/nik/{nomor}', [Pcare_Controller::class, 'get_nik_bpjs'])->name('pcare.nik');
+    Route::get('/poli', [Pcare_Controller::class, 'get_poli_fktp_bpjs'])->name('pcare.poli');
+    Route::get('/dokter', [Pcare_Controller::class, 'get_dokter_bpjs'])->name('pcare.dokter');
+    Route::get('/spesialis', [Pcare_Controller::class, 'get_spesialis_bpjs'])->name('pcare.spesialis');
+    Route::get('/sub-spesialis/{nama}', [Pcare_Controller::class, 'get_sub_spesialis_bpjs'])->name('pcare.subspesialis');
+    Route::get('/diagnosis/{nama}', [Pcare_Controller::class, 'get_diagnosis_bpjs'])->name('pcare.diagnosis');
+    Route::get('/statpul/{nama}', [Pcare_Controller::class, 'get_statpul_bpjs'])->name('pcare.statpul');
+    Route::get('/kesadaran', [Pcare_Controller::class, 'get_kesadaran_bpjs'])->name('pcare.kesadaran');
+    Route::get('/provider', [Pcare_Controller::class, 'get_provider_bpjs'])->name('pcare.provider');
+    Route::get('/khusus', [Pcare_Controller::class, 'get_khusus_bpjs'])->name('pcare.khusus');
+    Route::get('/dpho/{nama}', [Pcare_Controller::class, 'get_dphoobat_bpjs'])->name('pcare.dpho');
+    Route::get('/prognosa', [Pcare_Controller::class, 'get_prognosa_bpjs'])->name('pcare.prognosa');
+    Route::get('/alergi/{kode}', [Pcare_Controller::class, 'get_alergi_bpjs'])->name('pcare.alergi');
+    Route::get('/sarana', [Pcare_Controller::class, 'get_sarana_bpjs'])->name('pcare.sarana');
+    Route::get('/provide_rujuk/{spesialis}/{sarana}/{tanggal}', [Pcare_Controller::class, 'get_rujukan_spesialis_bpjs'])->name('pcare.provide_rujuk');
+    Route::get('/provide_rujuk_husus/{spesialis}/{noKartu}/{tanggal}', [Pcare_Controller::class, 'get_rujukan_husus_bpjs'])->name('pcare.provide_rujuk_husus');
+    Route::get('/provide_rujuk_husus_subspesialis/{husus}/{spesialis}/{noKartu}/{tanggal}', [Pcare_Controller::class, 'get_rujukan_husus_subspesialis_bpjs'])->name('pcare.provide_rujuk_husus_subspesialis');
+    Route::get('/jadwal/{kodepoli}/{tanggal}', [Pcare_Controller::class, 'get_jadwal_dokter_bpjs'])->name('pcare.jadwal');
+    Route::get('/poli/{tanggal}', [Pcare_Controller::class, 'get_ws_poli_bpjs'])->name('pcare.poli_ws');
+    Route::get('/get-dekrip-bpjs', [Pcare_Controller::class, 'bpjs_dekrip'])->name('pcare.dekrip_bpjs');
+    Route::get('/get-pendaftaran-nomor/{nomor}/{tanggal}', [Pcare_Controller::class, 'get_pendaftaran_nomor'])->name('pcare.pendaftaran_nomor');
+    Route::get('/get-pendaftaran-provide/{tanggal}', [Pcare_Controller::class, 'get_pendaftaran_provide'])->name('pcare.pendaftaran_provide');
 });
 
 // Data Master Medis
@@ -259,10 +264,10 @@ Route::prefix('personalia-dashboard')->group(function () {
 });
 
 Route::prefix('m_jkn')->group(function () {
-    Route::get('/token', [Mobile_JknController::class, 'get_token'])->name('get_token.m_jkn');
-    Route::post('/get_antrian', [Mobile_JknController::class, 'get_antrian'])->name('get_antrian.m_jkn');
-    Route::get('/status_antrian/{kode_poli}/{tgl}', [Mobile_JknController::class, 'get_status_antrian'])->name('get_status_antrian.m_jkn');
-    Route::get('/sisa_antrian/{noka}/{kode_poli}/{tgl_periksa}', [Mobile_JknController::class, 'get_sisa_antrian'])->name('get_sisa_antrian.m_jkn');
-    Route::put('/batalkan_antrian', [Mobile_JknController::class, 'batalkan_antrian'])->name('batalkan_antrian.m_jkn');
-    Route::post('/set_pasien_baru', [Mobile_JknController::class, 'set_pasien_baru'])->name('pasien_baru.m_jkn');
+    Route::get('/token', [Mobile_Jkn_Controller::class, 'get_token'])->name('get_token.m_jkn');
+    Route::post('/get_antrian', [Mobile_Jkn_Controller::class, 'get_antrian'])->name('get_antrian.m_jkn');
+    Route::get('/status_antrian/{kode_poli}/{tgl}', [Mobile_Jkn_Controller::class, 'get_status_antrian'])->name('get_status_antrian.m_jkn');
+    Route::get('/sisa_antrian/{noka}/{kode_poli}/{tgl_periksa}', [Mobile_Jkn_Controller::class, 'get_sisa_antrian'])->name('get_sisa_antrian.m_jkn');
+    Route::put('/batalkan_antrian', [Mobile_Jkn_Controller::class, 'batalkan_antrian'])->name('batalkan_antrian.m_jkn');
+    Route::post('/set_pasien_baru', [Mobile_Jkn_Controller::class, 'set_pasien_baru'])->name('pasien_baru.m_jkn');
 });

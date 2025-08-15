@@ -10,7 +10,8 @@ use App\Models\gcs_verbal;
 use App\Models\gcs_motorik;
 use App\Models\gcs_kesadaran;
 use App\Models\htt_pemeriksaan;
-use App\Http\Controllers\PcareController;
+use App\Http\Controllers\Brijing_Intergrasi\Pcare_Controller;
+
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -21,7 +22,7 @@ class Pelayanan_Perawat_Controller extends Controller
 {
     protected $PcareController;
 
-    public function __construct(PcareController $PcareController)
+    public function __construct(Pcare_Controller $PcareController)
     {
         $this->PcareController = $PcareController;
     }
