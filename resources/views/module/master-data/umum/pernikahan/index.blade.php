@@ -91,5 +91,5 @@
     @include('module.master-data.umum.pernikahan.components.modal-edit')
     @include('module.master-data.umum.pernikahan.components.modal-delete')
     @include('module.master-data.umum.pernikahan.components.modal-import')
-    @include('module.master-data.umum.pernikahan.components.modal-javascript')
+    @include('module.master-data.umum.pernikahan.components.javascript')
 @endsection

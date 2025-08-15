@@ -83,9 +83,9 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.poli.components.modal-add')
-    @include('module.master-data-medis.poli.components.modal-import')
-    @include('module.master-data-medis.poli.components.modal-delete')
-    @include('module.master-data-medis.poli.components.javascript')
+    @include('module.master-data.medis.poli.components.modal-add')
+    @include('module.master-data.medis.poli.components.modal-import')
+    @include('module.master-data.medis.poli.components.modal-delete')
+    @include('module.master-data.medis.poli.components.javascript')
 
 @endsection

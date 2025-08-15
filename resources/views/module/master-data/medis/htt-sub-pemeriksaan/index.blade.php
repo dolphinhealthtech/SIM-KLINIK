@@ -81,8 +81,8 @@
     <!-- /.content -->
 </div>
 
-        @include('module.master-data-medis.htt-sub-pemeriksaan.components.modal-add')
-        @include('module.master-data-medis.htt-sub-pemeriksaan.components.modal-edit')
-        @include('module.master-data-medis.htt-sub-pemeriksaan.components.modal-delete')
-        @include('module.master-data-medis.htt-sub-pemeriksaan.components.javascript')
+        @include('module.master-data.medis.htt-sub-pemeriksaan.components.modal-add')
+        @include('module.master-data.medis.htt-sub-pemeriksaan.components.modal-edit')
+        @include('module.master-data.medis.htt-sub-pemeriksaan.components.modal-delete')
+        @include('module.master-data.medis.htt-sub-pemeriksaan.components.javascript')
 @endsection

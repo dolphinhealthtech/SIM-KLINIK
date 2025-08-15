@@ -75,8 +75,8 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.subspesialis.components.modal-add')
-    @include('module.master-data-medis.subspesialis.components.modal-delete')
-    @include('module.master-data-medis.subspesialis.components.javascript')
+    @include('module.master-data.medis.subspesialis.components.modal-add')
+    @include('module.master-data.medis.subspesialis.components.modal-delete')
+    @include('module.master-data.medis.subspesialis.components.javascript')
 
 @endsection

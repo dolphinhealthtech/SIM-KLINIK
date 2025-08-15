@@ -86,9 +86,9 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.jenis-diet.components.modal-add')
-    @include('module.master-data-medis.jenis-diet.components.modal-edit')
-    @include('module.master-data-medis.jenis-diet.components.modal-delete')
-    @include('module.master-data-medis.jenis-diet.components.modal-import')
-    @include('module.master-data-medis.jenis-diet.components.javascript')
+    @include('module.master-data.medis.jenis-diet.components.modal-add')
+    @include('module.master-data.medis.jenis-diet.components.modal-edit')
+    @include('module.master-data.medis.jenis-diet.components.modal-delete')
+    @include('module.master-data.medis.jenis-diet.components.modal-import')
+    @include('module.master-data.medis.jenis-diet.components.javascript')
 @endsection

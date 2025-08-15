@@ -91,14 +91,14 @@
 </div>
 
 <!-- Modal untuk Tambah ICD 9 -->
-@include('module.master-data-medis.icd9.components.modal-add')
+@include('module.master-data.medis.icd9.components.modal-add')
 <!-- Modal untuk Edit ICD 9 -->
-@include('module.master-data-medis.icd9.components.modal-edit')
+@include('module.master-data.medis.icd9.components.modal-edit')
 <!-- Modal untuk Hapus ICD 9 -->
-@include('module.master-data-medis.icd9.components.modal-delete')
+@include('module.master-data.medis.icd9.components.modal-delete')
 <!-- Modal untuk Import ICD 9 -->
-@include('module.master-data-medis.icd9.components.modal-import')
+@include('module.master-data.medis.icd9.components.modal-import')
 <!-- Script -->
-@include('module.master-data-medis.icd9.components.javascript')
+@include('module.master-data.medis.icd9.components.javascript')
 
 @endsection

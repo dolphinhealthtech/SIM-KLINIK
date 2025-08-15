@@ -88,10 +88,10 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.laboratorium-bidang.components.modal-add')
-    @include('module.master-data-medis.laboratorium-bidang.components.modal-edit')
-    @include('module.master-data-medis.laboratorium-bidang.components.modal-delete')
-    @include('module.master-data-medis.laboratorium-bidang.components.modal-import')
-    @include('module.master-data-medis.laboratorium-bidang.components.javascript')
+    @include('module.master-data.medis.laboratorium-bidang.components.modal-add')
+    @include('module.master-data.medis.laboratorium-bidang.components.modal-edit')
+    @include('module.master-data.medis.laboratorium-bidang.components.modal-delete')
+    @include('module.master-data.medis.laboratorium-bidang.components.modal-import')
+    @include('module.master-data.medis.laboratorium-bidang.components.javascript')
 
 @endsection

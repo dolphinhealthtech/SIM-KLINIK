@@ -5,12 +5,34 @@ use App\Http\Controllers\DataMasterManajemenController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\DataMaster\gudang\GudangRequestController;
 use App\Http\Controllers\DataMaster\gudang\GudangUtamaController;
+
 use App\Http\Controllers\DataMaster\gudang\HargaJualController;
 use App\Http\Controllers\DataMaster\gudang\KategoriController;
 use App\Http\Controllers\DataMaster\gudang\SatuanController;
 use App\Http\Controllers\DataMaster\gudang\SetHargaController;
 use App\Http\Controllers\DataMaster\gudang\StokBarangController;
 use App\Http\Controllers\DataMaster\gudang\SupplierController;
+
+// Data Master Gudang
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Request\Gudang_Request_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Utama\Gudang_Utama_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Satuan\Satuan_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Kategori\Kategori_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Supplier\Supplier_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Set_Harga\Set_Harga_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Stok_Barang\Stok_Barang_Controller;
+
+
+// Data Master Inventaris
+use App\Http\Controllers\Module\Data_Master\Data_Inventaris\Request\Inventaris_Request_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Inventaris\Utama\Inventaris_Utama_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Inventaris\Satuan\Satuan_Inventaris_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Inventaris\Kategori\Kategori_Inventaris_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Inventaris\Stok\Stok_Inventaris_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Inventaris\Stok\Stok_Inventaris_Utama_Controller;
+
+
+
 use App\Http\Controllers\DataMaster\inventaris\InventarisRequestController;
 use App\Http\Controllers\DataMaster\inventaris\InventarisUtamaController;
 use App\Http\Controllers\DataMaster\inventaris\KategoriInventarisController;
@@ -31,6 +53,28 @@ use App\Http\Controllers\DataMaster\medis\RadiologiJenisController;
 use App\Http\Controllers\DataMaster\medis\SaranaController;
 use App\Http\Controllers\DataMaster\medis\SpesialisController;
 use App\Http\Controllers\DataMaster\medis\SubspesialisController;
+
+
+// Data Master Medis
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Radiologi_Jenis\Radiologi_Jenis_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Alergi\Alergi_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Icd9\Icd9_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Icd10\Icd10_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Jenis_Diet\Jenis_Diet_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Kategori_Perawatan\Kategori_Perawatan_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Laboratorium_Bidang\Laboratorium_Bidang_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Laboratorium_Bidang\Laboratorium_Bidang_Sub_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Nama_Makanan\Nama_Makanan_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Pemeriksaan_Htt\Pemeriksaan_Htt_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Pemeriksaan_Htt\Pemeriksaan_Htt_Sub_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Perawatan_Tindakan\Perawatan_Tindakan_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Poli\Poli_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Radiologi_Pemeriksaan\Radiologi_Pemeriksaan_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Sarana\Sarana_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Spesialis\Spesialis_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Subspesialis\Subspesialis_Controller;
+
+
 use App\Http\Controllers\DataMaster\main\GoldarController;
 use App\Http\Controllers\DataMaster\main\SukuController;
 use App\Http\Controllers\DataMaster\main\BangsaController;
@@ -44,6 +88,8 @@ use App\Http\Controllers\DataMaster\main\BankController;
 use App\Http\Controllers\DataMaster\main\AsuransiController;
 use App\Http\Controllers\DataMaster\main\PenjaminController;
 use App\Http\Controllers\DataMaster\main\LoketController;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Harga_Jual\Harga_Jual_Controller;
+// Data Master Umum
 use App\Http\Controllers\Module\Data_Master\Data_Umum\Agama_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Umum\Asuransi_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Umum\Bahasa_Controller;
@@ -57,6 +103,8 @@ use App\Http\Controllers\Module\Data_Master\Data_Umum\Pendidikan_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Umum\Penjamin_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Umum\Pernikahan_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Umum\Suku_Controller;
+
+
 use App\Http\Controllers\soap;
 use App\Http\Controllers\Soap\OdoController;
 use App\Http\Controllers\Soap\PelayananController;
@@ -144,97 +192,6 @@ Route::post('/data-inventaris-utama/import', [InventarisController::class, 'inve
 Route::get('/inventaris-pembelian-utama', [InventarisController::class, 'inventaris_pembelian_utama'])->name('inventaris_pembelian_utama.get');
 Route::post('/inventaris-pembelian-utama/add', [InventarisController::class, 'inventaris_pembelianadd_utama'])->name('inventaris_pembelian_utama.add');
 
-// Menu Data Master Gudang
-Route::prefix('data-master-gudang')->group(function () {
-    // Menu Jenis Satuan
-    Route::get('/satuan', [SatuanController::class, 'satuan'])->name('satuan.get');
-    Route::post('/satuan/add', [SatuanController::class, 'satuanadd'])->name('satuan.store');
-    Route::post('/satuan/update', [SatuanController::class, 'satuanedit'])->name('satuan.update');
-    Route::post('/satuan/delete', [SatuanController::class, 'satuandelete'])->name('satuan.destroy');
-    Route::get('/satuan/export', [SatuanController::class, 'satuanexport'])->name('satuan.export');
-    Route::post('/satuan/import', [SatuanController::class, 'satuanimport'])->name('satuan.import');
-
-    // Menu Jenis Kategori
-    Route::get('/kategori', [KategoriController::class, 'kategori'])->name('kategori.get');
-    Route::post('/kategori/add', [KategoriController::class, 'kategoriadd'])->name('kategori.store');
-    Route::post('/kategori/update', [KategoriController::class, 'kategoriedit'])->name('kategori.update');
-    Route::post('/kategori/delete', [KategoriController::class, 'kategoridelete'])->name('kategori.destroy');
-    Route::get('/kategori/export', [KategoriController::class, 'kategoriexport'])->name('kategori.export');
-    Route::post('/kategori/import', [KategoriController::class, 'kategoriimport'])->name('kategori.import');
-
-    // Menu Supplier
-    Route::get('/supplier-industri', [SupplierController::class, 'supplier'])->name('supplier.get');
-    Route::post('/supplier-industri/add', [SupplierController::class, 'supplieradd'])->name('supplier.store');
-    Route::post('/supplier-industri/update', [SupplierController::class, 'supplieredit'])->name('supplier.update');
-    Route::post('/supplier-industri/delete', [SupplierController::class, 'supplierdelete'])->name('supplier.destroy');
-    Route::get('/supplier-industri/export', [SupplierController::class, 'supplierexport'])->name('supplier.export');
-    Route::post('/supplier-industri/import', [SupplierController::class, 'supplierimport'])->name('supplier.import');
-
-    // Menu Setting Harga
-    Route::get('/setting-harga-jual', [SetHargaController::class, 'setharga'])->name('setharga.get');
-    Route::get('/setting-harga-jual-utama', [SetHargaController::class, 'setharga_utama'])->name('setharga_utama.get');
-    Route::post('/setting-harga-jual/add', [SetHargaController::class, 'sethargaadd'])->name('setharga.store');
-    Route::post('/setting-harga-jual-utama/add', [SetHargaController::class, 'sethargaadd_utama'])->name('setharga_utama.store');
-    Route::get('/setting-harga-jual/singkron/{id}', [SetHargaController::class, 'sethargasingkron'])->name('setharga.singkron');
-    Route::get('/setting-harga-jual-klinik/singkron', [SetHargaController::class, 'sethargasingkronklinik'])->name('setharga_klinik.singkron');
-    Route::get('/harga-barang-jual', [HargaJualController::class, 'hargajual'])->name('hargajual.get');
-    Route::get('/harga-barang-jual-utama', [HargaJualController::class, 'hargajualutama'])->name('hargajualutama.get');
-    Route::get('/stok-obat-alkes', [StokBarangController::class, 'stokobatalkes'])->name('stokobatalkes.get');
-    Route::get('/stok-obat-alkes-utama', [StokBarangController::class, 'stokobatalkes_utama'])->name('stokobatalkes_utama.get');
-
-    Route::get('/stok-penyesuaian-opname', [StokBarangController::class, 'stok_penyesuaian'])->name('stok_penyesuaian.get');
-    Route::get('/stok-penyesuaian-opname-utama', [StokBarangController::class, 'stok_penyesuaian_utama'])->name('stok_penyesuaian_utama.get');
-    Route::post('/stok-penyesuaian-opname/add', [StokBarangController::class, 'stok_penyesuaianadd'])->name('stok_penyesuaian.store');
-    Route::post('/stok-penyesuaian-opname-utama/add', [StokBarangController::class, 'stok_penyesuaianadd_utama'])->name('stok_penyesuaian_utama.store');
-
-    // Menu Satuan Inventaris
-    Route::get('/satuan-inventaris', [SatuanInventarisController::class, 'satuan_inventaris'])->name('satuan_inventaris.get');
-    Route::post('/satuan-inventaris/add', [SatuanInventarisController::class, 'satuan_inventarisadd'])->name('satuan_inventaris.store');
-    Route::post('/satuan-inventaris/update', [SatuanInventarisController::class, 'satuan_inventarisedit'])->name('satuan_inventaris.update');
-    Route::post('/satuan-inventaris/delete', [SatuanInventarisController::class, 'satuan_inventarisdelete'])->name('satuan_inventaris.destroy');
-    Route::get('/satuan-inventaris/export', [SatuanInventarisController::class, 'satuan_inventarisexport'])->name('satuan_inventaris.export');
-    Route::post('/satuan-inventaris/import', [SatuanInventarisController::class, 'satuan_inventarisimport'])->name('satuan_inventaris.import');
-
-    // Menu Kategori Inventaris
-    Route::get('/kategori-inventaris', [KategoriInventarisController::class, 'katin'])->name('katin.get');
-    Route::post('/kategori-inventaris/add', [KategoriInventarisController::class, 'katinadd'])->name('katin.store');
-    Route::post('/kategori-inventaris/update', [KategoriInventarisController::class, 'katinedit'])->name('katin.update');
-    Route::post('/kategori-inventaris/delete', [KategoriInventarisController::class, 'katindelete'])->name('katin.destroy');
-    Route::get('/kategori-inventaris/export', [KategoriInventarisController::class, 'katinexport'])->name('katin.export');
-    Route::post('/kategori-inventaris/import', [KategoriInventarisController::class, 'katinimport'])->name('katin.import');
-
-    // Menu Stok Inventaris
-    Route::get('/stok-inventaris', [StokInventarisController::class, 'stokin'])->name('stokin.get');
-    Route::get('/stok-inventaris/data/{id}', [StokInventarisController::class, 'stokin_data'])->name('stokin_data.get');
-    Route::post('/stok-inventaris/data/update', [StokInventarisController::class, 'stokin_dataedit'])->name('stokin_data.update');
-    Route::post('/stok-inventaris/data/delete', [StokInventarisController::class, 'stokin_datadelete'])->name('stokin_data.destroy');
-
-    // Menu Stok Inventaris Utama
-    Route::get('/stok-inventaris-utama', [StokInventarisController::class, 'stokin_utama'])->name('stokin_utama.get');
-    Route::get('/stok-inventaris-utama/data/{id}', [StokInventarisController::class, 'stokin_data_utama'])->name('stokin_data_utama.get');
-    Route::post('/stok-inventaris-utama/data/update', [StokInventarisController::class, 'stokin_dataedit_utama'])->name('stokin_data_utama.update');
-    Route::post('/stok-inventaris-utama/data/delete', [StokInventarisController::class, 'stokin_datadelete_utama'])->name('stokin_data_utama.destroy');
-
-
-    // Menu Request Obat Klinik Omega
-    Route::get('/inventaris-request', [InventarisRequestController::class, 'inventarisrequest'])->name('inventarisrequest.get');
-    Route::post('/inventaris-request/add', [InventarisRequestController::class, 'inventarisrequestadd'])->name('inventarisrequest.store');
-
-    // Menu Utama Klinik Omega
-    Route::get('/inventaris-utama', [InventarisUtamaController::class, 'inventarisutama'])->name('inventarisutama.get');
-    Route::post('/inventaris-utama/konfirmasi', [InventarisUtamaController::class, 'inventarisutamakonfirmasi'])->name('inventarisutama.konfirmasi');
-
-    // Menu Request Obat Klinik Omega
-    Route::get('/gudang-request', [GudangRequestController::class, 'gudangrequest'])->name('gudangrequest.get');
-    Route::post('/gudang-request/add', [GudangRequestController::class, 'gudangrequestadd'])->name('gudangrequest.store');
-
-    // Menu Utama Klinik Omega
-    Route::get('/gudang-utama', [GudangUtamaController::class, 'gudangutama'])->name('gudangutama.get');
-    Route::post('/gudang-utama/konfirmasi', [GudangUtamaController::class, 'gudangutamakonfirmasi'])->name('gudangutama.konfirmasi');
-
-    Route::get('/kartu-stok', [StokBarangController::class, 'kartu_stok'])->name('kartu_stok.get');
-    Route::get('/kartu-stok-utama', [StokBarangController::class, 'kartu_stok_utama'])->name('kartu_stok_utama.get');
-});
 
 // Menu Data Master Manajemen
 
@@ -341,8 +298,8 @@ Route::middleware('auth')->prefix('pendataan')->group(function () {
     Route::post('/print/stok-opname', [PendataanController::class, 'print_stok_opname'])->name('print_stok_opname');
 
     //Gudang utama
-    Route::get('/gudang-utama', [GudangUtamaController::class, 'laporan_gudang_utama'])->name('laporan_gudang_utama.get');
-    Route::post('/print/gudang-utama', [GudangUtamaController::class, 'print_gudang_utama'])->name('print_gudang_utama');
+    Route::get('/gudang-utama', [Gudang_Utama_Controller::class, 'laporan_gudang_utama'])->name('laporan_gudang_utama.get');
+    Route::post('/print/gudang-utama', [Gudang_Utama_Controller::class, 'print_gudang_utama'])->name('print_gudang_utama');
 });
 
 
@@ -556,145 +513,236 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     Route::prefix('medis')->group(function () {
 
         Route::prefix('poli')->group(function () {
-            Route::get('/', [PoliController::class, 'poli'])->name('poli.get');
-            Route::get('/sync', [PoliController::class, 'poliadd'])->name('poli.sync');
-            Route::post('/delete', [PoliController::class, 'polidelete'])->name('poli.destroy');
-            Route::get('/export', [PoliController::class, 'poliexport'])->name('poli.export');
-            Route::post('/import', [PoliController::class, 'poliimport'])->name('poli.import');
+            Route::get('/', [Poli_Controller::class, 'poli'])->name('poli.get');
+            Route::get('/sync', [Poli_Controller::class, 'poliadd'])->name('poli.sync');
+            Route::post('/delete', [Poli_Controller::class, 'polidelete'])->name('poli.destroy');
+            Route::get('/export', [Poli_Controller::class, 'poliexport'])->name('poli.export');
+            Route::post('/import', [Poli_Controller::class, 'poliimport'])->name('poli.import');
         });
 
         Route::prefix('sarana')->group(function () {
-            Route::get('/', [SaranaController::class, 'sarana'])->name('sarana.get');
-            Route::get('/sync', [SaranaController::class, 'saranaadd'])->name('sarana.sync');
-            Route::post('/delete', [SaranaController::class, 'saranadelete'])->name('sarana.destroy');
-            Route::get('/export', [SaranaController::class, 'saranaexport'])->name('sarana.export');
-            Route::post('/import', [SaranaController::class, 'saranaimport'])->name('sarana.import');
+            Route::get('/', [Sarana_Controller::class, 'sarana'])->name('sarana.get');
+            Route::get('/sync', [Sarana_Controller::class, 'saranaadd'])->name('sarana.sync');
+            Route::post('/delete', [Sarana_Controller::class, 'saranadelete'])->name('sarana.destroy');
+            Route::get('/export', [Sarana_Controller::class, 'saranaexport'])->name('sarana.export');
+            Route::post('/import', [Sarana_Controller::class, 'saranaimport'])->name('sarana.import');
         });
 
         Route::prefix('spesialis')->group(function () {
-            Route::get('/', [SpesialisController::class, 'spesialis'])->name('spesialis.get');
-            Route::get('/sync', [SpesialisController::class, 'spesialisadd'])->name('spesialis.sync');
-            Route::post('/delete', [SpesialisController::class, 'spesialisdelete'])->name('spesialis.destroy');
-            Route::get('/export', [SpesialisController::class, 'spesialisexport'])->name('spesialis.export');
-            Route::post('/import', [SpesialisController::class, 'spesialisimport'])->name('spesialis.import');
+            Route::get('/', [Spesialis_Controller::class, 'spesialis'])->name('spesialis.get');
+            Route::get('/sync', [Spesialis_Controller::class, 'spesialisadd'])->name('spesialis.sync');
+            Route::post('/delete', [Spesialis_Controller::class, 'spesialisdelete'])->name('spesialis.destroy');
+            Route::get('/export', [Spesialis_Controller::class, 'spesialisexport'])->name('spesialis.export');
+            Route::post('/import', [Spesialis_Controller::class, 'spesialisimport'])->name('spesialis.import');
         });
 
         Route::prefix('subspesialis')->group(function () {
-            Route::get('/{kode}', [SubspesialisController::class, 'subspesialis'])->name('subspesialis.get');
-            Route::get('/sync/{kode}', [SubspesialisController::class, 'subspesialisadd'])->name('subspesialis.sync');
-            Route::post('/delete', [SubspesialisController::class, 'subspesialisdelete'])->name('subspesialis.destroy');
+            Route::get('/{kode}', [Subspesialis_Controller::class, 'subspesialis'])->name('subspesialis.get');
+            Route::get('/sync/{kode}', [Subspesialis_Controller::class, 'subspesialisadd'])->name('subspesialis.sync');
+            Route::post('/delete', [Subspesialis_Controller::class, 'subspesialisdelete'])->name('subspesialis.destroy');
         });
 
         Route::prefix('katper')->group(function () {
-            Route::get('/', [KategoriPerawatanController::class, 'kategori_perawatan'])->name('kategori_perawatan.get');
-            Route::post('/add', [KategoriPerawatanController::class, 'kategori_perawatanadd'])->name('kategori_perawatan.store');
-            Route::post('/update', [KategoriPerawatanController::class, 'kategori_perawatanedit'])->name('kategori_perawatan.update');
-            Route::post('/delete', [KategoriPerawatanController::class, 'kategori_perawatandelete'])->name('kategori_perawatan.destroy');
-            Route::get('/export', [KategoriPerawatanController::class, 'kategori_perawatanexport'])->name('kategori_perawatan.export');
-            Route::post('/import', [KategoriPerawatanController::class, 'kategori_perawatanimport'])->name('kategori_perawatan.import');
+            Route::get('/', [Kategori_Perawatan_Controller::class, 'kategori_perawatan'])->name('kategori_perawatan.get');
+            Route::post('/add', [Kategori_Perawatan_Controller::class, 'kategori_perawatanadd'])->name('kategori_perawatan.store');
+            Route::post('/update', [Kategori_Perawatan_Controller::class, 'kategori_perawatanedit'])->name('kategori_perawatan.update');
+            Route::post('/delete', [Kategori_Perawatan_Controller::class, 'kategori_perawatandelete'])->name('kategori_perawatan.destroy');
+            Route::get('/export', [Kategori_Perawatan_Controller::class, 'kategori_perawatanexport'])->name('kategori_perawatan.export');
+            Route::post('/import', [Kategori_Perawatan_Controller::class, 'kategori_perawatanimport'])->name('kategori_perawatan.import');
         });
 
         Route::prefix('perawatan-tindakan')->group(function () {
-            Route::get('/', [PerawatanTindakanController::class, 'perawatan_tindakan'])->name('perawatan_tindakan.get');
-            Route::post('/add', [PerawatanTindakanController::class, 'perawatan_tindakanadd'])->name('perawatan_tindakan.store');
-            Route::post('/update', [PerawatanTindakanController::class, 'perawatan_tindakanedit'])->name('perawatan_tindakan.update');
-            Route::post('/delete', [PerawatanTindakanController::class, 'perawatan_tindakandelete'])->name('perawatan_tindakan.destroy');
-            Route::get('/export', [PerawatanTindakanController::class, 'perawatan_tindakanexport'])->name('perawatan_tindakan.export');
-            Route::post('/import', [PerawatanTindakanController::class, 'perawatan_tindakanimport'])->name('perawatan_tindakan.import');
+            Route::get('/', [Perawatan_Tindakan_Controller::class, 'perawatan_tindakan'])->name('perawatan_tindakan.get');
+            Route::post('/add', [Perawatan_Tindakan_Controller::class, 'perawatan_tindakanadd'])->name('perawatan_tindakan.store');
+            Route::post('/update', [Perawatan_Tindakan_Controller::class, 'perawatan_tindakanedit'])->name('perawatan_tindakan.update');
+            Route::post('/delete', [Perawatan_Tindakan_Controller::class, 'perawatan_tindakandelete'])->name('perawatan_tindakan.destroy');
+            Route::get('/export', [Perawatan_Tindakan_Controller::class, 'perawatan_tindakanexport'])->name('perawatan_tindakan.export');
+            Route::post('/import', [Perawatan_Tindakan_Controller::class, 'perawatan_tindakanimport'])->name('perawatan_tindakan.import');
         });
 
         Route::prefix('htt-pemeriksaan')->group(function () {
-            Route::get('/', [PemeriksaanHttController::class, 'htt_pemeriksaan'])->name('htt_pemeriksaan.get');
-            Route::post('/add', [PemeriksaanHttController::class, 'htt_pemeriksaanadd'])->name('htt_pemeriksaan.store');
-            Route::post('/update', [PemeriksaanHttController::class, 'htt_pemeriksaanedit'])->name('htt_pemeriksaan.update');
-            Route::post('/delete', [PemeriksaanHttController::class, 'htt_pemeriksaandelete'])->name('htt_pemeriksaan.destroy');
-            Route::get('/export', [PemeriksaanHttController::class, 'htt_pemeriksaanexport'])->name('htt_pemeriksaan.export');
-            Route::post('/import', [PemeriksaanHttController::class, 'htt_pemeriksaaneimport'])->name('htt_pemeriksaan.import');
+            Route::get('/', [Pemeriksaan_Htt_Controller::class, 'htt_pemeriksaan'])->name('htt_pemeriksaan.get');
+            Route::post('/add', [Pemeriksaan_Htt_Controller::class, 'htt_pemeriksaanadd'])->name('htt_pemeriksaan.store');
+            Route::post('/update', [Pemeriksaan_Htt_Controller::class, 'htt_pemeriksaanedit'])->name('htt_pemeriksaan.update');
+            Route::post('/delete', [Pemeriksaan_Htt_Controller::class, 'htt_pemeriksaandelete'])->name('htt_pemeriksaan.destroy');
+            Route::get('/export', [Pemeriksaan_Htt_Controller::class, 'htt_pemeriksaanexport'])->name('htt_pemeriksaan.export');
+            Route::post('/import', [Pemeriksaan_Htt_Controller::class, 'htt_pemeriksaaneimport'])->name('htt_pemeriksaan.import');
         });
 
         Route::prefix('htt_sub_pemeriksaan')->group(function () {
-            Route::get('/{kode}', [PemeriksaanHttController::class, 'htt_sub_pemeriksaan'])->name('htt_sub_pemeriksaan.get');
-            Route::post('/add', [PemeriksaanHttController::class, 'htt_sub_pemeriksaanadd'])->name('htt_sub_pemeriksaan.store');
-            Route::post('/update', [PemeriksaanHttController::class, 'htt_sub_pemeriksaanedit'])->name('htt_sub_pemeriksaan.update');
-            Route::post('/delete', [PemeriksaanHttController::class, 'htt_sub_pemeriksaandelete'])->name('htt_sub_pemeriksaan.destroy');
+            Route::get('/{kode}', [Pemeriksaan_Htt_Controller::class, 'htt_sub_pemeriksaan'])->name('htt_sub_pemeriksaan.get');
+            Route::post('/add', [Pemeriksaan_Htt_Controller::class, 'htt_sub_pemeriksaanadd'])->name('htt_sub_pemeriksaan.store');
+            Route::post('/update', [Pemeriksaan_Htt_Controller::class, 'htt_sub_pemeriksaanedit'])->name('htt_sub_pemeriksaan.update');
+            Route::post('/delete', [Pemeriksaan_Htt_Controller::class, 'htt_sub_pemeriksaandelete'])->name('htt_sub_pemeriksaan.destroy');
         });
 
         Route::prefix('alergi')->group(function () {
-            Route::get('/', [AlergiController::class, 'alergi'])->name('alergi.get');
-            Route::post('/add', [AlergiController::class, 'alergiadd'])->name('alergi.store');
-            Route::post('/delete', [AlergiController::class, 'alergidelete'])->name('alergi.destroy');
+            Route::get('/', [Alergi_Controller::class, 'alergi'])->name('alergi.get');
+            Route::post('/add', [Alergi_Controller::class, 'alergiadd'])->name('alergi.store');
+            Route::post('/delete', [Alergi_Controller::class, 'alergidelete'])->name('alergi.destroy');
         });
 
         Route::prefix('jenis-diet')->group(function () {
-            Route::get('/', [JenisDietController::class, 'jenis_diet'])->name('jenis_diet.get');
-            Route::post('/add', [JenisDietController::class, 'jenis_dietadd'])->name('jenis_diet.store');
-            Route::post('/update', [JenisDietController::class, 'jenis_dietedit'])->name('jenis_diet.update');
-            Route::post('/delete', [JenisDietController::class, 'jenis_dietdelete'])->name('jenis_diet.destroy');
-            Route::get('/export', [JenisDietController::class, 'jenis_dietexport'])->name('jenis_diet.export');
-            Route::post('/import', [JenisDietController::class, 'jenis_dietimport'])->name('jenis_diet.import');
+            Route::get('/', [Jenis_Diet_Controller::class, 'jenis_diet'])->name('jenis_diet.get');
+            Route::post('/add', [Jenis_Diet_Controller::class, 'jenis_dietadd'])->name('jenis_diet.store');
+            Route::post('/update', [Jenis_Diet_Controller::class, 'jenis_dietedit'])->name('jenis_diet.update');
+            Route::post('/delete', [Jenis_Diet_Controller::class, 'jenis_dietdelete'])->name('jenis_diet.destroy');
+            Route::get('/export', [Jenis_Diet_Controller::class, 'jenis_dietexport'])->name('jenis_diet.export');
+            Route::post('/import', [Jenis_Diet_Controller::class, 'jenis_dietimport'])->name('jenis_diet.import');
         });
 
         Route::prefix('nama-makanan')->group(function () {
-            Route::get('/', [NamaMakananController::class, 'nama_makanan'])->name('nama_makanan.get');
-            Route::post('/add', [NamaMakananController::class, 'nama_makananadd'])->name('nama_makanan.store');
-            Route::post('/update', [NamaMakananController::class, 'nama_makananedit'])->name('nama_makanan.update');
-            Route::post('/delete', [NamaMakananController::class, 'nama_makanandelete'])->name('nama_makanan.destroy');
-            Route::get('/export', [NamaMakananController::class, 'nama_makananexport'])->name('nama_makanan.export');
-            Route::post('/import', [NamaMakananController::class, 'nama_makananimport'])->name('nama_makanan.import');
+            Route::get('/', [Nama_Makanan_Controller::class, 'nama_makanan'])->name('nama_makanan.get');
+            Route::post('/add', [Nama_Makanan_Controller::class, 'nama_makananadd'])->name('nama_makanan.store');
+            Route::post('/update', [Nama_Makanan_Controller::class, 'nama_makananedit'])->name('nama_makanan.update');
+            Route::post('/delete', [Nama_Makanan_Controller::class, 'nama_makanandelete'])->name('nama_makanan.destroy');
+            Route::get('/export', [Nama_Makanan_Controller::class, 'nama_makananexport'])->name('nama_makanan.export');
+            Route::post('/import', [Nama_Makanan_Controller::class, 'nama_makananimport'])->name('nama_makanan.import');
         });
 
         Route::prefix('icd10')->group(function () {
-            Route::get('/', [Icd10Controller::class, 'icd10'])->name('icd10.get');
-            Route::post('/sync', [Icd10Controller::class, 'icd10singkron'])->name('icd10.singkron');
-            Route::post('/add', [Icd10Controller::class, 'icd10add'])->name('icd10.store');
-            Route::post('/update', [Icd10Controller::class, 'icd10edit'])->name('icd10.update');
-            Route::post('/delete', [Icd10Controller::class, 'icd10delete'])->name('icd10.destroy');
-            Route::get('/export', [Icd10Controller::class, 'icd10export'])->name('icd10.export');
-            Route::post('/import', [Icd10Controller::class, 'icd10import'])->name('icd10.import');
+            Route::get('/', [Icd10_Controller::class, 'icd10'])->name('icd10.get');
+            Route::post('/sync', [Icd10_Controller::class, 'icd10singkron'])->name('icd10.singkron');
+            Route::post('/add', [Icd10_Controller::class, 'icd10add'])->name('icd10.store');
+            Route::post('/update', [Icd10_Controller::class, 'icd10edit'])->name('icd10.update');
+            Route::post('/delete', [Icd10_Controller::class, 'icd10delete'])->name('icd10.destroy');
+            Route::get('/export', [Icd10_Controller::class, 'icd10export'])->name('icd10.export');
+            Route::post('/import', [Icd10_Controller::class, 'icd10import'])->name('icd10.import');
         });
 
         Route::prefix('icd9')->group(function () {
-            Route::get('/', [Icd9Controller::class, 'icd9'])->name('icd9.get');
-            Route::post('/add', [Icd9Controller::class, 'icd9add'])->name('icd9.store');
-            Route::post('/update', [Icd9Controller::class, 'icd9edit'])->name('icd9.update');
-            Route::post('/delete', [Icd9Controller::class, 'icd9delete'])->name('icd9.destroy');
-            Route::get('/export', [Icd9Controller::class, 'icd9export'])->name('icd9.export');
-            Route::post('/import', [Icd9Controller::class, 'icd9import'])->name('icd9.import');
+            Route::get('/', [Icd9_Controller::class, 'icd9'])->name('icd9.get');
+            Route::post('/add', [Icd9_Controller::class, 'icd9add'])->name('icd9.store');
+            Route::post('/update', [Icd9_Controller::class, 'icd9edit'])->name('icd9.update');
+            Route::post('/delete', [Icd9_Controller::class, 'icd9delete'])->name('icd9.destroy');
+            Route::get('/export', [Icd9_Controller::class, 'icd9export'])->name('icd9.export');
+            Route::post('/import', [Icd9_Controller::class, 'icd9import'])->name('icd9.import');
         });
 
         Route::prefix('radiologi_jenis')->group(function () {
-            Route::get('/', [RadiologiJenisController::class, 'radiologi_jenis'])->name('radiologi_jenis.get');
-            Route::post('/add', [RadiologiJenisController::class, 'radiologi_jenisadd'])->name('radiologi_jenis.store');
-            Route::post('/update', [RadiologiJenisController::class, 'radiologi_jenisedit'])->name('radiologi_jenis.update');
-            Route::post('/delete', [RadiologiJenisController::class, 'radiologi_jenisdelete'])->name('radiologi_jenis.destroy');
-            Route::get('/export', [RadiologiJenisController::class, 'radiologi_jenisexport'])->name('radiologi_jenis.export');
-            Route::post('/import', [RadiologiJenisController::class, 'radiologi_jenisimport'])->name('radiologi_jenis.import');
+            Route::get('/', [Radiologi_Jenis_Controller::class, 'radiologi_jenis'])->name('radiologi_jenis.get');
+            Route::post('/add', [Radiologi_Jenis_Controller::class, 'radiologi_jenisadd'])->name('radiologi_jenis.store');
+            Route::post('/update', [Radiologi_Jenis_Controller::class, 'radiologi_jenisedit'])->name('radiologi_jenis.update');
+            Route::post('/delete', [Radiologi_Jenis_Controller::class, 'radiologi_jenisdelete'])->name('radiologi_jenis.destroy');
+            Route::get('/export', [Radiologi_Jenis_Controller::class, 'radiologi_jenisexport'])->name('radiologi_jenis.export');
+            Route::post('/import', [Radiologi_Jenis_Controller::class, 'radiologi_jenisimport'])->name('radiologi_jenis.import');
         });
 
         Route::prefix('bidang-lab')->group(function () {
-            Route::get('/', [LaboratoriumBidangController::class, 'laboratorium_bidang'])->name('laboratorium_bidang.get');
-            Route::post('/add', [LaboratoriumBidangController::class, 'laboratorium_bidangadd'])->name('laboratorium_bidang.store');
-            Route::post('/update', [LaboratoriumBidangController::class, 'laboratorium_bidangedit'])->name('laboratorium_bidang.update');
-            Route::post('/delete', [LaboratoriumBidangController::class, 'laboratorium_bidangdelete'])->name('laboratorium_bidang.destroy');
-            Route::get('/export', [LaboratoriumBidangController::class, 'laboratorium_bidangexport'])->name('laboratorium_bidang.export');
-            Route::post('/import', [LaboratoriumBidangController::class, 'laboratorium_bidangeimport'])->name('laboratorium_bidang.import');
+            Route::get('/', [Laboratorium_Bidang_Controller::class, 'laboratorium_bidang'])->name('laboratorium_bidang.get');
+            Route::post('/add', [Laboratorium_Bidang_Controller::class, 'laboratorium_bidangadd'])->name('laboratorium_bidang.store');
+            Route::post('/update', [Laboratorium_Bidang_Controller::class, 'laboratorium_bidangedit'])->name('laboratorium_bidang.update');
+            Route::post('/delete', [Laboratorium_Bidang_Controller::class, 'laboratorium_bidangdelete'])->name('laboratorium_bidang.destroy');
+            Route::get('/export', [Laboratorium_Bidang_Controller::class, 'laboratorium_bidangexport'])->name('laboratorium_bidang.export');
+            Route::post('/import', [Laboratorium_Bidang_Controller::class, 'laboratorium_bidangeimport'])->name('laboratorium_bidang.import');
         });
 
         Route::prefix('bidang-lab-sub')->group(function () {
-            Route::get('/{kode}', [LaboratoriumBidangController::class, 'laboratorium_bidang_sub'])->name('laboratorium_bidang_sub.get');
-            Route::post('/add', [LaboratoriumBidangController::class, 'laboratorium_bidang_subadd'])->name('laboratorium_bidang_sub.store');
-            Route::post('/update', [LaboratoriumBidangController::class, 'laboratorium_bidang_subedit'])->name('laboratorium_bidang_sub.update');
-            Route::post('/delete', [LaboratoriumBidangController::class, 'laboratorium_bidang_subdelete'])->name('laboratorium_bidang_sub.destroy');
+            Route::get('/{kode}', [Laboratorium_Bidang_Controller::class, 'laboratorium_bidang_sub'])->name('laboratorium_bidang_sub.get');
+            Route::post('/add', [Laboratorium_Bidang_Controller::class, 'laboratorium_bidang_subadd'])->name('laboratorium_bidang_sub.store');
+            Route::post('/update', [Laboratorium_Bidang_Controller::class, 'laboratorium_bidang_subedit'])->name('laboratorium_bidang_sub.update');
+            Route::post('/delete', [Laboratorium_Bidang_Controller::class, 'laboratorium_bidang_subdelete'])->name('laboratorium_bidang_sub.destroy');
         });
 
         Route::prefix('radiologi_pemeriksaan')->group(function () {
-            Route::get('/', [RadiologiPemeriksaanController::class, 'radiologi_pemeriksaan'])->name('radiologi_pemeriksaan.get');
-            Route::post('/add', [RadiologiPemeriksaanController::class, 'radiologi_pemeriksaanadd'])->name('radiologi_pemeriksaan.store');
-            Route::post('/update', [RadiologiPemeriksaanController::class, 'radiologi_pemeriksaanedit'])->name('radiologi_pemeriksaan.update');
-            Route::post('/delete', [RadiologiPemeriksaanController::class, 'radiologi_pemeriksaandelete'])->name('radiologi_pemeriksaan.destroy');
-            Route::get('/export', [RadiologiPemeriksaanController::class, 'radiologi_pemeriksaanexport'])->name('radiologi_pemeriksaan.export');
-            Route::post('/import', [RadiologiPemeriksaanController::class, 'radiologi_pemeriksaaneimport'])->name('radiologi_pemeriksaan.import');
+            Route::get('/', [Radiologi_Pemeriksaan_Controller::class, 'radiologi_pemeriksaan'])->name('radiologi_pemeriksaan.get');
+            Route::post('/add', [Radiologi_Pemeriksaan_Controller::class, 'radiologi_pemeriksaanadd'])->name('radiologi_pemeriksaan.store');
+            Route::post('/update', [Radiologi_Pemeriksaan_Controller::class, 'radiologi_pemeriksaanedit'])->name('radiologi_pemeriksaan.update');
+            Route::post('/delete', [Radiologi_Pemeriksaan_Controller::class, 'radiologi_pemeriksaandelete'])->name('radiologi_pemeriksaan.destroy');
+            Route::get('/export', [Radiologi_Pemeriksaan_Controller::class, 'radiologi_pemeriksaanexport'])->name('radiologi_pemeriksaan.export');
+            Route::post('/import', [Radiologi_Pemeriksaan_Controller::class, 'radiologi_pemeriksaaneimport'])->name('radiologi_pemeriksaan.import');
         });
+    });
+
+    Route::prefix('gudang')->group(function () {
+        // Menu Jenis Satuan
+        Route::get('/satuan', [Satuan_Controller::class, 'satuan'])->name('satuan.get');
+        Route::post('/satuan/add', [Satuan_Controller::class, 'satuanadd'])->name('satuan.store');
+        Route::post('/satuan/update', [Satuan_Controller::class, 'satuanedit'])->name('satuan.update');
+        Route::post('/satuan/delete', [Satuan_Controller::class, 'satuandelete'])->name('satuan.destroy');
+        Route::get('/satuan/export', [Satuan_Controller::class, 'satuanexport'])->name('satuan.export');
+        Route::post('/satuan/import', [Satuan_Controller::class, 'satuanimport'])->name('satuan.import');
+
+        // Menu Jenis Kategori
+        Route::get('/kategori', [Kategori_Controller::class, 'kategori'])->name('kategori.get');
+        Route::post('/kategori/add', [Kategori_Controller::class, 'kategoriadd'])->name('kategori.store');
+        Route::post('/kategori/update', [Kategori_Controller::class, 'kategoriedit'])->name('kategori.update');
+        Route::post('/kategori/delete', [Kategori_Controller::class, 'kategoridelete'])->name('kategori.destroy');
+        Route::get('/kategori/export', [Kategori_Controller::class, 'kategoriexport'])->name('kategori.export');
+        Route::post('/kategori/import', [Kategori_Controller::class, 'kategoriimport'])->name('kategori.import');
+
+        // Menu Supplier
+        Route::get('/supplier-industri', [Supplier_Controller::class, 'supplier'])->name('supplier.get');
+        Route::post('/supplier-industri/add', [Supplier_Controller::class, 'supplieradd'])->name('supplier.store');
+        Route::post('/supplier-industri/update', [Supplier_Controller::class, 'supplieredit'])->name('supplier.update');
+        Route::post('/supplier-industri/delete', [Supplier_Controller::class, 'supplierdelete'])->name('supplier.destroy');
+        Route::get('/supplier-industri/export', [Supplier_Controller::class, 'supplierexport'])->name('supplier.export');
+        Route::post('/supplier-industri/import', [Supplier_Controller::class, 'supplierimport'])->name('supplier.import');
+
+        // Menu Setting Harga
+        Route::get('/setting-harga-jual', [Set_Harga_Controller::class, 'setharga'])->name('setharga.get');
+        Route::get('/setting-harga-jual-utama', [Set_Harga_Controller::class, 'setharga_utama'])->name('setharga_utama.get');
+        Route::post('/setting-harga-jual/add', [Set_Harga_Controller::class, 'sethargaadd'])->name('setharga.store');
+        Route::post('/setting-harga-jual-utama/add', [Set_Harga_Controller::class, 'sethargaadd_utama'])->name('setharga_utama.store');
+        Route::get('/setting-harga-jual/singkron/{id}', [Set_Harga_Controller::class, 'sethargasingkron'])->name('setharga.singkron');
+        Route::get('/setting-harga-jual-klinik/singkron', [Set_Harga_Controller::class, 'sethargasingkronklinik'])->name('setharga_klinik.singkron');
+        Route::get('/harga-barang-jual', [Harga_Jual_Controller::class, 'hargajual'])->name('hargajual.get');
+        Route::get('/harga-barang-jual-utama', [Harga_Jual_Controller::class, 'hargajualutama'])->name('hargajualutama.get');
+        Route::get('/stok-obat-alkes', [Stok_Barang_Controller::class, 'stokobatalkes'])->name('stokobatalkes.get');
+        Route::get('/stok-obat-alkes-utama', [Stok_Barang_Controller::class, 'stokobatalkes_utama'])->name('stokobatalkes_utama.get');
+
+        Route::get('/stok-penyesuaian-opname', [Stok_Barang_Controller::class, 'stok_penyesuaian'])->name('stok_penyesuaian.get');
+        Route::get('/stok-penyesuaian-opname-utama', [Stok_Barang_Controller::class, 'stok_penyesuaian_utama'])->name('stok_penyesuaian_utama.get');
+        Route::post('/stok-penyesuaian-opname/add', [Stok_Barang_Controller::class, 'stok_penyesuaianadd'])->name('stok_penyesuaian.store');
+        Route::post('/stok-penyesuaian-opname-utama/add', [Stok_Barang_Controller::class, 'stok_penyesuaianadd_utama'])->name('stok_penyesuaian_utama.store');
+
+        // Menu Satuan Inventaris
+        Route::get('/satuan-inventaris', [Satuan_Inventaris_Controller::class, 'satuan_inventaris'])->name('satuan_inventaris.get');
+        Route::post('/satuan-inventaris/add', [Satuan_Inventaris_Controller::class, 'satuan_inventarisadd'])->name('satuan_inventaris.store');
+        Route::post('/satuan-inventaris/update', [Satuan_Inventaris_Controller::class, 'satuan_inventarisedit'])->name('satuan_inventaris.update');
+        Route::post('/satuan-inventaris/delete', [Satuan_Inventaris_Controller::class, 'satuan_inventarisdelete'])->name('satuan_inventaris.destroy');
+        Route::get('/satuan-inventaris/export', [Satuan_Inventaris_Controller::class, 'satuan_inventarisexport'])->name('satuan_inventaris.export');
+        Route::post('/satuan-inventaris/import', [Satuan_Inventaris_Controller::class, 'satuan_inventarisimport'])->name('satuan_inventaris.import');
+
+        // Menu Kategori Inventaris
+        Route::get('/kategori-inventaris', [Kategori_Inventaris_Controller::class, 'katin'])->name('katin.get');
+        Route::post('/kategori-inventaris/add', [Kategori_Inventaris_Controller::class, 'katinadd'])->name('katin.store');
+        Route::post('/kategori-inventaris/update', [Kategori_Inventaris_Controller::class, 'katinedit'])->name('katin.update');
+        Route::post('/kategori-inventaris/delete', [Kategori_Inventaris_Controller::class, 'katindelete'])->name('katin.destroy');
+        Route::get('/kategori-inventaris/export', [Kategori_Inventaris_Controller::class, 'katinexport'])->name('katin.export');
+        Route::post('/kategori-inventaris/import', [Kategori_Inventaris_Controller::class, 'katinimport'])->name('katin.import');
+
+        // Menu Stok Inventaris
+        Route::get('/stok-inventaris', [Stok_Inventaris_Controller::class, 'stokin'])->name('stokin.get');
+        Route::get('/stok-inventaris/data/{id}', [StokInventaris_Controller::class, 'stokin_data'])->name('stokin_data.get');
+        Route::post('/stok-inventaris/data/update', [StokInventaris_Controller::class, 'stokin_dataedit'])->name('stokin_data.update');
+        Route::post('/stok-inventaris/data/delete', [StokInventaris_Controller::class, 'stokin_datadelete'])->name('stokin_data.destroy');
+
+        // Menu Stok Inventaris Utama
+        Route::get('/stok-inventaris-utama', [Stok_Inventaris_Utama_Controller::class, 'stokin_utama'])->name('stokin_utama.get');
+        Route::get('/stok-inventaris-utama/data/{id}', [Stok_Inventaris_Utama_Controller::class, 'stokin_data_utama'])->name('stokin_data_utama.get');
+        Route::post('/stok-inventaris-utama/data/update', [Stok_Inventaris_Utama_Controller::class, 'stokin_dataedit_utama'])->name('stokin_data_utama.update');
+        Route::post('/stok-inventaris-utama/data/delete', [Stok_Inventaris_Utama_Controller::class, 'stokin_datadelete_utama'])->name('stokin_data_utama.destroy');
+
+
+        // Menu Request Obat Klinik Omega
+        Route::get('/inventaris-request', [Inventaris_Request_Controller::class, 'inventarisrequest'])->name('inventarisrequest.get');
+        Route::post('/inventaris-request/add', [Inventaris_Request_Controller::class, 'inventarisrequestadd'])->name('inventarisrequest.store');
+
+        // Menu Utama Klinik Omega
+        Route::get('/inventaris-utama', [Inventaris_Utama_Controller::class, 'inventarisutama'])->name('inventarisutama.get');
+        Route::post('/inventaris-utama/konfirmasi', [Inventaris_Utama_Controller::class, 'inventarisutamakonfirmasi'])->name('inventarisutama.konfirmasi');
+
+        // Menu Request Obat Klinik Omega
+        Route::get('/gudang-request', [Gudang_Request_Controller::class, 'gudangrequest'])->name('gudangrequest.get');
+        Route::post('/gudang-request/add', [Gudang_Request_Controller::class, 'gudangrequestadd'])->name('gudangrequest.store');
+
+        // Menu Utama Klinik Omega
+        Route::get('/gudang-utama', [Gudang_Utama_Controller::class, 'gudangutama'])->name('gudangutama.get');
+        Route::post('/gudang-utama/konfirmasi', [Gudang_Utama_Controller::class, 'gudangutamakonfirmasi'])->name('gudangutama.konfirmasi');
+
+        Route::get('/kartu-stok', [Stok_Barang_Controller::class, 'kartu_stok'])->name('kartu_stok.get');
+        Route::get('/kartu-stok-utama', [Stok_Barang_Utama_Controller::class, 'kartu_stok_utama'])->name('kartu_stok_utama.get');
     });
 
     Route::prefix('manajemen')->group(function () {

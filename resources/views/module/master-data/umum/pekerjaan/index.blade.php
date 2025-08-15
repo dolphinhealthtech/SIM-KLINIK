@@ -91,7 +91,6 @@
 	@include('module.master-data.umum.pekerjaan.components.modal-delete')
 	@include('module.master-data.umum.pekerjaan.components.modal-import')
 	@include('module.master-data.umum.pekerjaan.components.javascript')
-
 @endsection
 
 

@@ -100,10 +100,10 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.perawatan-tindakan.components.modal-add')
-    @include('module.master-data-medis.perawatan-tindakan.components.modal-edit')
-    @include('module.master-data-medis.perawatan-tindakan.components.modal-delete')
-    @include('module.master-data-medis.perawatan-tindakan.components.modal-import')
-    @include('module.master-data-medis.perawatan-tindakan.components.javascript')
+    @include('module.master-data.medis.perawatan-tindakan.components.modal-add')
+    @include('module.master-data.medis.perawatan-tindakan.components.modal-edit')
+    @include('module.master-data.medis.perawatan-tindakan.components.modal-delete')
+    @include('module.master-data.medis.perawatan-tindakan.components.modal-import')
+    @include('module.master-data.medis.perawatan-tindakan.components.javascript')
 
 @endsection

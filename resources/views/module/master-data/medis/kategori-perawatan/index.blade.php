@@ -86,10 +86,10 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.kategori-perawatan.components.modal-add')
-    @include('module.master-data-medis.kategori-perawatan.components.modal-edit')
-    @include('module.master-data-medis.kategori-perawatan.components.modal-delete')
-    @include('module.master-data-medis.kategori-perawatan.components.modal-import')
-    @include('module.master-data-medis.kategori-perawatan.components.javascript')
+    @include('module.master-data.medis.kategori-perawatan.components.modal-add')
+    @include('module.master-data.medis.kategori-perawatan.components.modal-edit')
+    @include('module.master-data.medis.kategori-perawatan.components.modal-delete')
+    @include('module.master-data.medis.kategori-perawatan.components.modal-import')
+    @include('module.master-data.medis.kategori-perawatan.components.javascript')
 
 @endsection

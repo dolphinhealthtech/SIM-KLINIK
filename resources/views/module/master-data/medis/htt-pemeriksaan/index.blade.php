@@ -89,14 +89,14 @@
 </div>
 
     <!-- Modal untuk Tambah Pemeriksaan -->
-    @include('module.master-data-medis.htt-pemeriksaan.components.modal-add')
+    @include('module.master-data.medis.htt-pemeriksaan.components.modal-add')
     <!-- Modal untuk Edit Pemeriksaan -->
-    @include('module.master-data-medis.htt-pemeriksaan.components.modal-edit')
+    @include('module.master-data.medis.htt-pemeriksaan.components.modal-edit')
     <!-- Modal untuk Hapus Pemeriksaan -->
-    @include('module.master-data-medis.htt-pemeriksaan.components.modal-delete')
+    @include('module.master-data.medis.htt-pemeriksaan.components.modal-delete')
     <!-- Modal untuk Import Pemeriksaan -->
-    @include('module.master-data-medis.htt-pemeriksaan.components.modal-import')
+    @include('module.master-data.medis.htt-pemeriksaan.components.modal-import')
     <!-- Script -->
-    @include('module.master-data-medis.htt-pemeriksaan.components.javascript')
+    @include('module.master-data.medis.htt-pemeriksaan.components.javascript')
 
 @endsection

@@ -82,9 +82,9 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.spesialis.components.modal-add')
-    @include('module.master-data-medis.spesialis.components.modal-delete')
-    @include('module.master-data-medis.spesialis.components.modal-import')
-    @include('module.master-data-medis.spesialis.components.javascript')
+    @include('module.master-data.medis.spesialis.components.modal-add')
+    @include('module.master-data.medis.spesialis.components.modal-delete')
+    @include('module.master-data.medis.spesialis.components.modal-import')
+    @include('module.master-data.medis.spesialis.components.javascript')
 
 @endsection

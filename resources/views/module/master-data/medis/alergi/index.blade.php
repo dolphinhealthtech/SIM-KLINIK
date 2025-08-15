@@ -81,11 +81,11 @@
 </div>
 
     <!-- Modal Tambah Alergi -->
-    @include('module.master-data-medis.alergi.components.modal-add')
+    @include('module.master-data.medis.alergi.components.modal-add')
 
     <!-- Modal Hapus Alergi -->
-    @include('module.master-data-medis.alergi.components.modal-delete')
+    @include('module.master-data.medis.alergi.components.modal-delete')
 
     <!-- Script -->
-    @include('module.master-data-medis.alergi.components.javascript')
+    @include('module.master-data.medis.alergi.components.javascript')
 @endsection

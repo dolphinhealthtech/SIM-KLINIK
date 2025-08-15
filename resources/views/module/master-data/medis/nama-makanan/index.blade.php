@@ -86,10 +86,10 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.nama-makanan.components.modal-add')
-    @include('module.master-data-medis.nama-makanan.components.modal-edit')
-    @include('module.master-data-medis.nama-makanan.components.modal-delete')
-    @include('module.master-data-medis.nama-makanan.components.modal-import')
-    @include('module.master-data-medis.nama-makanan.components.javascript')
+    @include('module.master-data.medis.nama-makanan.components.modal-add')
+    @include('module.master-data.medis.nama-makanan.components.modal-edit')
+    @include('module.master-data.medis.nama-makanan.components.modal-delete')
+    @include('module.master-data.medis.nama-makanan.components.modal-import')
+    @include('module.master-data.medis.nama-makanan.components.javascript')
 
 @endsection

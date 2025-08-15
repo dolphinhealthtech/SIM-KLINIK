@@ -17,7 +17,7 @@ class Pernikahan_Controller extends Controller
     {
         $title = "Master Pernikahan";
         $pernikahan = pernikahan::all();
-        return view('module.master-data.pernikahan', compact('title','pernikahan'));
+        return view('module.master-data.umum.pernikahan.index', compact('title','pernikahan'));
     }
 
     public function pernikahanadd(Request $request)

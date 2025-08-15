@@ -94,5 +94,5 @@
     @include('module.master-data.umum.pendidikan.components.modal-edit')
     @include('module.master-data.umum.pendidikan.components.modal-delete')
     @include('module.master-data.umum.pendidikan.components.modal-import')
-    @include('module.master-data.umum.pendidikan.components.modal-javascript')
+    @include('module.master-data.umum.pendidikan.components.javascript')
 @endsection

@@ -86,10 +86,10 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.radiologi-jenis.components.modal-add')
-    @include('module.master-data-medis.radiologi-jenis.components.modal-delete')
-    @include('module.master-data-medis.radiologi-jenis.components.modal-edit')
-    @include('module.master-data-medis.radiologi-jenis.components.modal-import')
-    @include('module.master-data-medis.radiologi-jenis.components.javascript')
+    @include('module.master-data.medis.radiologi-jenis.components.modal-add')
+    @include('module.master-data.medis.radiologi-jenis.components.modal-delete')
+    @include('module.master-data.medis.radiologi-jenis.components.modal-edit')
+    @include('module.master-data.medis.radiologi-jenis.components.modal-import')
+    @include('module.master-data.medis.radiologi-jenis.components.javascript')
 
 @endsection

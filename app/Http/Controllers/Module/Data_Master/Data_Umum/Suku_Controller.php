@@ -16,7 +16,7 @@ class Suku_Controller extends Controller
     {
         $title = "Master Suku";
         $suku = suku::all();
-        return view('module.master-data.suku', compact('title', 'suku'));
+        return view('module.master-data.umum.suku.index', compact('title', 'suku'));
     }
 
     public function sukuadd(Request $request)

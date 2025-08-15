@@ -17,7 +17,7 @@ class Penjamin_Controller extends Controller
     {
          $title = "Master Penjamin";
          $penjamin = penjamin::all();
-         return view('module.master-data.penjamin', compact('title','penjamin'));
+         return view('module.master-data.umum.penjamin.index', compact('title','penjamin'));
     }
 
     public function penjaminadd(Request $request)

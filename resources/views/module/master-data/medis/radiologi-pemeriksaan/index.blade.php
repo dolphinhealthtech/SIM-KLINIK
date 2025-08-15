@@ -86,10 +86,10 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.radiologi-pemeriksaan.components.modal-add')
-    @include('module.master-data-medis.radiologi-pemeriksaan.components.modal-delete')
-    @include('module.master-data-medis.radiologi-pemeriksaan.components.modal-edit')
-    @include('module.master-data-medis.radiologi-pemeriksaan.components.modal-import')
-    @include('module.master-data-medis.radiologi-pemeriksaan.components.javascript')
+    @include('module.master-data.medis.radiologi-pemeriksaan.components.modal-add')
+    @include('module.master-data.medis.radiologi-pemeriksaan.components.modal-delete')
+    @include('module.master-data.medis.radiologi-pemeriksaan.components.modal-edit')
+    @include('module.master-data.medis.radiologi-pemeriksaan.components.modal-import')
+    @include('module.master-data.medis.radiologi-pemeriksaan.components.javascript')
 
 @endsection

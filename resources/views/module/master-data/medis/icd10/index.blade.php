@@ -95,15 +95,15 @@
     <!-- /.content -->
 </div>
     <!-- Modal untuk Tambah ICD 10 -->
-    @include('module.master-data-medis.icd10.components.modal-add')
+    @include('module.master-data.medis.icd10.components.modal-add')
     <!-- Modal untuk Edit ICD 10 -->
-    @include('module.master-data-medis.icd10.components.modal-edit')
+    @include('module.master-data.medis.icd10.components.modal-edit')
     <!-- Modal untuk Hapus ICD 10 -->
-    @include('module.master-data-medis.icd10.components.modal-delete')
+    @include('module.master-data.medis.icd10.components.modal-delete')
     <!-- Modal untuk Import ICD 10 -->
-    @include('module.master-data-medis.icd10.components.modal-import')
+    @include('module.master-data.medis.icd10.components.modal-import')
     <!-- Modal untuk Add Alergi ICD 10 -->
-    @include('module.master-data-medis.icd10.components.modal-add-alergi')
+    @include('module.master-data.medis.icd10.components.modal-add-alergi')
     <!-- Modal untuk Add Alergi ICD 10 -->
-    @include('module.master-data-medis.icd10.components.javascript')
+    @include('module.master-data.medis.icd10.components.javascript')
 @endsection

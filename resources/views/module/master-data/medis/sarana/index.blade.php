@@ -81,9 +81,9 @@
     <!-- /.content -->
 </div>
 
-    @include('module.master-data-medis.sarana.components.modal-add')
-    @include('module.master-data-medis.sarana.components.modal-delete')
-    @include('module.master-data-medis.sarana.components.modal-import')
-    @include('module.master-data-medis.sarana.components.javascript')
+    @include('module.master-data.medis.sarana.components.modal-add')
+    @include('module.master-data.medis.sarana.components.modal-delete')
+    @include('module.master-data.medis.sarana.components.modal-import')
+    @include('module.master-data.medis.sarana.components.javascript')
 
 @endsection
