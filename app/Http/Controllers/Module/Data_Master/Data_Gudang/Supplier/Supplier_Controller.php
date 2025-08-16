@@ -128,14 +128,4 @@ class Supplier_Controller extends Controller
         return redirect()->route('supplier.get')->with('success', 'Data berhasil diimpor!');
     }
 
-        // API Get Kode Supplier Industri
-
-        public function getLastKode()
-        {
-            $last = gudang_supplier_industri::orderBy('id', 'desc')->first();
-
-            return response()->json([
-                'kode' => $last ? $last->kode : null
-            ]);
-        }
 }

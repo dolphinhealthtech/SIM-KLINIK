@@ -18,8 +18,6 @@ use Illuminate\Http\Request;
 
 class Set_Harga_Utama_Controller extends Controller
 {
-
-
     public function setharga_utama()
     {
         $title = "Master Setting Harga Jual Utama";

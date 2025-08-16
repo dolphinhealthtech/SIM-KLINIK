@@ -31,7 +31,14 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Brijing_Intergrasi\Pcare_Controller;
 use App\Http\Controllers\Brijing_Intergrasi\Satusehat_Controller;
-
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Request\Gudang_Request_Api_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Stok_Barang\Stok_Barang_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Stok_Barang\Stok_Barang_Utama_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Supplier\Supplier_Api_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Utama\Gudang_Utama_Api_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Inventaris\Request\Inventaris_Request_Api_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Inventaris\Utama\Inventaris_Utama_Api_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Medis\Perawatan_Tindakan\Perawatan_Tindakan_Api_Controller;
 use App\Http\Controllers\Module\Pasien\Pasien_Api_Controller;
 use App\Http\Controllers\Module\Pelayanan\Pelayanan_Api_Controller;
 use App\Http\Controllers\Module\Pendaftaran\Pendaftaran_Api_Controller;
@@ -74,7 +81,8 @@ Route::get('/dokter/data/so/icd/{norawat}', [Pelayanan_Api_Controller::class, 's
 Route::get('/dokter/data/so/diet/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayanandatadiet'])->name('pelayana_dokter_data_diet.get');
 Route::get('/dokter/data/so/obat/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayanandataobat'])->name('pelayana_dokter_data_obat.get');
 Route::get('/dokter/data/so/tindakan/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayanandatatindakan'])->name('pelayana_dokter_data_tindakan.get');
-
+Route::get('/get-subspesialis/{kode}', [Pelayanan_Api_Controller::class, 'getSubSpesialis']);
+Route::get('/rujukan/cetak/{no_rawat}', [Pelayanan_Api_Controller::class, 'cetakSuratRujukan'])->name('rujukan.cetak');
 
 
 
@@ -93,7 +101,7 @@ Route::get('/sub-pemeriksaan/{id}', [PelayananController::class, 'getSubPemeriks
 
 
 
-Route::get('/get-subspesialis/{kode}', [RujukanController::class, 'getSubSpesialis']);
+
 
 Route::get('/get-pemeriksaan-laboratorium/{id}', [PelayananController::class, 'getSubBidangLab']);
 
@@ -142,40 +150,40 @@ Route::prefix('pcare')->group(function () {
 
 // Data Master Medis
 Route::prefix('data-master-medis')->group(function () {
-    Route::get('/perawatan_tindakan/getLastKode', [PerawatanTindakanController::class, 'getLastKode'])->name('perawatan_tindakan.getLastKode'); // di privat fungsi nya
+    Route::get('/perawatan_tindakan/getLastKode', [Perawatan_Tindakan_Api_Controller::class, 'getLastKode'])->name('perawatan_tindakan.getLastKode'); // di privat fungsi nya
 });
 
 // Data Master Gudang
 Route::prefix('data-master-gudang')->group(function () {
-    Route::get('/supplier-industri/getLastKode', [SupplierController::class, 'getLastKode'])->name('supplier_industri.getLastKode');
+    Route::get('/supplier-industri/getLastKode', [Supplier_Api_Controller::class, 'getLastKode'])->name('supplier_industri.getLastKode');
 
-    Route::get('/request/inventaris/getLastKode', [InventarisRequestController::class, 'inventaris_request_getLastKode'])->name('inventaris.request_getLastKode');
-    Route::get('/request/inventaris/getDetails/{kode_request}', [InventarisRequestController::class, 'inventaris_getDetails'])->name('inventaris.request_getDetails');
-    Route::get('/request/inventaris/detailsAprroval/{kode_request}', [InventarisRequestController::class, 'inventaris_detailsAprroval'])->name('inventaris.request_detailsAprroval');
-    Route::post('/request/inventaris/terimaData/{id}', [InventarisRequestController::class, 'inventaris_terimaData'])->name('inventaris.request_terimaData');
-    Route::post('/request/inventaris/tolakData/{id}', [InventarisRequestController::class, 'inventaris_tolakData'])->name('inventaris.request_tolakData');
+    Route::get('/request/inventaris/getLastKode', [Inventaris_Request_Api_Controller::class, 'inventaris_request_getLastKode'])->name('inventaris.request_getLastKode');
+    Route::get('/request/inventaris/getDetails/{kode_request}', [Inventaris_Request_Api_Controller::class, 'inventaris_getDetails'])->name('inventaris.request_getDetails');
+    Route::get('/request/inventaris/detailsAprroval/{kode_request}', [Inventaris_Request_Api_Controller::class, 'inventaris_detailsAprroval'])->name('inventaris.request_detailsAprroval');
+    Route::post('/request/inventaris/terimaData/{id}', [Inventaris_Request_Api_Controller::class, 'inventaris_terimaData'])->name('inventaris.request_terimaData');
+    Route::post('/request/inventaris/tolakData/{id}', [Inventaris_Request_Api_Controller::class, 'inventaris_tolakData'])->name('inventaris.request_tolakData');
 
-    Route::get('/utama/inventaris/getData/{kode_barang}', [InventarisUtamaController::class, 'inventaris_getData'])->name('utama.getData');
-    Route::get('/utama/inventaris/getDetails/{kode_request}', [InventarisUtamaController::class, 'inventarisGetDetails'])->name('inventaris.utama_getDetails');
-    Route::post('/utama/inventaris/proses-permintaan', [InventarisUtamaController::class, 'inventaris_prosesPermintaan'])->name('inventaris.utama_prosesPermintaan');
-    Route::get('/pdf/inventaris/{kodeRequest}', [InventarisUtamaController::class, 'inventaris_generatePdf'])->name('inventaris.utama_pdf');
+    Route::get('/utama/inventaris/getData/{kode_barang}', [Inventaris_Utama_Api_Controller::class, 'inventaris_getData'])->name('utama.getData');
+    Route::get('/utama/inventaris/getDetails/{kode_request}', [Inventaris_Utama_Api_Controller::class, 'inventarisGetDetails'])->name('inventaris.utama_getDetails');
+    Route::post('/utama/inventaris/proses-permintaan', [Inventaris_Utama_Api_Controller::class, 'inventaris_prosesPermintaan'])->name('inventaris.utama_prosesPermintaan');
+    Route::get('/pdf/inventaris/{kodeRequest}', [Inventaris_Utama_Api_Controller::class, 'inventaris_generatePdf'])->name('inventaris.utama_pdf');
 
-    Route::get('/request/getLastKode', [GudangRequestController::class, 'request_getLastKode'])->name('request.getLastKode');
-    Route::get('/request/getDetails/{kode_request}', [GudangRequestController::class, 'getDetails'])->name('request.getDetails');
-    Route::get('/request/detailsAprroval/{kode_request}', [GudangRequestController::class, 'detailsAprroval'])->name('request.detailsAprroval');
-    Route::post('/request/terimaData/{id}', [GudangRequestController::class, 'terimaData'])->name('request.terimaData');
-    Route::post('/request/tolakData/{id}', [GudangRequestController::class, 'tolakData'])->name('request.tolakData');
+    Route::get('/request/getLastKode', [Gudang_Request_Api_Controller::class, 'request_getLastKode'])->name('request.getLastKode');
+    Route::get('/request/getDetails/{kode_request}', [Gudang_Request_Api_Controller::class, 'getDetails'])->name('request.getDetails');
+    Route::get('/request/detailsAprroval/{kode_request}', [Gudang_Request_Api_Controller::class, 'detailsAprroval'])->name('request.detailsAprroval');
+    Route::post('/request/terimaData/{id}', [Gudang_Request_Api_Controller::class, 'terimaData'])->name('request.terimaData');
+    Route::post('/request/tolakData/{id}', [Gudang_Request_Api_Controller::class, 'tolakData'])->name('request.tolakData');
 
-    Route::get('/utama/getHargaDasar/{kode_obat}', [GudangUtamaController::class, 'getHargaDasar'])->name('utama.getHargaDasar');
-    Route::get('/utama/getDetails/{kode_request}', [GudangUtamaController::class, 'utamaGetDetails'])->name('utama.getDetails');
-    Route::post('/utama/proses-permintaan', [GudangUtamaController::class, 'prosesPermintaan'])->name('utama.prosesPermintaan');
-    Route::get('/pdf/{kodeRequest}', [GudangUtamaController::class, 'generatePdf'])->name('utama.pdf');
+    Route::get('/utama/getHargaDasar/{kode_obat}', [Gudang_Utama_Api_Controller::class, 'getHargaDasar'])->name('utama.getHargaDasar');
+    Route::get('/utama/getDetails/{kode_request}', [Gudang_Utama_Api_Controller::class, 'utamaGetDetails'])->name('utama.getDetails');
+    Route::post('/utama/proses-permintaan', [Gudang_Utama_Api_Controller::class, 'prosesPermintaan'])->name('utama.prosesPermintaan');
+    Route::get('/pdf/{kodeRequest}', [Gudang_Utama_Api_Controller::class, 'generatePdf'])->name('utama.pdf');
 
 
-    Route::get('/kartu-stok-masuk', [StokBarangController::class, 'getKartuStokMasuk'])->name('getKartuStokMasuk');
-    Route::get('/kartu-stok-masuk-utama', [StokBarangController::class, 'getKartuStokMasukUtama'])->name('getKartuStokMasukUtama');
-    Route::get('/kartu-stok-keluar', [StokBarangController::class, 'getKartuStokKeluar'])->name('getKartuStokKeluar');
-    Route::get('/kartu-stok-keluar-utama', [StokBarangController::class, 'getKartuStokKeluarUtama'])->name('getKartuStokKeluarUtama');
+    Route::get('/kartu-stok-masuk', [Stok_Barang_Controller::class, 'getKartuStokMasuk'])->name('getKartuStokMasuk');
+    Route::get('/kartu-stok-masuk-utama', [Stok_Barang_Utama_Controller::class, 'getKartuStokMasukUtama'])->name('getKartuStokMasukUtama');
+    Route::get('/kartu-stok-keluar', [Stok_Barang_Controller::class, 'getKartuStokKeluar'])->name('getKartuStokKeluar');
+    Route::get('/kartu-stok-keluar-utama', [Stok_Barang_Utama_Controller::class, 'getKartuStokKeluarUtama'])->name('getKartuStokKeluarUtama');
 });
 
 

@@ -37,21 +37,21 @@ class Logs_app_Middleware
 
             try {
                 Logs_app::create([
-                    'user_id'    => $user->id ?? null,
-                    'username'   => $user->username ?? "System",
-                    'activity'   => $request->path(),
-                    'ip_address' => $request->ip(),
-                    'browser'    => $agent->browser(),
-                    'os'         => $agent->platform(),
-                    'device'     => $agent->device() ?: 'Desktop',
-                    'is_api'     => str_starts_with($request->path(), 'api/') ? 'Yes' : 'No',
-                    'method'     => $request->method(),
-                    'time'       => now()->format('H:i:s'),
-                    'response_status' => $response->getStatusCode(),
-                    'payload'    => json_encode($request->except(['password', '_token'])),
-                    'response_status' => $response->getStatusCode() ?? null,
+                    'user_id'        => $user->id ?? null,
+                    'username'       => $user->username ?? "System",
+                    'activity'       => $request->path(),
+                    'ip_address'     => $request->ip(),
+                    'browser'        => $agent->browser(),
+                    'os'             => $agent->platform(),
+                    'device'         => $agent->device() ?: 'Desktop',
+                    'is_api'         => str_starts_with($request->path(), 'api/') ? 'Yes' : 'No',
+                    'method'         => $request->method(),
+                    'time'           => now()->format('H:i:s'),
+                    'response_status'=> $response->getStatusCode() ?? null,
+                    'response_body'  => method_exists($response, 'getContent') ? $response->getContent() : null,
+                    'payload'        => json_encode($request->except(['password', '_token'])),
                     'execution_ms'   => round($executionTime * 1000, 2),
-                    'created_at' => now(),
+                    'created_at'     => now(),
                 ]);
             } catch (\Throwable $e) {
                 // Log error kalau gagal menyimpan log

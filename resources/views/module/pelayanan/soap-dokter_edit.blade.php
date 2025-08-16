@@ -442,7 +442,7 @@
                                                         <div class="row">
                                                             <div class="col-md-3">
                                                                 <label>Jenis Diet</label>
-                                                                <select id="jenisDiet" class="form-control">
+                                                                <select id="jenisDiet" class="form-control select2bs4">
                                                                     <option value="">-- Pilih Jenis Diet --</option>
                                                                     @foreach ($jenis_diete as $jenis_dietedata)
                                                                         <option value="{{ $jenis_dietedata->nama }}">{{ $jenis_dietedata->nama }}</option>
@@ -452,7 +452,7 @@
 
                                                             <div class="col-md-4">
                                                                 <label>Makanan Dianjurkan</label>
-                                                                <select id="makananAnjuran" class="form-control">
+                                                                <select id="makananAnjuran" class="form-control select2bs4">
                                                                     <option value="">-- Pilih Makanan Dianjurkan --</option>
                                                                     @foreach ($jenis_makanan_diet as $jenis_makanan_dietdata)
                                                                         <option value="{{ $jenis_makanan_dietdata->nama }}">{{ $jenis_makanan_dietdata->nama }}</option>
@@ -462,7 +462,7 @@
 
                                                             <div class="col-md-4">
                                                                 <label>Makanan Tidak Boleh</label>
-                                                                <select id="makananPantangan" class="form-control">
+                                                                <select id="makananPantangan" class="form-control select2bs4">
                                                                     <option value="">-- Pilih Makanan Tidak Boleh --</option>
                                                                     @foreach ($jenis_makanan_diet as $jenis_makanan_dietdata)
                                                                         <option value="{{ $jenis_makanan_dietdata->nama }}">{{ $jenis_makanan_dietdata->nama }}</option>
@@ -498,7 +498,7 @@
                                                     <div class="tab-pane fade" id="custom-tabs-four-tindakan" role="tabpanel" aria-labelledby="custom-tabs-four-tindakan-tab">
                                                         <div class="form-row align-items-center mb-3" id="form-tindakan">
                                                             <div class="col-md-3 mb-2">
-                                                                <select class="form-control" id="jenis-tindakan">
+                                                                <select class="form-control select2bs4" id="jenis-tindakan">
                                                                     <option value="">Jenis Tindakan</option>
                                                                     @foreach($kategori as $kat)
                                                                         <option value="{{ $kat->id }}">{{ $kat->nama }}</option>
@@ -506,12 +506,12 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3 mb-2">
-                                                                <select class="form-control" id="tindakan">
+                                                                <select class="form-control select2bs4" id="tindakan">
                                                                     <option value="">Tindakan</option>
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3 mb-2">
-                                                                <select class="form-control" id="pelaksana">
+                                                                <select class="form-control select2bs4" id="pelaksana">
                                                                     <option value="">Pelaksana</option>
 
                                                                         <option value="dokter">Dokter</option>
@@ -563,7 +563,7 @@
                                                             <div class="form-row align-items-end mb-3">
                                                                 <div class="col-md-4">
                                                                     <label for="nama-obat">Nama Obat</label>
-                                                                    <select class="form-control" id="nama-obat">
+                                                                    <select class="form-control select2bs4" id="nama-obat">
                                                                     <option value="">-- Pilih Obat --</option>
                                                                     @foreach ($obat as $obatdata)
                                                                         <option value="{{ $obatdata->nama_barang }}" data-satuan="{{ $obatdata->satuan_kecil }}">{{ $obatdata->nama_barang }}</option>
@@ -619,7 +619,7 @@
 
                                                                 <div class="col-md-3">
                                                                     <div style="visibility: hidden;"><label for="signa-satuan1">Signa Satuan 1</label></div>
-                                                                    <select class="form-control" id="dosis3">
+                                                                    <select class="form-control select2bs4" id="dosis3">
                                                                         @foreach ($satuan as $satuandata)
                                                                             <option value="{{ $satuandata->nama }}">{{ $satuandata->nama }}</option>
                                                                         @endforeach
@@ -2093,14 +2093,14 @@
             $.get(urlTindakan)
                 .done(function(response) {
                     tindakanList = (response || []).map(function(item) {
-                        const pelaksanaStrings = (item.jenis_pelaksana || '-').split(',').map(p => p.trim());
+                        const pelaksanaStrings = (item.jenis_pelaksana).split(',').map(p => p.trim());
                         const hargaParsed = parseHarga(item.harga);
                         const pelaksana = pelaksanaStrings.map(pel => ({
                             pelaksana: pel,
                             harga: hargaParsed
                         }));
                         return {
-                            nama: item.Jenis_tindakan || item.nama || '-',
+                            nama: item.Jenis_tindakan,
                             pelaksana: pelaksana,
                             _id: 'tindakan_' + (item.id || Math.random().toString(36).substr(2, 9))
                         };

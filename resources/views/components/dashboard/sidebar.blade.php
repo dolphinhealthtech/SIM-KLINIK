@@ -1,4 +1,5 @@
 <!-- Main Sidebar Container -->
+
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a class="brand-link">
@@ -53,7 +54,7 @@
             <ul class="nav nav-pills nav-compact nav-child-indent nav-sidebar flex-column"
                 data-widget="treeview"
                 role="menu"
-                data-accordion="false">
+                data-accordion="false>
 
                 @foreach ($menus as $menu)
                     @php

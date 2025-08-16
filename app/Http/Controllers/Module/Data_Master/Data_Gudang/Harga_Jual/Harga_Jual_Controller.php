@@ -15,6 +15,6 @@ class Harga_Jual_Controller extends Controller
         $title = "Master Harga Jual Obat / Alkes";
         $harga_jual = gudang_barang_harga::all();
 
-        return view('module.master-data.gudang.harga-jual.index', compact('title', 'harga_jual'));
+        return view('module.master-data-gudang.harga_jual', compact('title', 'harga_jual'));
     }
 }

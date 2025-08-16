@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
-class SatuanInventarisController extends Controller
+class Satuan_Inventaris_Controller extends Controller
 {
     public function satuan_inventaris()
     {

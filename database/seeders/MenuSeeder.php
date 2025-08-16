@@ -511,8 +511,8 @@ class MenuSeeder extends Seeder
         $subsubMenusinventarisutama = [
             ['name' => 'Daftar Inventaris Utama','url' => '/data-inventaris-utama','icon' => 'fas fa-clipboard-list','order' => 2],
             ['name' => 'Pembelian Inventaris Utama','url' => '/inventaris-pembelian-utama','icon' => 'fas fa-cart-plus','order' => 4],
-            ['name' => 'Gudang Utama (Inventaris)', 'url' => '/data-master-gudang/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 6],
-            ['name' => 'Stok Inventaris Utama','url' => '/data-master-gudang/stok-inventaris-utama','icon' => 'fas fa-warehouse','order' => 8],
+            ['name' => 'Gudang Utama (Inventaris)', 'url' => '/data-master/gudang/inventaris-utama', 'icon' => 'fas fa-box', 'order' => 6],
+            ['name' => 'Stok Inventaris Utama','url' => '/data-master/gudang/stok-inventaris-utama','icon' => 'fas fa-warehouse','order' => 8],
         ];
 
         foreach ($subsubMenusinventarisutama as $subMenu) {

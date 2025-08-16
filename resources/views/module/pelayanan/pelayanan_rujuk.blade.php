@@ -610,7 +610,9 @@ $(document).ready(function () {
                         }).then(() => {
                             $('.modal-backdrop').remove(); // Hapus backdrop jika masih ada
                             var noRawat = $('#no_rawat').val();
-                            window.location.href = '/rujukan/cetak/' + noRawat;
+                            const url = "{{ route('rujukan.cetak', ':no_rawat') }}".replace(':no_rawat', noRawat);
+                            window.location.href = url;
+
                         });
                     } else {
                         Swal.fire({

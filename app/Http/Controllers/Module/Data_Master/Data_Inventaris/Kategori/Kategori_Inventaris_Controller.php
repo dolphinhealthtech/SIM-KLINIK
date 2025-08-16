@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
-class KategoriInventarisController  extends Controller
+class Kategori_Inventaris_Controller extends Controller
 {
     public function katin()
     {

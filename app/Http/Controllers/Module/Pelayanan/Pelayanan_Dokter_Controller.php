@@ -866,7 +866,8 @@ class Pelayanan_Dokter_Controller extends Controller
 
         // GCS
         $totalSkor = (int) $soap->eye + (int) $soap->verbal + (int) $soap->motorik;
-        $kdSadar = gcs_kesadaran::where('skor', $totalSkor)->value('kode') ?? '01';
+        $kdSadar = gcs_kesadaran::where('skor', $totalSkor)->value('kode') ?? '1';
+        $kdSadar = str_pad($kdSadar, 2, '0', STR_PAD_LEFT);
 
         // Diagnosa ICD
         $icds = pelayanan_soap_dokter_icd::where('no_rawat', $soap->no_rawat)

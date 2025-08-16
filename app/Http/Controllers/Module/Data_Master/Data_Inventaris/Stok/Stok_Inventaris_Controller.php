@@ -8,7 +8,7 @@ use App\Models\inventaris_stok_utama;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class StokInventarisController extends Controller
+class Stok_Inventaris_Controller extends Controller
 {
     public function stokin()
     {

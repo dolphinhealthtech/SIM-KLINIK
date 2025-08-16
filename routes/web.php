@@ -16,10 +16,13 @@ use App\Http\Controllers\DataMaster\gudang\SupplierController;
 // Data Master Gudang
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Request\Gudang_Request_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Utama\Gudang_Utama_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Harga_Jual\Harga_Jual_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Harga_Jual\Harga_Jual_Utama_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Satuan\Satuan_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Kategori\Kategori_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Supplier\Supplier_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Set_Harga\Set_Harga_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Set_Harga\Set_Harga_Utama_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Stok_Barang\Stok_Barang_Controller;
 
 
@@ -88,7 +91,7 @@ use App\Http\Controllers\DataMaster\main\BankController;
 use App\Http\Controllers\DataMaster\main\AsuransiController;
 use App\Http\Controllers\DataMaster\main\PenjaminController;
 use App\Http\Controllers\DataMaster\main\LoketController;
-use App\Http\Controllers\Module\Data_Master\Data_Gudang\Harga_Jual\Harga_Jual_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Stok_Barang\Stok_Barang_Utama_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Manajemen\Manajemen_Controller;
 // Data Master Umum
 use App\Http\Controllers\Module\Data_Master\Data_Umum\Agama_Controller;
@@ -317,7 +320,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('/rujukan/cetak/{no_rawat}', [App\Http\Controllers\Soap\RujukanController::class, 'cetakSuratRujukan'])->name('rujukan.cetak');
+
 
 
 
@@ -367,13 +370,13 @@ Route::middleware('auth')->prefix('pasien-pelayanan')->group(function () {
             Route::get('/permintaan/{norawat}', [Pelayanan_Dokter_Controller::class, 'pelayana_permintaan'])->name('pelayana_permintaan.get');
             Route::get('/permintaan-rujuk/{norawat}', [Pelayanan_Dokter_Controller::class, 'pelayana_rujukan'])->name('pelayana_rujuk.get');
             Route::post('/permintaan-rujuk/add', [Pelayanan_Dokter_Controller::class, 'pelayana_rujukan_add'])->name('pelayana_rujuk.add');
-            Route::post('/permintaan-sakit/print', [PelayananController::class, 'permintaanSakitPrint'])->name('permintaan.sakit.print'); //api
-            Route::post('/permintaan-sehat/print', [PelayananController::class, 'permintaanSehatPrint'])->name('permintaan.sehat.print'); //api
-            Route::post('/permintaan-kematian/print', [PelayananController::class, 'permintaanKematianPrint'])->name('permintaan.kematian.print'); //api
-            Route::post('/resep/print', [PelayananController::class, 'print'])->name('resep.print');
-            Route::post('/permintaan-laboratorium/print', [PelayananController::class, 'laboratoriumPrint'])->name('laboratorium.print');
-            Route::post('/permintaan-radiologi/print', [PelayananController::class, 'radiologiPrint'])->name('radiologi.print');
-            Route::post('/skd/print', [PelayananController::class, 'skdPrint'])->name('skd.print');
+            Route::post('/permintaan-sakit/print', [Pelayanan_Dokter_Controller::class, 'permintaanSakitPrint'])->name('permintaan.sakit.print'); //api
+            Route::post('/permintaan-sehat/print', [Pelayanan_Dokter_Controller::class, 'permintaanSehatPrint'])->name('permintaan.sehat.print'); //api
+            Route::post('/permintaan-kematian/print', [Pelayanan_Dokter_Controller::class, 'permintaanKematianPrint'])->name('permintaan.kematian.print'); //api
+            Route::post('/resep/print', [Pelayanan_Dokter_Controller::class, 'print'])->name('resep.print');
+            Route::post('/permintaan-laboratorium/print', [Pelayanan_Dokter_Controller::class, 'laboratoriumPrint'])->name('laboratorium.print');
+            Route::post('/permintaan-radiologi/print', [Pelayanan_Dokter_Controller::class, 'radiologiPrint'])->name('radiologi.print');
+            Route::post('/skd/print', [Pelayanan_Dokter_Controller::class, 'skdPrint'])->name('skd.print');
         });
     });
     // Menu Pasien
@@ -681,20 +684,20 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
 
         // Menu Setting Harga
         Route::get('/setting-harga-jual', [Set_Harga_Controller::class, 'setharga'])->name('setharga.get');
-        Route::get('/setting-harga-jual-utama', [Set_Harga_Controller::class, 'setharga_utama'])->name('setharga_utama.get');
+        Route::get('/setting-harga-jual-utama', [Set_Harga_Utama_Controller::class, 'setharga_utama'])->name('setharga_utama.get');
         Route::post('/setting-harga-jual/add', [Set_Harga_Controller::class, 'sethargaadd'])->name('setharga.store');
-        Route::post('/setting-harga-jual-utama/add', [Set_Harga_Controller::class, 'sethargaadd_utama'])->name('setharga_utama.store');
+        Route::post('/setting-harga-jual-utama/add', [Set_Harga_Utama_Controller::class, 'sethargaadd_utama'])->name('setharga_utama.store');
         Route::get('/setting-harga-jual/singkron/{id}', [Set_Harga_Controller::class, 'sethargasingkron'])->name('setharga.singkron');
         Route::get('/setting-harga-jual-klinik/singkron', [Set_Harga_Controller::class, 'sethargasingkronklinik'])->name('setharga_klinik.singkron');
         Route::get('/harga-barang-jual', [Harga_Jual_Controller::class, 'hargajual'])->name('hargajual.get');
-        Route::get('/harga-barang-jual-utama', [Harga_Jual_Controller::class, 'hargajualutama'])->name('hargajualutama.get');
+        Route::get('/harga-barang-jual-utama', [Harga_Jual_Utama_Controller::class, 'hargajualutama'])->name('hargajualutama.get');
         Route::get('/stok-obat-alkes', [Stok_Barang_Controller::class, 'stokobatalkes'])->name('stokobatalkes.get');
-        Route::get('/stok-obat-alkes-utama', [Stok_Barang_Controller::class, 'stokobatalkes_utama'])->name('stokobatalkes_utama.get');
+        Route::get('/stok-obat-alkes-utama', [Stok_Barang_Utama_Controller::class, 'stokobatalkes_utama'])->name('stokobatalkes_utama.get');
 
         Route::get('/stok-penyesuaian-opname', [Stok_Barang_Controller::class, 'stok_penyesuaian'])->name('stok_penyesuaian.get');
-        Route::get('/stok-penyesuaian-opname-utama', [Stok_Barang_Controller::class, 'stok_penyesuaian_utama'])->name('stok_penyesuaian_utama.get');
+        Route::get('/stok-penyesuaian-opname-utama', [Stok_Barang_Utama_Controller::class, 'stok_penyesuaian_utama'])->name('stok_penyesuaian_utama.get');
         Route::post('/stok-penyesuaian-opname/add', [Stok_Barang_Controller::class, 'stok_penyesuaianadd'])->name('stok_penyesuaian.store');
-        Route::post('/stok-penyesuaian-opname-utama/add', [Stok_Barang_Controller::class, 'stok_penyesuaianadd_utama'])->name('stok_penyesuaian_utama.store');
+        Route::post('/stok-penyesuaian-opname-utama/add', [Stok_Barang_Utama_Controller::class, 'stok_penyesuaianadd_utama'])->name('stok_penyesuaian_utama.store');
 
         // Menu Satuan Inventaris
         Route::get('/satuan-inventaris', [Satuan_Inventaris_Controller::class, 'satuan_inventaris'])->name('satuan_inventaris.get');
@@ -714,9 +717,9 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
 
         // Menu Stok Inventaris
         Route::get('/stok-inventaris', [Stok_Inventaris_Controller::class, 'stokin'])->name('stokin.get');
-        Route::get('/stok-inventaris/data/{id}', [StokInventaris_Controller::class, 'stokin_data'])->name('stokin_data.get');
-        Route::post('/stok-inventaris/data/update', [StokInventaris_Controller::class, 'stokin_dataedit'])->name('stokin_data.update');
-        Route::post('/stok-inventaris/data/delete', [StokInventaris_Controller::class, 'stokin_datadelete'])->name('stokin_data.destroy');
+        Route::get('/stok-inventaris/data/{id}', [Stok_Inventaris_Controller::class, 'stokin_data'])->name('stokin_data.get');
+        Route::post('/stok-inventaris/data/update', [Stok_Inventaris_Controller::class, 'stokin_dataedit'])->name('stokin_data.update');
+        Route::post('/stok-inventaris/data/delete', [Stok_Inventaris_Controller::class, 'stokin_datadelete'])->name('stokin_data.destroy');
 
         // Menu Stok Inventaris Utama
         Route::get('/stok-inventaris-utama', [Stok_Inventaris_Utama_Controller::class, 'stokin_utama'])->name('stokin_utama.get');
