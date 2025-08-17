@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Brijing_Intergrasi\Pcare_Controller;
 use App\Http\Controllers\Brijing_Intergrasi\Satusehat_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Request\Gudang_Request_Api_Controller;
+use App\Http\Controllers\Module\Data_Master\Data_Gudang\Stok_Barang\Stok_Barang_Api_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Stok_Barang\Stok_Barang_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Stok_Barang\Stok_Barang_Utama_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Supplier\Supplier_Api_Controller;
@@ -44,6 +45,7 @@ use App\Http\Controllers\Module\Pelayanan\Pelayanan_Api_Controller;
 use App\Http\Controllers\Module\Pendaftaran\Pendaftaran_Api_Controller;
 
 use App\Http\Controllers\Module\SDM\Dokter\Dokter_Api_Controller;
+use App\Http\Controllers\Module\SDM\Staff\Staff_Api_Controller;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -56,6 +58,9 @@ Route::get('/get-dokter-all/{id}', [Dokter_Api_Controller::class, 'getDokterEdit
 Route::get('/jadwal/json/{id}', [Dokter_Api_Controller::class, 'dokterjadwaljson']);
 Route::get('/sinkron-jadwal-dokter/{id}', [Dokter_Api_Controller::class, 'jadwal_dokter'])->name('jadwal.sinkron');
 
+//staff
+Route::get('/get-staff/{id}', [Staff_Api_Controller::class, 'getStaff']);
+Route::get('/get-staff-all/{id}', [Staff_Api_Controller::class, 'getStaffEdit']);
 
 //pasien
 Route::get('/get-pasien/{id}', [Pasien_Api_Controller::class, 'get_pasien']);
@@ -70,7 +75,7 @@ Route::get('/so/hadir/{norawat}', [Pelayanan_Api_Controller::class, 'sopelayanan
 Route::get('/alergi/by-jenis/{id}', [Pelayanan_Api_Controller::class, 'getByJenis']);
 
 //pelayanan dokter
-Route::get('/so/hadir/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayananpanggil'])->name('pelayana_dokter.hadir');
+Route::get('/soap/hadir/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayananpanggil'])->name('pelayana_dokter.hadir');
 Route::get('/dokter/data/so/{norawat}', [Pelayanan_Api_Controller::class, 'soappelayanandata'])->name('pelayana_dokter_data.get');
 Route::post('/odontogram/load-details', [Pelayanan_Api_Controller::class, 'odontogramdetailsload']);
 Route::get('/odontogram/load', [Pelayanan_Api_Controller::class, 'odontogramload']);
@@ -86,9 +91,7 @@ Route::get('/rujukan/cetak/{no_rawat}', [Pelayanan_Api_Controller::class, 'cetak
 
 
 
-Route::get('/get-staff/{id}', [StaffController::class, 'getStaff']);
 
-Route::get('/get-staff-all/{id}', [StaffController::class, 'getStaffEdit']);
 
 
 Route::get('/generate-kode-data-barang', [DabarController::class, 'generateKodeDataBarang'])->name('generateKodeDataBarang');
@@ -97,13 +100,13 @@ Route::get('/generate-faktur-pembelian', [PembelianController::class, 'generateF
 Route::get('/generate-kode-inventaris', [InventarisController::class, 'generateKodeInventaris'])->name('generateKodeInventaris');
 Route::get('/generate-kode-pembelian-inventaris', [InventarisController::class, 'generatePembelianInventaris'])->name('generatePembelianInventaris');
 
-Route::get('/sub-pemeriksaan/{id}', [PelayananController::class, 'getSubPemeriksaan']);
+Route::get('/sub-pemeriksaan/{id}', [Pelayanan_Api_Controller::class, 'getSubPemeriksaan']);
 
 
 
 
 
-Route::get('/get-pemeriksaan-laboratorium/{id}', [PelayananController::class, 'getSubBidangLab']);
+Route::get('/get-pemeriksaan-laboratorium/{id}', [Pelayanan_Api_Controller::class, 'getSubBidangLab']);
 
 
 
@@ -180,9 +183,9 @@ Route::prefix('data-master-gudang')->group(function () {
     Route::get('/pdf/{kodeRequest}', [Gudang_Utama_Api_Controller::class, 'generatePdf'])->name('utama.pdf');
 
 
-    Route::get('/kartu-stok-masuk', [Stok_Barang_Controller::class, 'getKartuStokMasuk'])->name('getKartuStokMasuk');
+    Route::get('/kartu-stok-masuk', [Stok_Barang_Api_Controller::class, 'getKartuStokMasuk'])->name('getKartuStokMasuk');
     Route::get('/kartu-stok-masuk-utama', [Stok_Barang_Utama_Controller::class, 'getKartuStokMasukUtama'])->name('getKartuStokMasukUtama');
-    Route::get('/kartu-stok-keluar', [Stok_Barang_Controller::class, 'getKartuStokKeluar'])->name('getKartuStokKeluar');
+    Route::get('/kartu-stok-keluar', [Stok_Barang_Api_Controller::class, 'getKartuStokKeluar'])->name('getKartuStokKeluar');
     Route::get('/kartu-stok-keluar-utama', [Stok_Barang_Utama_Controller::class, 'getKartuStokKeluarUtama'])->name('getKartuStokKeluarUtama');
 });
 

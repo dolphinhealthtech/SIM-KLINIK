@@ -178,7 +178,7 @@ class Staff_Controller extends Controller
             }
 
             // Simpan pelatihan
-            foreach ($request->pelatihan as $item) {
+            foreach ($request->pelatihan ?? [] as $item) {
                 $sertifikatPath = $item['sertifikat'] ?? null;
                 if (is_file($sertifikatPath)) {
                     $sertifikatPath = $item['sertifikat']->store('pelatihan', 'public');

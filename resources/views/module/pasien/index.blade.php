@@ -117,19 +117,19 @@
                                                 <td class="text-center">
                                                     @if ($pasiensdata->verifikasi == 1)
                                                         {{-- @can('lengkapi') --}}
-                                                            <a class="btn btn-info rounded-pill lengkapi-btn" data-toggle="modal"
+                                                            <a class="btn btn-outline-info rounded-pill lengkapi-btn" data-toggle="modal"
                                                                 data-target="#lengkapiModal"
                                                                 data-id="{{ $pasiensdata->id }}">
                                                                 <i class="fa fa-exclamation-circle"></i> Lengkapi
                                                             </a>
 
                                                             <!-- Tombol Panggil untuk data yang belum dilengkapi -->
-                                                            <a class="btn btn-primary rounded-pill panggil-btn" data-toggle="modal"
+                                                            {{-- <a class="btn btn-primary rounded-pill panggil-btn" data-toggle="modal"
                                                                 data-target="#panggilModal"
                                                                 data-id="{{ $pasiensdata->id }}"
                                                                 data-nama="{{ $pasiensdata->nama }}">
                                                                 <i class="fa fa-bullhorn"></i> Panggil
-                                                            </a>
+                                                            </a> --}}
                                                         {{-- @endcan --}}
                                                     @else
                                                         {{-- @can('rubah') --}}

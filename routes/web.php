@@ -1,17 +1,8 @@
 <?php
 
 use App\Http\Controllers\dashboard;
-use App\Http\Controllers\DataMasterManajemenController;
 use App\Http\Controllers\Auth\ProfileController;
-use App\Http\Controllers\DataMaster\gudang\GudangRequestController;
-use App\Http\Controllers\DataMaster\gudang\GudangUtamaController;
 
-use App\Http\Controllers\DataMaster\gudang\HargaJualController;
-use App\Http\Controllers\DataMaster\gudang\KategoriController;
-use App\Http\Controllers\DataMaster\gudang\SatuanController;
-use App\Http\Controllers\DataMaster\gudang\SetHargaController;
-use App\Http\Controllers\DataMaster\gudang\StokBarangController;
-use App\Http\Controllers\DataMaster\gudang\SupplierController;
 
 // Data Master Gudang
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Request\Gudang_Request_Controller;
@@ -36,27 +27,6 @@ use App\Http\Controllers\Module\Data_Master\Data_Inventaris\Stok\Stok_Inventaris
 
 
 
-use App\Http\Controllers\DataMaster\inventaris\InventarisRequestController;
-use App\Http\Controllers\DataMaster\inventaris\InventarisUtamaController;
-use App\Http\Controllers\DataMaster\inventaris\KategoriInventarisController;
-use App\Http\Controllers\DataMaster\inventaris\SatuanInventarisController;
-use App\Http\Controllers\DataMaster\inventaris\StokInventarisController;
-use App\Http\Controllers\DataMaster\medis\AlergiController;
-use App\Http\Controllers\DataMaster\medis\Icd9Controller;
-use App\Http\Controllers\DataMaster\medis\Icd10Controller;
-use App\Http\Controllers\DataMaster\medis\JenisDietController;
-use App\Http\Controllers\DataMaster\medis\KategoriPerawatanController;
-use App\Http\Controllers\DataMaster\medis\LaboratoriumBidangController;
-use App\Http\Controllers\DataMaster\medis\NamaMakananController;
-use App\Http\Controllers\DataMaster\medis\PemeriksaanHttController;
-use App\Http\Controllers\DataMaster\medis\PerawatanTindakanController;
-use App\Http\Controllers\DataMaster\medis\PoliController;
-use App\Http\Controllers\DataMaster\medis\RadiologiPemeriksaanController;
-use App\Http\Controllers\DataMaster\medis\RadiologiJenisController;
-use App\Http\Controllers\DataMaster\medis\SaranaController;
-use App\Http\Controllers\DataMaster\medis\SpesialisController;
-use App\Http\Controllers\DataMaster\medis\SubspesialisController;
-
 
 // Data Master Medis
 use App\Http\Controllers\Module\Data_Master\Data_Medis\Radiologi_Jenis\Radiologi_Jenis_Controller;
@@ -77,20 +47,6 @@ use App\Http\Controllers\Module\Data_Master\Data_Medis\Sarana\Sarana_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Medis\Spesialis\Spesialis_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Medis\Subspesialis\Subspesialis_Controller;
 
-
-use App\Http\Controllers\DataMaster\main\GoldarController;
-use App\Http\Controllers\DataMaster\main\SukuController;
-use App\Http\Controllers\DataMaster\main\BangsaController;
-use App\Http\Controllers\DataMaster\main\BahasaController;
-use App\Http\Controllers\DataMaster\main\AgamaController;
-use App\Http\Controllers\DataMaster\main\PendidikanController;
-use App\Http\Controllers\DataMaster\main\KelaminController;
-use App\Http\Controllers\DataMaster\main\PernikahanController;
-use App\Http\Controllers\DataMaster\main\PekerjaanController;
-use App\Http\Controllers\DataMaster\main\BankController;
-use App\Http\Controllers\DataMaster\main\AsuransiController;
-use App\Http\Controllers\DataMaster\main\PenjaminController;
-use App\Http\Controllers\DataMaster\main\LoketController;
 use App\Http\Controllers\Module\Data_Master\Data_Gudang\Stok_Barang\Stok_Barang_Utama_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Manajemen\Manajemen_Controller;
 // Data Master Umum
@@ -109,11 +65,6 @@ use App\Http\Controllers\Module\Data_Master\Data_Umum\Pernikahan_Controller;
 use App\Http\Controllers\Module\Data_Master\Data_Umum\Suku_Controller;
 
 
-use App\Http\Controllers\soap;
-use App\Http\Controllers\Soap\OdoController;
-use App\Http\Controllers\Soap\PelayananController;
-use App\Http\Controllers\Soap\RujukanController;
-use App\Http\Controllers\SuperadminController;
 use App\Http\Controllers\WebSettingController;
 use App\Http\Controllers\SuperAdmin\ApotekController;
 use App\Http\Controllers\SuperAdmin\DabarController;
@@ -236,7 +187,7 @@ Route::get('/monitor/loket-antrian/data', [MonitorController::class, 'loketAntri
 
 
 
-Route::post('/pasien/panggil/{id}', [PasienController::class, 'panggilPasien'])->name('pasien.panggil');
+Route::post('/pasien/panggil/{id}', [Pasien_Controller::class, 'panggilPasien'])->name('pasien.panggil');
 
 // Menu Pembelian
 Route::get('/pembelian', [PembelianController::class, 'pembelian'])->name('pembelian.get');
@@ -309,10 +260,6 @@ Route::middleware('auth')->prefix('pendataan')->group(function () {
 
 // Group route dashboard berdasarkan role agar lebih rapi
 
-// Route untuk Superadmin (akses umum dashboard)
-Route::get('/dashboard', [dashboard::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -788,5 +735,6 @@ Route::middleware('auth')->prefix('pendaftaran-offline')->group(function () {
     Route::post('/hadir', [Pendaftaran_Controller::class, 'pendaftaranhadir'])->name('pendaftaran.hadir');
 });
 
+require __DIR__ . '/dashboard.php';
 require __DIR__ . '/auth.php';
 require __DIR__ . '/user.php';

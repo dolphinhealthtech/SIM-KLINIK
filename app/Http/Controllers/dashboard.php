@@ -33,35 +33,7 @@ class dashboard extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
 
-        if ($user) {
-            if (isset($user->role) && $user->role === 'Administrasi') {
-                return view('module.dashboard.administrasi.index');
-            } elseif (isset($user->role) && $user->role === 'Apoteker') {
-                return view('module.dashboard.apoteker.index');
-            } elseif (isset($user->role) && $user->role === 'Dokter') {
-                return view('module.dashboard.dokter.index');
-            } elseif (isset($user->role) && $user->role === 'Gudang') {
-                return view('module.dashboard.gudang.index');
-            } elseif (isset($user->role) && $user->role === 'Gudang Utama') {
-                return view('module.dashboard.gudang-utama.index');
-            } elseif (isset($user->role) && $user->role === 'Kasir') {
-                return view('module.dashboard.kasir.index');
-            } elseif (isset($user->role) && $user->role === 'Manajemen') {
-                return view('module.dashboard.manajemen.index');
-            } elseif (isset($user->role) && $user->role === 'Pasien') {
-                return view('module.dashboard.pasien.index');
-            } elseif (isset($user->role) && $user->role === 'Perawat') {
-                return view('module.dashboard.perawat.index');
-            } elseif (isset($user->role) && $user->role === 'Personalia') {
-                return view('module.dashboard.personalia.index');
-            } elseif (isset($user->role) && $user->role === 'Registrasi') {
-                return view('module.dashboard.registrasi.index');
-            } elseif (isset($user->role) && $user->role === 'Super Admin') {
-                return view('module.dashboard.super-admin.index');
-            }
-        }
 
         $today = Carbon::today();
         $now = Carbon::now();
@@ -159,6 +131,7 @@ class dashboard extends Controller
         // ================================
         // 5. Kirim Semua ke View
         // ================================
+
         return view('module.dashboard.super-admin.index', compact(
             'datapasien',
             'datadokter',
@@ -176,6 +149,16 @@ class dashboard extends Controller
         ));
     }
 
+    public function dokter()
+    {
+      return view('module.dashboard.dokter.index');
+
+    }
+    public function registrasi()
+    {
+        return view('module.dashboard.registrasi.index');
+
+    }
 
 
     public function kunjunganHarian()

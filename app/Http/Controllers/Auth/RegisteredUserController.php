@@ -41,7 +41,7 @@ class RegisteredUserController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'profile' => 'default.png',
+            'profile' => 'default.webp',
             'is_active' => 0,
         ]);
 
