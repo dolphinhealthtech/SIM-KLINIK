@@ -114,32 +114,42 @@
                                         <td class="text-center">{{ $pendaftarandata->dokter->namauser->name }}</td>
                                         <td class="text-center">
                                             <!-- Batal -->
-                                            @if ($pendaftarandata->status->status_pendaftaran == 1)
-                                            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill batal-data-pasien me-1"
-                                                data-id="{{ $pendaftarandata->status->id }}"
-                                                data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
-                                                <i class="fas fa-times-circle"></i> Batal
-                                            </button>
-                                            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill panggil-data-pasien me-1"
-                                                data-id="{{ $pendaftarandata->status->id }}"
-                                                data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
-                                                <i class="fas fa-phone"></i> Hadir
-                                            </button>
-                                            <br>
-                                            <button type="button" class="btn btn-outline-warning btn-sm rounded-pill dokter-data-pasien mt-2"
-                                                data-id="{{ $pendaftarandata->nomor_register }}"
-                                                data-poli="{{ $pendaftarandata->poli_id }}"
-                                                data-nama="{{ $pendaftarandata->pasien->nama }}"
-                                                data-tgl-kunjung="{{ $pendaftarandata->tanggal_kujungan }}">
-                                                <i class="fas fa-user-md"></i> Ubah Dokter
-                                            </button>
-                                            @endif
-                                            @if ($pendaftarandata->status->status_pendaftaran == 2)
-                                            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill batal-data-pasien-pcare me-1"
-                                                data-id="{{ $pendaftarandata->status->id }}"
-                                                data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
-                                                <i class="fas fa-times-circle"></i> Batal
-                                            </button>
+                                            @if ($pendaftarandata->is_apotek == 0)
+                                                @if ($pendaftarandata->status->status_pendaftaran == 1)
+                                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill batal-data-pasien me-1"
+                                                    data-id="{{ $pendaftarandata->status->id }}"
+                                                    data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
+                                                    <i class="fas fa-times-circle"></i> Batal
+                                                </button>
+                                                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill panggil-data-pasien me-1"
+                                                    data-id="{{ $pendaftarandata->status->id }}"
+                                                    data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
+                                                    <i class="fas fa-phone"></i> Hadir
+                                                </button>
+                                                <br>
+                                                <button type="button" class="btn btn-outline-warning btn-sm rounded-pill dokter-data-pasien mt-2"
+                                                    data-id="{{ $pendaftarandata->nomor_register }}"
+                                                    data-poli="{{ $pendaftarandata->poli_id }}"
+                                                    data-nama="{{ $pendaftarandata->pasien->nama }}"
+                                                    data-tgl-kunjung="{{ $pendaftarandata->tanggal_kujungan }}">
+                                                    <i class="fas fa-user-md"></i> Ubah Dokter
+                                                </button>
+                                                @endif
+                                                @if ($pendaftarandata->status->status_pendaftaran == 2)
+                                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill batal-data-pasien-pcare me-1"
+                                                    data-id="{{ $pendaftarandata->status->id }}"
+                                                    data-nama-pasien="{{ $pendaftarandata->pasien->nama }}">
+                                                    <i class="fas fa-times-circle"></i> Batal
+                                                </button>
+                                                @endif
+                                            @else
+                                                <button type="button"
+                                                        class="btn btn-outline-success btn-sm rounded-pill disabled"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        title="Sudah selesai diperiksa oleh dokter">
+                                                    <i class="fas fa-check-circle"></i>  Selesai
+                                                </button>
                                             @endif
                                         </td>
 

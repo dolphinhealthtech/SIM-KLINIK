@@ -39,8 +39,14 @@ class Pendaftaran_Controller extends Controller
                 $query->whereIn('status_pendaftaran', ['1', '2']);
             })
             ->whereDate('tanggal_kujungan', '=', $today)
-            ->whereDoesntHave('apotek') // Filter: yang belum ada di tabel apotek
-            ->get();
+            ->withCount('apotek')
+            ->get()
+            ->map(function ($item) {
+                $item->is_apotek = $item->apotek_count > 0 ? 1 : 0;
+                unset($item->apotek_count);
+                return $item;
+            });
+
 
 
         $pasienallold = Pendaftaran_rawat_jalan::whereDate('tanggal_kujungan', '=', $today)
