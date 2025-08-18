@@ -40,6 +40,7 @@ class Pendaftaran_Controller extends Controller
             })
             ->whereDate('tanggal_kujungan', '=', $today)
             ->withCount('apotek')
+            ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($item) {
                 $item->is_apotek = $item->apotek_count > 0 ? 1 : 0;
@@ -151,6 +152,23 @@ class Pendaftaran_Controller extends Controller
             $pasien = Pasien::find($request->pasien);
             if (!$pasien) {
                 return response()->json(['error' => 'Pasien tidak ditemukan'], 404);
+            }
+            $tanggalKunjungan = Carbon::parse($request->tanggal_kunjungan)->toDateString();
+
+            // ✅ Cek kalau penjamin adalah BPJS
+            $penjamin = Penjamin::find($request->penjamin_id);
+            if ($penjamin && strtoupper($penjamin->nama) === "BPJS") {
+                $sudahDaftar = Pendaftaran_rawat_jalan::where('pasien_id', $pasien->id)
+                    ->where('Penjamin', $penjamin->id)
+                    ->whereDate('tanggal_kujungan', $tanggalKunjungan)
+                    ->exists();
+
+                if ($sudahDaftar) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Pasien sudah terdaftar dengan BPJS pada tanggal tersebut.'
+                    ], 409);
+                }
             }
 
             $tanggal = Carbon::parse($request->tanggal_kunjungan);
@@ -465,6 +483,7 @@ class Pendaftaran_Controller extends Controller
                     'message' => 'Data pelayanan tidak ditemukan.'
                 ], 404);
             }
+
 
             // Update dokter
             $datapendaftaran->dokter_id = $request->dokter_id_update;

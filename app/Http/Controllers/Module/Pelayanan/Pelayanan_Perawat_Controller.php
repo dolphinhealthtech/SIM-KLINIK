@@ -37,8 +37,9 @@ class Pelayanan_Perawat_Controller extends Controller
             'pendaftaran.status',
             'pelayanan_soap'
         ])
-            ->whereDate('created_at', Carbon::today()) // Filter hanya hari ini
-            ->get();
+        ->whereDate('created_at', Carbon::today()) // Filter hanya hari ini
+        ->orderBy('created_at', 'asc') // ⬅️ ascending (lama ke baru)
+        ->get();
 
 
         foreach ($pelayanan as $item) {

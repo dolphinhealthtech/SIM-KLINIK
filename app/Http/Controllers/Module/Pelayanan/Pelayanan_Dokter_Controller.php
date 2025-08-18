@@ -93,8 +93,6 @@ class Pelayanan_Dokter_Controller extends Controller
         return view('module.pelayanan.pelayanan-dokter.index', compact('title', 'pelayanan'));
     }
 
-
-
     public function soappelayananselesai($norawat)
     {
         $nomor_rawat = base64_decode($norawat);
@@ -286,7 +284,7 @@ class Pelayanan_Dokter_Controller extends Controller
         $obat = gudang_barang::all();
         $satuan = gudang_satuan::all();
 
-        return view('module.pelayanan.soap-dokter', compact('title', 'satuan', 'jenis_diete', 'obat', 'jenis_makanan_diet', 'tindakan', 'kategori', 'icd10', 'icd9', 'pelayanan', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
+        return view('module.pelayanan.pelayanan-dokter.soap-dokter', compact('title', 'satuan', 'jenis_diete', 'obat', 'jenis_makanan_diet', 'tindakan', 'kategori', 'icd10', 'icd9', 'pelayanan', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
     }
 
     public function soappelayananedit($norawat)
@@ -332,7 +330,7 @@ class Pelayanan_Dokter_Controller extends Controller
 
         $pelayana_data = Pelayanan::where('nomor_rm', $pelayanan->nomor_rm)->get();
         // dd($pelayana_data);
-        return view('module.pelayanan.soap-dokter_edit', compact('title', 'pelayana_data', 'satuan', 'jenis_diete', 'obat', 'jenis_makanan_diet', 'tindakan', 'kategori', 'icd10', 'icd9', 'pelayanan', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
+        return view('module.pelayanan.pelayanan-dokter.soap-dokter_edit', compact('title', 'pelayana_data', 'satuan', 'jenis_diete', 'obat', 'jenis_makanan_diet', 'tindakan', 'kategori', 'icd10', 'icd9', 'pelayanan', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
     }
 
     public function soappelayananandd(Request $request)

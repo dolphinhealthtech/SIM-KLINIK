@@ -86,7 +86,86 @@ use App\Http\Controllers\Module\Pasien\Pasien_Controller;
 use App\Http\Controllers\Module\Pendaftaran\Pendaftaran_Controller;
 use App\Http\Controllers\Module\Pelayanan\Pelayanan_Dokter_Controller;
 use App\Http\Controllers\Module\Pelayanan\Pelayanan_Perawat_Controller;
+use App\Http\Controllers\Module\Pendaftaran\Pendaftaran_Online_Controller;
 use App\Http\Controllers\Module\SDM\Staff\Staff_Controller;
+
+// Menu data Pasien
+Route::middleware(['auth'])->prefix('data-pasien')->group(function () {
+    Route::get('/', [Pasien_Controller::class, 'pasiens'])->name('pasien.get');
+    Route::get('/time-line/{norm}', [Pasien_Controller::class, 'pasiens_time_line'])->name('pasiens_time_line.get');
+    Route::post('/add', [Pasien_Controller::class, 'pasiensadd'])->name('pasien.store');
+    Route::post('/verifikasi', [Pasien_Controller::class, 'pasienvefiv'])->name('pasien.verifikasi');
+    Route::post('/update', [Pasien_Controller::class, 'pasienupdate'])->name('pasien.update');
+});
+
+// Menu Pendaftaran Online
+Route::prefix('pendaftaran-online')->group(function () {
+    Route::get('/', [Pendaftaran_Online_Controller::class, 'monitor'])->name('pendaftaran-online.get');
+    Route::post('/add/bpjs', [Pendaftaran_Online_Controller::class, 'monitor_bpjs'])->name('pendaftaran-online.add.bpjs');
+    Route::post('/add/nobpjs', [Pendaftaran_Online_Controller::class, 'monitor_nobpjs'])->name('pendaftaran-online.add.nobpjs');
+    Route::post('/add/pasien', [Pendaftaran_Online_Controller::class, 'pasiensadd'])->name('pendaftaran-online.add.pasien');
+});
+
+
+
+// Menu Pendaftaran Offline
+Route::middleware('auth')->prefix('pendaftaran-offline')->group(function () {
+    Route::get('/', [Pendaftaran_Controller::class, 'pendaftaran'])->name('pendaftaran.get');
+    Route::post('/add', [Pendaftaran_Controller::class, 'pendaftaranadd'])->name('pendaftaran.add');
+    Route::post('/batal', [Pendaftaran_Controller::class, 'pendaftaranbatal'])->name('pendaftaran.batal');
+    Route::post('/batal/pcare', [Pendaftaran_Controller::class, 'pendaftaranbatalpcare'])->name('pendaftaran.batal.pcare');
+    Route::post('/dokterup', [Pendaftaran_Controller::class, 'pendaftaranupdokter'])->name('pendaftaran.dokter.update');
+    Route::post('/hadir', [Pendaftaran_Controller::class, 'pendaftaranhadir'])->name('pendaftaran.hadir');
+});
+
+Route::middleware('auth')->prefix('pasien-pelayanan')->group(function () {
+    Route::prefix('dokter')->group(function () {
+        Route::get('/', [Pelayanan_Dokter_Controller::class, 'pelayana_dokter'])->name('pelayanad.get');
+        Route::get('/{norawat}', [Pelayanan_Dokter_Controller::class, 'soappelayanan'])->name('pelayana_dokter.get');
+        Route::get('/edit/{norawat}', [Pelayanan_Dokter_Controller::class, 'soappelayananedit'])->name('pelayana_dokter.edit');
+        Route::post('/add', [Pelayanan_Dokter_Controller::class, 'soappelayananandd'])->name('pelayana_dokter.add');
+        Route::post('/update', [Pelayanan_Dokter_Controller::class, 'soappelayananupdate'])->name('pelayana_dokter.update');
+        Route::get('/selesai/{norawat}', [Pelayanan_Dokter_Controller::class, 'soappelayananselesai'])->name('pelayana_dokter.selesai');
+
+
+
+
+        Route::prefix('surat')->group(function () {
+            Route::get('/permintaan/{norawat}', [Pelayanan_Dokter_Controller::class, 'pelayana_permintaan'])->name('pelayana_permintaan.get');
+            Route::get('/permintaan-rujuk/{norawat}', [Pelayanan_Dokter_Controller::class, 'pelayana_rujukan'])->name('pelayana_rujuk.get');
+            Route::post('/permintaan-rujuk/add', [Pelayanan_Dokter_Controller::class, 'pelayana_rujukan_add'])->name('pelayana_rujuk.add');
+            Route::post('/permintaan-sakit/print', [Pelayanan_Dokter_Controller::class, 'permintaanSakitPrint'])->name('permintaan.sakit.print'); //api
+            Route::post('/permintaan-sehat/print', [Pelayanan_Dokter_Controller::class, 'permintaanSehatPrint'])->name('permintaan.sehat.print'); //api
+            Route::post('/permintaan-kematian/print', [Pelayanan_Dokter_Controller::class, 'permintaanKematianPrint'])->name('permintaan.kematian.print'); //api
+
+            Route::post('/permintaan-laboratorium/print', [Pelayanan_Dokter_Controller::class, 'laboratoriumPrint'])->name('laboratorium.print');
+            Route::post('/permintaan-radiologi/print', [Pelayanan_Dokter_Controller::class, 'radiologiPrint'])->name('radiologi.print');
+            Route::post('/skd/print', [Pelayanan_Dokter_Controller::class, 'skdPrint'])->name('skd.print');
+        });
+    });
+    // Menu Pasien
+    Route::prefix('perawat')->group(function () {
+        Route::get('/', [Pelayanan_Perawat_Controller::class, 'pelayana'])->name('pelayana.get');
+        Route::get('/{norawat}', [Pelayanan_Perawat_Controller::class, 'sopelayanan'])->name('sopelayana.get');
+        Route::get('/edit/{norawat}', [Pelayanan_Perawat_Controller::class, 'sopelayananedit'])->name('sopelayana.edit');
+        Route::post('/add', [Pelayanan_Perawat_Controller::class, 'sopelayanandd'])->name('sopelayana.add');
+        Route::post('/update', [Pelayanan_Perawat_Controller::class, 'sopelayananupdate'])->name('sopelayana.update');
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -300,41 +379,7 @@ Route::prefix('sdm')->group(function () {
     });
 });
 
-// Menu Pelayanan Pemeriksaan
-Route::middleware('auth')->prefix('pasien-pelayanan')->group(function () {
-    Route::prefix('dokter')->group(function () {
-        Route::get('/', [Pelayanan_Dokter_Controller::class, 'pelayana_dokter'])->name('pelayanad.get');
-        Route::get('/so/{norawat}', [Pelayanan_Dokter_Controller::class, 'soappelayanan'])->name('pelayana_dokter.get');
-        Route::get('/so/edit/{norawat}', [Pelayanan_Dokter_Controller::class, 'soappelayananedit'])->name('pelayana_dokter.edit');
-        Route::post('/so/add', [Pelayanan_Dokter_Controller::class, 'soappelayananandd'])->name('pelayana_dokter.add');
-        Route::post('/so/update', [Pelayanan_Dokter_Controller::class, 'soappelayananupdate'])->name('pelayana_dokter.update');
-        Route::get('/so/selesai/{norawat}', [Pelayanan_Dokter_Controller::class, 'soappelayananselesai'])->name('pelayana_dokter.selesai');
 
-
-
-
-        Route::prefix('surat')->group(function () {
-            Route::get('/permintaan/{norawat}', [Pelayanan_Dokter_Controller::class, 'pelayana_permintaan'])->name('pelayana_permintaan.get');
-            Route::get('/permintaan-rujuk/{norawat}', [Pelayanan_Dokter_Controller::class, 'pelayana_rujukan'])->name('pelayana_rujuk.get');
-            Route::post('/permintaan-rujuk/add', [Pelayanan_Dokter_Controller::class, 'pelayana_rujukan_add'])->name('pelayana_rujuk.add');
-            Route::post('/permintaan-sakit/print', [Pelayanan_Dokter_Controller::class, 'permintaanSakitPrint'])->name('permintaan.sakit.print'); //api
-            Route::post('/permintaan-sehat/print', [Pelayanan_Dokter_Controller::class, 'permintaanSehatPrint'])->name('permintaan.sehat.print'); //api
-            Route::post('/permintaan-kematian/print', [Pelayanan_Dokter_Controller::class, 'permintaanKematianPrint'])->name('permintaan.kematian.print'); //api
-            Route::post('/resep/print', [Pelayanan_Dokter_Controller::class, 'print'])->name('resep.print');
-            Route::post('/permintaan-laboratorium/print', [Pelayanan_Dokter_Controller::class, 'laboratoriumPrint'])->name('laboratorium.print');
-            Route::post('/permintaan-radiologi/print', [Pelayanan_Dokter_Controller::class, 'radiologiPrint'])->name('radiologi.print');
-            Route::post('/skd/print', [Pelayanan_Dokter_Controller::class, 'skdPrint'])->name('skd.print');
-        });
-    });
-    // Menu Pasien
-    Route::prefix('perawat')->group(function () {
-        Route::get('/', [Pelayanan_Perawat_Controller::class, 'pelayana'])->name('pelayana.get');
-        Route::get('/so/{norawat}', [Pelayanan_Perawat_Controller::class, 'sopelayanan'])->name('sopelayana.get');
-        Route::get('/so/edit/{norawat}', [Pelayanan_Perawat_Controller::class, 'sopelayananedit'])->name('sopelayana.edit');
-        Route::post('/so/add', [Pelayanan_Perawat_Controller::class, 'sopelayanandd'])->name('sopelayana.add');
-        Route::post('/so/update', [Pelayanan_Perawat_Controller::class, 'sopelayananupdate'])->name('sopelayana.update');
-    });
-});
 
 // Menu data Master
 Route::middleware('auth')->prefix('data-master')->group(function () {
@@ -520,10 +565,10 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
         });
 
         Route::prefix('htt_sub_pemeriksaan')->group(function () {
-            Route::get('/{kode}', [Pemeriksaan_Htt_Controller::class, 'htt_sub_pemeriksaan'])->name('htt_sub_pemeriksaan.get');
-            Route::post('/add', [Pemeriksaan_Htt_Controller::class, 'htt_sub_pemeriksaanadd'])->name('htt_sub_pemeriksaan.store');
-            Route::post('/update', [Pemeriksaan_Htt_Controller::class, 'htt_sub_pemeriksaanedit'])->name('htt_sub_pemeriksaan.update');
-            Route::post('/delete', [Pemeriksaan_Htt_Controller::class, 'htt_sub_pemeriksaandelete'])->name('htt_sub_pemeriksaan.destroy');
+            Route::get('/{kode}', [Pemeriksaan_Htt_Sub_Controller::class, 'htt_sub_pemeriksaan'])->name('htt_sub_pemeriksaan.get');
+            Route::post('/add', [Pemeriksaan_Htt_Sub_Controller::class, 'htt_sub_pemeriksaanadd'])->name('htt_sub_pemeriksaan.store');
+            Route::post('/update', [Pemeriksaan_Htt_Sub_Controller::class, 'htt_sub_pemeriksaanedit'])->name('htt_sub_pemeriksaan.update');
+            Route::post('/delete', [Pemeriksaan_Htt_Sub_Controller::class, 'htt_sub_pemeriksaandelete'])->name('htt_sub_pemeriksaan.destroy');
         });
 
         Route::prefix('alergi')->group(function () {
@@ -708,32 +753,9 @@ Route::middleware('auth')->prefix('data-master')->group(function () {
     });
 });
 
-// Menu data Pasien
-Route::middleware(['auth'])->prefix('data-pasien')->group(function () {
-    Route::get('/', [Pasien_Controller::class, 'pasiens'])->name('pasien.get');
-    Route::get('/time-line/{norm}', [Pasien_Controller::class, 'pasiens_time_line'])->name('pasiens_time_line.get');
-    Route::post('/add', [Pasien_Controller::class, 'pasiensadd'])->name('pasien.store');
-    Route::post('/verifikasi', [Pasien_Controller::class, 'pasienvefiv'])->name('pasien.verifikasi');
-    Route::post('/update', [Pasien_Controller::class, 'pasienupdate'])->name('pasien.update');
-});
 
-// Menu Pendaftaran Online
-Route::prefix('pendaftaran-online')->group(function () {
-    Route::get('/', [MonitorController::class, 'monitor'])->name('pendaftaran-online.get');
-    Route::post('/add/bpjs', [MonitorController::class, 'monitor_bpjs'])->name('pendaftaran-online.add.bpjs');
-    Route::post('/add/nobpjs', [MonitorController::class, 'monitor_nobpjs'])->name('pendaftaran-online.add.nobpjs');
-    Route::post('/add/pasien', [Pasien_Controller::class, 'pasiensadd'])->name('pendaftaran-online.add.pasien');
-});
 
-// Menu Pendaftaran Offline
-Route::middleware('auth')->prefix('pendaftaran-offline')->group(function () {
-    Route::get('/', [Pendaftaran_Controller::class, 'pendaftaran'])->name('pendaftaran.get');
-    Route::post('/add', [Pendaftaran_Controller::class, 'pendaftaranadd'])->name('pendaftaran.add');
-    Route::post('/batal', [Pendaftaran_Controller::class, 'pendaftaranbatal'])->name('pendaftaran.batal');
-    Route::post('/batal/pcare', [Pendaftaran_Controller::class, 'pendaftaranbatalpcare'])->name('pendaftaran.batal.pcare');
-    Route::post('/dokterup', [Pendaftaran_Controller::class, 'pendaftaranupdokter'])->name('pendaftaran.dokter.update');
-    Route::post('/hadir', [Pendaftaran_Controller::class, 'pendaftaranhadir'])->name('pendaftaran.hadir');
-});
+
 
 require __DIR__ . '/dashboard.php';
 require __DIR__ . '/auth.php';

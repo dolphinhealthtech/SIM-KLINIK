@@ -1,4 +1,3 @@
-
     <script>
         // Script untuk modal panggil
         $(document).on('click', '.panggil-btn', function() {
@@ -163,7 +162,6 @@
                         const kode = {
                             KPFK: "{{ $kodefasyankes->KPFK }}"
                         };
-                        console.log(kode);
                         if (kode.KPFK === data.kdProviderPst.kdProvider) {
                             $('#bpjs_error_edit_1').hide();
                         } else {
@@ -217,7 +215,6 @@
 
             function loadKabupaten(provinsiID, selectedKabupaten = "", callback = null) {
                 if (!provinsiID) return;
-                console.log("Loading Kabupaten untuk Provinsi ID:", provinsiID);
 
                 $('#kabupaten_edit').html('<option value="">Memuat...</option>');
                 $('#kecamatan_edit').html('<option value="" disabled selected>Pilih Kecamatan</option>');
@@ -225,7 +222,6 @@
 
                 $.get("{{ route('get.kabupaten') }}", { provinsi_id: provinsiID })
                     .done(function (data) {
-                        console.log("Data Kabupaten:", data);
                         let options = '<option value="" disabled selected>Pilih Kabupaten</option>';
                         $.each(data, function (index, kab) {
                             options += `<option value="${kab.kode}">${kab.name}</option>`;
@@ -234,7 +230,6 @@
 
                         if (selectedKabupaten) {
                             $('#kabupaten_edit').val(selectedKabupaten);
-                            console.log("Kabupaten Selected:", selectedKabupaten);
                             $('#kabupaten_edit').trigger('change');
                             if (callback) callback(selectedKabupaten);
                         }
@@ -246,14 +241,11 @@
 
             function loadKecamatan(kabupatenID, selectedKecamatan = "", callback = null) {
                 if (!kabupatenID) return;
-                console.log("Loading Kecamatan untuk Kabupaten ID:", kabupatenID);
-
                 $('#kecamatan_edit').html('<option value="">Memuat...</option>');
                 $('#desa_edit').html('<option value="" disabled selected>Pilih Kelurahan</option>');
 
                 $.get("{{ route('get.kecamatan') }}", { kabupaten_id: kabupatenID })
                     .done(function (data) {
-                        console.log("Data Kecamatan:", data);
                         let options = '<option value="" disabled selected>Pilih Kecamatan</option>';
                         $.each(data, function (index, kec) {
                             options += `<option value="${kec.kode}">${kec.name}</option>`;
@@ -262,7 +254,6 @@
 
                         if (selectedKecamatan) {
                             $('#kecamatan_edit').val(selectedKecamatan);
-                            console.log("Kecamatan Selected:", selectedKecamatan);
                             $('#kecamatan_edit').trigger('change');
                             if (callback) callback(selectedKecamatan);
                         }
@@ -274,13 +265,11 @@
 
             function loadDesa(kecamatanID, selectedDesa = "") {
                 if (!kecamatanID) return;
-                console.log("Loading Desa untuk Kecamatan ID:", kecamatanID);
 
                 $('#desa_edit').html('<option value="">Memuat...</option>');
 
                 $.get("{{ route('get.kelurahan') }}", { kecamatan_id: kecamatanID })
                     .done(function (data) {
-                        console.log("Data Desa:", data);
                         let options = '<option value="" disabled selected>Pilih Kelurahan</option>';
                         $.each(data, function (index, kel) {
                             options += `<option value="${kel.kode}">${kel.name}</option>`;
@@ -289,7 +278,6 @@
 
                         if (selectedDesa) {
                             $('#desa_edit').val(selectedDesa);
-                            console.log("Desa Selected:", selectedDesa);
                             $('#desa_edit').trigger('change');
                         }
                     })
@@ -301,30 +289,26 @@
             // Event saat Provinsi dipilih ulang
             $('#provinsi_edit').on('change', function () {
                 let provinsiID = $(this).val();
-                console.log("Provinsi dipilih:", provinsiID);
                 loadKabupaten(provinsiID);
             });
 
             // Event saat Kabupaten dipilih ulang
             $('#kabupaten_edit').on('change', function () {
                 let kabupatenID = $(this).val();
-                console.log("Kabupaten dipilih:", kabupatenID);
                 loadKecamatan(kabupatenID);
             });
 
             // Event saat Kecamatan dipilih ulang
             $('#kecamatan_edit').on('change', function () {
                 let kecamatanID = $(this).val();
-                console.log("Kecamatan dipilih:", kecamatanID);
                 loadDesa(kecamatanID);
             });
 
             // Event saat tombol "Lengkapi" diklik
             $(document).on('click', '.edit-btn', function () {
                 let pasienId = $(this).data('id');
-                console.log("Edit Pasien ID:", pasienId);
-
-                $.get(`/api/get-pasien/${pasienId}`)
+                apiUrl = `{{ route('search.pasien', ':id') }}`.replace(':id', pasienId);
+                $.get(apiUrl)
                     .done(function (data) {
                         $('#nomor_rm_edit').val(data.no_rm);
                         $('#nama_edit').val(data.nama);
@@ -387,9 +371,9 @@
             $('.lengkapi-btn').on('click', function () {
                 // Ambil data-id dari tombol yang diklik
                 let pasienId = $(this).data('id');
-
+                apiUrl = `{{ route('search.pasien', ':id') }}`.replace(':id', pasienId);
                 // Contoh: Ambil data pasien dari server (opsional)
-                $.get(`/api/get-pasien/${pasienId}`, function (data) {
+                $.get(apiUrl, function (data) {
                     $('#nomor_rm').val(data.no_rm);
                     $('#nama').val(data.nama);
                     $('#nik').val(data.nik);
@@ -398,7 +382,8 @@
                     $('#noihs').val(data.kode_ihs);
                     $('#alamat').val(data.alamat);
                     $('#telepon').val(data.telepon);
-                    $('#pernikahan').val(data.pernikahan);
+                    $('#pernikahan').val(data.pernikahan).trigger('change');
+                    $('#kewarganegaraan').val(data.kewarganegaraan).trigger('change');
                     $('#goldar').val(data.goldar).trigger('change');
                     $('#seks').val(data.seks).trigger('change');
                     $('#email').val(data.getnama?.email ?? '');
@@ -522,7 +507,6 @@
                         const kode = {
                             KPFK: "{{ $kodefasyankes->KPFK }}"
                         };
-                        console.log(kode);
                         if (kode.KPFK === data.kdProviderPst.kdProvider) {
                             $('#bpjs_error1').hide();
                         } else {

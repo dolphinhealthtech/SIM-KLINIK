@@ -23,6 +23,7 @@
                     sudahRequest = true;
 
                     // Jalankan AJAX
+
                     $.ajax({
                         url: '/api/pcare/noka/' + noka,
                         method: 'GET',
@@ -52,7 +53,6 @@
 
                 if (nik.length === 16 && !sudahRequest) {
                     sudahRequest = true;
-
                     // Jalankan AJAX
                     $.ajax({
                         url: '/api/pcare/nik/' + nik,
@@ -161,8 +161,9 @@
 
                 if (poliId && datetime) {
                     let formattedDatetime = datetime + ':00';
+                    let noihsApiUrl = `{{ route('search.dokter.poli', ':poliid') }}`.replace(':poliid', poliId); // Sesuaikan URL
                     $.ajax({
-                        url: `/api/get-dokter-by-poli/${poliId}`,
+                        url: noihsApiUrl,
                         method: 'GET',
                         data: { datetime: formattedDatetime },
                         success: function (data) {
@@ -195,9 +196,9 @@
 
                 if (poliId && datetime) {
                     let formattedDatetime = datetime + ':00';
-
+                    let noihsApiUrl = `{{ route('search.dokter.poli', ':poliid') }}`.replace(':poliid', poliId); // Sesuaikan URL
                     $.ajax({
-                        url: `/api/get-dokter-by-poli/${poliId}`,
+                        url: noihsApiUrl,
                         method: 'GET',
                         data: { datetime: formattedDatetime },
                         success: function (data) {
@@ -229,7 +230,7 @@
                 return;
             }
 
-            fetch('/api/get-pasien-nikornama', {
+            fetch(`{{ route('search.nik') }}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -265,8 +266,7 @@
                 feedbackElement.textContent = '';
                 return;
             }
-
-            fetch('/api/get-pasien-nikornoka', {
+            fetch( `{{ route('search.noka') }}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -400,19 +400,10 @@
                     },
                     error: function(xhr) {
                         if (xhr.status === 422 && xhr.responseJSON.errors) {
-                            let errorList = '';
-
-                            // Loop through validation errors
-                            Object.entries(xhr.responseJSON.errors).forEach(([key, value]) => {
-                                errorList += `- ${value[0]}<br>`;
-                                // Add is-invalid class to the field
-                                $(`[name="${key}"]`).addClass('is-invalid');
-                            });
-
                             Swal.fire({
-                                icon: 'warning',
-                                title: 'Validasi Gagal!',
-                                html: `Terdapat beberapa input yang belum valid:<br><br>${errorList}`,
+                                icon: 'error',
+                                title: 'Gagal!',
+                                html: `Terdapat beberapa input yang belum di isi atau Pasien sudah ada `,
                                 confirmButtonText: 'OK'
                             });
                         } else {

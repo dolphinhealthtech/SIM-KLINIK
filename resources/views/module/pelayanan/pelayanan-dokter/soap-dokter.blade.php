@@ -997,7 +997,7 @@
         const no_rawat = document.getElementById('no_rawat').value;
 
         $.ajax({
-            url: '/api/odontogram/load',
+            url: `{{ route('soappelayana.lod.odo') }}`,
             method: 'GET',
             data: {
                 nomor_rm: nomor_rm,
@@ -1045,8 +1045,6 @@
         const penjamin       = document.getElementById('penjamin')?.value || '';
         const tanggal_lahir  = document.getElementById('tanggal_lahir')?.value || '';
 
-        const odontogramDetailsAddRoute = "{{ route('odontogram.details.add') }}";
-
         // Siapkan payload untuk dikirim
         const formData = {
             nomor_rm,
@@ -1068,7 +1066,7 @@
 
         // Kirim via AJAX ke server (Laravel endpoint)
         $.ajax({
-            url: odontogramDetailsAddRoute, // Ganti sesuai rute Laravel Anda
+            url: `{{ route('soappelayana.add.deti.odo') }}`, // Ganti sesuai rute Laravel Anda
             method: 'POST',
             data: formData,
             headers: {
@@ -1101,7 +1099,7 @@
         const no_rawat = $('#no_rawat').val();
 
         $.ajax({
-            url: '/api/odontogram/load-details',
+            url: `{{ route('soappelayana.odo') }}`,
             method: 'POST',
             data: {
                 nomor_rm: nomor_rm,
@@ -1129,7 +1127,7 @@
 
 {{-- Script load data --}}
 <script>
-    const soapRoute = "{{ route('pelayana_dokter_data.get', ':id') }}";
+    const soapRoute = "{{ route('soappelayana.pelayana_data', ':id') }}";
 
     $(document).ready(function () {
         let id = $('#no_rawat').val();
@@ -1426,11 +1424,10 @@
             const resepData = JSON.stringify(resepList);
 
             $.ajax({
-                url: '{{ route('resep.print') }}',
+                url: `{{ route('soappelayana.resep.print') }}`,
                 type: 'POST',
                 data: {
-                    resep_data: resepData,
-                    _token: '{{ csrf_token() }}'
+                    resep_data: resepData
                 },
                 xhrFields: {
                     responseType: 'blob' // penting agar bisa buka PDF dari binary
@@ -1955,8 +1952,9 @@
             return;
         }
 
+        baseurl = `{{ route('soappelayana.alerhi', ':id') }}`.replace(':id', kodeJenis); // Sesuaikan URL
         $.ajax({
-            url: '/api/alergi/by-jenis/' + kodeJenis,
+            url: baseurl,
             method: 'GET',
             success: function(response) {
                 const select2 = $('#alergi');
@@ -2020,8 +2018,9 @@
             inputDetail.prop('disabled', true); // Nonaktifkan input saat sub di-reset
 
             if (id && id !== "-") {
+                let baseurl = `{{ route('soappelayana.htt', ':kode') }}`.replace(':kode', id); // Sesuaikan URL
                 $.ajax({
-                    url: '/api/sub-pemeriksaan/' + id,
+                    url: baseurl,
                     type: 'GET',
                     success: function (data) {
                         data.forEach(function (item) {

@@ -72,7 +72,7 @@
                                                     @if ($pelayanandata->tindakan_button == 'panggil')
                                                         <button type="button"
                                                                 class="btn btn-outline-warning btn-sm rounded-pill pasien-hadir"
-                                                                data-url="{{ route('pelayana_dokter.hadir', ['norawat' => $norawat]) }}"
+                                                                data-url="{{ route('soappelayana.hadir.hadir', ['norawat' => $norawat]) }}"
                                                                 data-bs-toggle="tooltip"
                                                                 data-bs-placement="top"
                                                                 title="Panggil pasien ke ruangan">

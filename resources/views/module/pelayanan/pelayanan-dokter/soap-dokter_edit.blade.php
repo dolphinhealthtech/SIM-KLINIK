@@ -1351,6 +1351,7 @@
 
         // Load dropdown alergi sesuai jenis
         if (jenisAlergiCPPT) {
+
             $.ajax({
                 url: '/api/alergi/by-jenis/' + jenisAlergiCPPT,
                 method: 'GET',
@@ -1567,7 +1568,6 @@
         const penjamin       = document.getElementById('penjamin')?.value || '';
         const tanggal_lahir  = document.getElementById('tanggal_lahir')?.value || '';
 
-        const odontogramDetailsAddRoute = "{{ route('odontogram.details.add') }}";
 
         // Siapkan payload untuk dikirim
         const formData = {
@@ -1590,7 +1590,7 @@
 
         // Kirim via AJAX ke server (Laravel endpoint)
         $.ajax({
-            url: odontogramDetailsAddRoute, // Ganti sesuai rute Laravel Anda
+            url: `{{ route('soappelayana.add.deti.odo') }}`, // Ganti sesuai rute Laravel Anda
             method: 'POST',
             data: formData,
             headers: {
@@ -1981,11 +1981,10 @@
             const resepData = JSON.stringify(resepList);
 
             $.ajax({
-                url: '{{ route('resep.print') }}',
+                url: `{{ route('soappelayana.resep.print') }}`,
                 type: 'POST',
                 data: {
-                    resep_data: resepData,
-                    _token: '{{ csrf_token() }}'
+                    resep_data: resepData
                 },
                 xhrFields: {
                     responseType: 'blob'
@@ -2649,8 +2648,9 @@
             return;
         }
 
+        baseurl = `{{ route('soappelayana.alerhi', ':id') }}`.replace(':id', kodeJenis); // Sesuaikan URL
         $.ajax({
-            url: '/api/alergi/by-jenis/' + kodeJenis,
+            url: baseurl,
             method: 'GET',
             success: function(response) {
                 const select2 = $('#alergi');
@@ -2685,11 +2685,6 @@
             const kode = $(this).val();
             loadAlergiByJenis(kode);
         });
-
-        // Saat load data dari server (misal di fungsi loadSoapData)
-        // Contoh:
-        // $('#jenis_alergi').val(data.jenis_alergi).trigger('change');
-        // loadAlergiByJenis(data.jenis_alergi, data.alergi);
     });
 
 </script>
@@ -2714,8 +2709,9 @@
             inputDetail.prop('disabled', true); // Nonaktifkan input saat sub di-reset
 
             if (id && id !== "-") {
+                let baseurl = `{{ route('soappelayana.htt', ':kode') }}`.replace(':kode', id); // Sesuaikan URL
                 $.ajax({
-                    url: '/api/sub-pemeriksaan/' + id,
+                    url: baseurl,
                     type: 'GET',
                     success: function (data) {
                         data.forEach(function (item) {

@@ -2,10 +2,10 @@
     $(document).ready(function() {
         $('#jenis_alergi').on('change', function () {
             const kode = $(this).val();
-
             if (kode) {
+                let baseurl = `{{ route('sopelayana.alerhi', ':kode') }}`.replace(':kode', kode); // Sesuaikan URL
                 $.ajax({
-                    url: '/api/alergi/by-jenis/' + kode,
+                    url: baseurl,
                     method: 'GET',
                     success: function(response) {
                         const select2 = $('#alergi');
@@ -48,8 +48,9 @@
             inputDetail.prop('disabled', true); // Nonaktifkan input saat sub di-reset
 
             if (id && id !== "-") {
+                let baseurl = `{{ route('sopelayana.htt', ':kode') }}`.replace(':kode', id); // Sesuaikan URL
                 $.ajax({
-                    url: '/api/sub-pemeriksaan/' + id,
+                    url: baseurl,
                     type: 'GET',
                     success: function (data) {
                         data.forEach(function (item) {

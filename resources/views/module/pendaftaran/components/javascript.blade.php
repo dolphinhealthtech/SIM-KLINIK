@@ -36,9 +36,9 @@
                     // Load dokter berdasarkan poli dan tanggal
                     if (poli && tanggal) {
                         let formattedDatetime = tanggal.replace('T', ' ') + ':00';
-
+                        let rubahdokter = `{{ route('search.dokter.poli.offline', ':poliid') }}`.replace(':poliid', poli); // Sesuaikan URL
                         $.ajax({
-                            url: `/api/get-dokter-by-poli/${poli}`,
+                            url: rubahdokter,
                             method: 'GET',
                             data: { datetime: formattedDatetime },
                             success: function (data) {
@@ -139,12 +139,9 @@
 
                 if (poliId && datetime) {
                     let formattedDatetime = datetime + ':00';
-                    console.log("Mengambil dokter...");
-                    console.log("Poli ID:", poliId);
-                    console.log("Datetime:", formattedDatetime);
-
+                    let noihsApiUrl = `{{ route('search.dokter.poli.offline', ':poliid') }}`.replace(':poliid', poliId); // Sesuaikan URL
                     $.ajax({
-                        url: `/api/get-dokter-by-poli/${poliId}`,
+                        url: noihsApiUrl,
                         method: 'GET',
                         data: { datetime: formattedDatetime },
                         success: function (data) {
@@ -354,7 +351,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menghapus Goldar!',
+                        text: 'Terjadi kesalahan saat menghapus Kehadiran!',
                     });
                 }
             });
