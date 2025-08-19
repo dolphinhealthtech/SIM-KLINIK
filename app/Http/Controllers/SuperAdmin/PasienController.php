@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SatusehatController;
 use App\Models\penjamin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 class PasienController extends Controller
@@ -52,6 +53,75 @@ class PasienController extends Controller
             return response()->json(['success' => false]);
         }
     }
+
+
+    public function search()
+{
+    try {
+        $pasiens = DB::table('pasiens')
+            ->select('id', 'nama', 'telepon')
+            ->whereNotNull('telepon')
+            ->where('telepon', '!=', '')
+            ->orderBy('nama')
+            ->limit(50)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $pasiens
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
+    public function queueMessage(Request $request)
+    {
+        try {
+            $telepon = $request->telepon;
+
+            // Cari pasien berdasarkan telepon
+            $pasien = DB::table('pasiens')
+                ->where('telepon', $telepon)
+                ->first();
+
+            if (!$pasien) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pasien tidak ditemukan'
+                ]);
+            }
+
+            // Cari antrian terbaru pasien
+            $antrian = DB::table('pasien_antrians')
+                ->where('pasien_id', $pasien->id)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if ($antrian) {
+                $message = "Halo {$pasien->nama}, nomor antrian Anda adalah {$antrian->nomor_antrian}. Status: " .
+                          ($antrian->status_panggil == 0 ? 'Menunggu' : 'Sudah Dipanggil') . ". Terima kasih.";
+            } else {
+                $message = "Halo {$pasien->nama}, terima kasih telah menggunakan layanan klinik kami. Silakan tunggu informasi lebih lanjut.";
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function cariNikNama(Request $request)
     {
         $nikNama = $request->input('nikNama');

@@ -24,8 +24,11 @@ use App\Http\Controllers\Soap\OdoController;
 use App\Http\Controllers\Soap\PelayananController;
 use App\Http\Controllers\Soap\RujukanController;
 use App\Http\Controllers\Mobile_JknController;
+use App\Http\Controllers\WhatsAppController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -97,6 +100,32 @@ Route::prefix('pcare')->group(function () {
     Route::get('/get-pendaftaran-provide/{tanggal}', [PcareController::class, 'get_pendaftaran_provide'])->name('pcare.pendaftaran_provide');
 });
 
+Route::prefix('whatsapp')->group(function () {
+
+    // Session Management
+    Route::get('/sessions', [WhatsAppController::class, 'getAllSessions']);
+    Route::get('/session/{sessionId}/status', [WhatsAppController::class, 'getSessionStatus']);
+    Route::get('/session/{sessionId}/qr', [WhatsAppController::class, 'getQRCode']);
+    Route::post('/session/{sessionId}/logout', [WhatsAppController::class, 'logoutSession']);
+    Route::delete('/session/{sessionId}/delete', [WhatsAppController::class, 'deleteSession']);
+    Route::post('/session/{sessionId}/restart', [WhatsAppController::class, 'restartSession']);
+
+    // Token Management
+    Route::get('/session/{sessionId}/token', [WhatsAppController::class, 'getTokenInfo']);
+    Route::post('/session/{sessionId}/token', [WhatsAppController::class, 'setPremiumToken']);
+    Route::post('/session/{sessionId}/token/status', [WhatsAppController::class, 'updateTokenStatus']);
+    Route::delete('/session/{sessionId}/token', [WhatsAppController::class, 'deleteToken']);
+
+    // Message Sending
+    Route::post('/session/{sessionId}/send', [WhatsAppController::class, 'sendMessage']);
+    Route::post('/session/{sessionId}/send-template', [WhatsAppController::class, 'sendTemplateMessage']);
+
+    // Debug & Testing
+    Route::get('/debug/folders', [WhatsAppController::class, 'debugFolders']);
+    Route::post('/refresh-sessions', [WhatsAppController::class, 'refreshSessions']);
+    Route::post('/test', [WhatsAppController::class, 'testEndpoint']);
+});
+
 // Data Master Medis
 Route::prefix('data-master-medis')->group(function () {
     Route::get('/perawatan_tindakan/getLastKode', [PerawatanTindakanController::class, 'getLastKode'])->name('perawatan_tindakan.getLastKode'); // di privat fungsi nya
@@ -155,7 +184,6 @@ Route::prefix('kasir')->group(function () {
     Route::get('/ambil-kode/{no_rawat}/{method}', [KasirController::class, 'getKodePenjamin'])->name('kasir.kode');
 });
 
-
 Route::get('/kunjungan-harian', [dashboard::class, 'kunjunganHarian']);
 Route::get('/kunjungan-per-poli', [dashboard::class, 'kunjunganPerPoli']);
 
@@ -171,3 +199,10 @@ Route::prefix('m_jkn')->group(function () {
     Route::put('/batalkan_antrian', [Mobile_JknController::class, 'batalkan_antrian'])->name('batalkan_antrian.m_jkn');
     Route::post('/set_pasien_baru', [Mobile_JknController::class, 'set_pasien_baru'])->name('pasien_baru.m_jkn');
 });
+
+
+
+Route::get('/pasiens/search', [PasienController::class, 'search']);
+
+Route::get('/pasiens/queue-message', [PasienController::class, 'queueMessage']);
+

@@ -63,6 +63,8 @@ use App\Http\Controllers\SuperAdmin\PendataanController;
 use App\Http\Controllers\SuperAdmin\StaffController;
 use App\Http\Controllers\SuperAdmin\UserController;
 use App\Http\Controllers\UserActivityLogController;
+use App\Http\Controllers\WhatsAppWebController;
+use App\Http\Controllers\WhatsAppController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -625,6 +627,29 @@ Route::middleware('auth')->group(function () {
 
 
 Route::get('/rujukan/cetak/{no_rawat}', [App\Http\Controllers\Soap\RujukanController::class, 'cetakSuratRujukan'])->name('rujukan.cetak');
+//wa gateway
+Route::prefix('whatsapp')->name('whatsapp.')->group(function () {
+
+    // Dashboard utama
+    Route::get('/', [WhatsAppWebController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [WhatsAppWebController::class, 'dashboard'])->name('dashboard.alt');
+
+    // Session management
+    Route::get('/session/{sessionId}', [WhatsAppWebController::class, 'sessionDetail'])->name('session.detail');
+
+    // API Documentation
+    Route::get('/api-docs', [WhatsAppWebController::class, 'apiDocs'])->name('api.docs');
+
+});
+
+// Redirect untuk kemudahan akses
+Route::redirect('/wa', '/whatsapp');
+Route::redirect('/whatsapp-gateway', '/whatsapp');
+// web.php
+Route::get('/get-pasien-info', [WhatsAppController::class, 'getPasienInfo']);
+Route::get('/api/pasien/telepons', function () {
+    return \App\Models\Pasien::select('telepon')->distinct()->get();
+});
 
 
 
