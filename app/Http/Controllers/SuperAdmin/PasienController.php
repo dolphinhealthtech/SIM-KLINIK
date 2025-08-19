@@ -187,6 +187,15 @@ class PasienController extends Controller
         return $nomorAntrian;
     }
 
+    public function pasiens_time_line($norm)
+    {
+        $title = "Time Line";
+        $normAsli = base64_decode($norm);
+        $datapasien = pasien::where('no_rm', $normAsli)->first();
+
+        return view('dashboard.pasien-time-line', compact('title', 'datapasien'));
+    }
+
     public function pasiens()
     {
         $title = "Pasien";
@@ -218,7 +227,7 @@ class PasienController extends Controller
     public function getPasien($id)
     {
         // $pasien = Pasien::find($id); // Ambil data pasien dari database
-        $pasien = Pasien::with(['getnama:id,email'])->find($id); // Ambil pasien + relasi email saja
+        $pasien = Pasien::with(['getnama'])->find($id); // Ambil pasien + relasi email saja
 
         return response()->json($pasien);
     }
@@ -373,7 +382,7 @@ class PasienController extends Controller
             $fotoName = $request->file('profile_image')->getClientOriginalName();
 
             // Define the directory path to save in the public folder
-            $destinationPath = public_path('uploads/patient_photos');
+            $destinationPath = public_path('profile');
 
             // Move the uploaded file to the public directory
             $request->file('profile_image')->move($destinationPath, $fotoName);
@@ -400,8 +409,9 @@ class PasienController extends Controller
                 'is_active' => 1
             ]);
             // Update data pasien
-            $pasien->update([
-                'no_rm' => $request->nomor_rm,
+            $pasien->updateOrCreate(
+                ['no_rm' => $request->nomor_rm],
+                [
                 'nama' => $request->nama,
                 'nik' => $request->nik,
                 'tempat_lahir' => $request->tempat_lahir,
@@ -515,71 +525,91 @@ class PasienController extends Controller
             "suku_edit" => 'required',
             "bangsa_edit" => 'required',
             "bahasa_edit" => 'required',
-            "email_edit" => 'nullable',
+            "email_edit" => 'nullable|email',
             "penjamin_2_info_edit" => 'nullable',
             "penjamin_3_info_edit" => 'nullable',
             "penjamin_2_edit" => 'nullable',
             "penjamin_3_edit" => 'nullable',
+            "profile_image_edit" => 'nullable|image|mimes:jpg,jpeg,png',
+            "user_edit" => 'required|exists:users,id',
         ]);
 
         $pasien = Pasien::where('no_rm', $request->nomor_rm_edit)->first();
-        if ($pasien) {
-            // Update data pasien
-            $pasien->update([
-                'no_rm' => $request->nomor_rm_edit,
-                'nama' => $request->nama_edit,
-                'nik' => $request->nik_edit,
-                'tempat_lahir' => $request->tempat_lahir_edit,
-                'tanggal_lahir' => $request->tgllahir_edit,
-                'provinsi_kode' => $request->provinsi_edit,
-                'kabupaten_kode' => $request->kabupaten_edit,
-                'kecamatan_kode' => $request->kecamatan_edit,
-                'desa_kode' => $request->desa_edit,
-                'rt' => $request->rt_edit,
-                'rw' => $request->rw_edit,
-                'kode_pos' => $request->kode_pos_edit,
-                'alamat' => $request->alamat_edit,
-                'no_bpjs' => $request->noka_edit,
-                'kode_ihs' => $request->noihs_edit,
-                'jenis_Kartu_bpjs' => $request->jenis_kartu_edit,
-                'kelas_bpjs' => $request->kelas_edit,
-                'provide' => $request->provide_edit,
-                'kodeprovide' => $request->kodeprovide_edit,
-                'hubungan_keluarga' => $request->hubungan_keluarga_edit,
-                'tgl_exp_bpjs' => $request->tgl_exp_bpjs_edit,
-                'seks' => $request->seks_edit,
-                'goldar' => $request->goldar_edit,
-                'pernikahan' => $request->pernikahan_edit,
-                'kewarganegaraan' => $request->kewarganegaraan_edit,
-                'agama' => $request->agama_edit,
-                'pendidikan' => $request->pendidikan_edit,
-                'pekerjaan' => $request->status_kerja_edit,
-                'telepon' => $request->telepon_edit,
-                'suku' => $request->suku_edit,
-                'bangsa' => $request->bangsa_edit,
-                'bahasa' => $request->bahasa_edit,
-                'penjamin_2_nama' => $request->penjamin_2_edit,
-                'penjamin_3_nama' => $request->penjamin_3_edit,
-                'penjamin_2_no' => $request->penjamin_2_info_edit,
-                'penjamin_3_no' => $request->penjamin_3_info_edit,
-            ]);
 
-            // Logging perubahan data
-            Log::info('Pasien berhasil diupdate', [
-                'no_rm' => $pasien->no_rm,
-                'user_input' => $pasien->user_name_input,
-                'waktu' => now()
-            ]);
-
-            return redirect()->route('pasien.get')->with('success', 'Data Pasien Berhasil Diperbarui');
-        } else {
+        if (!$pasien) {
             Log::error('Gagal update, pasien tidak ditemukan', [
-                'no_rm' => $request->nomor_rm,
+                'no_rm' => $request->nomor_rm_edit,
                 'user_input' => $request->userinput,
                 'waktu' => now()
             ]);
 
             return redirect()->route('pasien.get')->with('error', 'Data Pasien Gagal Diperbarui');
         }
+
+        // Update data pasien
+        $pasien->update([
+            'no_rm' => $request->nomor_rm_edit,
+            'nama' => $request->nama_edit,
+            'nik' => $request->nik_edit,
+            'tempat_lahir' => $request->tempat_lahir_edit,
+            'tanggal_lahir' => $request->tgllahir_edit,
+            'provinsi_kode' => $request->provinsi_edit,
+            'kabupaten_kode' => $request->kabupaten_edit,
+            'kecamatan_kode' => $request->kecamatan_edit,
+            'desa_kode' => $request->desa_edit,
+            'rt' => $request->rt_edit,
+            'rw' => $request->rw_edit,
+            'kode_pos' => $request->kode_pos_edit,
+            'alamat' => $request->alamat_edit,
+            'no_bpjs' => $request->noka_edit,
+            'kode_ihs' => $request->noihs_edit,
+            'jenis_Kartu_bpjs' => $request->jenis_kartu_edit,
+            'kelas_bpjs' => $request->kelas_edit,
+            'provide' => $request->provide_edit,
+            'kodeprovide' => $request->kodeprovide_edit,
+            'hubungan_keluarga' => $request->hubungan_keluarga_edit,
+            'tgl_exp_bpjs' => $request->tgl_exp_bpjs_edit,
+            'seks' => $request->seks_edit,
+            'goldar' => $request->goldar_edit,
+            'pernikahan' => $request->pernikahan_edit,
+            'kewarganegaraan' => $request->kewarganegaraan_edit,
+            'agama' => $request->agama_edit,
+            'pendidikan' => $request->pendidikan_edit,
+            'pekerjaan' => $request->status_kerja_edit,
+            'telepon' => $request->telepon_edit,
+            'suku' => $request->suku_edit,
+            'bangsa' => $request->bangsa_edit,
+            'bahasa' => $request->bahasa_edit,
+            'penjamin_2_nama' => $request->penjamin_2_edit,
+            'penjamin_3_nama' => $request->penjamin_3_edit,
+            'penjamin_2_no' => $request->penjamin_2_info_edit,
+            'penjamin_3_no' => $request->penjamin_3_info_edit,
+        ]);
+
+        // Update User (foto profile)
+        $user = User::find($request->user_edit);
+
+        if ($request->hasFile('profile_image_edit')) {
+            // Buat nama file unik
+            $fotoName = uniqid('user_') . '.' . $request->file('profile_image_edit')->getClientOriginalExtension();
+
+            // Simpan ke folder public/profile
+            $request->file('profile_image_edit')->move(public_path('profile'), $fotoName);
+
+            // Update hanya jika ada foto
+            $user->profile = $fotoName;
+        }
+
+        $user->save();
+
+        // Logging
+        Log::info('Pasien berhasil diupdate', [
+            'no_rm' => $pasien->no_rm,
+            'user_input' => $pasien->user_name_input,
+            'waktu' => now()
+        ]);
+
+        return redirect()->route('pasien.get')->with('success', 'Data Pasien Berhasil Diperbarui');
     }
+
 }

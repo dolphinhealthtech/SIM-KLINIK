@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('perawatan_tindakans', function (Blueprint $table) {
-            $table->string('tarif_all')->nullable();
+        Schema::table('pelayanan_soap_dokters', function (Blueprint $table) {
+            $table->longText('anamnesa')->nullable()->after('tableData');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('perawatan_tindakans', function (Blueprint $table) {
-            //
+        Schema::table('pelayanan_soap_dokters', function (Blueprint $table) {
+            $table->dropColumn('anamnesa');
         });
     }
 };

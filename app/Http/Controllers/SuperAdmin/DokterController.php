@@ -220,66 +220,109 @@ class DokterController extends Controller
 
     public function dokterverifikasi(Request $request)
     {
+        // ✅ VALIDASI
+        $request->validate([
+            'dokterid_verifikasi' => 'required|exists:dokters,id',
+            'nama_bank'           => 'required|string|max:100',
+            'norek'               => 'required|string|max:50',
+            'cabang_bank'         => 'required|string|max:100',
+
+            'pendidikan'          => 'required|array|min:1',
+            'pendidikan.*.kode'         => 'required|string',
+            'pendidikan.*.nama_sekolah' => 'required|string',
+            'pendidikan.*.tahun_lulus'  => 'required',
+            'pendidikan.*.ijasah'       => 'nullable|file|mimes:pdf,jpg,jpeg,png',
+
+            'spesialis'           => 'nullable|array',
+            'spesialis.*.nama'       => 'required|string',
+            'spesialis.*.institusi'  => 'required|string',
+            'spesialis.*.tahun_lulus'=> 'required',
+            'spesialis.*.ijasah'     => 'nullable|file|mimes:pdf,jpg,jpeg,png',
+
+            'pelatihan'           => 'nullable|array',
+            'pelatihan.*.nama'         => 'required|string',
+            'pelatihan.*.penyelenggara'=> 'required|string',
+            'pelatihan.*.tahun'        => 'required',
+            'pelatihan.*.sertifikat'   => 'nullable|file|mimes:pdf,jpg,jpeg,png',
+        ]);
+
         try {
+            // ✅ SIMPAN DATA UTAMA
+            $verifikasi = dokter_verifikasi::updateOrCreate(
+                ['dokter_id' => $request->dokterid_verifikasi],
+                [
+                    'nama_bank'   => $request->nama_bank,
+                    'norek'       => $request->norek,
+                    'cabang_bank' => $request->cabang_bank,
+                ]
+            );
 
-            // Simpan data utama
-            $verifikasi = dokter_verifikasi::create([
-                'dokter_id'   => $request->dokterid_verifikasi,
-                'nama_bank'   => $request->nama_bank,
-                'norek'       => $request->norek,
-                'cabang_bank' => $request->cabang_bank,
-            ]);
-
-            // Simpan pendidikan
+            // ✅ SIMPAN PENDIDIKAN
             foreach ($request->pendidikan as $item) {
-                $ijasahPath = $item['ijasah'] ?? null;
-                if (is_file($ijasahPath)) {
+                $ijasahPath = null;
+                if (isset($item['ijasah']) && $item['ijasah'] instanceof \Illuminate\Http\UploadedFile) {
                     $ijasahPath = $item['ijasah']->store('ijasah', 'public');
                 }
 
-                dokter_pendidikan::create([
-                    'dokter_verifikasi_id' => $verifikasi->id,
-                    'kode' => $item['kode'],
-                    'nama_sekolah' => $item['nama_sekolah'],
-                    'tahun_lulus' => $item['tahun_lulus'],
-                    'ijasah' => $ijasahPath,
-                ]);
+                dokter_pendidikan::updateOrCreate(
+                    [
+                        'dokter_verifikasi_id' => $verifikasi->id,
+                        'kode' => $item['kode'],
+                    ],
+                    [
+                        'nama_sekolah' => $item['nama_sekolah'],
+                        'tahun_lulus'  => $item['tahun_lulus'],
+                        'ijasah'       => $ijasahPath,
+                    ]
+                );
             }
 
-            // Simpan spesialis
-            foreach ($request->spesialis as $item) {
-                $ijasahPath = $item['ijasah'] ?? null;
-                if (is_file($ijasahPath)) {
-                    $ijasahPath = $item['ijasah']->store('spesialis', 'public');
+            // ✅ SIMPAN SPESIALIS (Opsional)
+            if (!empty($request->spesialis)) {
+                foreach ($request->spesialis as $item) {
+                    $ijasahPath = null;
+                    if (isset($item['ijasah']) && $item['ijasah'] instanceof \Illuminate\Http\UploadedFile) {
+                        $ijasahPath = $item['ijasah']->store('spesialis', 'public');
+                    }
+
+                    dokter_pendidikan_spesialis::updateOrCreate(
+                        [
+                            'dokter_verifikasi_id' => $verifikasi->id,
+                            'nama' => $item['nama'],
+                            'institusi' => $item['institusi'],
+                        ],
+                        [
+                            'tahun_lulus' => $item['tahun_lulus'],
+                            'ijasah'      => $ijasahPath,
+                        ]
+                    );
                 }
-
-                dokter_pendidikan_spesialis::create([
-                    'dokter_verifikasi_id' => $verifikasi->id,
-                    'nama' => $item['nama'],
-                    'institusi' => $item['institusi'],
-                    'tahun_lulus' => $item['tahun_lulus'],
-                    'ijasah' => $ijasahPath,
-                ]);
             }
 
-            // Simpan pelatihan
-            foreach ($request->pelatihan as $item) {
-                $sertifikatPath = $item['sertifikat'] ?? null;
-                if (is_file($sertifikatPath)) {
-                    $sertifikatPath = $item['sertifikat']->store('pelatihan', 'public');
+            // ✅ SIMPAN PELATIHAN (Opsional)
+            if (!empty($request->pelatihan)) {
+                foreach ($request->pelatihan as $item) {
+                    $sertifikatPath = null;
+                    if (isset($item['sertifikat']) && $item['sertifikat'] instanceof \Illuminate\Http\UploadedFile) {
+                        $sertifikatPath = $item['sertifikat']->store('pelatihan', 'public');
+                    }
+
+                    dokter_pelatihan::updateOrCreate(
+                        [
+                            'dokter_verifikasi_id' => $verifikasi->id,
+                            'nama' => $item['nama'],
+                            'penyelenggara' => $item['penyelenggara'],
+                        ],
+                        [
+                            'tahun'      => $item['tahun'],
+                            'sertifikat' => $sertifikatPath,
+                        ]
+                    );
                 }
-
-                dokter_pelatihan::create([
-                    'dokter_verifikasi_id' => $verifikasi->id,
-                    'nama' => $item['nama'],
-                    'penyelenggara' => $item['penyelenggara'],
-                    'tahun' => $item['tahun'],
-                    'sertifikat' => $sertifikatPath,
-                ]);
             }
 
-            $dokter = Dokter::find($request->dokterid_verifikasi);
-
+            // ✅ UPDATE STATUS DOKTER
+            $dokter = dokter::find($request->dokterid_verifikasi);
             if ($dokter && $dokter->verifikasi == 1) {
                 $dokter->verifikasi = 2;
                 $dokter->save();
@@ -287,12 +330,15 @@ class DokterController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data pasien berhasil disimpan.'
+                'message' => 'Data dokter berhasil dilengkapi.'
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+
+        } catch (\Exception $e) {
             return response()->json([
-                'errors' => $e->errors()
-            ], 422);
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data.',
+                'error'   => $e->getMessage(),
+            ], 500);
         }
     }
 

@@ -6,7 +6,6 @@
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
-
         <div class="form-group mb-3">
             <label for="login">Email atau Username</label>
             <div class="input-group">

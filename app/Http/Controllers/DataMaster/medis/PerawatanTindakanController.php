@@ -40,7 +40,6 @@ class PerawatanTindakanController extends Controller
                  "tarif_dokter" => 'required|string',
                  "tarif_perawat" => 'required|string',
                  "tarif_total" => 'required|string',
-                 "tarif_all" => 'required|string',
              ]);
 
              $perawatan_tindakan = perawatan_tindakan::create([
@@ -50,7 +49,6 @@ class PerawatanTindakanController extends Controller
                  'tarif_dokter' => $request->tarif_dokter,
                  'tarif_perawat' => $request->tarif_perawat,
                  'tarif_total' => $request->tarif_total,
-                 'tarif_all' => $request->tarif_all,
              ]);
 
              return response()->json([
@@ -81,7 +79,6 @@ class PerawatanTindakanController extends Controller
             "tarif_dokter_edit" => 'required|string',
             "tarif_perawat_edit" => 'required|string',
             "tarif_total_edit" => 'required|string',
-            "tarif_all_edit" => 'required|string',
          ]);
 
          $perawatan_tindakan = perawatan_tindakan::find($request->perawatan_tindakanid_edit);
@@ -98,7 +95,6 @@ class PerawatanTindakanController extends Controller
          $perawatan_tindakan->tarif_dokter = $request->tarif_dokter_edit;
          $perawatan_tindakan->tarif_perawat = $request->tarif_perawat_edit;
          $perawatan_tindakan->tarif_total = $request->tarif_total_edit;
-         $perawatan_tindakan->tarif_all = $request->tarif_all_edit;
          $perawatan_tindakan->save();
 
          return response()->json([

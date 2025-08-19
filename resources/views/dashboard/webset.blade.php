@@ -182,15 +182,6 @@
                                                         Gudang Utama</label>
                                                 </div>
                                             </div>
-
-                                            <div class="form-group">
-                                                <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" id="toggleTindakanAll"
-                                                        name="toggleTindakanAll" checked>
-                                                    <label class="custom-control-label" for="toggleTindakanAll">Aktifkan Fitur
-                                                        Tindakan Pemeriksaan</label>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1418,7 +1409,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         $('#toggleBPJS').prop('checked', states.is_bpjs_active == 1);
                         $('#toggleSatusehat').prop('checked', states.is_satusehat_active == 1);
                         $('#toggleGudangutama').prop('checked', states.is_gudangutama_active == 1);
-                        $('#toggleTindakanAll').prop('checked', states.is_tindakan_active == 1);
                     }
                 },
                 error: function(xhr) {

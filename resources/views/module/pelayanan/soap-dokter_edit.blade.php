@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <form id="addFormsoap" action="{{ route('pelayana_dokter.add') }}" method="POST">
+                            <form id="addFormsoap" action="{{ route('pelayana_dokter.update') }}" method="POST">
                                 @csrf
                             <div class="card-body">
                                 <div class="row">
@@ -99,6 +99,9 @@
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-odo-tab" data-toggle="pill" href="#custom-tabs-four-odo" role="tab" aria-controls="custom-tabs-four-odo" aria-selected="false">Odontogram </a>
                                                     </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-cppt-tab" data-toggle="pill" href="#custom-tabs-four-cppt" role="tab" aria-controls="custom-tabs-four-cppt" aria-selected="false">cppt </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <div class="card-body">
@@ -106,25 +109,23 @@
                                                     <div class="tab-pane fade show active" id="custom-tabs-four-subyektif" role="tabpanel" aria-labelledby="custom-tabs-four-subyektif-tab">
                                                         <div class="form-group">
                                                             <label>Keluhan :</label>
-                                                            <div class="row align-items-stretch">
-                                                                <div class="col-md-6">
+                                                            <div class="row">
+                                                                <div class="col-md-5">
                                                                     <textarea class="form-control" id="penyakit" placeholder="Masukan Keluhan"></textarea>
                                                                 </div>
                                                                 <div class="col-md-5 d-flex align-items-center">
-                                                                    <label class="mr-4 mb-0">Sejak</label>
+                                                                    <label class="mr-3 mb-0">Sejak</label>
                                                                     <input type="number" class="form-control mr-2" id="durasi" placeholder="Masukkan durasi">
                                                                     <select class="form-control select2bs4" id="waktu" name="waktu">
-                                                                        <option value="" disabled selected>-- Pilih waktu --</option>
-                                                                        <option value="Menit">Menit</option>
-                                                                        <option value="Jam">Jam</option>
+                                                                        <option value="" disabled selected>-- Pilih Hari --</option>
                                                                         <option value="Hari">Hari</option>
                                                                         <option value="Minggu">Minggu</option>
                                                                         <option value="Bulan">Bulan</option>
                                                                         <option value="Tahun">Tahun</option>
                                                                     </select>
-                                                                    <div class="col-md-2">
-                                                                        <button type="button" class="btn btn-primary" onclick="addData()">Tambahkan</button>
-                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-2 d-flex justify-content-end">
+                                                                    <button type="button" class="btn btn-primary" onclick="addData()">Tambahkan</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -319,7 +320,7 @@
                                                                 <div class="form-group row align-items-center">
                                                                     <label for="icd10" class="ml-2 col-form-label">Diagnosa (ICD 10)</label>
                                                                     <div class="ml-1">
-                                                                        <button type="button" class="ml-2 btn btn-default" id="kodeICD10" style="cursor: not-allowed;" data-toggle="tooltip" data-placement="top" title="Silahkan pilih pada kolom dibawah">KODE ICD 10</button>
+                                                                        <button type="button" class="ml-2 btn btn-default" id="kodeICD10">KODE ICD 10</button>
                                                                         <button type="button" class="ml-2 btn btn-default dropdown-toggle" id="dropdownMenuButtonICD10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                             <span id="prioritas_icd_10" class="caret">Pilih</span>
                                                                         </button>
@@ -350,7 +351,7 @@
                                                                     <label for="icd9" class="ml-2 col-form-label">Tindakan (ICD 9)</label>
                                                                     <div class="ml-1">
                                                                         <!-- Tombol yang akan menampilkan kode ICD 9 -->
-                                                                        <button type="button" class="ml-2 btn btn-default" id="kodeICD9" style="cursor: not-allowed;" data-toggle="tooltip" data-placement="top" title="Silahkan pilih pada kolom dibawah">KODE ICD 9</button>
+                                                                        <button type="button" class="ml-2 btn btn-default" id="kodeICD9">KODE ICD 9</button>
                                                                     </div>
                                                                 </div>
 
@@ -441,7 +442,7 @@
                                                         <div class="row">
                                                             <div class="col-md-3">
                                                                 <label>Jenis Diet</label>
-                                                                <select id="jenisDiet" class="form-control select2bs4">
+                                                                <select id="jenisDiet" class="form-control">
                                                                     <option value="">-- Pilih Jenis Diet --</option>
                                                                     @foreach ($jenis_diete as $jenis_dietedata)
                                                                         <option value="{{ $jenis_dietedata->nama }}">{{ $jenis_dietedata->nama }}</option>
@@ -451,7 +452,7 @@
 
                                                             <div class="col-md-4">
                                                                 <label>Makanan Dianjurkan</label>
-                                                                <select id="makananAnjuran" class="form-control select2bs4">
+                                                                <select id="makananAnjuran" class="form-control">
                                                                     <option value="">-- Pilih Makanan Dianjurkan --</option>
                                                                     @foreach ($jenis_makanan_diet as $jenis_makanan_dietdata)
                                                                         <option value="{{ $jenis_makanan_dietdata->nama }}">{{ $jenis_makanan_dietdata->nama }}</option>
@@ -461,7 +462,7 @@
 
                                                             <div class="col-md-4">
                                                                 <label>Makanan Tidak Boleh</label>
-                                                                <select id="makananPantangan" class="form-control select2bs4">
+                                                                <select id="makananPantangan" class="form-control">
                                                                     <option value="">-- Pilih Makanan Tidak Boleh --</option>
                                                                     @foreach ($jenis_makanan_diet as $jenis_makanan_dietdata)
                                                                         <option value="{{ $jenis_makanan_dietdata->nama }}">{{ $jenis_makanan_dietdata->nama }}</option>
@@ -497,7 +498,7 @@
                                                     <div class="tab-pane fade" id="custom-tabs-four-tindakan" role="tabpanel" aria-labelledby="custom-tabs-four-tindakan-tab">
                                                         <div class="form-row align-items-center mb-3" id="form-tindakan">
                                                             <div class="col-md-3 mb-2">
-                                                                <select class="form-control select2bs4" id="jenis-tindakan">
+                                                                <select class="form-control" id="jenis-tindakan">
                                                                     <option value="">Jenis Tindakan</option>
                                                                     @foreach($kategori as $kat)
                                                                         <option value="{{ $kat->id }}">{{ $kat->nama }}</option>
@@ -505,16 +506,18 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3 mb-2">
-                                                                <select class="form-control select2bs4" id="tindakan">
+                                                                <select class="form-control" id="tindakan">
                                                                     <option value="">Tindakan</option>
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3 mb-2">
-                                                                <select class="form-control select2bs4" id="pelaksana">
+                                                                <select class="form-control" id="pelaksana">
                                                                     <option value="">Pelaksana</option>
+
                                                                         <option value="dokter">Dokter</option>
                                                                         <option value="perawat">Perawat</option>
-                                                                        <option value="keduanya">Dokter + Perawat</option>
+                                                                        <option value="keduanya">Keduanya</option>
+
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3 mb-2">
@@ -558,44 +561,43 @@
 
                                                             <!-- Input Obat & Dosis -->
                                                             <div class="form-row align-items-end mb-3">
-                                                            <div class="col-md-4">
-                                                                <label for="nama-obat">Nama Obat</label>
-                                                                <select class="form-control select2bs4" id="nama-obat">
-                                                                <option value="">-- Pilih Obat --</option>
-                                                                @foreach ($obat as $obatdata)
-                                                                    <option value="{{ $obatdata->nama_barang }}" data-satuan="{{ $obatdata->satuan_kecil }}">{{ $obatdata->nama_barang }}</option>
-                                                                @endforeach
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label>Qty / Jumlah</label>
-                                                                <div class="form-row">
-                                                                    <div class="col">
-                                                                    <input type="text" id="dosis1" class="form-control" placeholder="Contoh: 500">
-                                                                    </div>
-                                                                    <div class="col">
-                                                                    <input type="text" id="dosis2" class="form-control" readonly>
+                                                                <div class="col-md-4">
+                                                                    <label for="nama-obat">Nama Obat</label>
+                                                                    <select class="form-control" id="nama-obat">
+                                                                    <option value="">-- Pilih Obat --</option>
+                                                                    @foreach ($obat as $obatdata)
+                                                                        <option value="{{ $obatdata->nama_barang }}" data-satuan="{{ $obatdata->satuan_kecil }}">{{ $obatdata->nama_barang }}</option>
+                                                                    @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label>Qty / Jumlah</label>
+                                                                    <div class="form-row">
+                                                                        <div class="col">
+                                                                        <input type="text" id="dosis1" class="form-control" placeholder="Contoh: 500">
+                                                                        </div>
+                                                                        <div class="col">
+                                                                        <input type="text" id="dosis2" class="form-control" readonly>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
 
-                                                            <div class="col-md-4">
-                                                                <label for="instruksi">Instruksi</label>
-                                                                <select class="form-control select2bs4" id="instruksi">
-                                                                <option value="">-- Pilih Instruksi --</option>
-                                                                <option value="CITO">CITO</option>
-                                                                <option value="ITER">ITER</option>
-                                                                <option value="Equal qs">Equal qs</option>
-                                                                <option value="m.f pulv da in caps">m.f pulv da in caps</option>
-                                                                <option value="s.u.e">s.u.e</option>
-                                                                <option value="m.f pulv dtd no X">m.f pulv dtd no X</option>
-                                                                <option value="m.f pulv dtd no XV">m.f pulv dtd no XV</option>
-                                                                <option value="s.q.d.d.c">s.q.d.d.c</option>
-                                                                <option value="haust">haust</option>
-                                                                <option value="s.i.m.m">s.i.m.m</option>
-                                                                <option value="cth">cth</option>
-                                                                </select>
-                                                            </div>
+                                                                <div class="col-md-4">
+                                                                    <label for="instruksi">kode instruksi resep</label>
+                                                                    <select class="form-control select2bs4" id="instruksi">
+                                                                    <option value="">-- Pilih Instruksi --</option>
+                                                                        <option value="CITO">CITO</option>
+                                                                        <option value="ITER">ITER</option>
+                                                                        <option value="Equal qs">Equal qs</option>
+                                                                        <option value="m.f pulv da in caps">m.f pulv da in caps</option>
+                                                                        <option value="s.u.e">s.u.e</option>
+                                                                        <option value="m.f pulv dtd no X">m.f pulv dtd no X</option>
+                                                                        <option value="m.f pulv dtd no XV">m.f pulv dtd no XV</option>
+                                                                        <option value="s.q.d.d.c">s.q.d.d.c</option>
+                                                                        <option value="haust">haust</option>
+                                                                        <option value="s.i.m.m">s.i.m.m</option>
+                                                                    </select>
+                                                                </div>
                                                             </div>
 
                                                             <!-- Input Signa -->
@@ -617,7 +619,7 @@
 
                                                                 <div class="col-md-3">
                                                                     <div style="visibility: hidden;"><label for="signa-satuan1">Signa Satuan 1</label></div>
-                                                                    <select class="form-control select2bs4" id="dosis3">
+                                                                    <select class="form-control" id="dosis3">
                                                                         @foreach ($satuan as $satuandata)
                                                                             <option value="{{ $satuandata->nama }}">{{ $satuandata->nama }}</option>
                                                                         @endforeach
@@ -627,7 +629,7 @@
                                                                 <div class="col-md-3">
                                                                     <div style="visibility: hidden;"><label for="signa-satuan2">Signa Satuan 2</label></div>
                                                                     <select class="form-control select2bs4" id="signa-satuan2">
-                                                                        <option value="">-- Pilih Satuan --</option>
+                                                                        <option value="">-- Pilih Instruksi penggunaan --</option>
                                                                         <option value="SEBELUM MAKAN">SEBELUM MAKAN</option>
                                                                         <option value="SESUDAH MAKAN">SESUDAH MAKAN</option>
                                                                         <option value="SEBELUM/SESUDAH MAKAN">SEBELUM/SESUDAH MAKAN</option>
@@ -657,7 +659,7 @@
 
                                                             <button type="submit" class="btn btn-primary">Submit</button>
                                                     </div>
-                                                    {{-- poli gigi only --}}
+
                                                     <div class="tab-pane fade" id="custom-tabs-four-odo" role="tabpanel" aria-labelledby="custom-tabs-four-odo-tab">
                                                         <style>
                                                             .svg-container {
@@ -821,6 +823,420 @@
 
                                                     </div>
 
+                                                    <div class="tab-pane fade" id="custom-tabs-four-cppt" role="tabpanel" aria-labelledby="custom-tabs-four-cppt-tab">
+                                                        <div class="timeline">
+                                                            @foreach ($pelayana_data as $pelayanan)
+                                                                {{-- Tanggal CPPT --}}
+                                                                <div class="time-label">
+                                                                    <span class="bg-primary text-white px-3 py-1 rounded">
+                                                                        {{ $pelayanan->tanggal_kujungan}}
+                                                                    </span>
+                                                                </div>
+
+                                                                {{-- Data SOAP Perawat --}}
+                                                                @foreach ($pelayanan->pelayanan_so as $prawat)
+                                                                    <div>
+                                                                        <i class="fas fa-user-nurse bg-info"></i> {{-- Icon berbeda utk perawat --}}
+                                                                        <div class="timeline-item">
+                                                                            <span class="time"><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($prawat->created_at)->format('H:i') }}</span>
+                                                                            <h3 class="timeline-header mb-2">
+                                                                                {{ $prawat->user_input_name ?? 'Perawat tidak diketahui' }} – Perawat
+                                                                            </h3>
+                                                                            <div class="timeline-body">
+                                                                                <!-- Nav Tabs -->
+                                                                                <ul class="nav nav-tabs" role="tablist" id="tabs-prawat-{{ $prawat->id }}">
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link active" id="soap-s-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-s-prawat-{{ $prawat->id }}" role="tab">Subyektif</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-o-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-o-prawat-{{ $prawat->id }}" role="tab">Objektif</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-a-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-a-prawat-{{ $prawat->id }}" role="tab">Head To Toe</a>
+                                                                                    </li>
+                                                                                </ul>
+
+                                                                                <!-- Tab Content -->
+                                                                                <div class="tab-content border rounded-bottom p-3" id="tab-content-prawat-{{ $prawat->id }}">
+                                                                                    <div class="tab-pane fade show active" id="soap-s-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-s-tab-prawat-{{ $prawat->id }}">
+                                                                                        @php
+                                                                                            $subjektifData = json_decode($prawat->tableData, true);
+                                                                                        @endphp
+
+                                                                                        <table class="table table-bordered">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th>No</th>
+                                                                                                    <th>Subyektif</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @if(is_array($subjektifData) && count($subjektifData) > 0)
+                                                                                                    @foreach($subjektifData as $index => $item)
+                                                                                                        <tr>
+                                                                                                            <td>{{ $index + 1 }}</td>
+                                                                                                            <td>
+                                                                                                                pasien mengeluhkan {{ strtolower($item['penyakit']) }}
+                                                                                                                sejak {{ $item['durasi'] }} {{ $item['waktu'] }}
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    @endforeach
+                                                                                                @else
+                                                                                                    <tr>
+                                                                                                        <td colspan="2">-</td>
+                                                                                                    </tr>
+                                                                                                @endif
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-o-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-o-tab-prawat-{{ $prawat->id }}">
+                                                                                        <div class="row">
+                                                                                           <div class="col-md-2">
+                                                                                                <label>Tensi (mmHg)</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" value="{{$prawat->sistol}}" readonly>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                                                                                        <span>/</span> <!-- Menambahkan pemisah / -->
+                                                                                                    </div>
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" value="{{$prawat->distol}}" readonly>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="suhu_cppt1">Suhu (°C)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->suhu}}°C" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="nadi_cppt1">Nadi (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->nadi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="rr_cppt1">RR (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->rr}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="tinggi_cppt1">Tinggi (Cm)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->tinggi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="berat_cppt1">Berat (/Kg)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->berat}}" readonly>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="row mt-2">
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="spo2_cppt1">SpO2</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->spo2}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Alergi dan jenis</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="jenis_alergi_cppt" name="jenis_alergi_cppt" disabled>
+                                                                                                            <option value="" disabled {{ empty($prawat->jenis_alergi) ? 'selected' : '' }}>-- Pilih --</option>
+                                                                                                            <option value="00" {{ $prawat->jenis_alergi == '00' ? 'selected' : '' }}>tidak ada</option>
+                                                                                                            <option value="01" {{ $prawat->jenis_alergi == '01' ? 'selected' : '' }}>makanan</option>
+                                                                                                            <option value="02" {{ $prawat->jenis_alergi == '02' ? 'selected' : '' }}>obat</option>
+                                                                                                            <option value="03" {{ $prawat->jenis_alergi == '03' ? 'selected' : '' }}>udara</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="alergi_cppt" name="alergi_cppt" disabled>
+                                                                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="lingkar_perut_cppt1">Lingkar Perut</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->lingkar_perut}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Data BMI</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-4">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$prawat->nilai_bmi}}">
+                                                                                                    </div>
+                                                                                                    <div class="col-md-8">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$prawat->status_bmi}}">
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="form-group row">
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="eye">EYE</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="eye_cppt" name="eye_cppt"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gsc_eye as $gsc_eyedata_cppt)
+                                                                                                        <option value="{{$gsc_eyedata_cppt->skor}}">{{$gsc_eyedata_cppt->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="verbal">VERBAL</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="verbal_cppt" name="verbal_cppt"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_verbal as $gcs_verbaldata_cppt)
+                                                                                                        <option value="{{$gcs_verbaldata_cppt->skor}}">{{$gcs_verbaldata_cppt->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="motorik">MOTORIK</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="motorik_cppt" name="motorik_cppt"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_motorik as $gcs_motorikdata_cppt)
+                                                                                                        <option value="{{$gcs_motorikdata_cppt->skor}}">{{$gcs_motorikdata_cppt->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="sadar">Kesadaran</label>
+                                                                                                <select class="form-control" style="width: 100%;" id="sadar_cppt" name="sadar_cppt" disabled>
+                                                                                                    <option value="" disabled selected> </option>
+                                                                                                    @foreach ($gcs_kesadaran as $gcs_kesadarandata_cppt)
+                                                                                                        <option value="{{ $gcs_kesadarandata_cppt->skor }}">{{ $gcs_kesadarandata_cppt->nama }}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-a-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-a-tab-prawat-{{ $prawat->id }}">
+                                                                                        @php
+                                                                                            $asesmen = preg_replace('/<p><br><\/p>/i', '', $prawat->summernote ?? '-');
+                                                                                        @endphp
+
+                                                                                        <p><strong>Head To Toe:</strong></p>
+                                                                                        {!! $asesmen !!}
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+
+                                                                {{-- Data SOAP Dokter --}}
+                                                                @foreach ($pelayanan->pelayanan_soap as $dokterSoap)
+                                                                    <div>
+                                                                        <i class="fas fa-user-md bg-success"></i>
+                                                                        <div class="timeline-item">
+                                                                            <span class="time"><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($dokterSoap->created_at)->format('H:i') }}</span>
+                                                                            <h3 class="timeline-header mb-2">
+                                                                                {{ $pelayanan->dokter->namauser->name ?? 'Dokter tidak diketahui' }} – Dokter
+                                                                            </h3>
+                                                                            <div class="timeline-body">
+                                                                                <!-- Nav Tabs -->
+                                                                                <ul class="nav nav-tabs" role="tablist" id="tabs-dokter-{{ $dokterSoap->id }}">
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link active" id="soap-s-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-s-dokter-{{ $dokterSoap->id }}" role="tab">S</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-o-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-o-dokter-{{ $dokterSoap->id }}" role="tab">O</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-ht-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-ht-dokter-{{ $dokterSoap->id }}" role="tab">HTT</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-a-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-a-dokter-{{ $dokterSoap->id }}" role="tab">A</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-d-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-d-dokter-{{ $dokterSoap->id }}" role="tab">D</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-p-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-p-dokter-{{ $dokterSoap->id }}" role="tab">P</a>
+                                                                                    </li>
+                                                                                </ul>
+
+                                                                                <!-- Tab Content -->
+                                                                                <div class="tab-content border rounded-bottom p-3" id="tab-content-dokter-{{ $dokterSoap->id }}">
+                                                                                    <div class="tab-pane fade show active" id="soap-s-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-s-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        @php
+                                                                                            $subjektifData = json_decode($dokterSoap->tableData, true);
+                                                                                        @endphp
+
+                                                                                        <table class="table table-bordered">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th>No</th>
+                                                                                                    <th>Subyektif</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @if(is_array($subjektifData) && count($subjektifData) > 0)
+                                                                                                    @foreach($subjektifData as $index => $item)
+                                                                                                        <tr>
+                                                                                                            <td>{{ $index + 1 }}</td>
+                                                                                                            <td>
+                                                                                                                pasien mengeluhkan {{ strtolower($item['penyakit']) }}
+                                                                                                                sejak {{ $item['durasi'] }} {{ $item['waktu'] }}
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    @endforeach
+                                                                                                @else
+                                                                                                    <tr>
+                                                                                                        <td colspan="2">-</td>
+                                                                                                    </tr>
+                                                                                                @endif
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-o-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-o-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <div class="row">
+                                                                                           <div class="col-md-2">
+                                                                                                <label>Tensi (mmHg)</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" value="{{$dokterSoap->sistol}}" readonly>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                                                                                        <span>/</span> <!-- Menambahkan pemisah / -->
+                                                                                                    </div>
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" value="{{$dokterSoap->distol}}" readonly>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="suhu_cppt">Suhu (°C)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->suhu}}°C" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="nadi_cppt">Nadi (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->nadi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="rr_cppt">RR (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->rr}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="tinggi_cppt">Tinggi (Cm)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->tinggi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="berat_cppt">Berat (/Kg)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->berat}}" readonly>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row mt-2">
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="spo2_cppt">SpO2</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->spo2}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Alergi dan jenis</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="jenis_alergi_cpptd" name="jenis_alergi_cpptd" disabled>
+                                                                                                            <option value="" disabled {{ empty($dokterSoap->jenis_alergi) ? 'selected' : '' }}>-- Pilih --</option>
+                                                                                                            <option value="00" {{ $dokterSoap->jenis_alergi == '00' ? 'selected' : '' }}>tidak ada</option>
+                                                                                                            <option value="01" {{ $dokterSoap->jenis_alergi == '01' ? 'selected' : '' }}>makanan</option>
+                                                                                                            <option value="02" {{ $dokterSoap->jenis_alergi == '02' ? 'selected' : '' }}>obat</option>
+                                                                                                            <option value="03" {{ $dokterSoap->jenis_alergi == '03' ? 'selected' : '' }}>udara</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="alergi_cpptd" name="alergi_cpptd" disabled>
+                                                                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="lingkar_perut_cppt">Lingkar Perut</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->lingkar_perut}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Data BMI</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-4">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$dokterSoap->nilai_bmi}}">
+                                                                                                    </div>
+                                                                                                    <div class="col-md-8">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$dokterSoap->status_bmi}}">
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="form-group row">
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="eye">EYE</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="eye_cpptd" name="eye_cpptd"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gsc_eye as $gsc_eyedata_cpptd)
+                                                                                                        <option value="{{$gsc_eyedata_cpptd->skor}}">{{$gsc_eyedata_cpptd->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="verbal">VERBAL</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="verbal_cpptd" name="verbal_cpptd"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_verbal as $gcs_verbaldata_cpptd)
+                                                                                                        <option value="{{$gcs_verbaldata_cpptd->skor}}">{{$gcs_verbaldata_cpptd->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="motorik">MOTORIK</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="motorik_cpptd" name="motorik_cpptd"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_motorik as $gcs_motorikdata_cpptd)
+                                                                                                        <option value="{{$gcs_motorikdata_cpptd->skor}}">{{$gcs_motorikdata_cpptd->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="sadar">Kesadaran</label>
+                                                                                                <select class="form-control" style="width: 100%;" id="sadar_cpptd" name="sadar_cpptd" disabled>
+                                                                                                    <option value="" disabled selected> </option>
+                                                                                                    @foreach ($gcs_kesadaran as $gcs_kesadarandata_cpptd)
+                                                                                                        <option value="{{ $gcs_kesadarandata_cpptd->skor }}">{{ $gcs_kesadarandata_cpptd->nama }}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-ht-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-ht-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        @php
+                                                                                            $htt = preg_replace('/<p><br><\/p>/i', '', $dokterSoap->htt ?? '-');
+                                                                                        @endphp
+
+                                                                                        <p><strong>Head To Toe:</strong></p>
+                                                                                        {!! $htt !!}
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-a-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-a-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        @php
+                                                                                            $asesmen = preg_replace('/<p><br><\/p>/i', '', $dokterSoap->assesmen ?? '-');
+                                                                                        @endphp
+
+                                                                                        <p><strong>Head To Toe:</strong></p>
+                                                                                        {!! $asesmen !!}
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-d-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-d-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <p><strong>Planning:</strong> {{ $dokterSoap->p ?? '-' }}</p>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-p-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-p-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <p><strong>Planning:</strong> {{ $dokterSoap->p ?? '-' }}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                            @endforeach
+                                                        </div>
+
+                                                    </div>
+
                                                 </div>
                                             </div>
                                             <!-- /.card -->
@@ -838,11 +1254,7 @@
     <!-- /.content -->
 </div>
 
-<script>
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-</script>
+
 
 <!-- Modal Bootstrap -->
 <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
@@ -887,6 +1299,117 @@
       </div>
     </div>
 </div>
+
+
+<script>
+    $(document).ready(function() {
+        // Ambil nilai dari database
+        const eyeCPPT = parseInt("{{ $prawat->eye }}") || 0;
+        const verbalCPPT = parseInt("{{ $prawat->verbal }}") || 0;
+        const motorikCPPT = parseInt("{{ $prawat->motorik }}") || 0;
+
+        // Set langsung ke dropdown (meskipun disabled, tetap bisa via JS)
+        $('#eye_cppt').val(eyeCPPT);
+        $('#verbal_cppt').val(verbalCPPT);
+        $('#motorik_cppt').val(motorikCPPT);
+
+        // Hitung total skor
+        let totalScore = eyeCPPT + verbalCPPT + motorikCPPT;
+
+        // Set ke select kesadaran
+        $('#sadar_cppt').val(totalScore);
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Ambil nilai dari database
+        const eyeCPPTd = parseInt("{{ $dokterSoap->eye }}") || 0;
+        const verbalCPPTd = parseInt("{{ $dokterSoap->verbal }}") || 0;
+        const motorikCPPTd = parseInt("{{ $dokterSoap->motorik }}") || 0;
+
+        // Set langsung ke dropdown (meskipun disabled, tetap bisa via JS)
+        $('#eye_cpptd').val(eyeCPPTd);
+        $('#verbal_cpptd').val(verbalCPPTd);
+        $('#motorik_cpptd').val(motorikCPPTd);
+
+        // Hitung total skor
+        let totalScored = eyeCPPTd + verbalCPPTd + motorikCPPTd;
+
+        // Set ke select kesadaran
+        $('#sadar_cpptd').val(totalScored);
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        const jenisAlergiCPPT = "{{ $prawat->jenis_alergi }}"; // dari database
+        const alergiCPPT = "{{ $prawat->alergi }}"; // dari database
+
+        // Set dropdown jenis alergi langsung
+        $('#jenis_alergi_cppt').val(jenisAlergiCPPT);
+
+        // Load dropdown alergi sesuai jenis
+        if (jenisAlergiCPPT) {
+            $.ajax({
+                url: '/api/alergi/by-jenis/' + jenisAlergiCPPT,
+                method: 'GET',
+                success: function(response) {
+                    const select2 = $('#alergi_cppt');
+                    select2.empty().append('<option value="" disabled>-- Pilih Data Alergi --</option>');
+
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function(item) {
+                            select2.append(`<option value="${item.kode_alergi}">${item.nama_jenis_alergi}</option>`);
+                        });
+
+                        // Pilih alergi yang sesuai database
+                        if (alergiCPPT) {
+                            select2.val(alergiCPPT);
+                        }
+                    } else {
+                        select2.append('<option value="00">Tidak ada data</option>');
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        const jenisAlergiCPPT = "{{ $dokterSoap->jenis_alergi }}"; // dari database
+        const alergiCPPT = "{{ $dokterSoap->alergi }}"; // dari database
+
+        // Set dropdown jenis alergi langsung
+        $('#jenis_alergi_cpptd').val(jenisAlergiCPPT);
+
+        // Load dropdown alergi sesuai jenis
+        if (jenisAlergiCPPT) {
+            $.ajax({
+                url: '/api/alergi/by-jenis/' + jenisAlergiCPPT,
+                method: 'GET',
+                success: function(response) {
+                    const select2 = $('#alergi_cpptd');
+                    select2.empty().append('<option value="" disabled>-- Pilih Data Alergi --</option>');
+
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function(item) {
+                            select2.append(`<option value="${item.kode_alergi}">${item.nama_jenis_alergi}</option>`);
+                        });
+
+                        // Pilih alergi yang sesuai database
+                        if (alergiCPPT) {
+                            select2.val(alergiCPPT);
+                        }
+                    } else {
+                        select2.append('<option value="00">Tidak ada data</option>');
+                    }
+                }
+            });
+        }
+    });
+</script>
 
 <script>
     let selectedBox = null;
@@ -1021,7 +1544,6 @@
     });
 </script>
 
-
 <script>
     document.getElementById('saveDentalForm').addEventListener('click', function () {
         // Ambil nilai input DMF
@@ -1129,7 +1651,7 @@
 
 {{-- Script load data --}}
 <script>
-    const soapRoute = "{{ route('pelayana_dokter_data.get', ':id') }}";
+    const soapRoute = "{{ route('pelayana_dokter_data_edit.get', ':id') }}";
 
     $(document).ready(function () {
         let id = $('#no_rawat').val();
@@ -1186,7 +1708,12 @@
                 $('#verbal').val(data.verbal).trigger('change');
                 $('#motorik').val(data.motorik).trigger('change');
 
-                $('#summernote').summernote('code', data.summernote);
+                $('#summernote').summernote('code', data.htt);
+                $('#summernote2').summernote('code', data.assesmen);
+                $('#summernote3').summernote('code', data.evaluasi);
+                $('#summernote4').summernote('code', data.plan);
+
+
 
                 function formatPatientData(data) {
                     let keluhan = '';
@@ -1208,7 +1735,7 @@
                     ];
 
                     // Ambil isi summernote (bisa berupa HTML), convert ke teks polos tanpa tag HTML supaya rapi
-                    const headToToeRaw = data.summernote || '';
+                    const headToToeRaw = data.htt || '';
                     const headToToeText = $('<div>').html(headToToeRaw).text().replace(/\n/g, '').trim() || 'Tidak ada pemeriksaan';
                     lines.push(`- Head to Toe: ${headToToeText}`);
 
@@ -1229,7 +1756,6 @@
     }
 </script>
 
-{{-- Script resep --}}
 <script>
     $(function () {
         let resepList = [];
@@ -1238,22 +1764,57 @@
         function renderResep() {
             let html = "";
             resepList.forEach((line, i) => {
-            html += `<div class="resep-line d-flex justify-content-between align-items-center"
-                    data-index="${i}" style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #ddd; ${i === selectedIndex ? 'background:#d1ecf1;' : ''}">
-                <span class="resep-text">${$('<div>').html(line.replace(/\n/g, "<br>")).html()}</span>`;
-            if (i === selectedIndex) {
-                html += `<div class="btn-group btn-group-sm ml-2">
-                        <button type="button" class="btn btn-warning btn-up">▲</button>
-                        <button type="button" class="btn btn-warning btn-down">▼</button>
-                        <button type="button" class="btn btn-success btn-edit">✎</button>
-                        <button type="button" class="btn btn-danger btn-delete">✖</button>
-                        </div>`;
-            }
-            html += `</div>`;
+                html += `<div class="resep-line d-flex justify-content-between align-items-center"
+                        data-index="${i}" style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #ddd; ${i === selectedIndex ? 'background:#d1ecf1;' : ''}">
+                    <span class="resep-text">${$('<div>').html(line.replace(/\n/g, "<br>")).html()}</span>`;
+                if (i === selectedIndex) {
+                    html += `<div class="btn-group btn-group-sm ml-2">
+                            <button type="button" class="btn btn-warning btn-up">▲</button>
+                            <button type="button" class="btn btn-warning btn-down">▼</button>
+                            <button type="button" class="btn btn-success btn-edit">✎</button>
+                            <button type="button" class="btn btn-danger btn-delete">✖</button>
+                            </div>`;
+                }
+                html += `</div>`;
             });
             $("#summernote-resep").html(html);
             $("#resep-data").val(JSON.stringify(resepList));
         }
+
+        // Load data resep dari server dengan idRawat dari input #no_rawat
+        function loadResepFromServer() {
+            const idRawat = $("#no_rawat").val();
+            if (!idRawat) return;
+
+            const url = "{{ route('pelayana_dokter_data_obat.get', ':id') }}".replace(":id", idRawat);
+            $.get(url)
+                .done(function(response) {
+                    if (Array.isArray(response) && response.length > 0 && response[0].Resep_obat) {
+                        try {
+                            resepList = JSON.parse(response[0].Resep_obat);
+                        } catch (e) {
+                            console.error('Gagal parsing Resep_obat:', e);
+                            resepList = [];
+                        }
+                    } else if (Array.isArray(response)) {
+                        resepList = response;
+                    } else {
+                        resepList = [];
+                    }
+                    selectedIndex = -1;
+                    renderResep();
+                })
+                .fail(function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Gagal memuat data resep dari server.',
+                    });
+                });
+        }
+
+        // Panggil load saat dokumen siap
+        loadResepFromServer();
 
         $("#btn-r-action").click(function () {
             const text = $("#r-text").val().trim();
@@ -1262,7 +1823,7 @@
             renderResep();
         });
 
-    $("#btn-add-obat").click(function () {
+        $("#btn-add-obat").click(function () {
             const nama = $("#nama-obat").val();
             const dosis1 = $("#dosis1").val().trim();
             const dosis2 = $("#dosis2").val().trim();
@@ -1285,14 +1846,12 @@
             let line = `${nama}`;
             if (dosis1) line += ` ${dosis1}`;
             if (dosis2) line += ` ${dosis2}`;
-
             line += "\n";
 
             if (instruksi) {
                 line += `${instruksi}\n`;
             }
 
-            // Susun signa walau tidak lengkap
             if (signaJumlah1 && signaJumlah2) {
                 line += `${signaJumlah1} x ${signaJumlah2}`;
                 if (dosis3) line += ` ${dosis3}`;
@@ -1302,7 +1861,7 @@
             resepList.push(line);
             renderResep();
 
-            // Reset input
+            // Reset form input
             $("#nama-obat").val("");
             $("#dosis1").val("");
             $("#dosis2").val("");
@@ -1313,19 +1872,20 @@
             $("#signa-satuan2").val("");
         });
 
-
-        // Auto isi dosis2
+        // Auto isi dosis2 berdasarkan data satuan obat
         $("#nama-obat").on("change", function () {
             const satuan = $(this).find(":selected").data("satuan");
             $("#dosis2").val(satuan ?? "");
         });
 
+        // Event click pada resep line untuk select/deselect
         $("#summernote-resep").on("click", ".resep-line", function () {
             const idx = $(this).data("index");
             selectedIndex = selectedIndex === idx ? -1 : idx;
             renderResep();
         });
 
+        // Delete resep
         $("#summernote-resep").on("click", ".btn-delete", function (e) {
             e.stopPropagation();
             const idx = $(this).closest(".resep-line").data("index");
@@ -1334,32 +1894,35 @@
             renderResep();
         });
 
+        // Pindah naik resep
         $("#summernote-resep").on("click", ".btn-up", function (e) {
             e.stopPropagation();
             const idx = $(this).closest(".resep-line").data("index");
             if (idx > 0) {
-            [resepList[idx - 1], resepList[idx]] = [resepList[idx], resepList[idx - 1]];
-            selectedIndex = idx - 1;
-            renderResep();
+                [resepList[idx - 1], resepList[idx]] = [resepList[idx], resepList[idx - 1]];
+                selectedIndex = idx - 1;
+                renderResep();
             }
         });
 
+        // Pindah turun resep
         $("#summernote-resep").on("click", ".btn-down", function (e) {
             e.stopPropagation();
             const idx = $(this).closest(".resep-line").data("index");
             if (idx < resepList.length - 1) {
-            [resepList[idx + 1], resepList[idx]] = [resepList[idx], resepList[idx + 1]];
-            selectedIndex = idx + 1;
-            renderResep();
+                [resepList[idx + 1], resepList[idx]] = [resepList[idx], resepList[idx + 1]];
+                selectedIndex = idx + 1;
+                renderResep();
             }
         });
 
+        // Edit resep
         $("#summernote-resep").on("click", ".btn-edit", function (e) {
             e.stopPropagation();
             const idx = $(this).closest(".resep-line").data("index");
             const line = resepList[idx];
 
-            // Reset form yang pasti diisi (nama & dosis)
+            // Reset input form
             $("#nama-obat").val("");
             $("#dosis1").val("");
             $("#dosis2").val("");
@@ -1371,18 +1934,14 @@
             $("#r-text").val("");
 
             if (line.startsWith("R:/")) {
-                // Jika ini resep bebas
                 const content = line.replace(/^R:\/*\s*/, "");
                 $("#r-text").val(content);
             } else {
-                // Pisah berdasarkan newline, hilangkan baris kosong
                 const parts = line.split("\n").map(p => p.trim()).filter(p => p.length > 0);
 
-                // === PARSING BARIS 1: nama obat + dosis1 + dosis2 ===
                 if (parts.length > 0) {
                     const tokens = parts[0].split(" ");
                     if (tokens.length >= 3) {
-                        // Ambil 2 terakhir sebagai dosis
                         $("#dosis2").val(tokens.pop());
                         $("#dosis1").val(tokens.pop());
                         $("#nama-obat").val(tokens.join(" "));
@@ -1394,13 +1953,10 @@
                     }
                 }
 
-                // === PARSING BARIS 2: instruksi (opsional) ===
                 if (parts.length > 1 && !/^\d+\s*x\s*\d+/.test(parts[1])) {
-                    // Pastikan ini bukan signa
                     $("#instruksi").val(parts[1]);
                 }
 
-                // === PARSING BARIS 3 atau BARIS 2 (jika tidak ada instruksi): signa ===
                 const signaLine = parts.find(p => /^\d+\s*x\s*\d+/.test(p));
                 if (signaLine) {
                     const signaRegex = /^(\d+)\s*x\s*(\d+)(?:\s+(\S+))?(?:\s+(.*))?$/;
@@ -1414,14 +1970,13 @@
                 }
             }
 
-            // Hapus item yang sedang diedit dan render ulang
+            // Hapus item yang diedit dan refresh UI
             resepList.splice(idx, 1);
             selectedIndex = -1;
             renderResep();
         });
 
-
-
+        // Cetak resep via AJAX
         $("#btn-print-resep-ajax").click(function () {
             const resepData = JSON.stringify(resepList);
 
@@ -1433,14 +1988,14 @@
                     _token: '{{ csrf_token() }}'
                 },
                 xhrFields: {
-                    responseType: 'blob' // penting agar bisa buka PDF dari binary
+                    responseType: 'blob'
                 },
-                success: function (response, status, xhr) {
+                success: function (response) {
                     const blob = new Blob([response], { type: 'application/pdf' });
                     const url = window.URL.createObjectURL(blob);
                     window.open(url, '_blank');
                 },
-                error: function (xhr) {
+                error: function () {
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal',
@@ -1454,53 +2009,107 @@
 
 {{-- Script tindakan --}}
 <script>
-    const perawatanTindakan = @json($tindakan);
-
-    let tindakanList = [];
-    let editingData = null;
-    let editingIndex = null;
-
-    function renderTable() {
-        const tbody = $('#tabel-tindakan tbody');
-        tbody.empty();
-
-        tindakanList.forEach((group, index) => {
-            const pelaksanaRows = group.pelaksana;
-            pelaksanaRows.forEach((p, i) => {
-                const row = $('<tr>');
-                if (i === 0) {
-                    row.append(`<td rowspan="${pelaksanaRows.length}" class="align-middle text-center">${group.nama}</td>`);
-                }
-                row.append(`<td class="align-middle text-center">${p.pelaksana}</td>`);
-                row.append(`<td class="align-middle text-center">Rp ${p.harga.toLocaleString('id-ID')}</td>`);
-                if (i === 0) {
-                    row.append(`
-                        <td rowspan="${pelaksanaRows.length}" class="align-middle text-center">
-                            <button type="button" class="btn btn-sm btn-warning btn-edit" data-index="${index}">Edit</button>
-                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-index="${index}">Hapus</button>
-                        </td>
-                    `);
-                }
-                tbody.append(row);
-            });
-        });
-    }
-
-    function resetForm() {
-        $('#jenis-tindakan').val('');
-        $('#tindakan').empty().append('<option value="">Pilih Tindakan</option>');
-        $('#pelaksana').val('');
-        $('#tambah-tindakan').text('Tambah').removeData('edit-index');
-
-        if (editingData !== null && editingIndex !== null) {
-            tindakanList.splice(editingIndex, 0, editingData);
-            editingData = null;
-            editingIndex = null;
-            renderTable();
-        }
-    }
-
     $(document).ready(function () {
+        const perawatanTindakan = @json($tindakan);
+
+        let tindakanList = [];
+        let editingData = null;
+        let editingIndex = null;
+
+        function renderTable() {
+            const tbody = $('#tabel-tindakan tbody');
+            tbody.empty();
+
+            tindakanList.forEach((group, index) => {
+                const pelaksanaRows = group.pelaksana;
+                pelaksanaRows.forEach((p, i) => {
+                    const row = $('<tr>');
+                    if (i === 0) {
+                        row.append(`<td rowspan="${pelaksanaRows.length}" class="align-middle text-center">${group.nama}</td>`);
+                    }
+                    row.append(`<td class="align-middle text-center">${p.pelaksana}</td>`);
+                    row.append(`<td class="align-middle text-center">Rp ${p.harga.toLocaleString('id-ID')}</td>`);
+                    if (i === 0) {
+                        row.append(`
+                            <td rowspan="${pelaksanaRows.length}" class="align-middle text-center">
+                                <button type="button" class="btn btn-sm btn-warning btn-edit" data-index="${index}">Edit</button>
+                                <button type="button" class="btn btn-sm btn-danger btn-delete" data-index="${index}">Hapus</button>
+                            </td>
+                        `);
+                    }
+                    tbody.append(row);
+                });
+            });
+
+            const hiddenInputs = $('#hiddenTindakanInputs');
+            hiddenInputs.empty();
+
+            tindakanList.forEach(item => {
+                hiddenInputs.append(`
+                    <input type="hidden" name="tindakan_nama[]" value="${item.nama}" data-id="${item._id}">
+                `);
+                item.pelaksana.forEach(p => {
+                    hiddenInputs.append(`
+                        <input type="hidden" name="tindakan_pelaksana[]" value="${p.pelaksana}" data-id="${item._id}">
+                        <input type="hidden" name="tindakan_harga[]" value="${p.harga ?? 0}" data-id="${item._id}">
+                    `);
+                });
+            });
+        }
+
+        function resetForm() {
+            $('#jenis-tindakan').val('');
+            $('#tindakan').empty().append('<option value="">Pilih Tindakan</option>');
+            $('#pelaksana').val('');
+            $('#tambah-tindakan').text('Tambah').removeData('edit-index');
+
+            if (editingData !== null && editingIndex !== null) {
+                tindakanList.splice(editingIndex, 0, editingData);
+                editingData = null;
+                editingIndex = null;
+                renderTable();
+            }
+        }
+
+        function parseHarga(harga) {
+            if (typeof harga === 'string') {
+                // ganti koma jadi titik lalu parse float lalu bulatkan
+                const num = parseFloat(harga.replace(',', '.'));
+                if (isNaN(num)) return 0;
+                return Math.round(num);
+            }
+            if (typeof harga === 'number') {
+                return Math.round(harga);
+            }
+            return 0;
+        }
+
+
+        // Load tindakan dari server jika no_rawat tersedia
+        const noRawat = $('#no_rawat').val();
+        if (noRawat) {
+            const urlTindakan = "{{ route('pelayana_dokter_data_tindakan.get', ':norawat') }}".replace(':norawat', noRawat);
+
+            $.get(urlTindakan)
+                .done(function(response) {
+                    tindakanList = (response || []).map(function(item) {
+                        const pelaksanaStrings = (item.jenis_pelaksana || '-').split(',').map(p => p.trim());
+                        const hargaParsed = parseHarga(item.harga);
+                        const pelaksana = pelaksanaStrings.map(pel => ({
+                            pelaksana: pel,
+                            harga: hargaParsed
+                        }));
+                        return {
+                            nama: item.Jenis_tindakan || item.nama || '-',
+                            pelaksana: pelaksana,
+                            _id: 'tindakan_' + (item.id || Math.random().toString(36).substr(2, 9))
+                        };
+                    });
+                    renderTable();
+                });
+
+        }
+
         $('#jenis-tindakan').change(function () {
             const kategoriId = parseInt($(this).val());
             const tindakanSelect = $('#tindakan').empty().append('<option value="">Pilih Tindakan</option>');
@@ -1643,6 +2252,54 @@
 
 {{-- Script Diet --}}
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const noRawat = $('#no_rawat').val(); // Ambil dari input
+        if (noRawat) {
+            loadDietFromAPI(noRawat);
+        }
+    });
+
+    function loadDietFromAPI(noRawat) {
+        const apiUrl = "{{ route('pelayana_dokter_data_diet.get', ':norawat') }}".replace(':norawat', noRawat);
+        fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector("#tabelDiet tbody");
+            const hiddenWrapper = document.getElementById("hiddenDietInputs");
+
+            data.forEach((item, index) => {
+                if (item.Jenis_diet && item.jenis_diet_makanan && item.jenis_diet_makanan_tidak) {
+                    const uniqueId = 'diet_' + Date.now() + '_' + index;
+
+                    // Tambahkan baris tabel
+                    const row = document.createElement("tr");
+                    row.setAttribute("data-id", uniqueId);
+                    row.innerHTML = `
+                        <td>${item.Jenis_diet}</td>
+                        <td>${item.jenis_diet_makanan}</td>
+                        <td>${item.jenis_diet_makanan_tidak}</td>
+                        <td>
+                            <button type="button" class="btn btn-warning btn-sm" onclick="editBaris(this)">Edit</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="hapusBaris(this)">Hapus</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+
+                    // Tambahkan hidden input
+                    hiddenWrapper.insertAdjacentHTML("beforeend", `
+                        <input type="hidden" name="diet_jenis[]" value="${item.Jenis_diet}" data-id="${uniqueId}">
+                        <input type="hidden" name="diet_anjuran[]" value="${item.jenis_diet_makanan}" data-id="${uniqueId}">
+                        <input type="hidden" name="diet_pantangan[]" value="${item.jenis_diet_makanan_tidak}" data-id="${uniqueId}">
+                    `);
+                }
+            });
+        })
+        .catch(error => {
+            console.error("Gagal memuat data diet:", error);
+        });
+    }
+
+
     let editIndex = null;
 
     function tambahAtauUpdateDiet(event) {
@@ -1738,95 +2395,132 @@
 {{-- Script ICD --}}
 <script>
     $(document).ready(function () {
+        let noRawat = $('#no_rawat').val(); // Ambil dari input
+        let apiURL = "{{ route('pelayana_dokter_data_icd.get', ['norawat' => ':noRawat']) }}".replace(':noRawat', noRawat);
+
+
+        $.getJSON(apiURL, function (data) {
+            const rows = Array.isArray(data) ? data : [];
+
+            rows.forEach(row => {
+                const icd10 = {
+                    code: row.kode_icd10,
+                    name: row.nama_icd10
+                };
+
+                const icd9 = {
+                    code: row.kode_icd9,
+                    name: row.nama_icd9
+                };
+
+                // Tambah ICD-10 (cek jika belum ada)
+                if (icd10.code && icd10.name && !isDuplicate('.icd_10 tbody', icd10.code)) {
+                    if (row.priority_icd10 === 'Primary' && hasPrimary('.icd_10 tbody')) {
+                        console.log(`Lewati ICD10 ${icd10.code}, karena Primary sudah ada`);
+                    } else {
+                        $('.icd_10 tbody').append(generateRow(icd10, row.priority_icd10 || 'Sekunder', 'ICD10'));
+                    }
+                }
+
+                // Tambah ICD-9 (cek jika belum ada)
+                if (icd9.code && icd9.name && !isDuplicate('.icd_9 tbody', icd9.code)) {
+                    $('.icd_9 tbody').append(generateRow(icd9, 'Sekunder', 'ICD9'));
+                }
+            });
+
+            updateTableState();
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("Gagal mengambil data dari API:", textStatus, errorThrown);
+        });
         // Variabel penyimpanan
         let selectedICD10 = null, selectedPriorityICD10 = null;
         let selectedICD9 = null, selectedPriorityICD9 = null;
 
         function hasPrimary(tbodySelector) {
-        let found = false;
-        $(`${tbodySelector} tr`).each(function () {
-            const prioritasText = $(this).find('td:eq(2)').text().trim();
-            if (prioritasText === 'Primary') {
-                found = true;
-                return false; // Break the loop
-            }
+            let found = false;
+            $(`${tbodySelector} tr`).each(function () {
+                const prioritasText = $(this).find('td:eq(2)').text().trim();
+                if (prioritasText === 'Primary') {
+                    found = true;
+                    return false; // Break the loop
+                }
+            });
+            return found;
+        }
+
+        function isDuplicate(tbodySelector, code) {
+            let found = false;
+            $(`${tbodySelector} tr`).each(function () {
+                const kodeText = $(this).find('td:eq(0)').text().trim();
+                if (kodeText === code) {
+                    found = true;
+                    return false; // Break the loop
+                }
+            });
+            return found;
+        }
+
+        // ICD10 - dropdown
+        $('#icd10').on('change', function () {
+            const opt = $(this).find('option:selected');
+            selectedICD10 = { code: opt.val(), name: opt.data('nama') };
+            $('#kodeICD10').text(selectedICD10.code);
         });
-        return found;
-    }
 
-    function isDuplicate(tbodySelector, code) {
-        let found = false;
-        $(`${tbodySelector} tr`).each(function () {
-            const kodeText = $(this).find('td:eq(0)').text().trim();
-            if (kodeText === code) {
-                found = true;
-                return false; // Break the loop
-            }
+        $('#dropdownMenuButtonICD10').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
+            selectedPriorityICD10 = $(this).data('value');
+            $('#prioritas_icd_10').text(selectedPriorityICD10);
         });
-        return found;
-    }
 
-    // ICD10 - dropdown
-    $('#icd10').on('change', function () {
-        const opt = $(this).find('option:selected');
-        selectedICD10 = { code: opt.val(), name: opt.data('nama') };
-        $('#kodeICD10').text(selectedICD10.code);
-    });
+        $('#acceptICD10').on('click', function () {
+            console.log('Accept clicked'); // Debug log
+            console.log('selectedICD10:', selectedICD10); // Debug log
+            console.log('selectedPriorityICD10:', selectedPriorityICD10); // Debug log
 
-    $('#dropdownMenuButtonICD10').next('.dropdown-menu').find('.dropdown-item').on('click', function () {
-        selectedPriorityICD10 = $(this).data('value');
-        $('#prioritas_icd_10').text(selectedPriorityICD10);
-    });
+            // Validasi 1: Cek apakah diagnosa dan prioritas sudah dipilih
+            if (!selectedICD10 || !selectedPriorityICD10) {
+                console.log('Validation failed: Missing data'); // Debug log
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'Pilih Diagnosa dan Prioritas!',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
 
-    $('#acceptICD10').on('click', function () {
-        console.log('Accept clicked'); // Debug log
-        console.log('selectedICD10:', selectedICD10); // Debug log
-        console.log('selectedPriorityICD10:', selectedPriorityICD10); // Debug log
+            // Validasi 2: Cek duplikasi data
+            if (isDuplicate('.icd_10 tbody', selectedICD10.code)) {
+                console.log('Validation failed: Duplicate data'); // Debug log
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Data sudah ada!',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
 
-        // Validasi 1: Cek apakah diagnosa dan prioritas sudah dipilih
-        if (!selectedICD10 || !selectedPriorityICD10) {
-            console.log('Validation failed: Missing data'); // Debug log
-            Swal.fire({
-                icon: 'warning',
-                title: 'Oops...',
-                text: 'Pilih Diagnosa dan Prioritas!',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
+            // Validasi 3: Cek primary hanya boleh satu
+            if (selectedPriorityICD10 === 'Primary' && hasPrimary('.icd_10 tbody')) {
+                console.log('Validation failed: Primary already exists'); // Debug log
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Primary hanya boleh satu.',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
 
-        // Validasi 2: Cek duplikasi data
-        if (isDuplicate('.icd_10 tbody', selectedICD10.code)) {
-            console.log('Validation failed: Duplicate data'); // Debug log
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Data sudah ada!',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
+            console.log('All validations passed, adding data'); // Debug log
 
-        // Validasi 3: Cek primary hanya boleh satu
-        if (selectedPriorityICD10 === 'Primary' && hasPrimary('.icd_10 tbody')) {
-            console.log('Validation failed: Primary already exists'); // Debug log
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Primary hanya boleh satu.',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
-
-        console.log('All validations passed, adding data'); // Debug log
-
-        // Jika semua validasi berhasil, tambahkan data
-        $('.icd_10 tbody').append(generateRow(selectedICD10, selectedPriorityICD10, 'ICD10'));
-        resetFields('#icd10', '#kodeICD10', '#prioritas_icd_10');
-        selectedICD10 = selectedPriorityICD10 = null;
-        updateTableState();
-    });
+            // Jika semua validasi berhasil, tambahkan data
+            $('.icd_10 tbody').append(generateRow(selectedICD10, selectedPriorityICD10, 'ICD10'));
+            resetFields('#icd10', '#kodeICD10', '#prioritas_icd_10');
+            selectedICD10 = selectedPriorityICD10 = null;
+            updateTableState();
+        });
 
         // ICD9 - dropdown
         $('#icd9').on('change', function () {

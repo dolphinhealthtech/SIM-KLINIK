@@ -22,6 +22,14 @@ class Pendaftaran_rawat_jalan extends Model
         'no_urut'
     ];
 
+    // Model Pendaftaran_rawat_jalan
+    protected static function booted()
+    {
+        static::deleting(function ($pendaftaran) {
+            $pendaftaran->status()->delete();
+        });
+    }
+
     public function status()
     {
         return $this->hasOne(Pendaftaran_rawat_jalan_status::class, 'register_id');

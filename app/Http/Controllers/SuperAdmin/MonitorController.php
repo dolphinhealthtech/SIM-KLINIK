@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use App\Models\goldar;
 use App\Models\kelamin;
 use App\Models\pernikahan;
 use App\Models\loket;
 use App\Models\pasien;
+use App\Models\pasien_antrian;
 use App\Models\Pendaftaran_rawat_jalan;
 use App\Models\Pendaftaran_rawat_jalan_status;
 use App\Models\penjamin;
@@ -269,5 +271,154 @@ class MonitorController extends Controller
         //     ->get();
 
         return view('monitor.loket_antrian', compact('title'));
+    }
+
+    /**
+     * Endpoint JSON untuk data monitor loket antrian (tanpa reload halaman)
+     */
+    public function loketAntrianData()
+    {
+        // Kumpulan antrian yang aktif (dipanggil) per loket: A, B, C
+        $allQueues = collect();
+
+        // Loket A (pasien_antrian) status_panggil = 1, hari ini
+        $antrianA = pasien_antrian::where('nomor_antrian', 'like', 'A-%')
+            ->where('status_panggil', '1')
+            ->whereDate('created_at', Carbon::today())
+            ->select('nomor_antrian as antrian', 'created_at')
+            ->first();
+
+        if ($antrianA) {
+            $allQueues->push([
+                'antrian' => $antrianA->antrian,
+                'loket' => 'A',
+                'loket_nama' => 'LOKET A',
+                'status_display' => 'SILAHKAN KE LOKET A',
+                'created_at' => $antrianA->created_at,
+            ]);
+        }
+
+        // Loket B (perawat) status_panggil = 1 dari pendaftaran_rawat_jalans
+        $antrianB = DB::table('pendaftaran_rawat_jalans')
+            ->join(
+                'pendaftaran_rawat_jalan_statuses',
+                'pendaftaran_rawat_jalan_statuses.nomor_register',
+                '=',
+                'pendaftaran_rawat_jalans.nomor_register'
+            )
+            ->where('pendaftaran_rawat_jalan_statuses.status_panggil', 1)
+            ->whereDate('pendaftaran_rawat_jalans.created_at', Carbon::today())
+            ->select('pendaftaran_rawat_jalans.antrian', 'pendaftaran_rawat_jalans.created_at')
+            ->first();
+
+        if ($antrianB) {
+            $allQueues->push([
+                'antrian' => $antrianB->antrian,
+                'loket' => 'B',
+                'loket_nama' => 'LOKET B',
+                'status_display' => 'SILAHKAN KE LOKET B',
+                'created_at' => $antrianB->created_at,
+            ]);
+        }
+
+        // Loket C (dokter) status_panggil = 2 dari pendaftaran_rawat_jalans
+        $antrianC = DB::table('pendaftaran_rawat_jalans')
+            ->join(
+                'pendaftaran_rawat_jalan_statuses',
+                'pendaftaran_rawat_jalan_statuses.nomor_register',
+                '=',
+                'pendaftaran_rawat_jalans.nomor_register'
+            )
+            ->where('pendaftaran_rawat_jalan_statuses.status_panggil', 2)
+            ->whereDate('pendaftaran_rawat_jalans.created_at', Carbon::today())
+            ->select('pendaftaran_rawat_jalans.antrian', 'pendaftaran_rawat_jalans.created_at')
+            ->first();
+
+        if ($antrianC) {
+            $allQueues->push([
+                'antrian' => $antrianC->antrian,
+                'loket' => 'C',
+                'loket_nama' => 'LOKET C',
+                'status_display' => 'SILAHKAN KE LOKET C',
+                'created_at' => $antrianC->created_at,
+            ]);
+        }
+
+        // Status kartu loket (angka terakhir dilayani per loket)
+        $loketStatuses = [
+            'A' => [
+                'nomor' => '--',
+                'label' => 'Siap Melayani',
+                'icon' => '<i class="fas fa-check-circle mr-1"></i>',
+            ],
+            'B' => [
+                'nomor' => '--',
+                'label' => 'Siap Melayani',
+                'icon' => '<i class="fas fa-check-circle mr-1"></i>',
+            ],
+            'C' => [
+                'nomor' => '--',
+                'label' => 'Siap Melayani',
+                'icon' => '<i class="fas fa-check-circle mr-1"></i>',
+            ],
+        ];
+
+        // A: sama dengan yang dipanggil di atas (status_panggil = 1)
+        if ($antrianA) {
+            $loketStatuses['A'] = [
+                'nomor' => $antrianA->antrian,
+                'label' => 'Sedang Dilayani',
+                'icon' => '<i class="fas fa-user-nurse mr-1"></i>',
+            ];
+        }
+
+        // B: ambil terbaru status_panggil = 1 pada hari ini dari tabel status
+        $loketB = DB::table('pendaftaran_rawat_jalan_statuses')
+            ->join(
+                'pendaftaran_rawat_jalans',
+                'pendaftaran_rawat_jalan_statuses.nomor_register',
+                '=',
+                'pendaftaran_rawat_jalans.nomor_register'
+            )
+            ->where('pendaftaran_rawat_jalan_statuses.status_panggil', 1)
+            ->whereDate('pendaftaran_rawat_jalan_statuses.created_at', Carbon::today())
+            ->orderBy('pendaftaran_rawat_jalan_statuses.created_at', 'desc')
+            ->select('pendaftaran_rawat_jalans.antrian')
+            ->first();
+
+        if ($loketB && $loketB->antrian) {
+            $loketStatuses['B'] = [
+                'nomor' => $loketB->antrian,
+                'label' => 'Sedang Dilayani Perawat',
+                'icon' => '<i class="fas fa-user-nurse mr-1"></i>',
+            ];
+        }
+
+        // C: ambil terbaru status_panggil = 2 pada hari ini dari tabel status
+        $loketC = DB::table('pendaftaran_rawat_jalan_statuses')
+            ->join(
+                'pendaftaran_rawat_jalans',
+                'pendaftaran_rawat_jalan_statuses.nomor_register',
+                '=',
+                'pendaftaran_rawat_jalans.nomor_register'
+            )
+            ->where('pendaftaran_rawat_jalan_statuses.status_panggil', 2)
+            ->whereDate('pendaftaran_rawat_jalan_statuses.created_at', Carbon::today())
+            ->orderBy('pendaftaran_rawat_jalan_statuses.created_at', 'desc')
+            ->select('pendaftaran_rawat_jalans.antrian')
+            ->first();
+
+        if ($loketC && $loketC->antrian) {
+            $loketStatuses['C'] = [
+                'nomor' => $loketC->antrian,
+                'label' => 'Sedang Dilayani Dokter',
+                'icon' => '<i class="fas fa-user-md mr-1"></i>',
+            ];
+        }
+
+        return response()->json([
+            'queues' => $allQueues->values()->all(),
+            'loket_statuses' => $loketStatuses,
+        ]);
     }
 }

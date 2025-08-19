@@ -66,11 +66,10 @@ class PcareController extends Controller
         $maxDecryptRetries = 3;
         $responseTime = 0;
         $data = null;
+        $token = $this->get_token();
 
         try {
             $startTime = microtime(true);
-
-            $token = $this->get_token();
             $headers = array_merge([
                 'Content-Type' => 'application/json; charset=utf-8'
             ], $token['headers']);
@@ -179,11 +178,11 @@ class PcareController extends Controller
         $maxDecryptRetries = 3;
         $responseTime = 0;
         $data = null;
+        $token = $this->get_token();
 
         try {
             $startTime = microtime(true);
 
-            $token = $this->get_token();
             if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
                 return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
             }
@@ -294,12 +293,12 @@ class PcareController extends Controller
         $maxDecryptRetries = 3;
         $responseTime = 0;
         $data = null;
+        $token = $this->get_token();
 
         for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
 
-                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
                 ], $token['headers']);
@@ -413,12 +412,12 @@ class PcareController extends Controller
         $attempt = 0;
         $data = null;
         $responseTime = 0;
+        $token = $this->get_token();
 
         for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
 
-                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
                 ], $token['headers']);
@@ -520,12 +519,12 @@ class PcareController extends Controller
         $maxDecryptRetries = 3;
         $responseTime = 0;
         $data = null;
+        $token = $this->get_token();
 
         for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
 
-                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
                 ], $token['headers']);
@@ -629,15 +628,14 @@ class PcareController extends Controller
         $SERVICE_NAME = $config->SERVICE;
         $feature = 'spesialis';
         $params1 = 'subspesialis';
-
         $maxDecryptRetries = 3;
         $responseTime = 0;
         $data = null;
+        $token = $this->get_token();
 
         try {
             $startTime = microtime(true);
 
-            $token = $this->get_token();
             if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
                 return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
             }
@@ -748,9 +746,9 @@ class PcareController extends Controller
         $maxDecrypt = 3;
         $responseTime = 0;
         $data = null;
+        $token = $this->get_token();
 
         try {
-            $token = $this->get_token();
             if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
                 return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
             }
@@ -857,9 +855,9 @@ class PcareController extends Controller
         $maxDecrypt = 3;
         $responseTime = 0;
         $data = null;
+        $token = $this->get_token();
 
         try {
-            $token = $this->get_token();
             if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
                 return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
             }
@@ -961,12 +959,12 @@ class PcareController extends Controller
         $maxDecryptRetries = 3;
         $data = null;
         $responseTime = 0;
+        $token = $this->get_token();
 
         for ($reqAttempt = 0; $reqAttempt < $maxRequestRetries; $reqAttempt++) {
             try {
                 $startTime = microtime(true);
 
-                $token = $this->get_token();
                 $headers = array_merge([
                     'Content-Type' => 'application/json; charset=utf-8'
                 ], $token['headers']);
@@ -1790,12 +1788,12 @@ class PcareController extends Controller
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE_ANTREAN;
         $feature = 'antrean/add';
-
+        $token = $this->get_token();
         try {
             // Assuming $this->generateHeaders() returns an array of headers
             $headers = array_merge([
                 'Content-Type' => 'application/json; charset=utf-8'
-            ], $this->get_token()['headers']);
+            ], $token['headers']);
 
             // Make the API request
             $response = Http::withHeaders($headers)
@@ -1820,7 +1818,7 @@ class PcareController extends Controller
 
 
         // Decrypt the string using AES-256-CBC
-        $key = $this->get_token()['key_decrypt'];
+        $key = $token['key_decrypt'];
         $encrypt_method = 'AES-256-CBC';
         $key_hash = hex2bin(hash('sha256', $key));  // Get key hash
         $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
@@ -1843,12 +1841,13 @@ class PcareController extends Controller
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE_ANTREAN;
         $feature = 'antrean/batal';
+        $token = $this->get_token();
 
         try {
             // Assuming $this->generateHeaders() returns an array of headers
             $headers = array_merge([
                 'Content-Type' => 'application/json; charset=utf-8'
-            ], $this->get_token()['headers']);
+            ], $token['headers']);
 
             // Make the API request
             $response = Http::withHeaders($headers)
@@ -1873,7 +1872,7 @@ class PcareController extends Controller
 
 
         // Decrypt the string using AES-256-CBC
-        $key = $this->get_token()['key_decrypt'];
+        $key = $token['key_decrypt'];
         $encrypt_method = 'AES-256-CBC';
         $key_hash = hex2bin(hash('sha256', $key));  // Get key hash
         $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
@@ -1896,12 +1895,12 @@ class PcareController extends Controller
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE_ANTREAN;
         $feature = 'antrean/panggil';
-
+        $token = $this->get_token();
         try {
             // Assuming $this->generateHeaders() returns an array of headers
             $headers = array_merge([
                 'Content-Type' => 'application/json; charset=utf-8'
-            ], $this->get_token()['headers']);
+            ], $token['headers']);
 
             // Make the API request
             $response = Http::withHeaders($headers)
@@ -1926,7 +1925,7 @@ class PcareController extends Controller
 
 
         // Decrypt the string using AES-256-CBC
-        $key = $this->get_token()['key_decrypt'];
+        $key = $token['key_decrypt'];
         $encrypt_method = 'AES-256-CBC';
         $key_hash = hex2bin(hash('sha256', $key));  // Get key hash
         $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
@@ -1953,12 +1952,13 @@ class PcareController extends Controller
         $attempt = 0;
         $data = null;
         $responseTime = 0;
+        $tokenData = $this->get_token();
+
         try {
             $startTime = microtime(true);
-            // Assuming $this->generateHeaders() returns an array of headers
             $headers = array_merge([
                 'Content-Type' => 'text/plain; charset=utf-8'
-            ], $this->get_token()['headers']);
+            ], $tokenData['headers']);
 
             $response = Http::withHeaders($headers)
                 ->post("{$BASE_URL}/{$SERVICE_NAME}/{$feature}", $datapost);
@@ -1972,7 +1972,7 @@ class PcareController extends Controller
             $encryptedString = $responseBody['response'];
 
             // Decrypt the string using AES-256-CBC
-            $key = $this->get_token()['key_decrypt'];
+            $key = $tokenData['key_decrypt'];
             $encrypt_method = 'AES-256-CBC';
             $key_hash = substr(hex2bin(hash('sha256', $key)), 0, 32);  // Get key hash
             $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
@@ -1990,7 +1990,7 @@ class PcareController extends Controller
                 base64_decode($encryptedString),
                 $encrypt_method,
                 $key_hash,
-                OPENSSL_RAW_DATA, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
+                OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, // Bisa coba tambahkan | OPENSSL_ZERO_PADDING jika masih gagal
                 $iv
             );
 
@@ -2464,13 +2464,13 @@ class PcareController extends Controller
         $config = set_bpjs::find(1);
         $BASE_URL = $config->BASE_URL;
         $SERVICE_NAME = $config->SERVICE;
-        $feature = 'kunjungan';
-
+        $feature = 'kunjungan/v1';
+        $tokendata = $this->get_token();
         try {
             // Assuming $this->generateHeaders() returns an array of headers
             $headers = array_merge([
                 'Content-Type' => 'text/plain; charset=utf-8'
-            ], $this->get_token()['headers']);
+            ], $tokendata['headers']);
 
             // Make the API request
             $response = Http::withHeaders($headers)
@@ -2495,13 +2495,13 @@ class PcareController extends Controller
 
 
         // Decrypt the string using AES-256-CBC
-        $key = $this->get_token()['key_decrypt'];
+        $key = $tokendata['key_decrypt'];
         $encrypt_method = 'AES-256-CBC';
         $key_hash = hex2bin(hash('sha256', $key));  // Get key hash
         $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);  // Get IV
 
         // Decrypt the base64-encoded encrypted string
-        $decryptedString = openssl_decrypt(base64_decode($encryptedString), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
+        $decryptedString = openssl_decrypt(base64_decode($encryptedString), $encrypt_method, $key_hash, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv);
 
         $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
 
@@ -2509,7 +2509,9 @@ class PcareController extends Controller
         $data = json_decode($jsonString, true);
 
 
-        return response()->json($data);
+        return response()->json([
+            "data" => $data
+        ]);
     }
 
     public function get_jadwal_dokter_bpjs($kodepoli, $tanggal)
@@ -2828,6 +2830,133 @@ class PcareController extends Controller
         ]);
     }
 
+    public function delete_pendaftaran($data)
+    {
+        $config = set_bpjs::find(1);
+        if (!$config) {
+            return response()->json(['status' => 'error', 'message' => 'Config not found'], 500);
+        }
+
+        $nomor = $data['nomorkartu'];
+        $tanggal = $data['tanggalperiksa'];
+        $nomorurut = $data['nourut'];
+        $kodepoli = $data['kodepoli'];
+
+        if (!$nomor || !$tanggal || !$nomorurut || !$kodepoli) {
+            return response()->json(['status' => 'error', 'message' => 'Invalid input data'], 400);
+        }
+
+        $BASE_URL = $config->BASE_URL;
+        $SERVICE_NAME = $config->SERVICE;
+        $endpoint = "pendaftaran/peserta/{$nomor}/tglDaftar/{$tanggal}/noUrut/{$nomorurut}/kdPoli/{$kodepoli}";
+
+        $maxRequest = 3;
+        $maxDecrypt = 3;
+        $responseTime = 0;
+        $data = null;
+        try {
+            $token = $this->get_token();
+            if (!$token || !isset($token['headers'], $token['key_decrypt'])) {
+                return response()->json(['status' => 'error', 'message' => 'Token retrieval failed'], 500);
+            }
+
+            $headers = array_merge([
+                'Content-Type' => 'application/json; charset=utf-8'
+            ], $token['headers']);
+            $timestamp = $token['headers']['X-Timestamp'];
+            $key = $token['key_decrypt'];
+
+            $data = null;
+
+            for ($i = 0; $i < $maxRequest; $i++) {
+                $startTime = microtime(true);
+                $response = Http::withHeaders($headers)->delete("{$BASE_URL}/{$SERVICE_NAME}/{$endpoint}");
+                $responseTime = microtime(true) - $startTime;
+
+                $responseBody = json_decode($response->body(), true);
+                if (!is_array($responseBody)) continue;
+
+                $meta = $responseBody['metaData'] ?? $responseBody['metadata'] ?? null;
+
+                if (!$meta || ($meta['code'] ?? 500) != 200) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $meta['message'] ?? 'BPJS error',
+                        'response_time' => number_format($responseTime, 2)
+                    ], 400);
+                }
+
+                // Jika response null (seperti pada DELETE), anggap berhasil
+                if (!isset($responseBody['response']) || $responseBody['response'] === null) {
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => $meta['message'] ?? 'Berhasil',
+                        'data' => null,
+                        'response_time' => number_format($responseTime, 2)
+                    ]);
+                }
+
+                // Proses dekripsi jika ada response terenkripsi
+                $encryptedString = $responseBody['response'];
+                $encrypt_method = 'AES-256-CBC';
+                $key_hash = hash('sha256', $key, true);
+                $iv = substr($key_hash, 0, 16);
+
+                for ($j = 0; $j < $maxDecrypt; $j++) {
+                    $decryptedString = openssl_decrypt(
+                        base64_decode($encryptedString),
+                        $encrypt_method,
+                        $key_hash,
+                        OPENSSL_RAW_DATA,
+                        $iv
+                    );
+
+                    if ($decryptedString) {
+                        $jsonString = LZString::decompressFromEncodedURIComponent($decryptedString);
+                        if ($jsonString) {
+                            $data = json_decode($jsonString, true);
+                            if ($data !== null) {
+                                break 2; // keluar dari kedua loop (dekripsi & request)
+                            }
+                        }
+                    }
+
+                    Log::warning("Dekripsi gagal attempt {$j} (request {$i})");
+                }
+
+                Log::warning("Fallback dekrip internal - Rujukan Khusus Subspesialis (request {$i})");
+                $fallback = $this->bpjs_dekrip_internal($timestamp, $encryptedString);
+                if (isset($fallback['data'])) {
+                    $data = $fallback['data'];
+                    break;
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'response_time' => number_format($responseTime ?? 0, 2)
+            ], 500);
+        }
+
+        // Jika ada data hasil dekripsi atau fallback
+        if (!empty($data)) {
+            return response()->json([
+                'status' => 'success',
+                'data' => $data,
+                'response_time' => number_format($responseTime ?? 0, 2)
+            ]);
+        }
+
+        // Jika tidak ada data setelah semua percobaan
+        return response()->json([
+            'status' => 'error',
+            'message' => 'No data found or failed to decrypt.',
+            'response_time' => number_format($responseTime ?? 0, 2)
+        ], 400);
+
+    }
+
     public function bpjs_dekrip(Request $request)
     {
         // Ambil timestamp dan data dari request
@@ -2904,4 +3033,6 @@ class PcareController extends Controller
             ], 403));
         }
     }
+
+
 }

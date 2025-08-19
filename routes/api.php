@@ -52,6 +52,11 @@ Route::get('/generate-kode-pembelian-inventaris', [InventarisController::class, 
 Route::get('/sub-pemeriksaan/{id}', [PelayananController::class, 'getSubPemeriksaan']);
 Route::get('/alergi/by-jenis/{id}', [PelayananController::class, 'getByJenis']);
 Route::get('/dokter/data/so/{norawat}', [PelayananController::class, 'soappelayanandata'])->name('pelayana_dokter_data.get');
+Route::get('/dokter/data/so/edit/{norawat}', [PelayananController::class, 'soappelayanandataedit'])->name('pelayana_dokter_data_edit.get');
+Route::get('/dokter/data/so/icd/{norawat}', [PelayananController::class, 'soappelayanandataicd'])->name('pelayana_dokter_data_icd.get');
+Route::get('/dokter/data/so/diet/{norawat}', [PelayananController::class, 'soappelayanandatadiet'])->name('pelayana_dokter_data_diet.get');
+Route::get('/dokter/data/so/obat/{norawat}', [PelayananController::class, 'soappelayanandataobat'])->name('pelayana_dokter_data_obat.get');
+Route::get('/dokter/data/so/tindakan/{norawat}', [PelayananController::class, 'soappelayanandatatindakan'])->name('pelayana_dokter_data_tindakan.get');
 
 Route::get('/get-subspesialis/{kode}', [RujukanController::class, 'getSubSpesialis']);
 

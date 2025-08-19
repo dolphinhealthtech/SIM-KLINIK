@@ -14,8 +14,7 @@ class perawatan_tindakan extends Model
         'perawatan_kategori_id',
         'tarif_dokter',
         'tarif_perawat',
-        'tarif_total',
-        'tarif_all'
+        'tarif_total'
     ];
 
     public function perawatan_kategori() {

@@ -19,12 +19,6 @@
             </div><!-- /.container-fluid -->
         </div>
         <!-- /.content-header -->
-        @php
-            use App\Models\WebSetting;
-
-            $setting = WebSetting::first();
-            $isTindakanActive = $setting->is_tindakan_active ?? true;
-        @endphp
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
@@ -58,12 +52,8 @@
                                             <th class="text-center">Kode</th>
                                             <th class="text-center">Nama</th>
                                             <th class="text-center">Kategori</th>
-                                            @if($isTindakanActive)
-                                                <th class="text-center">Tarif Tindakan</th>
-                                            @else
-                                                <th class="text-center">Tarif Dokter</th>
-                                                <th class="text-center">Tarif Perawat</th>
-                                            @endif
+                                            <th class="text-center">Tarif Dokter</th>
+                                            <th class="text-center">Tarif Perawat</th>
                                             <th class="text-center">Total Tarif</th>
                                             <th class="text-center" width="25%">Action</th>
                                         </tr>
@@ -75,12 +65,8 @@
                                                 <td class="text-center">{{ $perawatan_tindakandata->kode }}</td>
                                                 <td class="text-center">{{ $perawatan_tindakandata->nama }}</td>
                                                 <td class="text-center">{{ $perawatan_tindakandata->perawatan_kategori->nama }}</td>
-                                                @if($isTindakanActive)
-                                                    <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_all, 0, ',', '.') }}</td>
-                                                @else
-                                                    <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_dokter, 0, ',', '.') }}</td>
-                                                    <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_perawat, 0, ',', '.') }}</td>
-                                                @endif
+                                                <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_dokter, 0, ',', '.') }}</td>
+                                                <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_perawat, 0, ',', '.') }}</td>
                                                 <td class="text-center">Rp {{ number_format((int)$perawatan_tindakandata->tarif_total, 0, ',', '.') }}</td>
                                                 <td class="text-center">
                                                     <a href="#" class="btn btn-warning btn-sm edit-data-perawatan_tindakan"
@@ -90,7 +76,6 @@
                                                         data-tarif_dokter-perawatan_tindakan="{{ $perawatan_tindakandata->tarif_dokter }}"
                                                         data-tarif_perawat-perawatan_tindakan="{{ $perawatan_tindakandata->tarif_perawat }}"
                                                         data-tarif_total-perawatan_tindakan="{{ $perawatan_tindakandata->tarif_total }}"
-                                                        data-tarif_all-perawatan_tindakan="{{ $perawatan_tindakandata->tarif_all }}"
                                                         data-target="#editperawatan_tindakanModa">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </a>
@@ -147,30 +132,18 @@
                                 </select>
                             </div>
                         </div>
-                        @if($isTindakanActive)
-                            <input type="hidden" class="form-control rupiah" id="tarif_dokter" name="tarif_dokter" value="0" >
-                            <input type="hidden" class="form-control rupiah" id="tarif_perawat" name="tarif_perawat" value="0">
-                            <div class="col-sm-8">
-                                <div class="form-group">
-                                    <label>Tarif Tindakan</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_all" name="tarif_all" required>
-                                </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tarif Dokter</label>
+                                <input type="text" class="form-control rupiah" id="tarif_dokter" name="tarif_dokter" required>
                             </div>
-                        @else
-                           <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label>Tarif Dokter</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_dokter" name="tarif_dokter" required>
-                                </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tarif Perawat</label>
+                                <input type="text" class="form-control rupiah" id="tarif_perawat" name="tarif_perawat" required>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label>Tarif Perawat</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_perawat" name="tarif_perawat" required>
-                                </div>
-                            </div>
-                            <input type="hidden" class="form-control rupiah" id="tarif_all" name="tarif_all" value="0">
-                        @endif
+                        </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Total Tarif</label>
@@ -219,30 +192,18 @@
                                 </select>
                             </div>
                         </div>
-                        @if($isTindakanActive)
-                            <input type="hidden" class="form-control rupiah" id="tarif_dokter_edit" name="tarif_dokter_edit">
-                            <input type="hidden" class="form-control rupiah" id="tarif_perawat_edit" name="tarif_perawat_edit">
-                            <div class="col-sm-8">
-                                <div class="form-group">
-                                    <label>Tarif Tindakan</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_all_edit" name="tarif_all_edit" required>
-                                </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tarif Dokter</label>
+                                <input type="text" class="form-control rupiah" id="tarif_dokter_edit" name="tarif_dokter_edit" required>
                             </div>
-                        @else
-                            <input type="hidden" class="form-control rupiah" id="tarif_all_edit" name="tarif_all_edit">
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label>Tarif Dokter</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_dokter_edit" name="tarif_dokter_edit" required>
-                                </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Tarif Perawat</label>
+                                <input type="text" class="form-control rupiah" id="tarif_perawat_edit" name="tarif_perawat_edit" required>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label>Tarif Perawat</label>
-                                    <input type="text" class="form-control rupiah" id="tarif_perawat_edit" name="tarif_perawat_edit" required>
-                                </div>
-                            </div>
-                        @endif
+                        </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Total Tarif</label>
@@ -345,13 +306,11 @@
                     let tarifDokter = parseRupiah($('#tarif_dokter').val());
                     let tarifPerawat = parseRupiah($('#tarif_perawat').val());
                     let tarifTotal = parseRupiah($('#tarif_total').val());
-                    let tarifTindakan = parseRupiah($('#tarif_all').val());
 
                     // Set kembali input dengan angka murni
                     $('#tarif_dokter').val(tarifDokter);
                     $('#tarif_perawat').val(tarifPerawat);
                     $('#tarif_total').val(tarifTotal);
-                    $('#tarif_all').val(tarifTindakan);
 
                     $.ajax({
                         url: form.attr('action'),
@@ -402,7 +361,6 @@
             var tarif_dokter = $(this).data('tarif_dokter-perawatan_tindakan');
             var tarif_perawat = $(this).data('tarif_perawat-perawatan_tindakan');
             var tarif_total = $(this).data('tarif_total-perawatan_tindakan');
-            var tarif_all = $(this).data('tarif_all-perawatan_tindakan');
 
             $('#perawatan_tindakanid_edit').val(id);
             $('#nama_edit').val(nama);
@@ -410,7 +368,6 @@
             $('#tarif_dokter_edit').val(tarif_dokter).trigger('input');
             $('#tarif_perawat_edit').val(tarif_perawat).trigger('input');
             $('#tarif_total_edit').val(tarif_total).trigger('input');
-            $('#tarif_all_edit').val(tarif_all).trigger('input');
         });
 
         $('#editFormperawatan_tindakan').on('submit', function(e) {
@@ -423,13 +380,11 @@
             let tarifDokterEdit = parseRupiah($('#tarif_dokter_edit').val());
             let tarifPerawatEdit = parseRupiah($('#tarif_perawat_edit').val());
             let tarifTotalEdit = parseRupiah($('#tarif_total_edit').val());
-            let tarifTindakanEdit = parseRupiah($('#tarif_all_edit').val());
 
             // Set kembali input dengan angka murni
             $('#tarif_dokter_edit').val(tarifDokterEdit);
             $('#tarif_perawat_edit').val(tarifPerawatEdit);
             $('#tarif_total_edit').val(tarifTotalEdit);
-            $('#tarif_all_edit').val(tarifTindakanEdit);
 
             $.ajax({
                 url: url,
@@ -552,34 +507,19 @@
         }
 
         $(document).ready(function () {
-            $('#tarif_dokter, #tarif_perawat, #tarif_all').on('input', function () {
-                const isTindakanActive = $('#tarif_all').is(':visible') || $('#tarif_all').attr('type') === 'text';
-
+            $('#tarif_dokter, #tarif_perawat').on('input', function () {
                 let total = 0;
-
-                if (isTindakanActive) {
-                    total = parseRupiah($('#tarif_all').val());
-                } else {
-                    let dokter = parseRupiah($('#tarif_dokter').val());
-                    let perawat = parseRupiah($('#tarif_perawat').val());
-                    total = dokter + perawat;
-                }
-
+                let dokter = parseRupiah($('#tarif_dokter').val());
+                let perawat = parseRupiah($('#tarif_perawat').val());
+                total = dokter + perawat;
                 $('#tarif_total').val(formatRupiah(total.toString()));
             });
 
-            $('#tarif_dokter_edit, #tarif_perawat_edit, #tarif_all_edit').on('input', function () {
-                const isTindakanActive = $('#tarif_all_edit').is(':visible') || $('#tarif_all_edit').attr('type') === 'text';
+            $('#tarif_dokter_edit, #tarif_perawat_edit').on('input', function () {
                 let total_edit = 0;
-
-                if (isTindakanActive) {
-                    total_edit = parseRupiah($('#tarif_all_edit').val());
-                } else {
-                    let dokter_edit = parseRupiah($('#tarif_dokter_edit').val());
-                    let perawat_edit = parseRupiah($('#tarif_perawat_edit').val());
-                    total_edit = dokter_edit + perawat_edit;
-                }
-
+                let dokter_edit = parseRupiah($('#tarif_dokter_edit').val());
+                let perawat_edit = parseRupiah($('#tarif_perawat_edit').val());
+                total_edit = dokter_edit + perawat_edit;
                 $('#tarif_total_edit').val(formatRupiah(total_edit.toString()));
             });
         });

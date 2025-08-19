@@ -22,7 +22,6 @@ class Perawatan_tindakanExport implements FromCollection, WithHeadings
                 optional($item->perawatan_kategori)->nama, // hindari error jika null
                 $item->tarif_dokter,
                 $item->tarif_perawat,
-                $item->tarif_all,
                 $item->tarif_total,
             ];
         });

@@ -15,10 +15,11 @@ class GoldarImport implements ToModel, WithStartRow
     */
     public function model(array $row)
     {
-        return new goldar([
-            'nama'  => $row[0], // Ambil dari kolom pertama
-            'resus' => $row[1], // Ambil dari kolom kedua
-        ]);
+        return Goldar::updateOrCreate(
+            ['nama' => $row[0]], // Kolom yang digunakan untuk mencari record
+            ['resus' => strtolower(trim($row[1])) === 'null' ? null : $row[1]]
+        );
+
     }
 
     public function startRow(): int

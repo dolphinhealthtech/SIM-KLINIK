@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
-    <title>Permintaan Surat Keterangan Dokter</title>
+    <title>Surat Sakit</title>
     <style>
+        @page {
+            margin: 5mm 12mm 10mm 12mm;
+        }
+
         body {
             font-family: Arial, sans-serif;
             font-size: 9px;
@@ -32,7 +37,7 @@
 
         .footer {
             position: fixed;
-            bottom: 5px;
+            bottom: 2px;
             width: 100%;
         }
 
@@ -43,9 +48,9 @@
 
         .signature-line {
             border-top: 1px solid #000;
-            width: 120px;
+            width: 100px;
             margin: 0 auto;
-            margin-top: 40px;
+            margin-top: 20px;
         }
 
         .page-break {
@@ -57,27 +62,38 @@
             margin: 0;
             margin-left: 10px;
         }
+
         .info-table td {
             padding: 3px 0;
             vertical-align: top;
             border: none;
         }
+
         .info-label {
             width: 73px;
         }
+
         .info-separator {
             width: 10px;
             text-align: center;
         }
 
+        .footer-text {
+            font-size: 8px;
+        }
+
+        .signature-spacing {
+            height: 10px;
+        }
     </style>
 </head>
+
 <body>
-    <table style="width: 100%; margin-bottom: 10px;">
+    <table style="width: 100%; margin: 0 0 6px 0;">
         <tr>
             <td style="width: 60px; text-align: center; vertical-align: middle;">
                 <img src="{{ public_path('profile/default.png') }}" alt="Logo"
-                    style="width: 50px; height: 50px; border-radius: 50%;">
+                    style="width: 44px; height: 44px; border-radius: 50%;">
             </td>
             <td style="text-align: center;">
                 <div style="font-size: 14px; font-weight: bold; margin: 0;">
@@ -92,22 +108,15 @@
 
     <div class="divider"></div>
 
-    <div class="document-title">SURAT KETERANGAN DOKTER</div>
-    <div class="kode-surat">{{ $kode_surat }}</div>
+    <div class="document-title">SURAT SAKIT</div>
 
-    <p class="teks">Yang bertanda tangan dibwah ini, menerangkan bahwa : </p>
+    <p class="teks">Yang bertanda tangan dibawah ini, menerangkan bahwa :</p>
 
     <table class="info-table" style="width: 100%;">
         <tr>
             <td class="info-label">Nama</td>
             <td class="info-separator">:</td>
             <td>{{ $nama_pasien }}</td>
-        </tr>
-
-        <tr>
-            <td class="info-label">No BPJS</td>
-            <td class="info-separator">:</td>
-            <td>{{ $no_bpjs }}</td>
         </tr>
 
         <tr>
@@ -129,59 +138,117 @@
         </tr>
     </table>
 
-    <p class="teks">Pada pemeriksaan kami saat ini pada {{ \Carbon\Carbon::parse($tgl_pemeriksaan)->format('d-m-Y H:i') }}, yang bersangkutan ternyata dalam keadaan <b>"SAKIT"</b>, dengan</p>
+    <p class="teks">Berdasarkan pemeriksaan yang telah dilakukan, yang bersangkutan dinyatakan <strong>SAKIT</strong>
+        dengan keterangan sebagai berikut :</p>
+
+    @php
+        $listDiagnosisPenyerta = array_values(
+            array_filter(
+                [$diagnosis_penyerta_1 ?? null, $diagnosis_penyerta_2 ?? null, $diagnosis_penyerta_3 ?? null],
+                function ($value) {
+                    return isset($value) && trim($value) !== '';
+                },
+            ),
+        );
+
+        $listKomplikasi = array_values(
+            array_filter([$komplikasi_1 ?? null, $komplikasi_2 ?? null, $komplikasi_3 ?? null], function ($value) {
+                return isset($value) && trim($value) !== '';
+            }),
+        );
+    @endphp
+
 
     <table class="info-table" style="width: 100%;">
         <tr>
-            <td class="info-label">Diagnosa</td>
+            <td class="info-label">Diagnosis</td>
             <td class="info-separator">:</td>
-            {{-- <td>{{ $diagnosa }}</td> --}}
-            <td><strong>{!! nl2br(e($diagnosa ?? '-')) !!}</strong></td>
+            <td>{{ $diagnosis_utama }}</td>
+        </tr>
+
+        @if (count($listDiagnosisPenyerta) > 0)
+            <tr>
+                <td class="info-label">Diagnosis Penyerta</td>
+                <td class="info-separator">:</td>
+                <td>
+                    @foreach ($listDiagnosisPenyerta as $index => $item)
+                        {{ $index + 1 }}. {{ $item }}@if (!$loop->last)
+                            <br>
+                        @endif
+                    @endforeach
+                </td>
+            </tr>
+        @endif
+
+        @if (count($listKomplikasi) > 0)
+            <tr>
+                <td class="info-label">Komplikasi</td>
+                <td class="info-separator">:</td>
+                <td>
+                    @foreach ($listKomplikasi as $index => $item)
+                        {{ $index + 1 }}. {{ $item }}@if (!$loop->last)
+                            <br>
+                        @endif
+                    @endforeach
+                </td>
+            </tr>
+        @endif
+
+        <tr>
+            <td class="info-label">Istirahat Selama</td>
+            <td class="info-separator">:</td>
+            <td>{{ $lama_istirahat ?? 0 }} Hari</td>
         </tr>
 
         <tr>
-            <td class="info-label">Selama</td>
+            <td class="info-label">Terhitung Mulai</td>
             <td class="info-separator">:</td>
-            <td>{{ $jumlah_hari }} Hari</td>
-        </tr>
-
-        <tr>
-            <td class="info-label">Terhitung Hingga</td>
-            <td class="info-separator">:</td>
-            <td>{{ \Carbon\Carbon::parse($tgl_awal)->format('d-m-Y') }} - {{ \Carbon\Carbon::parse($tgl_akhir)->format('d-m-Y') }}</td>
+            <td>
+                @if ($terhitung_mulai)
+                    {{ \Carbon\Carbon::parse($terhitung_mulai)->format('d-m-Y') }}
+                    s.d
+                    {{ \Carbon\Carbon::parse($terhitung_mulai)->addDays(($lama_istirahat ?? 0) - 1)->format('d-m-Y') }}
+                @else
+                    -
+                @endif
+            </td>
         </tr>
     </table>
 
-    <p class="teks">Demikian surat keterangan ini dibuat dengan sebenar-benarnya dan untuk dipergunakan sebagai mestinya.</p>
+    <p class="teks">Demikian surat sakit ini dibuat dengan sebenar-benarnya dan untuk dipergunakan sebagai mestinya.
+    </p>
 
     <div class="footer">
         <table class="signature-table">
             <tr>
-                <td>Tangerang, {{ $now->format('d-m-Y') }}</td>
+                <td class="footer-text">Tangerang, {{ $now->format('d-m-Y') }}</td>
                 <td></td>
                 <td></td>
             </tr>
             <tr>
-                <td style="font-weight: bold;">Dokter Pemeriksan</td>
+                <td class="footer-text" style="font-weight: bold;">Dokter Pemeriksa</td>
                 <td></td>
                 <td></td>
             </tr>
             <tr>
-                <td style="height: 15px;"></td>
+                <td class="signature-spacing"></td>
                 <td></td>
                 <td></td>
             </tr>
             <tr>
-                <td><div class="signature-line"></div></td>
+                <td>
+                    <div class="signature-line"></div>
+                </td>
                 <td></td>
                 <td></td>
             </tr>
             <tr>
-                <td>{{ $dokter_pengirim ?? auth()->user()->name ?? 'Petugas' }}</td>
+                <td class="footer-text">{{ $dokter_pengirim ?? (auth()->user()->name ?? 'Petugas') }}</td>
                 <td></td>
                 <td></td>
             </tr>
         </table>
     </div>
 </body>
+
 </html>

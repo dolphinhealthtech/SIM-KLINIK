@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CacheControl;
 use App\Http\Middleware\LogExecutionTime;
 use App\Http\Middleware\LogUserActivity;
 use Illuminate\Foundation\Application;
@@ -16,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(LogUserActivity::class);
         $middleware->append(LogExecutionTime::class);
+        // $middleware->append(CacheControl::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

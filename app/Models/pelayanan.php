@@ -35,15 +35,16 @@ class pelayanan extends Model
 
     public function pendaftaran()
     {
-        return $this->belongsTo(Pendaftaran_rawat_jalan::class, 'nomor_register','nomor_register');
+        return $this->belongsTo(Pendaftaran_rawat_jalan::class, 'nomor_register', 'nomor_register');
     }
+
     public function pelayanan_so()
     {
-        return $this->belongsTo(pelayanan_soap_perawat::class,'nomor_register','no_rawat');
+        return $this->hasMany(pelayanan_soap_perawat::class,  'no_rawat', 'nomor_register');
     }
     public function pelayanan_soap()
     {
-        return $this->hasMany(pelayanan_soap_dokter::class,'no_rawat','nomor_register');
+        return $this->hasMany(pelayanan_soap_dokter::class, 'no_rawat', 'nomor_register');
     }
 
     public function icd()
