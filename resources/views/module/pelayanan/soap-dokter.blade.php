@@ -99,6 +99,9 @@
                                                     <li class="nav-item">
                                                         <a class="nav-link" id="custom-tabs-four-odo-tab" data-toggle="pill" href="#custom-tabs-four-odo" role="tab" aria-controls="custom-tabs-four-odo" aria-selected="false">Odontogram </a>
                                                     </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="custom-tabs-four-cppt-tab" data-toggle="pill" href="#custom-tabs-four-cppt" role="tab" aria-controls="custom-tabs-four-cppt" aria-selected="false">cppt </a>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <div class="card-body">
@@ -820,7 +823,419 @@
                                                         </div>
 
                                                     </div>
+                                                    <div class="tab-pane fade" id="custom-tabs-four-cppt" role="tabpanel" aria-labelledby="custom-tabs-four-cppt-tab">
+                                                        <div class="timeline">
+                                                            @foreach ($pelayana_data as $pelayanan)
+                                                                {{-- Tanggal CPPT --}}
+                                                                <div class="time-label">
+                                                                    <span class="bg-primary text-white px-3 py-1 rounded">
+                                                                        {{ $pelayanan->tanggal_kujungan}}
+                                                                    </span>
+                                                                </div>
 
+                                                                {{-- Data SOAP Perawat --}}
+                                                                @foreach ($pelayanan->pelayanan_so as $prawat)
+                                                                    <div>
+                                                                        <i class="fas fa-user-nurse bg-info"></i> {{-- Icon berbeda utk perawat --}}
+                                                                        <div class="timeline-item">
+                                                                            <span class="time"><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($prawat->created_at)->format('H:i') }}</span>
+                                                                            <h3 class="timeline-header mb-2">
+                                                                                {{ $prawat->user_input_name ?? 'Perawat tidak diketahui' }} – Perawat
+                                                                            </h3>
+                                                                            <div class="timeline-body">
+                                                                                <!-- Nav Tabs -->
+                                                                                <ul class="nav nav-tabs" role="tablist" id="tabs-prawat-{{ $prawat->id }}">
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link active" id="soap-s-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-s-prawat-{{ $prawat->id }}" role="tab">Subyektif</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-o-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-o-prawat-{{ $prawat->id }}" role="tab">Objektif</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-a-tab-prawat-{{ $prawat->id }}" data-toggle="tab" href="#soap-a-prawat-{{ $prawat->id }}" role="tab">Head To Toe</a>
+                                                                                    </li>
+                                                                                </ul>
+
+                                                                                <!-- Tab Content -->
+                                                                                <div class="tab-content border rounded-bottom p-3" id="tab-content-prawat-{{ $prawat->id }}">
+                                                                                    <div class="tab-pane fade show active" id="soap-s-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-s-tab-prawat-{{ $prawat->id }}">
+                                                                                        @php
+                                                                                            $subjektifData = json_decode($prawat->tableData, true);
+                                                                                        @endphp
+
+                                                                                        <table class="table table-bordered">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th>No</th>
+                                                                                                    <th>Subyektif</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @if(is_array($subjektifData) && count($subjektifData) > 0)
+                                                                                                    @foreach($subjektifData as $index => $item)
+                                                                                                        <tr>
+                                                                                                            <td>{{ $index + 1 }}</td>
+                                                                                                            <td>
+                                                                                                                pasien mengeluhkan {{ strtolower($item['penyakit']) }}
+                                                                                                                sejak {{ $item['durasi'] }} {{ $item['waktu'] }}
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    @endforeach
+                                                                                                @else
+                                                                                                    <tr>
+                                                                                                        <td colspan="2">-</td>
+                                                                                                    </tr>
+                                                                                                @endif
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-o-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-o-tab-prawat-{{ $prawat->id }}">
+                                                                                        <div class="row">
+                                                                                           <div class="col-md-2">
+                                                                                                <label>Tensi (mmHg)</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" value="{{$prawat->sistol}}" readonly>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                                                                                        <span>/</span> <!-- Menambahkan pemisah / -->
+                                                                                                    </div>
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" value="{{$prawat->distol}}" readonly>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="suhu_cppt1">Suhu (°C)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->suhu}}°C" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="nadi_cppt1">Nadi (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->nadi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="rr_cppt1">RR (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->rr}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="tinggi_cppt1">Tinggi (Cm)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->tinggi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="berat_cppt1">Berat (/Kg)</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->berat}}" readonly>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="row mt-2">
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="spo2_cppt1">SpO2</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->spo2}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Alergi dan jenis</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="jenis_alergi_cppt" name="jenis_alergi_cppt" disabled>
+                                                                                                            <option value="" disabled {{ empty($prawat->jenis_alergi) ? 'selected' : '' }}>-- Pilih --</option>
+                                                                                                            <option value="00" {{ $prawat->jenis_alergi == '00' ? 'selected' : '' }}>tidak ada</option>
+                                                                                                            <option value="01" {{ $prawat->jenis_alergi == '01' ? 'selected' : '' }}>makanan</option>
+                                                                                                            <option value="02" {{ $prawat->jenis_alergi == '02' ? 'selected' : '' }}>obat</option>
+                                                                                                            <option value="03" {{ $prawat->jenis_alergi == '03' ? 'selected' : '' }}>udara</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="alergi_cppt" name="alergi_cppt" disabled>
+                                                                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="lingkar_perut_cppt1">Lingkar Perut</label>
+                                                                                                <input type="text" class="form-control" value="{{$prawat->lingkar_perut}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Data BMI</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-4">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$prawat->nilai_bmi}}">
+                                                                                                    </div>
+                                                                                                    <div class="col-md-8">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$prawat->status_bmi}}">
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="form-group row">
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="eye">EYE</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="eye_cppt" name="eye_cppt"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gsc_eye as $gsc_eyedata_cppt)
+                                                                                                        <option value="{{$gsc_eyedata_cppt->skor}}">{{$gsc_eyedata_cppt->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="verbal">VERBAL</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="verbal_cppt" name="verbal_cppt"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_verbal as $gcs_verbaldata_cppt)
+                                                                                                        <option value="{{$gcs_verbaldata_cppt->skor}}">{{$gcs_verbaldata_cppt->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="motorik">MOTORIK</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="motorik_cppt" name="motorik_cppt"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_motorik as $gcs_motorikdata_cppt)
+                                                                                                        <option value="{{$gcs_motorikdata_cppt->skor}}">{{$gcs_motorikdata_cppt->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="sadar">Kesadaran</label>
+                                                                                                <select class="form-control" style="width: 100%;" id="sadar_cppt" name="sadar_cppt" disabled>
+                                                                                                    <option value="" disabled selected> </option>
+                                                                                                    @foreach ($gcs_kesadaran as $gcs_kesadarandata_cppt)
+                                                                                                        <option value="{{ $gcs_kesadarandata_cppt->skor }}">{{ $gcs_kesadarandata_cppt->nama }}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-a-prawat-{{ $prawat->id }}" role="tabpanel" aria-labelledby="soap-a-tab-prawat-{{ $prawat->id }}">
+                                                                                        @php
+                                                                                            $asesmen = preg_replace('/<p><br><\/p>/i', '', $prawat->summernote ?? '-');
+                                                                                        @endphp
+
+                                                                                        <p><strong>Head To Toe:</strong></p>
+                                                                                        {!! $asesmen !!}
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+
+                                                                {{-- Data SOAP Dokter --}}
+                                                                @foreach ($pelayanan->pelayanan_soap as $dokterSoap)
+                                                                    <div>
+                                                                        <i class="fas fa-user-md bg-success"></i>
+                                                                        <div class="timeline-item">
+                                                                            <span class="time"><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($dokterSoap->created_at)->format('H:i') }}</span>
+                                                                            <h3 class="timeline-header mb-2">
+                                                                                {{ $pelayanan->dokter->namauser->name ?? 'Dokter tidak diketahui' }} – Dokter
+                                                                            </h3>
+                                                                            <div class="timeline-body">
+                                                                                <!-- Nav Tabs -->
+                                                                                <ul class="nav nav-tabs" role="tablist" id="tabs-dokter-{{ $dokterSoap->id }}">
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link active" id="soap-s-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-s-dokter-{{ $dokterSoap->id }}" role="tab">S</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-o-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-o-dokter-{{ $dokterSoap->id }}" role="tab">O</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-ht-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-ht-dokter-{{ $dokterSoap->id }}" role="tab">HTT</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-a-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-a-dokter-{{ $dokterSoap->id }}" role="tab">A</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-d-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-d-dokter-{{ $dokterSoap->id }}" role="tab">D</a>
+                                                                                    </li>
+                                                                                    <li class="nav-item">
+                                                                                        <a class="nav-link" id="soap-p-tab-dokter-{{ $dokterSoap->id }}" data-toggle="tab" href="#soap-p-dokter-{{ $dokterSoap->id }}" role="tab">P</a>
+                                                                                    </li>
+                                                                                </ul>
+
+                                                                                <!-- Tab Content -->
+                                                                                <div class="tab-content border rounded-bottom p-3" id="tab-content-dokter-{{ $dokterSoap->id }}">
+                                                                                    <div class="tab-pane fade show active" id="soap-s-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-s-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        @php
+                                                                                            $subjektifData = json_decode($dokterSoap->tableData, true);
+                                                                                        @endphp
+
+                                                                                        <table class="table table-bordered">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th>No</th>
+                                                                                                    <th>Subyektif</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @if(is_array($subjektifData) && count($subjektifData) > 0)
+                                                                                                    @foreach($subjektifData as $index => $item)
+                                                                                                        <tr>
+                                                                                                            <td>{{ $index + 1 }}</td>
+                                                                                                            <td>
+                                                                                                                pasien mengeluhkan {{ strtolower($item['penyakit']) }}
+                                                                                                                sejak {{ $item['durasi'] }} {{ $item['waktu'] }}
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    @endforeach
+                                                                                                @else
+                                                                                                    <tr>
+                                                                                                        <td colspan="2">-</td>
+                                                                                                    </tr>
+                                                                                                @endif
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-o-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-o-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <div class="row">
+                                                                                           <div class="col-md-2">
+                                                                                                <label>Tensi (mmHg)</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" value="{{$dokterSoap->sistol}}" readonly>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-1 d-flex justify-content-center align-items-center">
+                                                                                                        <span>/</span> <!-- Menambahkan pemisah / -->
+                                                                                                    </div>
+                                                                                                    <div class="col-md-5">
+                                                                                                        <input type="text" class="form-control" value="{{$dokterSoap->distol}}" readonly>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="suhu_cppt">Suhu (°C)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->suhu}}°C" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="nadi_cppt">Nadi (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->nadi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="rr_cppt">RR (/mnt)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->rr}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="tinggi_cppt">Tinggi (Cm)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->tinggi}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="berat_cppt">Berat (/Kg)</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->berat}}" readonly>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row mt-2">
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="spo2_cppt">SpO2</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->spo2}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Alergi dan jenis</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="jenis_alergi_cpptd" name="jenis_alergi_cpptd" disabled>
+                                                                                                            <option value="" disabled {{ empty($dokterSoap->jenis_alergi) ? 'selected' : '' }}>-- Pilih --</option>
+                                                                                                            <option value="00" {{ $dokterSoap->jenis_alergi == '00' ? 'selected' : '' }}>tidak ada</option>
+                                                                                                            <option value="01" {{ $dokterSoap->jenis_alergi == '01' ? 'selected' : '' }}>makanan</option>
+                                                                                                            <option value="02" {{ $dokterSoap->jenis_alergi == '02' ? 'selected' : '' }}>obat</option>
+                                                                                                            <option value="03" {{ $dokterSoap->jenis_alergi == '03' ? 'selected' : '' }}>udara</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                    <div class="col-md-6">
+                                                                                                        <select class="form-control select2bs4" id="alergi_cpptd" name="alergi_cpptd" disabled>
+                                                                                                            <option value="" disabled selected>-- Pilih --</option>
+                                                                                                        </select>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class="col-md-2">
+                                                                                                <label for="lingkar_perut_cppt">Lingkar Perut</label>
+                                                                                                <input type="text" class="form-control" value="{{$dokterSoap->lingkar_perut}}" readonly>
+                                                                                            </div>
+                                                                                            <div class="col-md-4">
+                                                                                                <label>Data BMI</label>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-md-4">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$dokterSoap->nilai_bmi}}">
+                                                                                                    </div>
+                                                                                                    <div class="col-md-8">
+                                                                                                        <input type="text" class="form-control" readonly value="{{$dokterSoap->status_bmi}}">
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="form-group row">
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="eye">EYE</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="eye_cpptd" name="eye_cpptd"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gsc_eye as $gsc_eyedata_cpptd)
+                                                                                                        <option value="{{$gsc_eyedata_cpptd->skor}}">{{$gsc_eyedata_cpptd->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="verbal">VERBAL</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="verbal_cpptd" name="verbal_cpptd"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_verbal as $gcs_verbaldata_cpptd)
+                                                                                                        <option value="{{$gcs_verbaldata_cpptd->skor}}">{{$gcs_verbaldata_cpptd->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="motorik">MOTORIK</label>
+                                                                                                <select class="form-control select2bs4" style="width: 100%;" id="motorik_cpptd" name="motorik_cpptd"disabled>
+                                                                                                    <option value="" disabled selected>-- Pilih --</option>
+                                                                                                    @foreach ($gcs_motorik as $gcs_motorikdata_cpptd)
+                                                                                                        <option value="{{$gcs_motorikdata_cpptd->skor}}">{{$gcs_motorikdata_cpptd->nama}}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <label for="sadar">Kesadaran</label>
+                                                                                                <select class="form-control" style="width: 100%;" id="sadar_cpptd" name="sadar_cpptd" disabled>
+                                                                                                    <option value="" disabled selected> </option>
+                                                                                                    @foreach ($gcs_kesadaran as $gcs_kesadarandata_cpptd)
+                                                                                                        <option value="{{ $gcs_kesadarandata_cpptd->skor }}">{{ $gcs_kesadarandata_cpptd->nama }}</option>
+                                                                                                    @endforeach
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-ht-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-ht-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        @php
+                                                                                            $htt = preg_replace('/<p><br><\/p>/i', '', $dokterSoap->htt ?? '-');
+                                                                                        @endphp
+
+                                                                                        <p><strong>Head To Toe:</strong></p>
+                                                                                        {!! $htt !!}
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-a-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-a-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        @php
+                                                                                            $asesmen = preg_replace('/<p><br><\/p>/i', '', $dokterSoap->assesmen ?? '-');
+                                                                                        @endphp
+
+                                                                                        <p><strong>Head To Toe:</strong></p>
+                                                                                        {!! $asesmen !!}
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-d-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-d-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <p><strong>Planning:</strong> {{ $dokterSoap->p ?? '-' }}</p>
+                                                                                    </div>
+                                                                                    <div class="tab-pane fade" id="soap-p-dokter-{{ $dokterSoap->id }}" role="tabpanel" aria-labelledby="soap-p-tab-dokter-{{ $dokterSoap->id }}">
+                                                                                        <p><strong>Planning:</strong> {{ $dokterSoap->p ?? '-' }}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                            @endforeach
+                                                        </div>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                             <!-- /.card -->
