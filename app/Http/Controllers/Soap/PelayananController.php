@@ -644,7 +644,9 @@ class PelayananController extends Controller
         $obat = gudang_barang::all();
         $satuan = gudang_satuan::all();
 
-        return view('module.pelayanan.soap-dokter', compact('title', 'satuan', 'jenis_diete', 'obat', 'jenis_makanan_diet', 'tindakan', 'kategori', 'icd10', 'icd9', 'pelayanan', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
+        $pelayana_data = Pelayanan::where('nomor_rm', $pelayanan->nomor_rm)->get();
+
+        return view('module.pelayanan.soap-dokter', compact('title', 'pelayana_data', 'satuan', 'jenis_diete', 'obat', 'jenis_makanan_diet', 'tindakan', 'kategori', 'icd10', 'icd9', 'pelayanan', 'umur', 'gsc_eye', 'gcs_verbal', 'gcs_motorik', 'gcs_kesadaran', 'htt_pemeriksaan'));
     }
 
     public function soappelayananedit($norawat)
