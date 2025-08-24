@@ -476,6 +476,20 @@ class PelayananController extends Controller
                 }
             }
 
+            $soapp = pelayanan_soap_perawat::where('no_rawat', $pelayanan->nomor_register)->first();
+
+            $outputp = 'Keluhan tidak tersedia';
+            if (!empty($soapp->tableData)) {
+                $array = json_decode($soapp->tableData, true);
+                if (is_array($array)) {
+                    $hasil = [];
+                    foreach ($array as $item) {
+                        $hasil[] = "{$item['penyakit']} {$item['durasi']} " . strtolower($item['waktu']);
+                    }
+                    $outputp = implode(', ', $hasil);
+                }
+            }
+
             // GCS Kesadaran
             $totalSkor = (int) $soap->eye + (int) $soap->verbal + (int) $soap->motorik;
             $kesadaran = gcs_kesadaran::where('skor', $totalSkor)->first();
@@ -507,7 +521,7 @@ class PelayananController extends Controller
                 "noKartu" => $pelayanan->pasien->no_bpjs ?? '',
                 "tglDaftar" => now()->format('d-m-Y'),
                 "kdPoli" => $pelayanan->poli->kode ?? '',
-                "keluhan" => $output,
+                "keluhan" => $outputp,
                 "kdSadar" => $kdSadar,
                 "sistole" => $soap->sistol,
                 "diastole" => $soap->distol,
@@ -528,7 +542,7 @@ class PelayananController extends Controller
                 "alergiUdara" => $pelayanan->alergi_udara ?? '00',
                 "alergiObat" => $pelayanan->alergi_obat ?? '00',
                 "kdPrognosa" => "01",
-                "terapiObat" => $pelayanan->terapi_obat ?? "tidak ada",
+                "terapiObat" => $soap->resep->Resep_obat ?? "tidak ada",
                 "terapiNonObat" => $pelayanan->terapi_nonobat ?? "tidak ada",
                 "bmhp" => $soap->bmhp ?? '',
                 "suhu" => $soap->suhu ?? " 0",
