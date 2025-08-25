@@ -537,7 +537,7 @@ class PelayananController extends Controller
                 "rujukLanjut" => null,
                 "kdTacc" => 0,
                 "alasanTacc" => null,
-                "anamnesa" => strip_tags($pelayanan->htt),
+                "anamnesa" => strip_tags($soap->htt),
                 "alergiMakan" => $pelayanan->alergi_makanan ?? '00',
                 "alergiUdara" => $pelayanan->alergi_udara ?? '00',
                 "alergiObat" => $pelayanan->alergi_obat ?? '00',
