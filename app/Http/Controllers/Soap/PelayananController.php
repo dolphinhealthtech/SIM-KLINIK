@@ -521,7 +521,7 @@ class PelayananController extends Controller
                 "noKartu" => $pelayanan->pasien->no_bpjs ?? '',
                 "tglDaftar" => now()->format('d-m-Y'),
                 "kdPoli" => $pelayanan->poli->kode ?? '',
-                "keluhan" => $outputp,
+                "keluhan" => $outputp ?? $output ?? 'Tidak ada keluhan',
                 "kdSadar" => $kdSadar,
                 "sistole" => $soap->sistol,
                 "diastole" => $soap->distol,
@@ -537,7 +537,7 @@ class PelayananController extends Controller
                 "rujukLanjut" => null,
                 "kdTacc" => 0,
                 "alasanTacc" => null,
-                "anamnesa" => $output,
+                "anamnesa" => strip_tags($pelayanan->htt),
                 "alergiMakan" => $pelayanan->alergi_makanan ?? '00',
                 "alergiUdara" => $pelayanan->alergi_udara ?? '00',
                 "alergiObat" => $pelayanan->alergi_obat ?? '00',
@@ -603,6 +603,8 @@ class PelayananController extends Controller
             'message' => 'Data tidak ditemukan atau belum memiliki status.'
         ], 404);
     }
+
+
 
     public function soappelayanan($norawat)
     {
