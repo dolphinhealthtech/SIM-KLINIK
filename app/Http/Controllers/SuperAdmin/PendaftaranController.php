@@ -467,19 +467,13 @@ class PendaftaranController extends Controller
     public function pendaftaranupdokter(Request $request)
     {
         try {
-            $pelayanan = Pelayanan::with('pendaftaran')->find($request->rubahdokter_id);
+            $pelayanan = Pendaftaran_rawat_jalan::find($request->rubahdokter_id);
 
             if (!$pelayanan) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Data pelayanan tidak ditemukan.'
                 ], 404);
-            }
-
-            // Pastikan relasi pendaftaran ada
-            if ($pelayanan->pendaftaran) {
-                $pelayanan->pendaftaran->dokter_id = $request->dokter_id_update;
-                $pelayanan->pendaftaran->save();
             }
 
             // Update di tabel pelayanan juga
